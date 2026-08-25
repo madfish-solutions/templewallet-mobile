@@ -1,11 +1,11 @@
 import { FC } from 'react';
+import { TouchableOpacity } from 'react-native';
 
 import { isAndroid } from 'src/config/system';
 import { formatSize } from 'src/styles/format-size';
 import { generateHitSlop } from 'src/styles/generate-hit-slop';
 
 import { IconV2, IconV2Props } from '../icon-v2';
-import { SafeTouchableOpacity } from '../safe-touchable-opacity';
 import { TouchableWithAnalytics } from '../touchable-with-analytics';
 
 import { TouchableIconStyles } from './styles';
@@ -29,7 +29,7 @@ export const TouchableIconV2: FC<Props> = ({
   color
 }) => (
   <TouchableWithAnalytics
-    Component={SafeTouchableOpacity}
+    Component={TouchableOpacity}
     style={[TouchableIconStyles.container, { width: size, height: size }, style]}
     disabled={disabled}
     hitSlop={generateHitSlop(formatSize(4))}

@@ -41,6 +41,9 @@ export const isYesterday = (date: Date) => {
   return isTheSameDay(date, yesterday);
 };
 
+export const formatDayMonthYear = (date: Date) =>
+  date.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
 export const formatDateOutput = (date: number | string) =>
   new Date(date).toLocaleString('en-GB', {
     day: 'numeric',

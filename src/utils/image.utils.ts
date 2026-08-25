@@ -26,7 +26,7 @@ const buildIpfsMediaUrisByInfo = (info: MediaUriInfo, isFullView: boolean) => {
   return sizes.map(size => buildIpfsMediaUriByInfo(info, size)).concat(buildIpfsMediaUriByInfo(info, undefined, false));
 };
 
-export const buildCollectibleImagesStack = (
+export const buildTezosCollectibleImagesStack = (
   slug: string,
   { artifactUri, displayUri, thumbnailUri }: AssetMediaURIs,
   fullView = false

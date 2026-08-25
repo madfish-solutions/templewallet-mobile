@@ -1,5 +1,6 @@
 import { createAction } from '@reduxjs/toolkit';
 
+import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
 
 interface ProcessLoadedEvmAssetsActionPayload {
@@ -22,3 +23,14 @@ interface SetEvmAssetManualActionPayload {
 }
 
 export const setEvmAssetManualAction = createAction<SetEvmAssetManualActionPayload>('evm/assets/SET_EVM_ASSET_MANUAL');
+
+interface SetEvmAssetVisibilityActionPayload {
+  account: HexString;
+  chainId: number;
+  slug: string;
+  visibility: VisibilityEnum;
+}
+
+export const setEvmAssetVisibilityAction = createAction<SetEvmAssetVisibilityActionPayload>(
+  'evm/assets/SET_EVM_ASSET_VISIBILITY'
+);

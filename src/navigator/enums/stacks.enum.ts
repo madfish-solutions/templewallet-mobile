@@ -51,8 +51,10 @@ export type MainStackParams =
   | MainStackParamsPart<ScreensEnum.Debug>
   | MainStackParamsPart<ScreensEnum.Blank>;
 
+export type MainStackNavigationParams = MainStackParams & { pop?: boolean };
+
 export type NestedNavigationStacksParamList = {
-  [StacksEnum.MainStack]: MainStackParams | undefined;
+  [StacksEnum.MainStack]: MainStackNavigationParams | undefined;
 };
 
 export type StacksParamList = {

@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { GestureResponderEvent, StyleProp, Text, TextStyle, View, ViewStyle } from 'react-native';
+import { GestureResponderEvent, StyleProp, Text, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { FormattedAmount } from 'src/components/formatted-amount';
@@ -8,7 +8,6 @@ import { IconV2 } from 'src/components/icon-v2';
 import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
 import { NetworkIcon, NetworkIconVariant } from 'src/components/network-icon';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
-import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { useTotalFiatBalanceOfAccount } from 'src/hooks/use-total-balance';
 import { Account } from 'src/interfaces/account.interfaces';
 import { formatSize } from 'src/styles/format-size';
@@ -104,9 +103,9 @@ const AccountAddress: FC<AccountAddressProps> = ({ address, network, onPress, ic
   );
 
   return onPress ? (
-    <SafeTouchableOpacity style={[styles.address, compact && styles.compactAddress]} onPress={onPress}>
+    <TouchableOpacity style={[styles.address, compact && styles.compactAddress]} onPress={onPress}>
       {content}
-    </SafeTouchableOpacity>
+    </TouchableOpacity>
   ) : (
     <View style={[styles.address, compact && styles.compactAddress]}>{content}</View>
   );

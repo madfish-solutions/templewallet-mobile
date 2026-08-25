@@ -3,19 +3,17 @@ import { NavigationContainer } from '@react-navigation/native';
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack';
 import React, { useState } from 'react';
 import { Platform } from 'react-native';
-import { useDispatch } from 'react-redux';
 
 import { useModalOptions } from 'src/components/header/use-modal-options.util';
 import { Loader } from 'src/components/loader/loader';
 import { isIOS } from 'src/config/system';
-import { useRootHooks } from 'src/hooks/root-hooks';
+import { RootHooks } from 'src/hooks/root-hooks';
 import { useAppSplash } from 'src/hooks/use-app-splash.hook';
 import { useDevicePasscode } from 'src/hooks/use-device-passcode.hook';
 import { AddAssetModal } from 'src/modals/add-asset-modal/add-asset-modal';
 import { ChooseAccountImportType } from 'src/modals/choose-account-import-type';
 import { ChooseWalletImportType } from 'src/modals/choose-wallet-import-type';
-import { CollectibleModal } from 'src/modals/collectible-modal/collectible-modal';
-import { EvmCollectibleModal } from 'src/modals/collectible-modal/evm-collectible-modal';
+import { CollectibleModal } from 'src/modals/collectible-modal';
 import { ConfirmationModal } from 'src/modals/confirmation-modal/confirmation-modal';
 import { AddContactModal } from 'src/modals/contact-modals/add-contact-modal/add-contact-modal';
 import { EditContactModal } from 'src/modals/contact-modals/edit-contact-modal/edit-contact-modal';
@@ -43,6 +41,7 @@ import { EnterPassword } from 'src/screens/enter-password/enter-password';
 import { ForceUpdate } from 'src/screens/force-update/force-update';
 import { PassCode } from 'src/screens/passcode/passcode';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
+import { dispatch } from 'src/store';
 import { shouldShowNewsletterModalAction } from 'src/store/newsletter/newsletter-actions';
 import { useIsAppCheckFailed, useIsForceUpdateNeeded } from 'src/store/security/security-selectors';
 import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
@@ -74,12 +73,9 @@ const mainStackScreenOptions = Platform.select({
 });
 
 export const RootStackScreen = () => {
-  const dispatch = useDispatch();
   const { isLocked } = useAppLock();
   const isShowLoader = useIsShowLoaderSelector();
   const isAuthorised = useIsAuthorisedSelector();
-
-  useRootHooks();
 
   const isSplash = useAppSplash();
   const isPasscode = useDevicePasscode();
@@ -102,6 +98,7 @@ export const RootStackScreen = () => {
       onStateChange={handleNavigationContainerStateChange}
     >
       <PortalProvider>
+        <RootHooks />
         <CurrentRouteNameContext value={currentRouteName}>
           <RootStack.Navigator screenOptions={screenOptions}>
             <RootStack.Screen
@@ -151,11 +148,6 @@ export const RootStackScreen = () => {
             <RootStack.Screen
               name={ModalsEnum.CollectibleModal}
               component={CollectibleModal}
-              options={{ ...useModalOptions(), gestureEnabled: isIOS }}
-            />
-            <RootStack.Screen
-              name={ModalsEnum.EvmCollectibleModal}
-              component={EvmCollectibleModal}
               options={{ ...useModalOptions(), gestureEnabled: isIOS }}
             />
             <RootStack.Screen

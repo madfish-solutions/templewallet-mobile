@@ -30,5 +30,10 @@ export enum IconNameV2Enum {
   Earth = 'Earth',
   LinkYes = 'LinkYes',
   LinkNo = 'LinkNo',
-  ChevronRight2 = 'ChevronRight2'
+  ChevronRight2 = 'ChevronRight2',
+  Send = 'Send',
+  Income = 'Income',
+  Documents = 'Documents',
+  Ok = 'Ok',
+  OutLink = 'OutLink'
 }

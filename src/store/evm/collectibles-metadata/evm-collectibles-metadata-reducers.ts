@@ -24,6 +24,9 @@ const evmCollectiblesMetadataReducers = createReducer<EvmCollectiblesMetadataSta
 
         if (existing) {
           Object.assign(existing, pickBy(metadata[slug], isDefined));
+          if (metadata[slug].metadataUri === null) {
+            existing.metadataUri = null;
+          }
         } else {
           chainRecord[slug] = metadata[slug];
         }

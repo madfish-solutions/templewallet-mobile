@@ -6,16 +6,17 @@ import { useMemo } from 'react';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-assets-selectors';
 import { useEvmAccountChainBalancesSelector } from 'src/store/evm/balances/evm-balances-selectors';
-import { useEvmAssetExchangeRateGetter } from 'src/store/evm/exchange-rates/evm-exchange-rates-selectors';
+import { useEvmChainExchangeRatesSelector } from 'src/store/evm/exchange-rates/evm-exchange-rates-selectors';
 import { useEvmChainTokensMetadataSelector } from 'src/store/evm/tokens-metadata/evm-tokens-metadata-selectors';
 import { useShieldedBalanceSelector } from 'src/store/sapling';
-import { useAssetExchangeRateGetter } from 'src/store/settings/settings-selectors';
+import { useAssetExchangeRateGetter, useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 import { useAccountAddressForEvm, useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
-import { EvmAssetStandardEnum, EVM_TOKEN_SLUG } from 'src/token/interfaces/token-metadata.interface';
+import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { ETHERLINK_MAINNET_CHAIN_SPECS } from 'src/types/networks';
+import { buildEvmAssetCatalog, toEvmDisplayedAsset } from 'src/utils/assets/evm';
 import { useAccountTkeyToken, useCurrentAccountTokens } from 'src/utils/assets/hooks';
 import { getDollarValue } from 'src/utils/balance.utils';
 import { isEvmCollectibleSlug } from 'src/utils/from-token-slug';
@@ -24,8 +25,6 @@ import { isPositiveNumber } from 'src/utils/number.util';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 import { mutezToTz } from 'src/utils/tezos.util';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
-
-const etherlinkNativeCurrency = ETHERLINK_MAINNET_CHAIN_SPECS.currency;
 
 export interface MultichainDisplayedToken {
   slug: string;
@@ -94,7 +93,8 @@ export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
   const evmBalances = useEvmAccountChainBalancesSelector(evmAddress, ETHERLINK_MAINNET_CHAIN_ID);
   const evmAssets = useEvmAccountChainAssetsSelector(evmAddress, ETHERLINK_MAINNET_CHAIN_ID);
   const evmMetadata = useEvmChainTokensMetadataSelector(ETHERLINK_MAINNET_CHAIN_ID);
-  const getEvmExchangeRate = useEvmAssetExchangeRateGetter(ETHERLINK_MAINNET_CHAIN_ID);
+  const evmExchangeRates = useEvmChainExchangeRatesSelector(ETHERLINK_MAINNET_CHAIN_ID);
+  const fiatToUsdRate = useFiatToUsdRateSelector();
   const shieldedBalanceMutez = useShieldedBalanceSelector();
 
   return useMemo(() => {
@@ -116,53 +116,45 @@ export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
       );
     });
 
-    const evmTokens: MultichainDisplayedToken[] = [];
-
-    // Manually added assets are displayed even with a zero balance
-    const evmSlugs = new Set(Object.keys(evmBalances));
-    for (const slug in evmAssets) {
-      if (evmAssets[slug].manual) {
-        evmSlugs.add(slug);
-      }
-    }
-
-    for (const slug of evmSlugs) {
-      const atomicBalance = evmBalances[slug] ?? '0';
-      if (!isPositiveNumber(atomicBalance) && evmAssets[slug]?.manual !== true) {
-        continue;
+    const evmTokens = buildEvmAssetCatalog({
+      assets: evmAssets,
+      balances: evmBalances,
+      exchangeRates: evmExchangeRates,
+      fiatToUsdRate,
+      tokensMetadata: evmMetadata
+    }).flatMap<MultichainDisplayedToken>(item => {
+      if (!item.isVisible || (!item.isNative && !item.isManual && !isPositiveNumber(item.balance))) {
+        return [];
       }
 
-      const isNative = slug === EVM_TOKEN_SLUG;
-      const standard = isNative
-        ? EvmAssetStandardEnum.NATIVE
-        : evmAssets[slug]?.standard ?? evmMetadata[slug]?.standard;
-      const isFungible = standard === EvmAssetStandardEnum.NATIVE || standard === EvmAssetStandardEnum.ERC20;
-      if (!isFungible || isEvmCollectibleSlug(slug)) {
-        continue;
+      const isFungible = item.standard === EvmAssetStandardEnum.NATIVE || item.standard === EvmAssetStandardEnum.ERC20;
+      if (!isFungible || isEvmCollectibleSlug(item.assetSlug)) {
+        return [];
       }
 
-      const nativeCurrency = isNative ? etherlinkNativeCurrency : undefined;
-      const metadata = evmMetadata[slug];
-      const decimals = nativeCurrency?.decimals ?? metadata?.decimals;
-      if (decimals == null) {
-        continue;
+      const asset = toEvmDisplayedAsset(item, ETHERLINK_MAINNET_CHAIN_SPECS);
+      if (!asset) {
+        return [];
       }
-      const symbol = nativeCurrency?.symbol ?? metadata?.symbol ?? '';
-      const fiatRate = getEvmExchangeRate(slug);
-      const fiatValue = isDefined(fiatRate) ? getDollarValue(atomicBalance, decimals, fiatRate).toNumber() : undefined;
 
-      evmTokens.push({
-        slug,
-        chainKind: TempleChainKind.EVM,
-        chainId: ETHERLINK_MAINNET_CHAIN_ID,
-        symbol,
-        name: nativeCurrency?.name ?? metadata?.name ?? symbol,
-        iconUri: nativeCurrency?.iconURL ?? metadata?.iconURL,
-        atomicBalance,
-        decimals,
-        fiatValue
-      });
-    }
+      const fiatValue = isDefined(asset.exchangeRate)
+        ? getDollarValue(asset.balance, asset.decimals, asset.exchangeRate).toNumber()
+        : undefined;
+
+      return [
+        {
+          slug: asset.assetSlug,
+          chainKind: TempleChainKind.EVM,
+          chainId: asset.chainId,
+          symbol: asset.symbol,
+          name: asset.name,
+          iconUri: asset.thumbnailUri,
+          atomicBalance: asset.balance,
+          decimals: asset.decimals,
+          fiatValue
+        }
+      ];
+    });
 
     return tezosTokens
       .concat(evmTokens)
@@ -175,10 +167,11 @@ export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
     tkeyToken,
     visibleTokensList,
     getExchangeRate,
+    fiatToUsdRate,
+    evmExchangeRates,
     shieldedBalanceMutez,
     evmBalances,
     evmAssets,
-    evmMetadata,
-    getEvmExchangeRate
+    evmMetadata
   ]);
 };

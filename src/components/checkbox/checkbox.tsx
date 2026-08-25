@@ -1,4 +1,5 @@
 import React, { memo, useCallback } from 'react';
+import { TouchableOpacity } from 'react-native';
 
 import { emptyFn } from 'src/config/general';
 import { formatSize } from 'src/styles/format-size';
@@ -9,7 +10,6 @@ import { setTestID } from 'src/utils/test-id.utils';
 
 import { IconV2 } from '../icon-v2';
 import { IconNameV2Enum } from '../icon-v2/icon-name.enum';
-import { SafeTouchableOpacity } from '../safe-touchable-opacity';
 
 import { CheckboxProps } from './checkbox.props';
 import { CheckboxStyles } from './checkbox.styles';
@@ -24,7 +24,7 @@ export const Checkbox = memo<CheckboxProps>(
     }, [value, testID, trackEvent, onChange]);
 
     return (
-      <SafeTouchableOpacity
+      <TouchableOpacity
         disabled={disabled}
         style={CheckboxStyles.container}
         activeOpacity={1}
@@ -34,7 +34,7 @@ export const Checkbox = memo<CheckboxProps>(
       >
         <IconV2 name={value ? IconNameV2Enum.CheckboxCheckedFill : IconNameV2Enum.CheckboxEmpty} size={size} />
         {children}
-      </SafeTouchableOpacity>
+      </TouchableOpacity>
     );
   }
 );

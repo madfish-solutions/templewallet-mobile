@@ -10,10 +10,8 @@ import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowRightIcon from './assets/arrow-right.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
 import AudioIcon from './assets/audio.svg';
-import BlurDark from './assets/blur-dark.svg';
 import BlurEyeBlack from './assets/blur-eye-black.svg';
 import BlurEyeWhite from './assets/blur-eye-white.svg';
-import BlurLight from './assets/blur-light.svg';
 import BrokenImage from './assets/broken-image.svg';
 import BurnIcon from './assets/burn.svg';
 import BuyWithCryptoIcon from './assets/buy-with-crypto.svg';
@@ -253,8 +251,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.CreditCard]: CreditCardIcon,
   [IconNameEnum.Favourite]: FavoriteIcon,
   [IconNameEnum.Update]: UpdateIcon,
-  [IconNameEnum.BlurLight]: BlurLight,
-  [IconNameEnum.BlurDark]: BlurDark,
   [IconNameEnum.NotificationDot]: NotificationDotIcon,
   [IconNameEnum.CheckboxOn]: CheckboxOnIcon,
   [IconNameEnum.CheckboxOff]: CheckboxOffIcon,

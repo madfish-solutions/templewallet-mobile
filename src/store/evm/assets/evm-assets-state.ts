@@ -1,3 +1,4 @@
+import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
 
 interface EvmAssetRecordEntry {
@@ -5,6 +6,7 @@ interface EvmAssetRecordEntry {
   /** `true` if manually added/flagged by the user, preserved across API refreshes.
    * Only the debug screen sets it until the manage-assets ticket ships the real UI. */
   manual: boolean;
+  visibility: VisibilityEnum;
 }
 
 export type EvmChainAssetsRecord = Record<string, EvmAssetRecordEntry>;

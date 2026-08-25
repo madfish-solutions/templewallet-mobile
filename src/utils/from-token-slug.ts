@@ -1,5 +1,11 @@
 export const fromTokenSlug = <T = string>(slug: string) => slug.split('_') as [contract: T, tokenId?: string];
 
+export const toEvmAssetSlug = (contract: string, tokenId?: string | number) => {
+  const address = contract.toLowerCase();
+
+  return tokenId == null ? address : `${address}_${tokenId}`;
+};
+
 /**
  * EVM-only: collectible slugs are `${contract}_${tokenId}`, while fungible slugs are a bare contract
  * address or `eth`. Not valid for Tezos slugs, there every FA2 asset contains `_`.

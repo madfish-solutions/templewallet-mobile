@@ -21,7 +21,7 @@ import { showErrorToast } from 'src/toast/toast.utils';
 import { isStackFocused } from 'src/utils/is-stack-focused.util';
 
 import { NavigationBarIconNameEnum } from '../navigation-bar-icon/icon-name.enum';
-import { NOT_AVAILABLE_MESSAGE, useSwapScreenParams } from '../utils';
+import { NOT_AVAILABLE_MESSAGE, useIsManageCollectiblesTab, useSwapScreenParams } from '../utils';
 
 import { SideBarButton } from './side-bar-button/side-bar-button';
 import { useSideBarStyles } from './side-bar.styles';
@@ -34,6 +34,7 @@ export const SideBar = memo<Props>(({ currentRouteName }) => {
   const styles = useSideBarStyles();
 
   const swapScreenParams = useSwapScreenParams(currentRouteName);
+  const isManageCollectiblesTab = useIsManageCollectiblesTab(currentRouteName);
 
   const isStackFocusedMemo = useCallback(
     (screensStack: ScreensOrModalsEnum[]) => isStackFocused(currentRouteName, screensStack),
@@ -52,13 +53,16 @@ export const SideBar = memo<Props>(({ currentRouteName }) => {
             label="Wallet"
             iconName={NavigationBarIconNameEnum.Wallet}
             routeName={ScreensEnum.Wallet}
-            focused={isStackFocusedMemo(walletStackScreens) || isStackFocusedMemo(settingsStackScreens)}
+            focused={
+              (isStackFocusedMemo(walletStackScreens) && !isManageCollectiblesTab) ||
+              isStackFocusedMemo(settingsStackScreens)
+            }
           />
           <SideBarButton
             label={LIMIT_NFT_FEATURES ? 'Collectibles' : 'NFT'}
             iconName={NavigationBarIconNameEnum.Nft}
             routeName={ScreensEnum.CollectiblesHome}
-            focused={isStackFocusedMemo(nftStackScreens)}
+            focused={isStackFocusedMemo(nftStackScreens) || isManageCollectiblesTab}
             disabledOnPress={handleDisabledPress}
           />
           {!LIMIT_FIN_FEATURES && (
