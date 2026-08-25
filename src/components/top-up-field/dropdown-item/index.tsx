@@ -18,14 +18,18 @@ import { getProperNetworkFullName } from 'src/utils/topup';
 import { useTopUpTokenDropdownItemStyles } from './styles';
 
 const preloadedTokensIcons: Record<string, ImageRequireSource> = {
+  CAD: require('../fiat-icons/cad.png'),
   CNY: require('../fiat-icons/cny.png'),
   EGP: require('../fiat-icons/egp.png'),
+  HKD: require('../fiat-icons/hkd.png'),
   INR: require('../fiat-icons/inr.png'),
   JOD: require('../fiat-icons/jod.png'),
+  JPY: require('../fiat-icons/jpy.png'),
   KES: require('../fiat-icons/kes.png'),
   KRW: require('../fiat-icons/krw.png'),
   KWD: require('../fiat-icons/kwd.png'),
   PHP: require('../fiat-icons/php.png'),
+  SGD: require('../fiat-icons/sgd.png'),
   ZAR: require('../fiat-icons/zar.png'),
   KZT: require('../fiat-icons/kzt.png')
 };
@@ -56,7 +60,7 @@ export const TopUpTokenDropdownItem: FC<Props> = memo(
       }
 
       return <StaticTokenIcon uri={token?.icon ?? undefined} size={iconSize} />;
-    }, [token]);
+    }, [iconSize, token]);
 
     const codeFromToken = token?.codeToDisplay ?? token?.code;
     const tokenCodeToDisplay = codeFromToken === 'XTZ' ? 'TEZ' : codeFromToken;
