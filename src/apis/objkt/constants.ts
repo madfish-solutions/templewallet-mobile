@@ -64,7 +64,7 @@ const TECHNICAL_ATTRIBUTE_NAME = '__hazards_';
 
 export const HIDDEN_ATTRIBUTES_NAME = [ADULT_ATTRIBUTE_NAME, TECHNICAL_ATTRIBUTE_NAME];
 
-export const MAX_OBJKT_QUERY_RESPONSE_ITEMS = 500;
+const MAX_OBJKT_QUERY_RESPONSE_ITEMS = 500;
 
 /**
  * There is no way to get 'fa' collection total size.
