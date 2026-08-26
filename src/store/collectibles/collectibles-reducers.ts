@@ -4,8 +4,9 @@ import { persistReducer } from 'redux-persist';
 import { SlicedAsyncStorage } from 'src/utils/sliced-async-storage';
 
 import { createEntity } from '../create-entity';
+import { setSelectedAccountAction } from '../wallet/wallet-actions';
 
-import { loadCollectiblesDetailsActions } from './collectibles-actions';
+import { loadCollectiblesDetailsActions, loadOneCollectibleDetailsActions } from './collectibles-actions';
 import { CollectiblesState, collectiblesInitialState } from './collectibles-state';
 
 /** In seconds // TTL = Time To Live */
@@ -47,6 +48,32 @@ const collectiblesReducer = createReducer<CollectiblesState>(collectiblesInitial
 
   builder.addCase(loadCollectiblesDetailsActions.fail, state => {
     state.details.isLoading = false;
+  });
+
+  builder.addCase(setSelectedAccountAction, state => {
+    state.details.isLoading = false;
+  });
+
+  builder.addCase(loadOneCollectibleDetailsActions.submit, state => {
+    state.singleCollectibleLoading = true;
+  });
+
+  builder.addCase(loadOneCollectibleDetailsActions.success, (state, { payload }) => {
+    const { slug, details, timestamp } = payload;
+    state.singleCollectibleLoading = false;
+    const timestampInSeconds = Math.round(timestamp / 1_000);
+
+    if (!details) {
+      return;
+    }
+
+    state.adultFlags[slug] = { val: details.isAdultContent, ts: timestampInSeconds };
+    state.details.data[slug] = details;
+    state.singleCollectibleLoading = false;
+  });
+
+  builder.addCase(loadOneCollectibleDetailsActions.fail, state => {
+    state.singleCollectibleLoading = false;
   });
 });
 

@@ -72,4 +72,20 @@ export const MAX_OBJKT_QUERY_RESPONSE_ITEMS = 500;
  */
 export const FA_COLLECTION_PAGINATION_STEP = MAX_OBJKT_QUERY_RESPONSE_ITEMS;
 
+/**
+ * Nested collectibles-by-slug query (listings, attributes, tags, galleries).
+ * `MAX_OBJKT_QUERY_RESPONSE_ITEMS` is Hasura's row cap, not a safe request size:
+ * hundreds of `_or` clauses in one document time out on mobile and on Objkt.
+ */
+export const OBJKT_COLLECTIBLES_QUERY_CHUNK_SIZE = 50;
+
+/** In-flight collectibles-by-slug requests. Keep low to avoid saturating mobile + Objkt. */
+export const OBJKT_COLLECTIBLES_QUERY_CONCURRENCY = 2;
+
+export const OBJKT_COLLECTIBLES_QUERY_RETRY_COUNT = 2;
+
+export const OBJKT_COLLECTIBLES_QUERY_RETRY_BASE_DELAY_MS = 400;
+
+export const OBJKT_COLLECTIBLES_QUERY_TIMEOUT_MS = 20_000;
+
 export const GALLERY_COLLECTION_PAGINATION_STEP = 15;

@@ -48,5 +48,10 @@ Optimize for clarity, polish, and performance in every change.
 - General utils: `src/utils/`
 - Secure storage implementation: `src/shelter`
 
+## Objkt collectibles-by-slug
+- `MAX_OBJKT_QUERY_RESPONSE_ITEMS` (500) is Hasura's max rows, used for collection pagination — not a safe request size for nested token queries.
+- Collectibles-by-slug uses `OBJKT_COLLECTIBLES_QUERY_CHUNK_SIZE` (50), concurrency 2, per-chunk retries, and a 20s abort timeout.
+- Bulk details loading: `concatMap` so same-account slug deltas do not cancel in-flight work; `switchMap` on `selectedAccountPublicKeyHash` so account switches drop the queue and abort HTTP.
+
 ## A Note to the Agent
 We are building this together. When you learn something non-obvious, add it here so future changes go faster.
