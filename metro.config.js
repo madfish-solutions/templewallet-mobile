@@ -37,13 +37,6 @@ module.exports = withSentryConfig(
           };
         }
 
-        if (moduleName === 'utf8') {
-          return {
-            filePath: require.resolve('./utf8.cjs'),
-            type: 'sourceFile'
-          };
-        }
-
         return context.resolveRequest(context, moduleName, platform);
       }
     }
