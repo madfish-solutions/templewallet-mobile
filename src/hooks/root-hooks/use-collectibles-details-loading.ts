@@ -42,7 +42,6 @@ export const useCollectiblesDetailsLoading = () => {
 
   useAuthorisedInterval(
     () => {
-      console.log('oy vey 1', visibleCollectiblesSlugs.length, otherCollectiblesSlugs.length);
       // TODO: Is it necessary for collectibles on non-Mainnet networks too?
       if (prevAccountPkhRef.current !== accountPkh) {
         prevAccountPkhRef.current = accountPkh;
