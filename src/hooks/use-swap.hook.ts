@@ -1,14 +1,20 @@
 import BigNumber from 'bignumber.js';
 import { useCallback } from 'react';
 
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { Route3SwapHops, Route3LiquidityBakingHops, Route3Token } from 'src/interfaces/route3.interface';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { getSwapTransferParams } from 'src/utils/swap.utils';
 
 import { useReadOnlyTezosToolkit } from './use-read-only-tezos-toolkit.hook';
 
 export const useSwap = () => {
-  const publicKeyHash = useCurrentAccountPkhSelector();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
   const tezos = useReadOnlyTezosToolkit();
 
   return useCallback(
@@ -28,8 +34,8 @@ export const useSwap = () => {
         slippageRatio,
         hops,
         tezos,
-        publicKeyHash
+        tezosAddress
       ),
-    [tezos, publicKeyHash]
+    [tezos, tezosAddress]
   );
 };

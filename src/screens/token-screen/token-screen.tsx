@@ -1,23 +1,24 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
 
 import { ActivityGroupsList } from 'src/components/activity-groups-list/activity-groups-list';
 import { Divider } from 'src/components/divider/divider';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { HeaderButton } from 'src/components/header/header-button/header-button';
 import { HeaderTokenInfo } from 'src/components/header/header-token-info/header-token-info';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { HeaderCard } from 'src/components/header-card/header-card';
 import { HeaderCardActionButtons } from 'src/components/header-card-action-buttons/header-card-action-buttons';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
 import { TokenScreenContentContainer } from 'src/components/token-screen-content-container/token-screen-content-container';
 import { useContractActivity } from 'src/hooks/use-contract-activity';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen, useScreenParams } from 'src/navigator/hooks/use-navigation.hook';
+import { dispatch } from 'src/store';
 import { useScamTokenSlugsSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { highPriorityLoadTokenBalanceAction } from 'src/store/wallet/wallet-actions';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos, useCurrentAccountId } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { getTokenSlug } from 'src/token/utils/token.utils';
@@ -26,12 +27,18 @@ import { useCurrentAccountTokens } from 'src/utils/assets/hooks';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 export const TokenScreen = () => {
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
+  const accountId = useCurrentAccountId();
+
   const { token: initialToken } = useScreenParams<ScreensEnum.TokenScreen>();
 
   const navigateToScreen = useNavigateToScreen();
 
-  const dispatch = useDispatch();
-  const accountPkh = useCurrentAccountPkhSelector();
   const tokensList = useCurrentAccountTokens();
   const tezosToken = useTezosTokenOfCurrentAccount();
 
@@ -49,11 +56,12 @@ export const TokenScreen = () => {
   useEffect(() => {
     dispatch(
       highPriorityLoadTokenBalanceAction({
-        publicKeyHash: accountPkh,
+        accountId,
+        publicKeyHash: tezosAddress,
         slug: getTokenSlug(token)
       })
     );
-  }, []);
+  }, [accountId, tezosAddress, token]);
 
   const { activities, handleUpdate, isAllLoaded, isLoading } = useContractActivity(getTokenSlug(initialToken));
 
@@ -65,7 +73,7 @@ export const TokenScreen = () => {
   useNavigationSetOptions(
     {
       headerTitle: () => <HeaderTokenInfo token={token} />,
-      headerRight: () => <HeaderButton iconName={IconNameEnum.InfoAlt} onPress={handleInfoIconClick} />
+      headerRight: () => <HeaderButton iconName={IconNameV2Enum.Info} onPress={handleInfoIconClick} />
     },
     [token]
   );
@@ -77,7 +85,7 @@ export const TokenScreen = () => {
       <HeaderCard>
         <TokenEquityValue token={token} />
         <Divider size={formatSize(4)} />
-        <PublicKeyHashText publicKeyHash={accountPkh} marginBottom={formatSize(16)} />
+        <PublicKeyHashText publicKeyHash={tezosAddress} marginBottom={formatSize(16)} />
 
         <HeaderCardActionButtons token={token} />
       </HeaderCard>

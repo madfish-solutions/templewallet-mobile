@@ -13,7 +13,6 @@ import {
 import { beaconDeepLinkHandler } from 'src/beacon/use-beacon-handler.hook';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { isIOS } from 'src/config/system';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useSuggestedHeaderHeight } from 'src/hooks/use-suggested-header-height.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -22,6 +21,7 @@ import { useNavigateToModal, useNavigation } from 'src/navigator/hooks/use-navig
 import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
+import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { isBeaconPayload } from 'src/utils/beacon.utils';
@@ -67,8 +67,6 @@ const CameraView = () => {
   const { trackEvent } = useAnalytics();
   const { top: topInset } = useSafeAreaInsets();
 
-  const { metadata } = useNetworkInfo();
-
   usePageAnalytic(ScreensEnum.ScanQrCode);
 
   const handleRead = useCallback(
@@ -85,10 +83,10 @@ const CameraView = () => {
       if (isAuthorised) {
         if (isValidAddress(data)) {
           if (Number(tezosToken.balance) > 0) {
-            navigateToModal(ModalsEnum.Send, { token: metadata, receiverPublicKeyHash: data });
+            navigateToModal(ModalsEnum.Send, { token: TEZ_TOKEN_METADATA, receiverPublicKeyHash: data });
           } else {
             trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_ZERO_BALANCE, AnalyticsEventCategory.General);
-            showErrorToast({ description: `You need to have ${metadata.symbol} to pay gas fee` });
+            showErrorToast({ description: `You need to have ${TEZ_TOKEN_METADATA.symbol} to pay gas fee` });
           }
         } else if (isBeaconPayload(data)) {
           let dataWasIgnored = true;
@@ -127,7 +125,7 @@ const CameraView = () => {
         }
       }
     },
-    [goBack, navigateToModal, trackEvent, tezosToken, metadata, isAuthorised]
+    [goBack, navigateToModal, trackEvent, tezosToken, isAuthorised]
   );
 
   const headerHeight = useSuggestedHeaderHeight(false);

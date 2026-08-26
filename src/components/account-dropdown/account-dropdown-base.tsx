@@ -1,61 +1,55 @@
-import React, { memo } from 'react';
+import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
+import { View } from 'react-native';
 
-import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
-import { AccountBaseInterface } from 'src/interfaces/account.interface';
+import { CopyAddressPopup } from 'src/components/copy-address-popup';
+import { AccountTypeEnum } from 'src/enums/account-type.enum';
+import { Account } from 'src/interfaces/account.interfaces';
 import { TestIdProps } from 'src/interfaces/test-id.props';
-import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigateToModal, useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
-import { WalletSelectors } from 'src/screens/wallet/wallet.selectors';
-import { useShelter } from 'src/shelter/use-shelter.hook';
-import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
-import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
-import { copyStringToClipboard } from 'src/utils/clipboard.utils';
+import { useGetSaplingAddressForAccount } from 'src/store/sapling/sapling-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { includesIgnoreCase } from 'src/utils/string.utils';
 
-import { BottomSheetActionButton } from '../bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
 import { Dropdown, DropdownActionButtonsComponent, DropdownValueBaseProps } from '../dropdown/dropdown';
+import { OptionsPopupController } from '../options-popup';
 
 import { accountEqualityFn } from './account-equality-fn';
 
-const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
-  const navigateToModal = useNavigateToModal();
-  const navigateToScreen = useNavigateToScreen();
-  const { trackEvent } = useAnalytics();
-  const { createHdAccount } = useShelter();
+export type AccountDropdownValueComponent = SyncFC<
+  { value: Account; disabled?: boolean; isCollectibleScreen?: boolean } & TestIdProps
+>;
 
-  const handleCreateNewAccountButtonPress = () => {
-    createHdAccount();
-    onPress();
-    trackEvent(WalletSelectors.createNewAccountButton, AnalyticsEventCategory.ButtonPress);
-  };
+type Props = Omit<DropdownValueBaseProps<Account>, 'value' | 'renderValue' | 'onValueChange'> & {
+  value: Account;
+  renderValue: AccountDropdownValueComponent;
+  onValueChange: SyncFn<Account>;
+  renderSearchActionButtons?: DropdownActionButtonsComponent;
+} & TestIdProps;
 
-  const handleManageAccountsButtonPress = () => {
-    navigateToScreen({ screen: ScreensEnum.ManageAccounts });
-    onPress();
-  };
-
-  const handleImportAccountButtonPress = () => {
-    navigateToModal(ModalsEnum.ChooseAccountImportType);
-    onPress();
-  };
-
-  return (
-    <>
-      <BottomSheetActionButton
-        title="Create new account"
-        onPress={useCallbackIfOnline(handleCreateNewAccountButtonPress)}
-      />
-      <BottomSheetActionButton
-        title="Import an account"
-        onPress={useCallbackIfOnline(handleImportAccountButtonPress)}
-      />
-      <BottomSheetActionButton title="Manage accounts" onPress={handleManageAccountsButtonPress} />
-    </>
-  );
+const getAccountSectionTitle = (account: Account) => {
+  switch (account.type) {
+    case AccountTypeEnum.HD:
+      return 'Created';
+    case AccountTypeEnum.IMPORTED_CHAIN:
+    case AccountTypeEnum.IMPORTED_MULTICHAIN:
+      return 'Imported';
+    case AccountTypeEnum.WATCH_ONLY_DEBUG:
+      return 'Watch Only';
+  }
 };
 
-type Props = DropdownValueBaseProps<AccountBaseInterface> & TestIdProps;
+const getAccountSectionWeight = (account: Account) => {
+  switch (account.type) {
+    case AccountTypeEnum.HD:
+      return 0;
+    case AccountTypeEnum.IMPORTED_CHAIN:
+    case AccountTypeEnum.IMPORTED_MULTICHAIN:
+      return 1;
+    case AccountTypeEnum.WATCH_ONLY_DEBUG:
+      return 2;
+  }
+};
 
 export const AccountDropdownBase = memo<Props>(
   ({
@@ -66,25 +60,66 @@ export const AccountDropdownBase = memo<Props>(
     renderAccountListItem,
     testID,
     testIDProperties,
-    isCollectibleScreen
+    isCollectibleScreen,
+    renderSearchActionButtons
   }) => {
-    const onLongPressHandler = () => isDefined(value) && copyStringToClipboard(value.publicKeyHash);
+    const triggerRef = useRef<View>(null);
+    const copyAddressPopupRef = useRef<OptionsPopupController>(null);
+    const [searchValue, setSearchValue] = useState('');
+    const getSaplingAddressForAccount = useGetSaplingAddressForAccount();
+
+    const groupedList = useMemo(
+      () =>
+        Array.from(list)
+          .filter(account => {
+            const tezosAddress = getAccountAddressForTezos(account);
+            const evmAddress = getAccountAddressForEvm(account);
+            const saplingAddress = getSaplingAddressForAccount(account);
+
+            return (
+              includesIgnoreCase(account.name, searchValue) ||
+              (tezosAddress && includesIgnoreCase(tezosAddress, searchValue)) ||
+              (saplingAddress && includesIgnoreCase(saplingAddress, searchValue)) ||
+              (evmAddress && includesIgnoreCase(evmAddress, searchValue))
+            );
+          })
+          .sort((accountA, accountB) => getAccountSectionWeight(accountA) - getAccountSectionWeight(accountB)),
+      [getSaplingAddressForAccount, list, searchValue]
+    );
+
+    const onLongPressHandler = useCallback(() => {
+      copyAddressPopupRef.current?.open();
+    }, []);
 
     return (
-      <Dropdown
-        testID={testID}
-        testIDProperties={testIDProperties}
-        description="Accounts"
-        value={value}
-        list={list}
-        equalityFn={accountEqualityFn}
-        renderValue={renderValue}
-        renderListItem={renderAccountListItem}
-        renderActionButtons={ActionButtons}
-        onValueChange={onValueChange}
-        onLongPress={onLongPressHandler}
-        isCollectibleScreen={isCollectibleScreen}
-      />
+      <>
+        <Dropdown
+          testID={testID}
+          testIDProperties={testIDProperties}
+          description="My Accounts"
+          emptyListText="No records found"
+          isSearchable
+          value={value}
+          list={groupedList}
+          listItemHeight={formatSize(84)}
+          equalityFn={accountEqualityFn}
+          renderValue={props => renderValue({ ...props, value })}
+          renderListItem={renderAccountListItem}
+          getListItemSectionTitle={getAccountSectionTitle}
+          setSearchValue={setSearchValue}
+          onValueChange={value => {
+            if (isDefined(value)) {
+              onValueChange(value);
+            }
+          }}
+          onLongPress={onLongPressHandler}
+          isCollectibleScreen={isCollectibleScreen}
+          renderSearchActionButtons={renderSearchActionButtons}
+          triggerWrapperRef={triggerRef}
+        />
+
+        <CopyAddressPopup controlRef={copyAddressPopupRef} account={value} triggerRef={triggerRef} />
+      </>
     );
   }
 );

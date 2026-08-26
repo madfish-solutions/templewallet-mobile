@@ -1,10 +1,6 @@
 export enum AccountTypeEnum {
-  HD_ACCOUNT = 'HD',
-  IMPORTED_ACCOUNT = 'IMPORTED',
+  HD = 'HD',
+  IMPORTED_CHAIN = 'IMPORTED_CHAIN',
+  IMPORTED_MULTICHAIN = 'IMPORTED_MULTICHAIN',
   WATCH_ONLY_DEBUG = 'WATCH_ONLY_DEBUG'
-}
-
-export enum ImportAccountDerivationEnum {
-  DEFAULT = 'DEFAULT',
-  CUSTOM_PATH = 'CUSTOM_PATH'
 }

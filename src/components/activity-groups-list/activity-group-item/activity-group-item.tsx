@@ -1,10 +1,8 @@
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useNonZeroAmounts } from 'src/hooks/use-non-zero-amounts.hook';
 import { ActivityGroup, emptyActivity } from 'src/interfaces/activity.interface';
-import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { tzktUrl } from 'src/utils/linking';
 
@@ -29,9 +27,6 @@ export const ActivityGroupItem: FC<Props> = ({ group }) => {
 
   const nonZeroAmounts = useNonZeroAmounts(group);
 
-  const selectedRpcUrl = useSelectedRpcUrlSelector();
-  const { isTezosNode } = useNetworkInfo();
-
   const firstActivity = group[0] ?? emptyActivity;
 
   return (
@@ -47,10 +42,7 @@ export const ActivityGroupItem: FC<Props> = ({ group }) => {
             testID={ActivityGroupItemSelectors.operationHash}
           />
           <Divider size={formatSize(4)} />
-          <ExternalLinkButton
-            url={tzktUrl(selectedRpcUrl, firstActivity.hash)}
-            testID={ActivityGroupItemSelectors.externalLink}
-          />
+          <ExternalLinkButton url={tzktUrl(firstActivity.hash)} testID={ActivityGroupItemSelectors.externalLink} />
         </View>
       </View>
       <Divider size={formatSize(8)} />
@@ -63,7 +55,7 @@ export const ActivityGroupItem: FC<Props> = ({ group }) => {
           <ActivityTime timestamp={firstActivity.timestamp} />
         </View>
 
-        {isTezosNode && <ActivityGroupDollarAmountChange nonZeroAmounts={nonZeroAmounts} />}
+        <ActivityGroupDollarAmountChange nonZeroAmounts={nonZeroAmounts} />
       </View>
       <Divider size={formatSize(16)} />
     </View>

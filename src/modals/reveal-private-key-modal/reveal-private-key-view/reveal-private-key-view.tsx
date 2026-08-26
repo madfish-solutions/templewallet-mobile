@@ -9,10 +9,10 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
 interface Props {
-  publicKeyHash: string;
+  address: string;
 }
 
-export const RevealPrivateKeyView: FC<Props> = ({ publicKeyHash }) => {
+export const RevealPrivateKeyView: FC<Props> = ({ address }) => {
   const { revealSecretKey } = useShelter();
   const { trackEvent } = useAnalytics();
   const { activeTimer, clearActiveTimer } = useActiveTimer();
@@ -22,11 +22,11 @@ export const RevealPrivateKeyView: FC<Props> = ({ publicKeyHash }) => {
   useEffect(() => {
     clearActiveTimer();
     setSecretKey(undefined);
-  }, [publicKeyHash]);
+  }, [address]);
 
   const handleProtectedOverlayPress = () => {
     revealSecretKey({
-      publicKeyHash,
+      address,
       successCallback: value => {
         clearActiveTimer();
 

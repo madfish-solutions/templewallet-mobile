@@ -1,6 +1,6 @@
 import { BottomSheetSectionList, TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { memo, useCallback } from 'react';
-import { FlatListProps, ListRenderItemInfo, Text, View } from 'react-native';
+import { FlatListProps, ListRenderItemInfo, StyleProp, Text, View, ViewStyle } from 'react-native';
 
 import { emptyComponent, emptyFn } from 'src/config/general';
 import { useDropdownHeight } from 'src/hooks/use-dropdown-height.hook';
@@ -22,6 +22,7 @@ import { useDropdownStyles } from './styles';
 export interface SectionDropdownProps<T> extends TestIdProps, Pick<FlatListProps<T>, 'keyExtractor'> {
   description: string;
   list: Array<SectionDropdownDataInterface<T>>;
+  emptyListText?: string;
   isSearchable?: boolean;
   itemHeight?: number;
   setSearchValue?: SyncFn<string>;
@@ -29,21 +30,23 @@ export interface SectionDropdownProps<T> extends TestIdProps, Pick<FlatListProps
   renderValue: DropdownValueComponent<T>;
   renderListItem: DropdownListItemComponent<T>;
   renderActionButtons?: DropdownActionButtonsComponent;
+  itemContainerStyle?: StyleProp<ViewStyle>;
+  showCloseButton?: boolean;
   onLongPress?: EmptyFn;
 }
 
 interface SectionDropdownValueProps<T> {
-  value?: T;
+  value: T;
   itemHeight?: number;
   list: Array<SectionDropdownDataInterface<T>>;
   disabled?: boolean;
-  onValueChange: SyncFn<T | undefined>;
+  onValueChange: SyncFn<T>;
 }
 
-type DropdownEqualityFn<T> = (item: T, value?: T) => boolean;
+type DropdownEqualityFn<T> = (item: T, value: T) => boolean;
 
 type DropdownValueComponent<T> = SyncFC<{
-  value?: T;
+  value: T;
   disabled?: boolean;
 }>;
 
@@ -60,6 +63,7 @@ const SectionDropdownComponent = <T extends unknown>({
   value,
   list,
   description,
+  emptyListText = 'No assets found.',
   itemHeight = formatSize(64),
   disabled = false,
   isSearchable = false,
@@ -68,6 +72,8 @@ const SectionDropdownComponent = <T extends unknown>({
   renderValue,
   renderListItem,
   renderActionButtons = emptyComponent,
+  itemContainerStyle,
+  showCloseButton = false,
   keyExtractor,
   onValueChange,
   onLongPress,
@@ -89,13 +95,13 @@ const SectionDropdownComponent = <T extends unknown>({
 
       return (
         <TouchableOpacity key={index} onPress={handlePress}>
-          <DropdownItemContainer hasMargin={true} isSelected={isSelected}>
+          <DropdownItemContainer hasMargin={true} isSelected={isSelected} style={itemContainerStyle}>
             {renderListItem({ item, isSelected })}
           </DropdownItemContainer>
         </TouchableOpacity>
       );
     },
-    [equalityFn, value, onValueChange, dropdownBottomSheetController.close, renderListItem]
+    [equalityFn, value, onValueChange, dropdownBottomSheetController, renderListItem, itemContainerStyle]
   );
 
   const scroll = useCallback(() => {
@@ -142,17 +148,31 @@ const SectionDropdownComponent = <T extends unknown>({
         {renderValue({ value, disabled })}
       </TouchableWithAnalytics>
 
-      <BottomSheet description={description} contentHeight={contentHeight} controller={dropdownBottomSheetController}>
+      <BottomSheet
+        description={description}
+        contentHeight={contentHeight}
+        controller={dropdownBottomSheetController}
+        showCloseButton={showCloseButton}
+        showCancelButton={!showCloseButton}
+      >
         <View style={styles.contentContainer}>
-          {isSearchable && <SearchInput placeholder="Search" onChangeText={setSearchValue} />}
+          {isSearchable && (
+            <View style={styles.searchContainer}>
+              <SearchInput
+                containerStyle={styles.searchInputContainer}
+                placeholder="Search"
+                onChangeText={setSearchValue}
+              />
+            </View>
+          )}
           <BottomSheetSectionList
             sections={list}
             getItemLayout={createGetItemLayout(itemHeight)}
-            contentContainerStyle={styles.flatListContentContainer}
+            contentContainerStyle={styles.listContentContainer}
             keyExtractor={keyExtractor}
             renderItem={renderItem}
             renderSectionHeader={renderSectionHeader}
-            ListEmptyComponent={<DataPlaceholder text="No assets found." />}
+            ListEmptyComponent={<DataPlaceholder text={emptyListText} />}
           />
         </View>
 

@@ -10,7 +10,7 @@ export const ButtonStyles = StyleSheet.create({
     justifyContent: 'center'
   },
   loader: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     justifyContent: 'center'
   }
 });

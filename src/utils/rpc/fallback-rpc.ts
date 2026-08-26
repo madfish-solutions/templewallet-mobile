@@ -11,12 +11,13 @@ import {
   RPCSimulateOperationParam
 } from '@taquito/rpc';
 import { TezosOperationError } from '@taquito/taquito';
+import { uniq } from 'lodash-es';
 import memoize from 'memoizee';
 
 import { isDefined } from '../is-defined';
 
 import { FastRpcClient, getFastRpcClient } from './fast-rpc';
-import { FALLBACK_RPC_LIST, TEMPLE_RPC } from './rpc-list';
+import { FALLBACK_TEZOS_RPC_LIST, TEMPLE_RPC } from './rpc-list';
 
 /**
  * A lightweight fallback client that sequentially tries multiple FastRpcClient instances
@@ -258,10 +259,6 @@ function isNonRetryableTezosError(error: unknown): boolean {
   return false;
 }
 
-export const getFallbackRpcClient = memoize((rpc: string) => {
-  if (rpc === TEMPLE_RPC.url) {
-    return new FallbackRpcClient([rpc, ...FALLBACK_RPC_LIST]);
-  }
-
-  return getFastRpcClient(rpc);
-});
+export const getFallbackRpcClient = memoize(
+  (preferredRpcUrl = TEMPLE_RPC.url) => new FallbackRpcClient(uniq([preferredRpcUrl].concat(FALLBACK_TEZOS_RPC_LIST)))
+);

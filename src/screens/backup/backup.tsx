@@ -12,7 +12,7 @@ import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { useIsBackupMadeSelector } from 'src/store/settings/settings-selectors';
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccount } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -27,7 +27,7 @@ export const Backup = () => {
   const styles = useBackupStyles();
   const navigateToScreen = useNavigateToScreen();
 
-  const account = useSelectedAccountSelector();
+  const account = useAccount();
   const { isManualBackupMade } = useIsBackupMadeSelector();
 
   usePageAnalytic(ScreensEnum.Backup);

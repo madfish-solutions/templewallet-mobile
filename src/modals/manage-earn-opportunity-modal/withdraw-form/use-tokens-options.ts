@@ -53,12 +53,9 @@ export const useTokensOptions = (earnOpportunityItem: EarnOpportunity, lpAmount?
         );
         break;
       case EarnOpportunityTypeEnum.LIQUIDITY_BAKING:
-        outputPromise = calculateLbUnstakeParams(
-          tokensIndexes,
-          lpAmount,
-          slippageTolerance,
-          tezos.rpc.getRpcUrl()
-        ).then(params => params.map(({ outputAfterFeeAtomic }) => outputAfterFeeAtomic));
+        outputPromise = calculateLbUnstakeParams(tokensIndexes, lpAmount, slippageTolerance).then(params =>
+          params.map(({ outputAfterFeeAtomic }) => outputAfterFeeAtomic)
+        );
         break;
       default:
         outputPromise = Promise.resolve([lpAmount]);
@@ -72,7 +69,6 @@ export const useTokensOptions = (earnOpportunityItem: EarnOpportunity, lpAmount?
           const additionalProperties = error instanceof AnalyticsError ? error.additionalProperties : {};
           trackErrorEvent('UseTokensOptionsError', internalError, [], {
             topLevelInput: {
-              rpcUrl: tezos.rpc.getRpcUrl(),
               lpAmount: lpAmount?.toFixed(),
               tokensIndexes,
               slippageTolerance,

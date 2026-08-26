@@ -14,9 +14,13 @@ export const setIsAnalyticsEnabled = createAction<boolean>('settings/SET_IS_ANAL
 
 export const setIsBalanceHidden = createAction<boolean>('settings/SET_IS_BALANCE_HIDDEN');
 
+/** @deprecated */
 export const addCustomRpc = createAction<RpcInterface>('settings/ADD_CUSTOM_RPC');
+/** @deprecated */
 export const editCustomRpc = createAction<{ url: string; values: RpcInterface }>('settings/EDIT_CUSTOM_RPC');
+/** @deprecated */
 export const removeCustomRpc = createAction<string>('settings/REMOVE_CUSTOM_RPC');
+/** @deprecated */
 export const setSelectedRpcUrl = createAction<string>('settings/SET_SELECTED_RPC_URL');
 export const setFiatCurrency = createAction<FiatCurrenciesEnum>('settings/SET_FIAT_CURRENCY');
 export const setSlippage = createAction<number>('settings/SET_SLIPPAGE');
@@ -24,7 +28,7 @@ export const setSlippage = createAction<number>('settings/SET_SLIPPAGE');
 export const toggleDomainAddressShown = createAction<void>('settings/TOGGLE_DOMAIN_ADDRESS_SHOWN');
 export const setIsDomainAddressShown = createAction<boolean>('settings/SET_IS_DOMAIN_ADDRESS_SHOWN');
 
-export const setZeroBalancesShown = createAction<boolean>('settings/SET_ZERO_BALANCES_SHOWN');
+export const setHideZeroBalances = createAction<boolean>('settings/SET_HIDE_ZERO_BALANCES');
 
 export const showLoaderAction = createAction('settings/SHOW_LOADER_ACTION');
 export const hideLoaderAction = createAction('settings/HIDE_LOADER_ACTION');

@@ -3,19 +3,17 @@ import { NavigationContainer } from '@react-navigation/native';
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack';
 import React, { useState } from 'react';
 import { Platform } from 'react-native';
-import { useDispatch } from 'react-redux';
 
 import { useModalOptions } from 'src/components/header/use-modal-options.util';
 import { Loader } from 'src/components/loader/loader';
 import { isIOS } from 'src/config/system';
-import { useRootHooks } from 'src/hooks/root-hooks';
+import { RootHooks } from 'src/hooks/root-hooks';
 import { useAppSplash } from 'src/hooks/use-app-splash.hook';
 import { useDevicePasscode } from 'src/hooks/use-device-passcode.hook';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { AddAssetModal } from 'src/modals/add-asset-modal/add-asset-modal';
 import { ChooseAccountImportType } from 'src/modals/choose-account-import-type';
 import { ChooseWalletImportType } from 'src/modals/choose-wallet-import-type';
-import { CollectibleModal } from 'src/modals/collectible-modal/collectible-modal';
+import { CollectibleModal } from 'src/modals/collectible-modal';
 import { ConfirmationModal } from 'src/modals/confirmation-modal/confirmation-modal';
 import { AddContactModal } from 'src/modals/contact-modals/add-contact-modal/add-contact-modal';
 import { EditContactModal } from 'src/modals/contact-modals/edit-contact-modal/edit-contact-modal';
@@ -34,7 +32,7 @@ import { RevealPrivateKeyModal } from 'src/modals/reveal-private-key-modal/revea
 import { RevealSeedPhraseModal } from 'src/modals/reveal-seed-phrase-modal/reveal-seed-phrase-modal';
 import { RewardsAnnouncementModal } from 'src/modals/rewards-announcement-modal';
 import { SelectBakerModal } from 'src/modals/select-baker-modal/select-baker-modal';
-import { SendModal } from 'src/modals/send-modal/send-modal';
+import { SendModal } from 'src/modals/send-modal';
 import { ShieldedAnnouncementModal } from 'src/modals/shielded-announcement-modal/shielded-announcement-modal';
 import { SplashModal } from 'src/modals/splash-modal/splash-modal';
 import { AfterSyncQRScan } from 'src/modals/sync-account/after-sync-qr-scan/after-sync-qr-scan';
@@ -43,6 +41,7 @@ import { EnterPassword } from 'src/screens/enter-password/enter-password';
 import { ForceUpdate } from 'src/screens/force-update/force-update';
 import { PassCode } from 'src/screens/passcode/passcode';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
+import { dispatch } from 'src/store';
 import { shouldShowNewsletterModalAction } from 'src/store/newsletter/newsletter-actions';
 import { useIsAppCheckFailed, useIsForceUpdateNeeded } from 'src/store/security/security-selectors';
 import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
@@ -74,13 +73,9 @@ const mainStackScreenOptions = Platform.select({
 });
 
 export const RootStackScreen = () => {
-  const dispatch = useDispatch();
   const { isLocked } = useAppLock();
   const isShowLoader = useIsShowLoaderSelector();
   const isAuthorised = useIsAuthorisedSelector();
-  const { isDcpNode } = useNetworkInfo();
-
-  useRootHooks();
 
   const isSplash = useAppSplash();
   const isPasscode = useDevicePasscode();
@@ -103,6 +98,7 @@ export const RootStackScreen = () => {
       onStateChange={handleNavigationContainerStateChange}
     >
       <PortalProvider>
+        <RootHooks />
         <CurrentRouteNameContext value={currentRouteName}>
           <RootStack.Navigator screenOptions={screenOptions}>
             <RootStack.Screen
@@ -127,7 +123,7 @@ export const RootStackScreen = () => {
             <RootStack.Screen
               name={ModalsEnum.SelectBaker}
               component={SelectBakerModal}
-              options={useModalOptions(`Select ${isDcpNode ? 'Producer' : 'Baker'}`, true)}
+              options={useModalOptions('Select Baker', true)}
             />
             <RootStack.Screen
               name={ModalsEnum.RevealSeedPhrase}

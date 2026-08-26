@@ -16,8 +16,6 @@ export interface Route3SwapParamsRequestRaw {
   toTokenDecimals: number;
   amount: string | undefined;
   dexesLimit?: number;
-  /** Needed to make a correction of params if input is SIRS */
-  rpcUrl: string;
 }
 
 // TODO: add `showTree: boolean` when adding route view
@@ -26,8 +24,6 @@ interface Route3SwapParamsRequestBase {
   toSymbol: string;
   toTokenDecimals: number;
   amount: string;
-  /** Needed to make a correction of params if input is SIRS */
-  rpcUrl: string;
   /** 3route API does not require it but the extension needs swaps trees */
   showTree: true;
 }

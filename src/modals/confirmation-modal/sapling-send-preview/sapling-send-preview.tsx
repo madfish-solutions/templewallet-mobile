@@ -3,9 +3,10 @@ import { View } from 'react-native';
 
 import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
 import { Divider } from 'src/components/divider/divider';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { TruncatedText } from 'src/components/truncated-text';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useTezosToken } from 'src/utils/wallet.utils';
 
@@ -18,7 +19,12 @@ interface Props {
 
 export const SaplingSendPreview: FC<Props> = ({ amount, saplingType }) => {
   const styles = useOperationsPreviewItemStyles();
-  const accountPkh = useCurrentAccountPkhSelector();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
   const amountToken = useTezosToken(amount);
 
   const label = saplingType === 'shield' ? 'TEZ sent' : 'Shielded TEZ sent';
@@ -27,7 +33,7 @@ export const SaplingSendPreview: FC<Props> = ({ amount, saplingType }) => {
     <View style={styles.container}>
       <View style={styles.contentWrapper}>
         <View style={styles.infoContainer}>
-          <RobotIcon seed={accountPkh} size={formatSize(32)} />
+          <RobotIcon seed={tezosAddress} size={formatSize(32)} />
           <Divider size={formatSize(10)} />
           <TruncatedText style={styles.description}>{label}</TruncatedText>
         </View>

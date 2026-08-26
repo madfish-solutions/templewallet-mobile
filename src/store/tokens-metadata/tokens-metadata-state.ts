@@ -1,5 +1,5 @@
 import { KNOWN_MAINNET_TOKENS_METADATA, PREDEFINED_DCP_TOKENS_METADATA } from 'src/token/data/tokens-metadata';
-import { emptyTokenMetadata, TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
+import { emptyTokenMetadata, TezosTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 
 import { createEntity } from '../create-entity';
@@ -7,8 +7,8 @@ import { LoadableEntityState } from '../types';
 
 export interface TokensMetadataState {
   isLoading: boolean;
-  metadataRecord: Record<string, TokenMetadataInterface>;
-  addTokenSuggestion: LoadableEntityState<TokenMetadataInterface>;
+  metadataRecord: Record<string, TezosTokenMetadata>;
+  addTokenSuggestion: LoadableEntityState<TezosTokenMetadata>;
   knownSvgs: Record<string, boolean>;
   scamTokenSlugs: LoadableEntityState<Record<string, boolean>>;
 }

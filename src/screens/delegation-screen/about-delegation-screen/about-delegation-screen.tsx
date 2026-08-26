@@ -8,6 +8,7 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { SocialButton } from 'src/components/social-button';
+import { SocialIconNameEnum } from 'src/components/social-button/social-icon-name-enum';
 import { discordUrl, redditUrl, telegramUrl, twitterUrl, youTubeUrl } from 'src/config/socials';
 import { formatSize } from 'src/styles/format-size';
 
@@ -56,27 +57,27 @@ export const AboutDelegationScreen: FC<Props> = ({ onDelegatePress }) => {
           <Divider size={formatSize(20)} />
           <View style={styles.buttonLinksContainer}>
             <SocialButton
-              iconName={IconNameEnum.Telegram}
+              iconName={SocialIconNameEnum.Telegram}
               url={telegramUrl}
               testID={AboutDelegationScreenSelectors.telegramButton}
             />
             <SocialButton
-              iconName={IconNameEnum.Discord}
+              iconName={SocialIconNameEnum.Discord}
               url={discordUrl}
               testID={AboutDelegationScreenSelectors.discordButton}
             />
             <SocialButton
-              iconName={IconNameEnum.Twitter}
+              iconName={SocialIconNameEnum.Twitter}
               url={twitterUrl}
               testID={AboutDelegationScreenSelectors.twitterButton}
             />
             <SocialButton
-              iconName={IconNameEnum.YouTube}
+              iconName={SocialIconNameEnum.YouTube}
               url={youTubeUrl}
               testID={AboutDelegationScreenSelectors.youTubeButton}
             />
             <SocialButton
-              iconName={IconNameEnum.Reddit}
+              iconName={SocialIconNameEnum.Reddit}
               url={redditUrl}
               testID={AboutDelegationScreenSelectors.redditButton}
             />

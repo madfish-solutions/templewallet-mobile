@@ -9,7 +9,7 @@ import { generateScreenOptions } from 'src/components/header/generate-screen-opt
 import { HeaderButton } from 'src/components/header/header-button/header-button';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
 import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -43,7 +43,7 @@ export const ManageAccounts = () => {
     generateScreenOptions(
       <HeaderTitle title="Manage Accounts" />,
       <HeaderButton
-        iconName={IconNameEnum.PlusIconOrange}
+        iconName={IconNameV2Enum.PlusBig}
         onPress={() => revealSelectBottomSheetController.open()}
         testID={ManageAccountsSelectors.addAccountButton}
       />

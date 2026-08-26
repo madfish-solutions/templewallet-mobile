@@ -1,3 +1,4 @@
+import { RpcClient } from '@taquito/rpc';
 import { ParamsWithKind } from '@taquito/taquito';
 
 export interface SaplingCredentials {
@@ -23,7 +24,7 @@ export interface ShieldParams {
   spendingKey: string;
   saplingAddress: string;
   amount: BigNumber;
-  rpcUrl: string;
+  rpcClient: RpcClient;
   memo?: string;
 }
 
@@ -31,7 +32,7 @@ export interface UnshieldParams {
   spendingKey: string;
   recipientPublicKeyHash: string;
   amount: BigNumber;
-  rpcUrl: string;
+  rpcClient: RpcClient;
 }
 
 export interface SaplingTransferParams {
@@ -39,7 +40,7 @@ export interface SaplingTransferParams {
   recipientSaplingAddress: string;
   amount: BigNumber;
   memo?: string;
-  rpcUrl: string;
+  rpcClient: RpcClient;
 }
 
 export interface SaplingOpParams {
@@ -51,10 +52,10 @@ export interface SaplingServiceInterface {
   deriveCredentials(spendingKey: string): Promise<SaplingCredentials>;
 
   /** Get the shielded balance in mutez for a given viewing key */
-  getShieldedBalance(viewingKey: string, rpcUrl: string): Promise<string>;
+  getShieldedBalance(viewingKey: string, rpcClient: RpcClient): Promise<string>;
 
   /** Get incoming and outgoing shielded transaction history */
-  getTransactionHistory(viewingKey: string, rpcUrl: string): Promise<SaplingTransactionHistory>;
+  getTransactionHistory(viewingKey: string, rpcClient: RpcClient): Promise<SaplingTransactionHistory>;
 
   /** Prepare a shield transaction (public TEZ - shielded) */
   prepareShieldTransaction(params: ShieldParams): Promise<SaplingOpParams>;

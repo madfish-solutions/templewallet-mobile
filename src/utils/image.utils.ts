@@ -1,13 +1,15 @@
 import { uniq } from 'lodash-es';
+import { getAddress } from 'viem';
 
 import { AssetMediaURIs } from './assets/types';
 import { isDefined } from './is-defined';
 import { isString } from './is-string';
 import { isTruthy } from './is-truthy';
+import { ETHERLINK_MAINNET_CHAIN_ID } from './rpc/rpc-list';
 
-const IPFS_PROTOCOL = 'ipfs://';
+export const IPFS_PROTOCOL = 'ipfs://';
 const OBJKT_MEDIA_HOST = 'https://assets.objkt.media/file/assets-003';
-const IPFS_GATE = 'https://ipfs.filebase.io/ipfs';
+export const IPFS_GATE = 'https://ipfs.filebase.io/ipfs';
 const MEDIA_HOST = 'https://static.tcinfra.net/media';
 
 type TcInfraMediaSize = 'small' | 'medium' | 'large' | 'raw';
@@ -15,13 +17,16 @@ type ObjktMediaTail = 'display' | 'artifact' | 'thumb288';
 
 const DEFAULT_MEDIA_SIZE: TcInfraMediaSize = 'small';
 
+/** Some contracts emit the `ipfs://ipfs/<CID>` double-prefix form, which breaks gateway conversion */
+export const normalizeIpfsUri = (uri?: string | null) => uri?.replace(/^ipfs:\/\/ipfs\//, IPFS_PROTOCOL) ?? undefined;
+
 const buildIpfsMediaUrisByInfo = (info: MediaUriInfo, isFullView: boolean) => {
   const sizes: TcInfraMediaSize[] = isFullView ? ['raw', 'large', 'medium', 'small'] : ['medium', 'small'];
 
   return sizes.map(size => buildIpfsMediaUriByInfo(info, size)).concat(buildIpfsMediaUriByInfo(info, undefined, false));
 };
 
-export const buildCollectibleImagesStack = (
+export const buildTezosCollectibleImagesStack = (
   slug: string,
   { artifactUri, displayUri, thumbnailUri }: AssetMediaURIs,
   fullView = false
@@ -180,6 +185,55 @@ export const buildTokenImagesStack = (url?: string, preferDirectSource = false):
   }
 
   return [];
+};
+
+const IMG_PROXY_HOST = 'https://img.templewallet.com';
+const RAINBOW_ASSETS_BASE_URL = 'https://raw.githubusercontent.com/rainbow-me/assets/master/blockchains/';
+const COMPRESSED_TOKEN_ICON_SIZE = 80;
+
+/** Extend along with new EVM chains */
+const CHAIN_ID_TO_IMAGE_CHAIN_NAME: Record<number, string> = {
+  [ETHERLINK_MAINNET_CHAIN_ID]: 'etherlink'
+};
+
+const getCompressedImageUrl = (imageUrl: string, size: number) =>
+  `${IMG_PROXY_HOST}/insecure/fill/${size}/${size}/ce/0/plain/${encodeURIComponent(imageUrl)}@png`;
+
+const getEvmTokenRainbowLogoUrl = (chainId: number, address: string) => {
+  const chainName = CHAIN_ID_TO_IMAGE_CHAIN_NAME[chainId];
+  if (!chainName) {
+    return undefined;
+  }
+
+  try {
+    return `${RAINBOW_ASSETS_BASE_URL}${chainName}/assets/${getAddress(address)}/logo.png`;
+  } catch {
+    return undefined;
+  }
+};
+
+export const buildEvmTokenIconSources = (chainId: number, address: string, iconURL?: string): string[] => {
+  const rainbowLogoUrl = getEvmTokenRainbowLogoUrl(chainId, address);
+
+  return [
+    // Blockscout serves some Etherlink token icons directly from IPFS gateways.
+    // Prefer the original gateway URL to avoid an unnecessary proxy hop.
+    iconURL?.startsWith('http') ? iconURL : undefined,
+    iconURL && getCompressedImageUrl(iconURL, COMPRESSED_TOKEN_ICON_SIZE),
+    rainbowLogoUrl && getCompressedImageUrl(rainbowLogoUrl, COMPRESSED_TOKEN_ICON_SIZE)
+  ].filter(isTruthy);
+};
+
+const DWEB_IPFS_GATE = 'https://dweb.link/ipfs';
+
+/** Blockscout serves ipfs images through dweb.link, so it is appended as the last option gateway */
+export const buildEvmCollectibleImagesStack = (uri?: string): string[] => {
+  const normalizedUri = normalizeIpfsUri(uri);
+  const stack = buildTokenImagesStack(normalizedUri);
+
+  return normalizedUri?.startsWith(IPFS_PROTOCOL)
+    ? stack.concat(`${DWEB_IPFS_GATE}/${normalizedUri.slice(IPFS_PROTOCOL.length)}`)
+    : stack;
 };
 
 export const isImgUriSvg = (url: string) => /\.svg(?:$|[?#])/i.test(url);

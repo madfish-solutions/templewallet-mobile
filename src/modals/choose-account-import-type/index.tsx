@@ -14,6 +14,7 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
+import { ImportAccountKeystoreFile } from '../import-account/import-account-keystore-file/import-account-keystore-file';
 import { ImportAccountPrivateKey } from '../import-account/import-account-private-key/import-account-private-key';
 import { ImportAccountSeed } from '../import-account/import-account-seed/import-account-seed';
 
@@ -21,7 +22,8 @@ import { useChooseAccountImportTypeStyles } from './styles';
 
 enum ImportType {
   SeedPhrase = 'SeedPhrase',
-  PrivateKey = 'PrivateKey'
+  PrivateKey = 'PrivateKey',
+  KeystoreFile = 'KeystoreFile'
 }
 
 export const ChooseAccountImportType = memo(() => {
@@ -40,6 +42,12 @@ export const ChooseAccountImportType = memo(() => {
         description: 'Use your private key of the account you\n' + 'want to import',
         iconName: IconNameEnum.Key,
         onPress: () => setSelectedImportType(ImportType.PrivateKey)
+      },
+      {
+        title: 'Keystore File',
+        description: 'Import your account from an encrypted\n' + 'keystore file (.tez)',
+        iconName: IconNameEnum.FileUpload,
+        onPress: () => setSelectedImportType(ImportType.KeystoreFile)
       }
     ],
     []
@@ -53,6 +61,9 @@ export const ChooseAccountImportType = memo(() => {
 
     case ImportType.PrivateKey:
       return <ImportAccountPrivateKey onBackPress={onBackPress} />;
+
+    case ImportType.KeystoreFile:
+      return <ImportAccountKeystoreFile onBackPress={onBackPress} />;
 
     default:
       return <ChooseWalletImportTypeContent importTypes={importTypes} />;

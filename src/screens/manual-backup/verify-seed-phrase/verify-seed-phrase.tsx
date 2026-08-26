@@ -11,11 +11,11 @@ import { HeaderButton } from 'src/components/header/header-button/header-button'
 import { HeaderProgress } from 'src/components/header/header-progress/header-progress';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
-import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { useShelter } from 'src/shelter/use-shelter.hook';
@@ -39,13 +39,12 @@ export const VerifySeedPhrase: FC<Props> = ({ onGoBackPress }) => {
   const styles = useVerifySeedPhraseStyles();
   const navigateToScreen = useNavigateToScreen();
   const { revealSeedPhrase } = useShelter();
-  const canUseOnRamp = useCanUseOnRamp();
 
   const [words, setWords] = useState<string[]>([]);
 
   useNavigationSetOptions(
     {
-      headerLeft: () => <HeaderButton iconName={IconNameEnum.ArrowLeft} onPress={onGoBackPress} />,
+      headerLeft: () => <HeaderButton iconName={IconNameV2Enum.ArrowLeft} onPress={onGoBackPress} />,
       headerRight: () => <HeaderProgress current={2} total={2} />,
       headerTitle: () => <HeaderTitle title="Verify your seed" />
     },
@@ -115,7 +114,7 @@ export const VerifySeedPhrase: FC<Props> = ({ onGoBackPress }) => {
     dispatch(madeManualBackupAction());
     showSuccessToast({ description: 'You have successfully verified seed phrase!' });
 
-    canUseOnRamp && dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Start));
+    !LIMIT_FIN_FEATURES && dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Start));
   };
 
   return (

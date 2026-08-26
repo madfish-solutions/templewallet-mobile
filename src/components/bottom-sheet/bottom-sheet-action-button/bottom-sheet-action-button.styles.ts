@@ -10,6 +10,9 @@ export const useBottomSheetActionButtonStyles = createUseStyles(({ colors, typog
     borderColor: colors.lines,
     borderBottomWidth: formatSize(1)
   },
+  topBorder: {
+    borderTopWidth: formatSize(1)
+  },
   title: {
     ...typography.body17Regular,
     color: colors.orange

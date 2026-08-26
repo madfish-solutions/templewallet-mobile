@@ -28,6 +28,11 @@ export const useCollectibleItemStyles = createUseStylesMemoized(({ colors, typog
   price: {
     ...typography.numbersRegular11,
     color: colors.gray1
+  },
+  networkBadge: {
+    bottom: formatSize(4),
+    position: 'absolute',
+    right: formatSize(4)
   }
 }));
 
@@ -41,7 +46,7 @@ export const useBalanceStyles = createUseStylesMemoized(({ typography }) => ({
     alignItems: 'center',
     paddingHorizontal: formatSize(4),
     paddingVertical: formatSize(2),
-    backgroundColor: hexa(basicLightColors.black, 0.9),
+    backgroundColor: hexa(basicLightColors.black, 0.6),
     borderRadius: formatSize(4)
   },
   text: {

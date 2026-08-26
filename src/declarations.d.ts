@@ -4,6 +4,8 @@ type EmptyFn = () => void;
 type SyncFn<T, R = void> = (arg: T) => R;
 type AsyncFn<T, R = void> = (arg: T) => Promise<R>;
 
+type HexString = `0x${string}`;
+
 type StringRecord<T = string> = Record<string, T>;
 
 declare module '*.svg' {
@@ -120,3 +122,18 @@ declare module 'react-native-video-controls' {
     // TODO: add custom methods here
   }
 }
+
+type NonEmptyArray<T> = [T, ...T[]];
+
+/**
+ * @description Creates a type that is T with the required keys K.
+ *
+ * @example
+ * RequiredBy<{ a?: string, b: number }, 'a'>
+ * => { a: string, b: number }
+ */
+type RequiredBy<T, K extends keyof T> = Omit<T, K> & ExactRequired<Pick<T, K>>;
+
+type ExactRequired<type> = {
+  [P in keyof type]-?: Exclude<type[P], undefined>;
+};

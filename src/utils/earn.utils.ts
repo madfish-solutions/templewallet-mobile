@@ -1,13 +1,13 @@
 import { BigNumber } from 'bignumber.js';
 
 import { tzktApi } from 'src/api.service';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { EarnOpportunityTokenStandardEnum } from 'src/enums/earn-opportunity-token-standard.enum';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { EarnOpportunityToken } from 'src/interfaces/earn-opportunity/earn-opportunity-token.interface';
 import { StakesValueInterface } from 'src/interfaces/earn.interface';
-import { TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
+import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
+import { TezosTokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { EarnOpportunity } from 'src/types/earn-opportunity.types';
 import { Farm } from 'src/types/farm';
@@ -73,13 +73,13 @@ export const convertEarnOpportunityToken = (rawToken: EarnOpportunityToken): Tok
     balance: '0',
     visibility: VisibilityEnum.Visible,
     id: fa2TokenId ?? 0,
-    address: contractAddress === 'tez' ? '' : contractAddress,
-    iconName: contractAddress === 'tez' ? IconNameEnum.TezToken : undefined,
+    address: contractAddress === 'tez' ? TEZ_TOKEN_METADATA.address : contractAddress,
+    iconName: contractAddress === 'tez' ? TEZ_TOKEN_METADATA.iconName : undefined,
     name,
     symbol,
     decimals,
     thumbnailUri,
-    standard: type === EarnOpportunityTokenStandardEnum.Fa2 ? TokenStandardsEnum.Fa2 : TokenStandardsEnum.Fa12
+    standard: type === EarnOpportunityTokenStandardEnum.Fa2 ? TezosTokenStandardsEnum.Fa2 : TezosTokenStandardsEnum.Fa12
   };
 };
 

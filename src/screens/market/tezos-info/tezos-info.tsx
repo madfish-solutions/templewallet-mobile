@@ -5,10 +5,10 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { TokenIcon } from 'src/components/token-icon/token-icon';
 import { TruncatedText } from 'src/components/truncated-text';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useTezosMarketTokenSelector } from 'src/store/market/market-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
+import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { formatPrice, formatPriceChange, formatRegularValue, getPriceChangeColor } from 'src/utils/market.utils';
 
 import { MarketSelectors } from '../market.selectors';
@@ -18,7 +18,6 @@ import { useTezosInfoStyles } from './tezos-info.styles';
 
 export const TezosInfo = () => {
   const styles = useTezosInfoStyles();
-  const { metadata: tezosMetadata } = useNetworkInfo();
   const marketTezos = useTezosMarketTokenSelector();
   const colors = useColors();
 
@@ -38,10 +37,10 @@ export const TezosInfo = () => {
         <View style={[styles.flex1, styles.commonView, styles.mr8]}>
           <View style={[styles.displayFlex, styles.tezMain, styles.mb8]}>
             <View style={styles.imageAndPrice}>
-              <TokenIcon iconName={tezosMetadata.iconName} />
+              <TokenIcon iconName={TEZ_TOKEN_METADATA.iconName} />
 
               <View style={styles.nameAndSymbolContainer}>
-                <Text style={styles.regularText}>{tezosMetadata.symbol}</Text>
+                <Text style={styles.regularText}>{TEZ_TOKEN_METADATA.symbol}</Text>
                 <Text style={styles.subtitle11}>{marketTezos?.name}</Text>
               </View>
             </View>

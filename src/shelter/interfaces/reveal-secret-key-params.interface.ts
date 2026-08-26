@@ -1,4 +1,4 @@
 export interface RevealSecretKeyParams {
-  publicKeyHash: string;
+  address: string;
   successCallback: SyncFn<string>;
 }

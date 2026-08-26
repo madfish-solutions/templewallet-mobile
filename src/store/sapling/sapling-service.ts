@@ -44,23 +44,23 @@ function getOrCreateSpendingKey(sask: string): InMemorySpendingKey {
   return spendingKey;
 }
 
-function createSaplingToolkit(spendingKey: InMemorySpendingKey, rpcUrl: string): SaplingToolkit {
+function createSaplingToolkit(spendingKey: InMemorySpendingKey, rpcClient: RpcClient): SaplingToolkit {
   const contractAddress = SAPLING_CONTRACT_ADDRESS;
 
   return new SaplingToolkit(
     { saplingSigner: spendingKey },
     { contractAddress, memoSize: SAPLING_MEMO_SIZE },
-    new RpcReadAdapter(new RpcClient(rpcUrl))
+    new RpcReadAdapter(rpcClient)
   );
 }
 
-function createTxViewer(viewingKey: string, rpcUrl: string): SaplingTransactionViewer {
+function createTxViewer(viewingKey: string, rpcClient: RpcClient): SaplingTransactionViewer {
   const contractAddress = SAPLING_CONTRACT_ADDRESS;
 
   return new SaplingTransactionViewer(
     new InMemoryViewingKey(viewingKey),
     { contractAddress },
-    new RpcReadAdapter(new RpcClient(rpcUrl))
+    new RpcReadAdapter(rpcClient)
   );
 }
 
@@ -75,8 +75,8 @@ class SaplingService implements SaplingServiceInterface {
     };
   }
 
-  async getShieldedBalance(viewingKey: string, rpcUrl: string): Promise<string> {
-    const viewer = createTxViewer(viewingKey, rpcUrl);
+  async getShieldedBalance(viewingKey: string, rpcClient: RpcClient): Promise<string> {
+    const viewer = createTxViewer(viewingKey, rpcClient);
     const transactions = await viewer.getIncomingAndOutgoingTransactions();
 
     let balance = new BigNumber(0);
@@ -89,8 +89,8 @@ class SaplingService implements SaplingServiceInterface {
     return balance.toFixed();
   }
 
-  async getTransactionHistory(viewingKey: string, rpcUrl: string): Promise<SaplingTransactionHistory> {
-    const viewer = createTxViewer(viewingKey, rpcUrl);
+  async getTransactionHistory(viewingKey: string, rpcClient: RpcClient): Promise<SaplingTransactionHistory> {
+    const viewer = createTxViewer(viewingKey, rpcClient);
     const transactions = await viewer.getTransactionsWithoutChangeRaw();
 
     return {
@@ -121,7 +121,7 @@ class SaplingService implements SaplingServiceInterface {
 
   async prepareShieldTransaction(params: ShieldParams): Promise<SaplingOpParams> {
     const spendingKey = getOrCreateSpendingKey(params.spendingKey);
-    const toolkit = createSaplingToolkit(spendingKey, params.rpcUrl);
+    const toolkit = createSaplingToolkit(spendingKey, params.rpcClient);
 
     const txData = await toolkit.prepareShieldedTransaction([
       { to: params.saplingAddress, amount: params.amount.toNumber(), mutez: true, memo: params.memo }
@@ -134,7 +134,7 @@ class SaplingService implements SaplingServiceInterface {
 
   async prepareUnshieldTransaction(params: UnshieldParams): Promise<SaplingOpParams> {
     const spendingKey = getOrCreateSpendingKey(params.spendingKey);
-    const toolkit = createSaplingToolkit(spendingKey, params.rpcUrl);
+    const toolkit = createSaplingToolkit(spendingKey, params.rpcClient);
 
     const txData = await toolkit.prepareUnshieldedTransaction({
       to: params.recipientPublicKeyHash,
@@ -149,7 +149,7 @@ class SaplingService implements SaplingServiceInterface {
 
   async prepareSaplingTransfer(params: SaplingTransferParams): Promise<SaplingOpParams> {
     const spendingKey = getOrCreateSpendingKey(params.spendingKey);
-    const toolkit = createSaplingToolkit(spendingKey, params.rpcUrl);
+    const toolkit = createSaplingToolkit(spendingKey, params.rpcClient);
 
     const txData = await toolkit.prepareSaplingTransaction([
       {

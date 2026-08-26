@@ -9,7 +9,6 @@ export const useSocialButtonStyles = createUseStyles(({ colors }) => ({
     height: size,
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: formatSize(6),
     borderRadius: formatSize(8),
     backgroundColor: colors.orange10
   },

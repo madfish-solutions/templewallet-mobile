@@ -20,7 +20,7 @@ export const useKoloCardWidgetModalStyles = createUseStylesMemoized(({ colors })
     backgroundColor: colors.pageBG
   },
   loaderContainer: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1

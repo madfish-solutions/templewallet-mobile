@@ -13,22 +13,26 @@ export const FormSectionDropdown = <T extends unknown>({
   name,
   description,
   list,
+  emptyListText,
   itemHeight,
   equalityFn,
   renderValue,
   renderListItem,
   renderActionButtons,
+  itemContainerStyle,
+  showCloseButton,
   isSearchable,
   setSearchValue,
   testID,
   testIDProperties
 }: Props<T>) => {
-  const [field, meta, helpers] = useField<T | undefined>(name);
+  const [field, meta, helpers] = useField<T>(name);
 
   return (
     <>
       <SectionDropdown<T>
         list={list}
+        emptyListText={emptyListText}
         value={field.value}
         isSearchable={isSearchable}
         description={description}
@@ -37,6 +41,8 @@ export const FormSectionDropdown = <T extends unknown>({
         renderValue={renderValue}
         renderListItem={renderListItem}
         renderActionButtons={renderActionButtons}
+        itemContainerStyle={itemContainerStyle}
+        showCloseButton={showCloseButton}
         setSearchValue={setSearchValue}
         onValueChange={helpers.setValue}
         testID={testID}

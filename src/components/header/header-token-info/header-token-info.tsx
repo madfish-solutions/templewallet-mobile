@@ -4,13 +4,13 @@ import { View } from 'react-native';
 import { TokenIcon } from 'src/components/token-icon/token-icon';
 import { TruncatedText } from 'src/components/truncated-text';
 import { formatSize } from 'src/styles/format-size';
-import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
+import { TezosTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { isString } from 'src/utils/is-string';
 
 import { useHeaderTokenInfoStyles } from './header-token-info.styles';
 
 interface Props {
-  token: TokenMetadataInterface;
+  token: TezosTokenMetadata;
 }
 
 export const HeaderTokenInfo: FC<Props> = ({ token }) => {

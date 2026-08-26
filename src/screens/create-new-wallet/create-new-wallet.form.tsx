@@ -19,7 +19,7 @@ import {
 import { showSuccessToast, showErrorToastByError } from 'src/toast/toast.utils';
 import { doesCloudBackupExist, saveCloudBackup } from 'src/utils/cloud-backup';
 import { useCloudAnalytics } from 'src/utils/cloud-backup/use-cloud-analytics';
-import { generateSeed } from 'src/utils/keys.util';
+import { generateSeed } from 'src/utils/keys.utils';
 
 type CreateNewPasswordFormValues = {
   password: string;

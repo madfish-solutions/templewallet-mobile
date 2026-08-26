@@ -4,15 +4,16 @@ import { Text, View } from 'react-native';
 
 import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
 import { Divider } from 'src/components/divider/divider';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { TruncatedText } from 'src/components/truncated-text';
 import { useSaplingAddressSelector } from 'src/store/sapling';
 import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
-import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import { TEZ_TOKEN_DECIMALS, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { getDollarValue } from 'src/utils/balance.utils';
 import { mutezToTz } from 'src/utils/tezos.util';
 import { useTezosToken } from 'src/utils/wallet.utils';
@@ -27,7 +28,12 @@ interface Props {
 export const RebalanceAfterPreview: FC<Props> = ({ amount, direction }) => {
   const styles = useOperationsPreviewItemStyles();
   const colors = useColors();
-  const accountPkh = useCurrentAccountPkhSelector();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
   const saplingAddress = useSaplingAddressSelector();
   const amountToken = useTezosToken(amount);
   const exchangeRate = useAssetExchangeRate(TEZ_TOKEN_SLUG);
@@ -36,17 +42,14 @@ export const RebalanceAfterPreview: FC<Props> = ({ amount, direction }) => {
   const minusLabel = isUnshield ? 'Shielded TEZ sent' : 'TEZ sent';
   const plusLabel = isUnshield ? 'TEZ received' : 'Shielded TEZ received';
 
-  const formattedAmount = useMemo(
-    () => mutezToTz(new BigNumber(amount), TEZ_TOKEN_METADATA.decimals).toFormat(),
-    [amount]
-  );
+  const formattedAmount = useMemo(() => mutezToTz(new BigNumber(amount), TEZ_TOKEN_DECIMALS).toFormat(), [amount]);
 
   const dollarValue = useMemo(() => {
     if (exchangeRate == null) {
       return null;
     }
 
-    return getDollarValue(amount, TEZ_TOKEN_METADATA.decimals, exchangeRate).toFixed(2);
+    return getDollarValue(amount, TEZ_TOKEN_DECIMALS, exchangeRate).toFixed(2);
   }, [amount, exchangeRate]);
 
   return (
@@ -54,7 +57,7 @@ export const RebalanceAfterPreview: FC<Props> = ({ amount, direction }) => {
       <View style={styles.container}>
         <View style={styles.contentWrapper}>
           <View style={styles.infoContainer}>
-            <RobotIcon seed={accountPkh} size={formatSize(40)} />
+            <RobotIcon seed={tezosAddress} size={formatSize(40)} />
             <Divider size={formatSize(10)} />
             <View>
               <TruncatedText style={styles.description}>{minusLabel}</TruncatedText>
@@ -84,7 +87,7 @@ export const RebalanceAfterPreview: FC<Props> = ({ amount, direction }) => {
       <View style={styles.container}>
         <View style={styles.contentWrapper}>
           <View style={styles.infoContainer}>
-            <RobotIcon seed={accountPkh} size={formatSize(40)} />
+            <RobotIcon seed={tezosAddress} size={formatSize(40)} />
             <Divider size={formatSize(10)} />
             <View>
               <TruncatedText style={styles.description}>{plusLabel}</TruncatedText>

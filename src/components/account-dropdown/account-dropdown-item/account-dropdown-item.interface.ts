@@ -1,11 +1,11 @@
-import { AccountBaseInterface } from 'src/interfaces/account.interface';
-
-import { IconNameEnum } from '../../icon/icon-name.enum';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
+import { Account } from 'src/interfaces/account.interfaces.ts';
 
 export interface AccountDropdownItemProps {
-  account?: AccountBaseInterface;
+  account: Account;
   showFullData?: boolean;
-  actionIconName?: IconNameEnum;
+  actionIconName?: IconNameV2Enum;
+  actionIconColor?: string;
   isPublicKeyHashTextDisabled?: boolean;
   isCollectibleScreen?: boolean;
 }

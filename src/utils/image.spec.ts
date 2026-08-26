@@ -1,4 +1,10 @@
-import { buildTokenImagesStack, formatImgUri, isImgUriSvg } from './image.utils';
+import {
+  buildEvmCollectibleImagesStack,
+  buildEvmTokenIconSources,
+  buildTokenImagesStack,
+  formatImgUri,
+  isImgUriSvg
+} from './image.utils';
 
 describe('image utils', () => {
   describe('formatImgUri', () => {
@@ -39,6 +45,27 @@ describe('image utils', () => {
         'https://static.tcinfra.net/media/medium/web/ipfs.filebase.io/ipfs/QmfEbirSA7indrEzjFAtJ589oChBFrqLio9kwpJwR4ttHx',
         mockCloudflareUri
       ]);
+    });
+  });
+
+  describe('buildEvmCollectibleImagesStack', () => {
+    it('converts IPFS collectible images into loadable gateway URLs', () => {
+      expect(buildEvmCollectibleImagesStack('ipfs://QmImage')).toEqual([
+        'https://static.tcinfra.net/media/small/ipfs/QmImage',
+        'https://static.tcinfra.net/media/medium/ipfs/QmImage',
+        'https://ipfs.filebase.io/ipfs/QmImage',
+        'https://dweb.link/ipfs/QmImage'
+      ]);
+    });
+  });
+
+  describe('buildEvmTokenIconSources', () => {
+    it('prefers the original HTTP icon URL over the image proxy', () => {
+      const iconUrl = 'https://ipfs.io/ipfs/QmImage';
+      const sources = buildEvmTokenIconSources(42793, '0x01F07f4d78d47A64F4C3B2b65f513f15Be6E1854', iconUrl);
+
+      expect(sources[0]).toEqual(iconUrl);
+      expect(sources[1]).toContain(encodeURIComponent(iconUrl));
     });
   });
 

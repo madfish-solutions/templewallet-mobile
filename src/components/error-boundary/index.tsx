@@ -6,13 +6,9 @@ import { store } from 'src/store';
 import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
 
 import { ErrorBoundaryContent } from './content';
+import { BoundaryError } from './errors';
 
-// TODO: export when it becomes necessary
-class BoundaryError extends Error {
-  constructor(public readonly message: string, public readonly beforeTryAgain: EmptyFn) {
-    super(message);
-  }
-}
+export { DeadEndBoundaryError } from './errors';
 
 type Props = PropsWithChildren<{
   Fallback?: FC<object>;

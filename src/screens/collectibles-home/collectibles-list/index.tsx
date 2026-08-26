@@ -1,7 +1,8 @@
-import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
+import BigNumber from 'bignumber.js';
 import React, { FC, memo, useCallback, useMemo } from 'react';
 import { ListRenderItem, useWindowDimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
+import Animated, { ScrollHandlerProcessed } from 'react-native-reanimated';
 
 import { ActivityIndicator } from 'src/components/activity-indicator';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
@@ -11,9 +12,11 @@ import {
 } from 'src/components/screen-container/screen-container.styles';
 import { SIDEBAR_WIDTH } from 'src/config/styles';
 import { LIMIT_NFT_FEATURES } from 'src/config/system';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useAreMetadatasLoadingSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { UsableAccountAsset } from 'src/utils/assets/types';
+import { DisplayedCollectible } from 'src/utils/assets/types';
+import { toChainAssetSlug } from 'src/utils/chain-asset-slug';
 import { createGetItemLayout } from 'src/utils/flat-list.utils';
 
 import { useCollectiblesGridStyles } from '../styles';
@@ -23,21 +26,34 @@ import { useCollectibleItemStyles } from './collectible-item/styles';
 import { CollectiblesListStyles, GRID_GAP } from './styles';
 
 interface Props {
-  collectibles: UsableAccountAsset[];
-  isShowInfo: boolean;
+  collectibles: DisplayedCollectible[];
+  showInfo: boolean;
+  onScroll: ScrollHandlerProcessed;
 }
 
 const ITEMS_PER_ROW = 3;
+const INITIAL_ROWS_TO_RENDER = 8;
 const GRID_GAPS_TOTAL_WIDTH = GRID_GAP * (ITEMS_PER_ROW - 1);
 
-const keyExtractor = (item: UsableAccountAsset) => item.slug;
+const keyExtractor = (item: DisplayedCollectible) =>
+  item.chainKind === TempleChainKind.EVM ? toChainAssetSlug(item.chainKind, item.chainId, item.slug) : item.slug;
 
-export const CollectiblesList = memo<Props>(({ collectibles, isShowInfo }) => {
+const getCollectibleBalance = (collectible: DisplayedCollectible) =>
+  collectible.chainKind === TempleChainKind.EVM ? collectible.balance : collectible.asset.balance;
+
+export const CollectiblesList = memo<Props>(({ collectibles, showInfo, onScroll }) => {
   const screenStyles = useScreenContainerStyles();
   const itemStyles = useCollectibleItemStyles();
 
-  const areMetadatasLoading = useAreMetadatasLoadingSelector();
-  const isSyncing = areMetadatasLoading;
+  const isSyncing = useAreMetadatasLoadingSelector();
+
+  const sortedCollectibles = useMemo(
+    () =>
+      [...collectibles].sort(
+        (a, b) => new BigNumber(getCollectibleBalance(b)).comparedTo(getCollectibleBalance(a)) ?? 0
+      ),
+    [collectibles]
+  );
 
   const { width: windowWidth } = useWindowDimensions();
 
@@ -51,8 +67,8 @@ export const CollectiblesList = memo<Props>(({ collectibles, isShowInfo }) => {
 
   const getItemLayout = useMemo(
     () =>
-      createGetItemLayout<UsableAccountAsset>(
-        isShowInfo
+      createGetItemLayout<DisplayedCollectible>(
+        showInfo
           ? itemSize +
               itemStyles.description.paddingTop +
               itemStyles.description.paddingBottom +
@@ -61,37 +77,32 @@ export const CollectiblesList = memo<Props>(({ collectibles, isShowInfo }) => {
           : itemSize,
         GRID_GAP
       ),
-    [isShowInfo, itemSize, itemStyles]
+    [showInfo, itemSize, itemStyles]
   );
 
-  const renderItem: ListRenderItem<UsableAccountAsset> = useCallback(
-    ({ item: collectible, index }) => (
-      <CollectibleItem
-        key={collectible.slug}
-        slug={collectible.slug}
-        collectible={collectible}
-        isShowInfo={isShowInfo}
-        size={itemSize}
-        style={(index + 1) % ITEMS_PER_ROW !== 0 ? CollectiblesListStyles.marginRight : undefined}
-      />
-    ),
-    [itemSize, isShowInfo]
+  const renderItem: ListRenderItem<DisplayedCollectible> = useCallback(
+    ({ item: collectible, index }) => {
+      const style = (index + 1) % ITEMS_PER_ROW !== 0 ? CollectiblesListStyles.marginRight : undefined;
+
+      return <CollectibleItem collectible={collectible} showInfo={showInfo} size={itemSize} style={style} />;
+    },
+    [itemSize, showInfo]
   );
 
   return (
-    <>
-      <BottomSheetFlatList
-        data={collectibles}
-        numColumns={ITEMS_PER_ROW}
-        initialNumToRender={ITEMS_PER_ROW * 15}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        getItemLayout={getItemLayout}
-        style={screenStyles.scrollView}
-        contentContainerStyle={screenStyles.scrollViewContentContainer}
-        ListFooterComponent={<ListFooterComponent empty={collectibles.length < 1} isSyncing={isSyncing} />}
-      />
-    </>
+    <Animated.FlatList
+      data={sortedCollectibles}
+      numColumns={ITEMS_PER_ROW}
+      initialNumToRender={ITEMS_PER_ROW * INITIAL_ROWS_TO_RENDER}
+      renderItem={renderItem}
+      keyExtractor={keyExtractor}
+      getItemLayout={getItemLayout}
+      style={screenStyles.scrollView}
+      contentContainerStyle={screenStyles.scrollViewContentContainer}
+      ListFooterComponent={<ListFooterComponent empty={sortedCollectibles.length < 1} isSyncing={isSyncing} />}
+      onScroll={onScroll}
+      scrollEventThrottle={16}
+    />
   );
 });
 

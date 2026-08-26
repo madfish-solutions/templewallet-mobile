@@ -1,27 +1,49 @@
 import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
-import { AccountTypeEnum } from '../enums/account-type.enum';
-import { mockAccountCredentials, mockHDAccountCredentials } from '../mocks/account-credentials.mock';
+import { AccountTypeEnum } from 'src/enums/account-type.enum';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import { Account } from 'src/interfaces/account.interfaces';
+import { mockAccountCredentials, mockHDAccountCredentials } from 'src/mocks/account-credentials.mock';
 import {
   mockCorrectPassword,
   mockCorrectUserCredentials,
   mockCorrectUserCredentialsValue,
   mockKeychain
-} from '../mocks/react-native-keychain.mock';
+} from 'src/mocks/react-native-keychain.mock';
 import {
   mockCorrectDecryptResult,
   mockCorrectPasswordHash,
   mockCryptoUtil,
   mockEncryptedData
-} from '../utils/crypto.util.mock';
-import { getBiometryKeychainOptions, getKeychainOptions, PASSWORD_STORAGE_KEY } from '../utils/keychain.utils';
-import { rxJsTestingHelper } from '../utils/testing.utils';
+} from 'src/utils/crypto.util.mock';
+import { getBiometryKeychainOptions, getKeychainOptions, PASSWORD_STORAGE_KEY } from 'src/utils/keychain.utils';
+import { rxJsTestingHelper } from 'src/utils/testing.utils';
 
 import { Shelter } from './shelter';
 
 // Shelter version in these tests doesn't matter, so we can set it to 0
 describe('Shelter', () => {
   const mockIncorrectPassword = 'mockIncorrectPassword';
+  const mockEvmCredentials = {
+    address: '0xfDc237eff648793c9F3B976c702493f0EE056489',
+    publicKey:
+      '0x0499d1bccb7edd00944e5c0aec8375dc99faae3bbf1680b43facf89ad68f228592fd7118af99ae94d632b2a96593b8440253d8f4933c02b8725a97daa57d9a1aa9',
+    privateKey: '0x3925ef64b24414526bd9d28826c642a34d4d8fbb292b467a33f5376126632d3d'
+  };
+  const mockEvmCredentialsIndex77 = {
+    address: '0x05441Dc088bBa47F65B246fe3E03afd83339FF0C',
+    publicKey:
+      '0x0490601ea5b84fb9f95c35c2f0fea034f4acb535b0c1dfd0a603bc0f194ae24f51c9e3805162bfa761c9cef502744fad7d9ab3249a3cb2fb2846de12e7222044c9',
+    privateKey: '0x88ce2f7f5f97cf5459da917e795cad4a67c027a5daa6124291b24488a7a28060'
+  };
+  const mockAccount: Account = {
+    id: mockAccountCredentials.publicKeyHash,
+    name: 'Account 1',
+    type: AccountTypeEnum.IMPORTED_CHAIN,
+    chain: TempleChainKind.Tezos,
+    address: mockAccountCredentials.publicKeyHash,
+    publicKey: mockAccountCredentials.publicKey
+  };
 
   beforeEach(() => {
     Shelter.lockApp();
@@ -30,7 +52,7 @@ describe('Shelter', () => {
 
   describe('app lock', () => {
     it('should initially lock app & be unable to decrypt data', done => {
-      Shelter.revealSecretKey$(mockAccountCredentials.publicKeyHash)
+      Shelter.revealAccountPrivateKey$(mockAccountCredentials.publicKeyHash)
         .pipe(withLatestFrom(Shelter.isLocked$))
         .subscribe(
           rxJsTestingHelper(([decryptResult, isLocked]) => {
@@ -41,10 +63,12 @@ describe('Shelter', () => {
     });
 
     it('should not unlock app with incorrect password & be unable to decrypt data', done => {
-      Shelter.unlockApp$(mockIncorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
+      Shelter.unlockApp$(mockIncorrectPassword, mockAccount)
         .pipe(
           switchMap(() =>
-            Shelter.revealSecretKey$(mockAccountCredentials.publicKeyHash).pipe(withLatestFrom(Shelter.isLocked$))
+            Shelter.revealAccountPrivateKey$(mockAccountCredentials.publicKeyHash).pipe(
+              withLatestFrom(Shelter.isLocked$)
+            )
           )
         )
         .subscribe(
@@ -56,10 +80,12 @@ describe('Shelter', () => {
     });
 
     it('should unlock app with correct password & be able to decrypt data', done => {
-      Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
+      Shelter.unlockApp$(mockCorrectPassword, mockAccount)
         .pipe(
           switchMap(() =>
-            Shelter.revealSecretKey$(mockAccountCredentials.publicKeyHash).pipe(withLatestFrom(Shelter.isLocked$))
+            Shelter.revealAccountPrivateKey$(mockAccountCredentials.publicKeyHash).pipe(
+              withLatestFrom(Shelter.isLocked$)
+            )
           )
         )
         .subscribe(
@@ -71,10 +97,12 @@ describe('Shelter', () => {
     });
 
     it('should lock app & be unable to decrypt data', done => {
-      Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
+      Shelter.unlockApp$(mockCorrectPassword, mockAccount)
         .pipe(
           switchMap(() =>
-            Shelter.revealSecretKey$(mockAccountCredentials.publicKeyHash).pipe(withLatestFrom(Shelter.isLocked$))
+            Shelter.revealAccountPrivateKey$(mockAccountCredentials.publicKeyHash).pipe(
+              withLatestFrom(Shelter.isLocked$)
+            )
           ),
           tap(([decryptResult, isLocked]) => {
             expect(decryptResult).toEqual(mockAccountCredentials.privateKey);
@@ -83,7 +111,7 @@ describe('Shelter', () => {
           switchMap(() => {
             Shelter.lockApp();
 
-            return Shelter.revealSecretKey$(mockAccountCredentials.publicKeyHash).pipe(
+            return Shelter.revealAccountPrivateKey$(mockAccountCredentials.publicKeyHash).pipe(
               withLatestFrom(Shelter.isLocked$)
             );
           })
@@ -99,23 +127,32 @@ describe('Shelter', () => {
 
   describe('accounts management', () => {
     it('should import HD account & unlock app', done => {
-      Shelter.importHdAccount$(mockAccountCredentials.seedPhrase, mockCorrectPassword)
+      Shelter.importWallet$(mockAccountCredentials.seedPhrase, mockCorrectPassword)
         .pipe(withLatestFrom(Shelter.isLocked$))
         .subscribe(
           rxJsTestingHelper(([accounts, isLocked]) => {
             expect(accounts?.[0].name).toEqual('Account 1');
-            expect(accounts?.[0].type).toEqual(AccountTypeEnum.HD_ACCOUNT);
-            expect(accounts?.[0].publicKey).toEqual(mockAccountCredentials.publicKey);
-            expect(accounts?.[0].publicKeyHash).toEqual(mockAccountCredentials.publicKeyHash);
+            expect(accounts?.[0].type).toEqual(AccountTypeEnum.HD);
+            expect(accounts?.[0]).toMatchObject({
+              hdIndex: 0,
+              tezosAddress: mockAccountCredentials.publicKeyHash,
+              evmAddress: mockEvmCredentials.address
+            });
 
-            expect(mockCryptoUtil.encryptString$).toHaveBeenCalledWith(
-              mockAccountCredentials.seedPhrase,
-              mockCorrectPasswordHash
+            expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
+              mockAccountCredentials.publicKeyHash,
+              JSON.stringify(mockEncryptedData),
+              getKeychainOptions(mockAccountCredentials.publicKeyHash, 0)
             );
             expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
-              'seedPhrase',
+              mockEvmCredentials.address,
               JSON.stringify(mockEncryptedData),
-              getKeychainOptions('seedPhrase', 0)
+              getKeychainOptions(mockEvmCredentials.address, 0)
+            );
+            expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
+              `sapling_sk_${mockAccountCredentials.publicKeyHash}`,
+              JSON.stringify(mockEncryptedData),
+              getKeychainOptions(`sapling_sk_${mockAccountCredentials.publicKeyHash}`, 0)
             );
 
             expect(isLocked).toEqual(false);
@@ -126,7 +163,7 @@ describe('Shelter', () => {
     it('should not import HD account with wrong mnemonic', done => {
       const incorrectSeedPhraseMock = 'Lorem ipsum dolor sit amet consectetur adipiscing elit donec iaculis libero et';
 
-      Shelter.importHdAccount$(incorrectSeedPhraseMock, mockCorrectPassword).subscribe({
+      Shelter.importWallet$(incorrectSeedPhraseMock, mockCorrectPassword).subscribe({
         error: err => {
           expect(err.message).toBe('Mnemonic not validated');
           done();
@@ -137,18 +174,123 @@ describe('Shelter', () => {
     it('should create HD account', done => {
       const mockName = 'mockName';
 
-      Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
-        .pipe(switchMap(() => Shelter.createHdAccount$(mockName, mockHDAccountCredentials.mockAccountIndex)))
+      Shelter.unlockApp$(mockCorrectPassword, mockAccount)
+        .pipe(
+          tap(() => mockCryptoUtil.decryptString$.mockResolvedValueOnce(mockAccountCredentials.seedPhrase)),
+          switchMap(() => Shelter.createHdAccount$(mockName, mockHDAccountCredentials.mockAccountIndex))
+        )
         .subscribe(
           rxJsTestingHelper(account => {
-            expect(account?.name).toEqual(mockName);
-            expect(account?.type).toEqual(AccountTypeEnum.HD_ACCOUNT);
-            expect(account?.publicKey).toEqual(mockHDAccountCredentials.publicKey);
-            expect(account?.publicKeyHash).toEqual(mockHDAccountCredentials.publicKeyHash);
+            expect(account).toMatchObject({
+              name: mockName,
+              type: AccountTypeEnum.HD,
+              tezosAddress: mockHDAccountCredentials.publicKeyHash,
+              evmAddress: mockEvmCredentialsIndex77.address
+            });
 
             expect(mockCryptoUtil.encryptString$).toHaveBeenCalledWith(
               mockHDAccountCredentials.privateKey,
               mockCorrectPasswordHash
+            );
+            expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
+              mockHDAccountCredentials.publicKeyHash,
+              JSON.stringify(mockEncryptedData),
+              getKeychainOptions(mockHDAccountCredentials.publicKeyHash, 0)
+            );
+            expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
+              mockEvmCredentialsIndex77.address,
+              JSON.stringify(mockEncryptedData),
+              getKeychainOptions(mockEvmCredentialsIndex77.address, 0)
+            );
+          }, done)
+        );
+    });
+
+    it('should skip automatic HD creation on imported EVM address collision', done => {
+      Shelter.unlockApp$(mockCorrectPassword, mockAccount)
+        .pipe(
+          tap(() => mockCryptoUtil.decryptString$.mockResolvedValueOnce(mockAccountCredentials.seedPhrase)),
+          switchMap(() =>
+            Shelter.createHdAccount$('mockName', mockHDAccountCredentials.mockAccountIndex, [
+              {
+                id: mockEvmCredentialsIndex77.address,
+                name: 'Imported EVM',
+                type: AccountTypeEnum.IMPORTED_CHAIN,
+                chain: TempleChainKind.EVM,
+                address: mockEvmCredentialsIndex77.address,
+                publicKey: mockEvmCredentialsIndex77.publicKey
+              }
+            ])
+          )
+        )
+        .subscribe(
+          rxJsTestingHelper(account => {
+            expect(account).toBeUndefined();
+            expect(mockKeychain.setGenericPassword).not.toHaveBeenCalledWith(
+              `account_private_key_${mockEvmCredentialsIndex77.address}`,
+              JSON.stringify(mockEncryptedData),
+              getKeychainOptions(`account_private_key_${mockEvmCredentialsIndex77.address}`, 0)
+            );
+          }, done)
+        );
+    });
+
+    it('should throw on explicit HD index collision', done => {
+      Shelter.unlockApp$(mockCorrectPassword, mockAccount)
+        .pipe(
+          tap(() => mockCryptoUtil.decryptString$.mockResolvedValueOnce(mockAccountCredentials.seedPhrase)),
+          switchMap(() =>
+            Shelter.createHdAccount$(
+              'mockName',
+              mockHDAccountCredentials.mockAccountIndex,
+              [
+                {
+                  id: mockEvmCredentialsIndex77.address,
+                  name: 'Imported EVM',
+                  type: AccountTypeEnum.IMPORTED_CHAIN,
+                  chain: TempleChainKind.EVM,
+                  address: mockEvmCredentialsIndex77.address,
+                  publicKey: mockEvmCredentialsIndex77.publicKey
+                }
+              ],
+              true
+            )
+          )
+        )
+        .subscribe({
+          error: err => {
+            expect(err.message).toEqual('Account already exists');
+            done();
+          }
+        });
+    });
+
+    it('should create Imported account', done => {
+      const mockName = 'mockName';
+
+      Shelter.unlockApp$(mockCorrectPassword, mockAccount)
+        .pipe(
+          switchMap(() =>
+            Shelter.createImportedChainAccount$(mockHDAccountCredentials.privateKey, mockName, TempleChainKind.Tezos)
+          )
+        )
+        .subscribe(
+          rxJsTestingHelper(account => {
+            expect(account).toMatchObject({
+              name: mockName,
+              type: AccountTypeEnum.IMPORTED_CHAIN,
+              address: mockHDAccountCredentials.publicKeyHash,
+              publicKey: mockHDAccountCredentials.publicKey
+            });
+
+            expect(mockCryptoUtil.encryptString$).toHaveBeenCalledWith(
+              mockHDAccountCredentials.privateKey,
+              mockCorrectPasswordHash
+            );
+            expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
+              mockHDAccountCredentials.publicKeyHash,
+              JSON.stringify(mockEncryptedData),
+              getKeychainOptions(mockHDAccountCredentials.publicKeyHash, 0)
             );
             expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
               mockHDAccountCredentials.publicKeyHash,
@@ -159,33 +301,71 @@ describe('Shelter', () => {
         );
     });
 
-    it('should create Imported account', done => {
-      const mockName = 'mockName';
+    it('should create imported EVM account with address-keyed credentials only', done => {
+      const mockName = 'mockEvmName';
 
-      Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
-        .pipe(switchMap(() => Shelter.createImportedAccount$(mockHDAccountCredentials.privateKey, mockName)))
+      Shelter.unlockApp$(mockCorrectPassword, mockAccount)
+        .pipe(
+          switchMap(() =>
+            Shelter.createImportedChainAccount$(mockEvmCredentials.privateKey, mockName, TempleChainKind.EVM)
+          )
+        )
         .subscribe(
           rxJsTestingHelper(account => {
-            expect(account?.name).toEqual(mockName);
-            expect(account?.type).toEqual(AccountTypeEnum.IMPORTED_ACCOUNT);
-            expect(account?.publicKey).toEqual(mockHDAccountCredentials.publicKey);
-            expect(account?.publicKeyHash).toEqual(mockHDAccountCredentials.publicKeyHash);
+            expect(account).toMatchObject({
+              name: mockName,
+              type: AccountTypeEnum.IMPORTED_CHAIN,
+              chain: TempleChainKind.EVM,
+              address: mockEvmCredentials.address,
+              publicKey: mockEvmCredentials.publicKey
+            });
 
-            expect(mockCryptoUtil.encryptString$).toHaveBeenCalledWith(
-              mockHDAccountCredentials.privateKey,
-              mockCorrectPasswordHash
+            expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
+              mockEvmCredentials.address,
+              JSON.stringify(mockEncryptedData),
+              getKeychainOptions(mockEvmCredentials.address, 0)
+            );
+          }, done)
+        );
+    });
+
+    it('should create imported multichain account', done => {
+      const mockName = 'mockMultichainName';
+
+      Shelter.unlockApp$(mockCorrectPassword, mockAccount)
+        .pipe(switchMap(() => Shelter.createImportedMultichainAccount$(mockAccountCredentials.seedPhrase, mockName)))
+        .subscribe(
+          rxJsTestingHelper(account => {
+            expect(account).toMatchObject({
+              name: mockName,
+              type: AccountTypeEnum.IMPORTED_MULTICHAIN,
+              tezosAddress: mockAccountCredentials.publicKeyHash,
+              tezosPublicKey: mockAccountCredentials.publicKey,
+              evmAddress: mockEvmCredentials.address,
+              evmPublicKey: mockEvmCredentials.publicKey
+            });
+
+            expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
+              mockAccountCredentials.publicKeyHash,
+              JSON.stringify(mockEncryptedData),
+              getKeychainOptions(mockAccountCredentials.publicKeyHash, 0)
             );
             expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
-              mockHDAccountCredentials.publicKeyHash,
+              mockEvmCredentials.address,
               JSON.stringify(mockEncryptedData),
-              getKeychainOptions(mockHDAccountCredentials.publicKeyHash, 0)
+              getKeychainOptions(mockEvmCredentials.address, 0)
+            );
+            expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
+              `sapling_sk_${mockAccountCredentials.publicKeyHash}`,
+              JSON.stringify(mockEncryptedData),
+              getKeychainOptions(`sapling_sk_${mockAccountCredentials.publicKeyHash}`, 0)
             );
           }, done)
         );
     });
 
     it('should reveal HD account seed phrase', done => {
-      Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
+      Shelter.unlockApp$(mockCorrectPassword, mockAccount)
         .pipe(switchMap(() => Shelter.revealSeedPhrase$()))
         .subscribe(
           rxJsTestingHelper(decryptResult => {
@@ -201,8 +381,8 @@ describe('Shelter', () => {
     });
 
     it('should reveal account private key', done => {
-      Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
-        .pipe(switchMap(() => Shelter.revealSecretKey$(mockAccountCredentials.publicKeyHash)))
+      Shelter.unlockApp$(mockCorrectPassword, mockAccount)
+        .pipe(switchMap(() => Shelter.revealAccountPrivateKey$(mockAccountCredentials.publicKeyHash)))
         .subscribe(
           rxJsTestingHelper(decryptResult => {
             expect(decryptResult).toEqual(mockAccountCredentials.privateKey);
@@ -218,9 +398,23 @@ describe('Shelter', () => {
         );
     });
 
+    it('should return undefined when account private key is absent', done => {
+      mockKeychain.getGenericPassword.mockResolvedValueOnce(false).mockResolvedValueOnce(mockCorrectUserCredentials);
+
+      Shelter.revealAccountPrivateKey$(mockAccountCredentials.publicKeyHash, mockCorrectPasswordHash).subscribe(
+        rxJsTestingHelper(decryptResult => {
+          expect(decryptResult).toBeUndefined();
+
+          expect(mockKeychain.getGenericPassword).toHaveBeenCalledWith(
+            getKeychainOptions(mockAccountCredentials.publicKeyHash, 0)
+          );
+        }, done)
+      );
+    });
+
     it('should return signer with private key', done => {
-      Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
-        .pipe(switchMap(() => Shelter.getSigner$(mockAccountCredentials.publicKeyHash)))
+      Shelter.unlockApp$(mockCorrectPassword, mockAccount)
+        .pipe(switchMap(() => Shelter.getTezosSigner$(mockAccountCredentials.publicKeyHash)))
         .subscribe(
           rxJsTestingHelper(async signer => {
             await expect(signer.secretKey()).resolves.toEqual(mockAccountCredentials.privateKey);
@@ -305,7 +499,7 @@ describe('Shelter', () => {
     });
 
     it('should return "false" for empty string & unlocked app', done => {
-      Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
+      Shelter.unlockApp$(mockCorrectPassword, mockAccount)
         .pipe(switchMap(() => Shelter.isPasswordCorrect$('')))
         .subscribe(
           rxJsTestingHelper(isPasswordCorrect => {
@@ -315,7 +509,7 @@ describe('Shelter', () => {
     });
 
     it('should return "false" for correct password & unlocked app', done => {
-      Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
+      Shelter.unlockApp$(mockCorrectPassword, mockAccount)
         .pipe(switchMap(() => Shelter.isPasswordCorrect$(mockIncorrectPassword)))
         .subscribe(
           rxJsTestingHelper(isPasswordCorrect => {
@@ -325,7 +519,7 @@ describe('Shelter', () => {
     });
 
     it('should return "true" for correct password & unlocked app', done => {
-      Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
+      Shelter.unlockApp$(mockCorrectPassword, mockAccount)
         .pipe(switchMap(() => Shelter.isPasswordCorrect$(mockCorrectPassword)))
         .subscribe(
           rxJsTestingHelper(isPasswordCorrect => {

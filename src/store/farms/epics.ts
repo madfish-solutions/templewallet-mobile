@@ -15,7 +15,6 @@ import {
 } from 'src/utils/error-analytics-data.utils';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
-import { withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
 import type { AnyActionEpic } from '../types';
 
@@ -50,11 +49,10 @@ const makeFarmsListErrorHandlerBase =
 const loadSingleFarmLastStake: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadSingleFarmStakeActions.submit),
-    withSelectedRpcUrl(state$),
     withUserAnalyticsCredentials(state$),
-    mergeMap(([[{ payload }, rpcUrl], { isAnalyticsEnabled, userId, ABTestingCategory }]) => {
+    mergeMap(([{ payload }, { isAnalyticsEnabled, userId, ABTestingCategory }]) => {
       const { farm, accountPkh } = payload;
-      const tezos = createReadOnlyTezosToolkit(rpcUrl);
+      const tezos = createReadOnlyTezosToolkit();
 
       return from(getFarmStake(farm, tezos, accountPkh)).pipe(
         map(stake =>

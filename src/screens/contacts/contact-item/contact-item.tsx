@@ -8,7 +8,7 @@ import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { TruncatedText } from 'src/components/truncated-text';
 import { WalletAddress } from 'src/components/wallet-address/wallet-address';
-import { AccountBaseInterface } from 'src/interfaces/account.interface';
+import { Contact } from 'src/interfaces/contact.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { deleteContactAction } from 'src/store/contact-book/contact-book-actions';
@@ -21,7 +21,7 @@ import { useContactItemStyles } from './contact-item.styles';
 import { ContactItemSelector } from './selectors';
 
 interface Props {
-  contact: AccountBaseInterface;
+  contact: Contact;
   index: number;
 }
 
@@ -31,7 +31,7 @@ export const ContactItem: FC<Props> = ({ contact, index }) => {
   const styles = useContactItemStyles();
   const { trackEvent } = useAnalytics();
 
-  const handleDeleteContact = (contact: AccountBaseInterface) => () =>
+  const handleDeleteContact = (contact: Contact) => () =>
     Alert.alert(`Delete “${contact.name}” from Contacts?`, undefined, [
       {
         text: 'Cancel',
@@ -53,10 +53,10 @@ export const ContactItem: FC<Props> = ({ contact, index }) => {
   return (
     <View style={styles.root}>
       <View style={styles.accountContainer}>
-        <RobotIcon seed={contact.publicKeyHash} />
+        <RobotIcon seed={contact.address} />
         <View style={styles.accountContainerData}>
           <TruncatedText style={styles.name}>{contact.name}</TruncatedText>
-          <WalletAddress isLocalDomainNameShowing publicKeyHash={contact.publicKeyHash} />
+          <WalletAddress isLocalDomainNameShowing publicKeyHash={contact.address} />
         </View>
       </View>
       <View style={styles.actions}>

@@ -149,6 +149,10 @@ export const TypographyProvider: FCWithChildren = ({ children }) => {
         fontFamily: FontsEnum.interRegular,
         fontSize: formatTextSize(10)
       },
+      caption10Medium: {
+        fontFamily: FontsEnum.interMedium,
+        fontSize: formatTextSize(10)
+      },
       caption11Regular: {
         fontFamily: FontsEnum.interRegular,
         fontSize: formatTextSize(11)

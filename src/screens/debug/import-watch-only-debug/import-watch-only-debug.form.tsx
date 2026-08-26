@@ -1,7 +1,6 @@
 import { object, SchemaOf, string } from 'yup';
 
 import { makeRequiredErrorMessage } from 'src/form/validation/messages';
-import { walletAddressValidation } from 'src/form/validation/wallet-address';
 
 export type ImportWatchOnlyDebugValues = {
   name: string;
@@ -15,5 +14,5 @@ export const importWatchOnlyDebugInitialValues: ImportWatchOnlyDebugValues = {
 
 export const importWatchOnlyDebugValidationSchema: SchemaOf<ImportWatchOnlyDebugValues> = object().shape({
   name: string().required(makeRequiredErrorMessage('Name')),
-  address: walletAddressValidation
+  address: string().required(makeRequiredErrorMessage('Address'))
 });

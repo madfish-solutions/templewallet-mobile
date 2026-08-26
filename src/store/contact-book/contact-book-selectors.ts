@@ -6,7 +6,7 @@ export const useContactsSelector = () => useSelector(state => state.contactBook.
 export const useContactsAddresses = () => {
   const contacts = useContactsSelector();
 
-  return useMemo(() => contacts.map(({ publicKeyHash }) => publicKeyHash), [contacts]);
+  return useMemo(() => contacts.map(({ address }) => address), [contacts]);
 };
 export const useContactsNames = () => {
   const contacts = useContactsSelector();

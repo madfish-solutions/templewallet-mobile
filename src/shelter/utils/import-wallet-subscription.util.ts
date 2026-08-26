@@ -1,6 +1,6 @@
-import { Dispatch } from '@reduxjs/toolkit';
 import { forkJoin, of, Subject, switchMap, tap } from 'rxjs';
 
+import { dispatch } from 'src/store';
 import {
   hideLoaderAction,
   setIsBiometricsEnabled,
@@ -8,18 +8,18 @@ import {
   showLoaderAction
 } from 'src/store/settings/settings-actions';
 import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
-import { addHdAccountAction, setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
+import { addAccountAction, setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
 
 import { ImportWalletParams } from '../interfaces/import-wallet-params.interface';
 import { Shelter } from '../shelter';
 
-export const importWalletSubscription = (importWallet$: Subject<ImportWalletParams>, dispatch: Dispatch) =>
+export const importWalletSubscription = (importWallet$: Subject<ImportWalletParams>) =>
   importWallet$
     .pipe(
       tap(() => dispatch(showLoaderAction())),
       switchMap(({ seedPhrase, password, hdAccountsLength, useBiometry }) =>
         forkJoin([
-          Shelter.importHdAccount$(seedPhrase, password, hdAccountsLength),
+          Shelter.importWallet$(seedPhrase, password, hdAccountsLength),
           useBiometry === true ? Shelter.enableBiometryPassword$(password) : of(false)
         ])
       ),
@@ -28,10 +28,10 @@ export const importWalletSubscription = (importWallet$: Subject<ImportWalletPara
     .subscribe(([importedAccounts, isPasswordSaved]) => {
       if (importedAccounts !== undefined) {
         const firstAccount = importedAccounts[0];
-        dispatch(setSelectedAccountAction(firstAccount.publicKeyHash));
+        dispatch(setSelectedAccountIdAction(firstAccount.id));
 
         for (const account of importedAccounts) {
-          dispatch(addHdAccountAction(account));
+          dispatch(addAccountAction(account));
         }
 
         dispatch(loadWhitelistAction.submit());

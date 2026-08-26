@@ -13,7 +13,7 @@ import { SaplingTransactionHistoryItem } from 'src/interfaces/sapling-service.in
 import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
-import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import { TEZ_TOKEN_DECIMALS, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatAssetAmount } from 'src/utils/number.util';
 import { mutezToTz } from 'src/utils/tezos.util';
@@ -33,7 +33,7 @@ export const PrivateActivityItem = ({ transaction }: Props) => {
   const iconName = isIncoming ? IconNameEnum.ArrowDown : IconNameEnum.ArrowUp;
   const iconColor = isIncoming ? colors.adding : colors.destructive;
 
-  const amountTez = mutezToTz(new BigNumber(transaction.value), TEZ_TOKEN_METADATA.decimals);
+  const amountTez = mutezToTz(new BigNumber(transaction.value), TEZ_TOKEN_DECIMALS);
   const formattedAmount = formatAssetAmount(amountTez);
 
   const dollarAmount = useMemo(() => {

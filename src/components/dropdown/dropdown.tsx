@@ -1,5 +1,14 @@
-import React, { memo, useCallback, useMemo, useRef } from 'react';
-import { FlatListProps, ListRenderItemInfo, StyleProp, View, ViewStyle, ActivityIndicator } from 'react-native';
+import React, { memo, ReactNode, Ref, useCallback, useMemo, useRef } from 'react';
+import {
+  FlatListProps,
+  ListRenderItemInfo,
+  StyleProp,
+  Text,
+  View,
+  ViewStyle,
+  ActivityIndicator,
+  TouchableOpacity
+} from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import { emptyComponent } from 'src/config/general';
@@ -8,13 +17,12 @@ import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
-import { createGetItemLayout } from 'src/utils/flat-list.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
 import { DataPlaceholder } from '../data-placeholder/data-placeholder';
-import { SafeTouchableOpacity } from '../safe-touchable-opacity';
+import { Divider } from '../divider/divider';
 import { SearchInput } from '../search-input/search-input';
 import { TouchableWithAnalytics } from '../touchable-with-analytics';
 
@@ -27,20 +35,29 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   list: T[];
   emptyListText?: string;
   isSearchable?: boolean;
-  itemHeight?: number;
+  searchPlaceholder?: string;
+  renderSearchActionButtons?: DropdownActionButtonsComponent;
+  listItemHeight?: number;
+  listItemSeparatorSize?: number;
+  listItemDividerSize?: number;
+  isCompactListItem?: boolean;
   itemContainerStyle?: StyleProp<ViewStyle>;
   isLoading?: boolean;
   setSearchValue?: SyncFn<string>;
   equalityFn: DropdownEqualityFn<T>;
   renderValue: DropdownValueComponent<T>;
   renderListItem: DropdownListItemComponent<T>;
+  getListItemSectionTitle?: (item: T) => string | undefined;
   renderActionButtons?: DropdownActionButtonsComponent;
+  listHeader?: ReactNode;
+  showCloseButton?: boolean;
+  scrollToSelectedOnOpen?: boolean;
+  triggerWrapperRef?: Ref<View>;
   onLongPress?: EmptyFn;
 }
 
 export interface DropdownValueProps<T> extends TestIdProps {
   value?: T;
-  itemHeight?: number;
   list: T[];
   disabled?: boolean;
   isCollectibleScreen?: boolean;
@@ -65,7 +82,7 @@ export type DropdownListItemComponent<T> = SyncFC<{
 }>;
 
 export type DropdownActionButtonsComponent = SyncFC<{
-  onPress: EmptyFn;
+  closeDropdown: (onClosed?: EmptyFn) => void;
 }>;
 
 const DropdownComponent = <T extends unknown>({
@@ -73,34 +90,78 @@ const DropdownComponent = <T extends unknown>({
   list,
   emptyListText = 'No assets found.',
   description,
-  itemHeight = formatSize(64),
+  listItemHeight = formatSize(64),
+  listItemSeparatorSize = formatSize(16),
+  listItemDividerSize = formatSize(8),
+  isCompactListItem = false,
   itemContainerStyle,
   disabled = false,
   isLoading = false,
   isSearchable = false,
+  searchPlaceholder = 'Search',
+  renderSearchActionButtons,
   isCollectibleScreen = false,
   setSearchValue,
   equalityFn,
   renderValue,
   renderListItem,
+  showCloseButton = true,
+  scrollToSelectedOnOpen = true,
+  getListItemSectionTitle,
   renderActionButtons = emptyComponent,
+  listHeader,
   keyExtractor,
   onValueChange,
   onLongPress,
   testID,
   testIDProperties,
-  itemTestIDPropertiesFn
+  itemTestIDPropertiesFn,
+  triggerWrapperRef
 }: DropdownProps<T> & DropdownValueProps<T>) => {
   const { trackEvent } = useAnalytics();
   const ref = useRef<FlatList<T>>(null);
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
-  const getItemLayout = useMemo(() => createGetItemLayout<T>(itemHeight), [itemHeight]);
+  const afterCloseRef = useRef<EmptyFn>(undefined);
+
+  const itemsTitles = useMemo(() => {
+    const result: Record<number, string | undefined> = {};
+    let previousSectionTitle: string | undefined;
+    list.forEach((item, index) => {
+      const sectionTitle = getListItemSectionTitle?.(item);
+      if (sectionTitle !== previousSectionTitle) {
+        result[index] = sectionTitle;
+        previousSectionTitle = sectionTitle;
+      }
+    });
+
+    return result;
+  }, [getListItemSectionTitle, list]);
+
+  const getItemLayout = useCallback(
+    (_: unknown, index: number) => {
+      const sectionTitle = itemsTitles[index];
+      const sectionsTitlesBeforeCount = Object.keys(itemsTitles).filter(key => Number(key) < index).length;
+      const rowDividerSize = listItemDividerSize;
+      const sectionTitleSize = formatSize(22);
+      const itemSeparatorSize = listItemSeparatorSize;
+
+      return {
+        length: listItemHeight + rowDividerSize + (sectionTitle ? sectionTitleSize : 0),
+        index,
+        offset:
+          index * (listItemHeight + rowDividerSize + itemSeparatorSize) + sectionsTitlesBeforeCount * sectionTitleSize
+      };
+    },
+    [itemsTitles, listItemDividerSize, listItemHeight, listItemSeparatorSize]
+  );
   const contentHeight = useDropdownHeight();
+  const renderItemSeparator = useCallback(() => <Divider size={listItemSeparatorSize} />, [listItemSeparatorSize]);
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<T>) => {
       const isSelected = equalityFn(item, value);
+      const sectionTitle = itemsTitles[index];
 
       const handlePress = () => {
         onValueChange(item);
@@ -108,20 +169,36 @@ const DropdownComponent = <T extends unknown>({
       };
 
       return (
-        <TouchableWithAnalytics
-          Component={SafeTouchableOpacity}
-          key={index}
-          onPress={handlePress}
-          testID={DropdownSelectors.option}
-          testIDProperties={itemTestIDPropertiesFn?.(item)}
-        >
-          <DropdownItemContainer hasMargin={true} isSelected={isSelected} style={itemContainerStyle}>
-            {renderListItem({ item, isSelected })}
-          </DropdownItemContainer>
-        </TouchableWithAnalytics>
+        <>
+          {isDefined(sectionTitle) && <Text style={styles.sectionHeaderText}>{sectionTitle}</Text>}
+          {listItemDividerSize > 0 && <Divider size={listItemDividerSize} />}
+          <TouchableWithAnalytics
+            Component={TouchableOpacity}
+            key={index}
+            onPress={handlePress}
+            testID={DropdownSelectors.option}
+            testIDProperties={itemTestIDPropertiesFn?.(item)}
+          >
+            <DropdownItemContainer isSelected={isSelected} isCompact={isCompactListItem} style={itemContainerStyle}>
+              {renderListItem({ item, isSelected })}
+            </DropdownItemContainer>
+          </TouchableWithAnalytics>
+        </>
       );
     },
-    [equalityFn, value, onValueChange, dropdownBottomSheetController.close, renderListItem, itemTestIDPropertiesFn]
+    [
+      equalityFn,
+      value,
+      itemsTitles,
+      onValueChange,
+      dropdownBottomSheetController.close,
+      itemTestIDPropertiesFn,
+      isCompactListItem,
+      listItemDividerSize,
+      styles.sectionHeaderText,
+      itemContainerStyle,
+      renderListItem
+    ]
   );
 
   const scroll = useCallback(() => {
@@ -141,27 +218,67 @@ const DropdownComponent = <T extends unknown>({
     }
   }, [value, list]);
 
+  const closeDropdown = useCallback(
+    (onClosed?: EmptyFn) => {
+      afterCloseRef.current = onClosed;
+      dropdownBottomSheetController.close({ duration: 100 });
+    },
+    [dropdownBottomSheetController.close]
+  );
+
+  const handleDropdownClose = useCallback(() => {
+    const callback = afterCloseRef.current;
+    afterCloseRef.current = undefined;
+    callback?.();
+  }, []);
+
   return (
     <>
-      <SafeTouchableOpacity
-        style={styles.valueContainer}
-        disabled={disabled}
-        onPress={() => {
-          scroll();
+      <View style={styles.valueContainer} ref={triggerWrapperRef}>
+        <TouchableOpacity
+          style={styles.valueContainer}
+          disabled={disabled}
+          onPress={() => {
+            if (scrollToSelectedOnOpen) {
+              scroll();
+            }
 
-          trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
+            trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
 
-          return dropdownBottomSheetController.open();
-        }}
-        onLongPress={onLongPress}
-        testID={testID}
+            return dropdownBottomSheetController.open();
+          }}
+          onLongPress={onLongPress}
+          testID={testID}
+        >
+          {renderValue({ value, disabled, isCollectibleScreen })}
+        </TouchableOpacity>
+      </View>
+
+      <BottomSheet
+        description={description}
+        contentHeight={contentHeight}
+        controller={dropdownBottomSheetController}
+        showCloseButton={showCloseButton}
+        showCancelButton={!showCloseButton}
+        onClose={handleDropdownClose}
       >
-        {renderValue({ value, disabled, isCollectibleScreen })}
-      </SafeTouchableOpacity>
-
-      <BottomSheet description={description} contentHeight={contentHeight} controller={dropdownBottomSheetController}>
         <View style={styles.contentContainer}>
-          {isSearchable && <SearchInput placeholder="Search assets" onChangeText={setSearchValue} />}
+          {isSearchable && (
+            <View style={styles.searchContainer}>
+              <SearchInput
+                containerStyle={styles.searchInputContainer}
+                placeholder={searchPlaceholder}
+                onChangeText={setSearchValue}
+              />
+              {renderSearchActionButtons && (
+                <>
+                  <Divider size={formatSize(24)} />
+                  {renderSearchActionButtons({ closeDropdown })}
+                </>
+              )}
+            </View>
+          )}
+          {listHeader}
           {isLoading ? (
             <View style={styles.activityIndicatorContainer}>
               <ActivityIndicator size="large" />
@@ -173,7 +290,11 @@ const DropdownComponent = <T extends unknown>({
               renderItem={renderItem}
               keyExtractor={keyExtractor}
               getItemLayout={getItemLayout}
-              contentContainerStyle={styles.flatListContentContainer}
+              contentContainerStyle={[
+                styles.listContentContainer,
+                isCompactListItem && styles.compactListContentContainer
+              ]}
+              ItemSeparatorComponent={renderItemSeparator}
               ListEmptyComponent={<DataPlaceholder text={emptyListText} />}
               windowSize={10}
               updateCellsBatchingPeriod={150}
@@ -181,9 +302,7 @@ const DropdownComponent = <T extends unknown>({
           )}
         </View>
 
-        {renderActionButtons({
-          onPress: () => dropdownBottomSheetController.close()
-        })}
+        {renderActionButtons({ closeDropdown })}
       </BottomSheet>
     </>
   );

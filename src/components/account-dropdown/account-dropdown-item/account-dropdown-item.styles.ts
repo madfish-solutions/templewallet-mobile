@@ -3,33 +3,34 @@ import { formatSize } from 'src/styles/format-size';
 
 export const useAccountDropdownItemStyles = createUseStylesMemoized(({ colors, typography }) => ({
   root: {
-    flexDirection: 'row'
-  },
-  rootModal: {
-    margin: formatSize(8)
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   infoContainer: {
     flexGrow: 1,
     flexShrink: 1,
     justifyContent: 'space-between',
-    marginLeft: formatSize(10)
+    marginLeft: formatSize(8)
   },
-  smallInfoContainer: {
-    flexGrow: 1,
-    flexShrink: 1,
-    justifyContent: 'center',
-    marginLeft: formatSize(4)
+  infoContainerCollectibles: {
+    marginLeft: formatSize(2)
   },
   upperContainer: {
     flexDirection: 'row',
     alignItems: 'center'
   },
   upperContainerFullData: {
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    minHeight: formatSize(40)
   },
   name: {
-    ...typography.tagline13Tag,
+    ...typography.body17Semibold,
+    flexShrink: 1,
+    marginRight: formatSize(4),
     color: colors.black
+  },
+  nameCollectibles: {
+    marginRight: formatSize(10)
   },
   lowerContainer: {
     flexDirection: 'row',
@@ -37,7 +38,7 @@ export const useAccountDropdownItemStyles = createUseStylesMemoized(({ colors, t
     alignItems: 'center'
   },
   balanceText: {
-    ...typography.numbersRegular13,
+    ...typography.numbersRegular15,
     color: colors.black
   },
   accountNameMargin: {

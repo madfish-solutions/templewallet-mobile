@@ -1,11 +1,11 @@
 import { OperationRequestOutput } from '@airgap/beacon-sdk';
 import { ParamsWithKind } from '@taquito/taquito';
 
-import { ReadOnlySignerPayload } from 'src/types/read-only-signer-payload';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum.ts';
+import { AccountForChain } from 'src/utils/account.utils.ts';
 
 export interface ApproveOperationRequestActionPayloadInterface {
-  rpcUrl: string;
-  sender: ReadOnlySignerPayload;
+  sender: AccountForChain<TempleChainKind.Tezos>;
   opParams: ParamsWithKind[];
   message: OperationRequestOutput;
 }

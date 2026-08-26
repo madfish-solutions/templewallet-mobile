@@ -1,6 +1,8 @@
 import BigNumber from 'bignumber.js';
+import { ReactNode } from 'react';
 import { TextInputProps, TextStyle, ViewStyle } from 'react-native';
 
+import { AssetInterface } from 'src/interfaces/asset.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 
@@ -12,28 +14,36 @@ export interface AssetAmountInputStylesConfig {
   inputContainer?: ViewStyle;
 }
 
-export interface AssetAmountInputProps extends TestIdProps {
+export interface AssetAmountInputProps<TAsset extends AssetInterface = TokenInterface> extends TestIdProps {
   expectedGasExpense?: BigNumber.Value;
+  /** Atomic amount to use when the MAX button is pressed. */
+  maxAmount?: BigNumber.Value;
+  maxButtonDisabled?: boolean;
   stylesConfig?: AssetAmountInputStylesConfig;
   maxButton?: boolean;
-  value: AssetAmountInterface;
+  value: AssetAmountInterface<TAsset>;
   label: string;
-  assetsList: TokenInterface[];
+  assetsList: TAsset[];
   balance?: string;
   balanceLabel?: string;
   frozenBalance?: string;
   isError?: boolean;
+  footerErrorMessage?: string;
   editable?: boolean;
   toUsdToggle?: boolean;
   isLoading?: boolean;
   isSearchable?: boolean;
+  searchPlaceholder?: string;
+  dropdownListHeader?: ReactNode;
+  dropdownDescription?: string;
+  scrollToSelectedOnOpen?: boolean;
   isShowNameForValue?: boolean;
   isSingleAsset?: boolean;
   selectionOptions?: TextInputProps['selection'];
   setSearchValue?: SyncFn<string>;
   onBlur?: EmptyFn;
   onFocus?: TextInputProps['onFocus'];
-  onValueChange: SyncFn<AssetAmountInterface>;
+  onValueChange: SyncFn<AssetAmountInterface<TAsset>>;
   tokenTestID?: string;
   switcherTestID?: string;
   maxButtonTestID?: string;

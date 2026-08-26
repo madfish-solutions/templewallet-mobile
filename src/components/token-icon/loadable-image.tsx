@@ -1,41 +1,41 @@
-import FastImage from '@d11/react-native-fast-image';
+import FastImage, { ImageStyle } from '@d11/react-native-fast-image';
 import React, { memo, useMemo } from 'react';
 
-import { useTokenImagesStack } from 'src/hooks/use-images-stack';
-import { useDidUpdate } from 'src/utils/hooks';
-
-import { Icon } from '../icon/icon';
-import { IconNameEnum } from '../icon/icon-name.enum';
-
-import { TokenIconStyles } from './token-icon.styles';
+import { AssetIconPlaceholder } from '../asset-icon-placeholder';
 
 interface Props {
-  useOriginal?: boolean;
-  uri: string;
+  borderRadius?: number;
+  isCollectible?: boolean;
+  isLoading: boolean;
+  isStackFailed: boolean;
+  onError: EmptyFn;
+  onLoad: EmptyFn;
   size: number;
-  onError?: EmptyFn;
+  placeholderSize: number;
+  uri?: string;
 }
 
-export const LoadableTokenIconImage = memo<Props>(({ uri, size, onError, useOriginal = false }) => {
-  const { src, isLoading, isStackFailed, onSuccess, onFail } = useTokenImagesStack(uri, useOriginal);
+export const LoadableTokenIconImage = memo<Props>(
+  ({ borderRadius, isCollectible = false, isLoading, isStackFailed, onError, onLoad, size, placeholderSize, uri }) => {
+    const isShowPlaceholder = useMemo(() => isLoading || isStackFailed, [isLoading, isStackFailed]);
 
-  useDidUpdate(() => {
-    if (isStackFailed) {
-      onError?.();
-    }
-  }, [isStackFailed, onError]);
+    const style = useMemo<ImageStyle>(
+      () => ({
+        borderRadius,
+        height: size,
+        left: (placeholderSize - size) / 2,
+        position: 'absolute',
+        top: (placeholderSize - size) / 2,
+        width: size
+      }),
+      [borderRadius, placeholderSize, size]
+    );
 
-  const isShowPlaceholder = useMemo(() => isLoading || isStackFailed, [isLoading, isStackFailed]);
-
-  const style = useMemo(
-    () => [isShowPlaceholder && TokenIconStyles.hiddenImage, { width: size, height: size }],
-    [isShowPlaceholder, size]
-  );
-
-  return (
-    <>
-      {isShowPlaceholder && <Icon name={IconNameEnum.NoNameToken} size={size} />}
-      <FastImage style={style} source={{ uri: src }} onError={onFail} onLoad={onSuccess} />
-    </>
-  );
-});
+    return (
+      <>
+        {isShowPlaceholder && <AssetIconPlaceholder isCollectible={isCollectible} size={placeholderSize} />}
+        {uri != null && <FastImage key={uri} style={style} source={{ uri }} onError={onError} onLoad={onLoad} />}
+      </>
+    );
+  }
+);
