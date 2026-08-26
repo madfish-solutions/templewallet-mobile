@@ -11,7 +11,9 @@ export const walletKitPromise = WalletKit.init({
     name: 'Temple Wallet Mobile',
     description: 'Dedicated mobile app to cover all your Tezos and EVM DeFi needs',
     url: 'www.templewallet.com',
-    icons: ['https://ipfs.io/ipfs/bafkreigwikllka4svf345zilxj6lq6glpe4djsqummmjfhigszwqaufjum'],
+    icons: [
+      'https://emerald-emotional-sailfish-309.mypinata.cloud/ipfs/bafkreigwikllka4svf345zilxj6lq6glpe4djsqummmjfhigszwqaufjum'
+    ],
     redirect: {
       native: 'temple://',
       universal: UNIVERSAL_LINKS_DOMAIN_URI_PREFIX
