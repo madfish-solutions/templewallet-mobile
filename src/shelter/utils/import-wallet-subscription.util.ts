@@ -1,6 +1,7 @@
 import { catchError, concatMap, EMPTY, finalize, forkJoin, of, Subject, tap } from 'rxjs';
 
 import { dispatch } from 'src/store';
+import { cacheSaplingCredentialsAction, loadShieldedBalanceActions } from 'src/store/sapling/sapling-actions';
 import {
   hideLoaderAction,
   setIsBiometricsEnabled,
@@ -31,13 +32,17 @@ export const importWalletSubscription = (importWallet$: Subject<ImportWalletRequ
           Shelter.importWallet$(seedPhrase, password, hdAccountsLength),
           useBiometry === true ? Shelter.enableBiometryPassword$(password) : of(false)
         ]).pipe(
-          tap(([importedAccounts, isPasswordSaved]) => {
-            if (!importedAccounts?.length) {
+          tap(([importResult, isPasswordSaved]) => {
+            if (!importResult?.accounts.length) {
               throw new Error(IMPORT_WALLET_ERROR_MESSAGE);
             }
 
-            dispatch(addAccountsAction(importedAccounts));
-            dispatch(setSelectedAccountIdAction(importedAccounts[0].id));
+            const { accounts, saplingCredentials } = importResult;
+
+            dispatch(cacheSaplingCredentialsAction(saplingCredentials));
+            dispatch(addAccountsAction(accounts));
+            dispatch(setSelectedAccountIdAction(accounts[0].id));
+            dispatch(loadShieldedBalanceActions.submit());
             dispatch(loadWhitelistAction.submit());
 
             isPasswordSaved !== false && dispatch(setIsBiometricsEnabled(true));

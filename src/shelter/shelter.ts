@@ -18,7 +18,7 @@ import { privateKeyToAccount } from 'viem/accounts';
 
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
-import { Account, ImportedMultichainAccount } from 'src/interfaces/account.interfaces';
+import { Account, HDAccount, ImportedMultichainAccount } from 'src/interfaces/account.interfaces';
 import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { decryptString$, EncryptedData, encryptString$, hashPassword$ } from 'src/utils/crypto.util';
 import { isDefined } from 'src/utils/is-defined';
@@ -48,6 +48,7 @@ import { throwError$ } from 'src/utils/rxjs.utils';
 import { getSaplingDerivationPath } from 'src/utils/sapling/address-utils';
 import { InMemorySpendingKey } from 'src/utils/sapling/sapling-keys';
 
+import { ImportWalletResult } from './interfaces/import-wallet-result.interface';
 import { hasSameChainAddress } from './utils/common.utils.ts';
 import { deriveSaskFromPrivateKey } from './utils/derive-sask-from-private-key.util';
 
@@ -60,6 +61,11 @@ interface PasswordServiceMigrationResultBase {
   isSuccess: boolean;
   error?: unknown;
   readPassword: false | UserCredentials;
+}
+
+interface DerivedHdAccount {
+  account: HDAccount;
+  saplingSpendingKey: string;
 }
 
 interface SuccessPasswordServiceMigrationResult extends PasswordServiceMigrationResultBase {
@@ -266,17 +272,23 @@ export class Shelter {
           Shelter.saveAccountCredentials$(tezosCredentials, passwordHash),
           Shelter.saveAccountCredentials$(evmCredentials, passwordHash)
         ]).pipe(
-          switchMap(([sask]) => Shelter.saveSaplingSpendingKey$(tezosCredentials.address, sask, passwordHash)),
-          mapTo<Account>({
-            id: nanoid(),
-            type: AccountTypeEnum.HD,
-            name,
-            tezosAddress: tezosCredentials.address,
-            tezosPublicKey: tezosCredentials.publicKey,
-            evmAddress: evmCredentials.address,
-            evmPublicKey: evmCredentials.publicKey,
-            hdIndex
-          })
+          switchMap(([sask]) =>
+            Shelter.saveSaplingSpendingKey$(tezosCredentials.address, sask, passwordHash).pipe(
+              mapTo<DerivedHdAccount>({
+                account: {
+                  id: nanoid(),
+                  type: AccountTypeEnum.HD,
+                  name,
+                  tezosAddress: tezosCredentials.address,
+                  tezosPublicKey: tezosCredentials.publicKey,
+                  evmAddress: evmCredentials.address,
+                  evmPublicKey: evmCredentials.publicKey,
+                  hdIndex
+                },
+                saplingSpendingKey: sask
+              })
+            )
+          )
         )
       )
     );
@@ -322,7 +334,7 @@ export class Shelter {
     seedPhrase: string,
     password: string,
     hdAccountsLength = 1
-  ): Observable<Account[] | undefined> => {
+  ): Observable<ImportWalletResult | undefined> => {
     if (!validateMnemonic(seedPhrase)) {
       return throwError$('Mnemonic not validated');
     }
@@ -361,11 +373,24 @@ export class Shelter {
                       name: `Account ${hdAccountIndex + 1}`,
                       hdIndex: hdAccountIndex,
                       passwordHash
-                    })
+                    }).pipe(
+                      switchMap(({ account, saplingSpendingKey }) =>
+                        from(new InMemorySpendingKey(saplingSpendingKey).getSaplingCredentials()).pipe(
+                          map(saplingCredentials => ({ account, saplingCredentials }))
+                        )
+                      )
+                    )
                   )
                 )
               ),
               toArray(),
+              map(importedAccounts => ({
+                accounts: importedAccounts.map(({ account }) => account),
+                saplingCredentials: importedAccounts.map(({ account, saplingCredentials }) => ({
+                  publicKeyHash: account.tezosAddress,
+                  ...saplingCredentials
+                }))
+              })),
               finalize(() => {
                 seed.fill(0);
                 saplingSeed.fill(0);
@@ -512,7 +537,7 @@ export class Shelter {
                   saplingSeed,
                   name,
                   hdIndex: accountIndex
-                });
+                }).pipe(map(({ account }) => account));
               }),
               finalize(() => {
                 seed.fill(0);

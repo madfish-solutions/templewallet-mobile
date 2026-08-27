@@ -8,6 +8,8 @@ import {
   getProofAuthorizingKey
 } from 'react-native-sapling';
 
+import { SaplingCredentials } from 'src/interfaces/sapling-service.interface';
+
 import { bufToUint8Array, toBase64 } from '../helpers';
 import { ParametersSpendProof, ParametersSpendSig, SaplingSpendDescription, SaplingTransactionInput } from '../types';
 
@@ -76,6 +78,15 @@ export class InMemorySpendingKey {
     }
 
     return this.#saplingViewingKey;
+  }
+
+  async getSaplingCredentials(): Promise<SaplingCredentials> {
+    const viewingKeyProvider = await this.getSaplingViewingKeyProvider();
+
+    return {
+      viewingKey: viewingKeyProvider.getFullViewingKey().toString('hex'),
+      saplingAddress: (await viewingKeyProvider.getAddress()).address
+    };
   }
 
   /**

@@ -12,13 +12,19 @@ import { StacksEnum } from 'src/navigator/enums/stacks.enum';
 import { dispatch as storeDispatch } from 'src/store';
 import { navigateAction } from 'src/store/root-state.actions';
 import { mockRootState } from 'src/store/root-state.mock';
+import { cacheSaplingCredentialsAction, loadShieldedBalanceActions } from 'src/store/sapling/sapling-actions';
 import { hideLoaderAction, setIsBiometricsEnabled, showLoaderAction } from 'src/store/settings/settings-actions';
 import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
 import { addAccountAction, addAccountsAction, setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
 import { mockShowErrorToast, mockShowSuccessToast, mockShowWarningToast } from 'src/toast/toast.utils.mock';
 import * as tokenBalanceUtils from 'src/utils/token-balance.utils';
 
-import { mockRevealedSecretKey, mockRevealedSeedPhrase, mockShelter } from './shelter.mock';
+import {
+  mockRevealedSecretKey,
+  mockRevealedSeedPhrase,
+  mockSaplingAccountCredentials,
+  mockShelter
+} from './shelter.mock';
 import { useShelter } from './use-shelter.hook';
 
 jest.mock('src/store', () => ({
@@ -73,6 +79,8 @@ describe('useShelter', () => {
 
     expect(mockStoreDispatch).toHaveBeenCalledWith(addAccountsAction([mockHdAccount]));
     expect(mockStoreDispatch).toHaveBeenCalledWith(setSelectedAccountIdAction(mockHdAccount.id));
+    expect(mockStoreDispatch).toHaveBeenCalledWith(cacheSaplingCredentialsAction([mockSaplingAccountCredentials]));
+    expect(mockStoreDispatch).toHaveBeenCalledWith(loadShieldedBalanceActions.submit());
     expect(mockStoreDispatch).toHaveBeenCalledWith(showLoaderAction());
     expect(mockStoreDispatch).toHaveBeenCalledWith(hideLoaderAction());
     expect(mockStoreDispatch).not.toHaveBeenCalledWith(addAccountAction(mockHdAccount));
@@ -94,7 +102,10 @@ describe('useShelter', () => {
   });
 
   it('should reuse the pending wallet import', async () => {
-    const importResult$ = new Subject<(typeof mockHdAccount)[]>();
+    const importResult$ = new Subject<{
+      accounts: (typeof mockHdAccount)[];
+      saplingCredentials: [];
+    }>();
     mockShelter.importWallet$.mockReturnValueOnce(importResult$);
     const { result } = renderHook(() => useShelter());
     const params = { seedPhrase: mockAccountCredentials.seedPhrase, password: mockCorrectPassword };
@@ -105,7 +116,7 @@ describe('useShelter', () => {
     expect(secondImport).toBe(firstImport);
     expect(mockShelter.importWallet$).toHaveBeenCalledTimes(1);
 
-    importResult$.next([mockHdAccount]);
+    importResult$.next({ accounts: [mockHdAccount], saplingCredentials: [] });
     importResult$.complete();
     await firstImport;
   });

@@ -67,12 +67,8 @@ function createTxViewer(viewingKey: string, rpcClient: RpcClient): SaplingTransa
 class SaplingService implements SaplingServiceInterface {
   async deriveCredentials(sask: string): Promise<SaplingCredentials> {
     const spendingKey = getOrCreateSpendingKey(sask);
-    const viewingKeyProvider = await spendingKey.getSaplingViewingKeyProvider();
 
-    return {
-      viewingKey: viewingKeyProvider.getFullViewingKey().toString('hex'),
-      saplingAddress: (await viewingKeyProvider.getAddress()).address
-    };
+    return spendingKey.getSaplingCredentials();
   }
 
   async getShieldedBalance(viewingKey: string, rpcClient: RpcClient): Promise<string> {

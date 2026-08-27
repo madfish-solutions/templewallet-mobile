@@ -6,8 +6,15 @@ import { Account } from 'src/interfaces/account.interfaces';
 import { mockCorrectPassword } from 'src/mocks/react-native-keychain.mock';
 import { getBiometryKeychainOptions } from 'src/utils/keychain.utils';
 
+import { ImportWalletResult } from './interfaces/import-wallet-result.interface';
+
 export const mockRevealedSecretKey = 'mockRevealedSecretKey';
 export const mockRevealedSeedPhrase = 'mockRevealedSeedPhrase';
+export const mockSaplingAccountCredentials = {
+  publicKeyHash: mockHdAccount.tezosAddress,
+  saplingAddress: 'zet1MockSaplingAddress',
+  viewingKey: 'mockViewingKey'
+};
 
 const migrateFromSamsungOrGoogleChip$ = jest.fn(() => of(undefined));
 
@@ -30,7 +37,9 @@ export const mockShelter = {
 
     return of(isCorrectPassword);
   }),
-  importWallet$: jest.fn<Observable<Account[] | undefined>, [string, string, number?]>(() => of([mockHdAccount])),
+  importWallet$: jest.fn<Observable<ImportWalletResult | undefined>, [string, string, number?]>(() =>
+    of({ accounts: [mockHdAccount], saplingCredentials: [mockSaplingAccountCredentials] })
+  ),
   enableBiometryPassword$: jest.fn((password: string) => of(password === mockCorrectPassword)),
   createHdAccount$: jest.fn(() => of(mockNewHdAccount)),
   saveSaplingSpendingKey$: jest.fn(() => of(undefined)),
