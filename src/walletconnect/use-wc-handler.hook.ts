@@ -1,3 +1,4 @@
+import { getSdkError } from '@walletconnect/utils';
 import { useEffect } from 'react';
 import { EmitterSubscription, Linking } from 'react-native';
 
@@ -15,6 +16,8 @@ import { getUrlQueryParams } from '../utils/url.utils';
 import { getSessionProposalRejectReason } from './validate-session-proposal';
 import { getSessionRequestRejectReason } from './validate-session-request';
 import { isWcUniversalLink, isWcUri, WcHandler } from './wc-handler';
+
+const USER_REJECTED_ERROR_CODE = getSdkError('USER_REJECTED').code;
 
 export const wcDeepLinkHandler = async (url: string | null, onValidDataCallback: EmptyFn, onError: SyncFn<string>) => {
   try {
@@ -61,6 +64,10 @@ export const useWcHandler = () => {
         const rejectReason = getSessionProposalRejectReason(proposal, store.getState().wallet.accounts);
 
         if (isDefined(rejectReason)) {
+          if (rejectReason.code !== USER_REJECTED_ERROR_CODE) {
+            showErrorToast({ title: 'Connection rejected', description: rejectReason.message });
+          }
+
           void WcHandler.rejectSession({
             id: proposal.id,
             reason: rejectReason
@@ -82,6 +89,10 @@ export const useWcHandler = () => {
         );
 
         if (isDefined(rejectReason)) {
+          if (rejectReason.code !== USER_REJECTED_ERROR_CODE) {
+            showErrorToast({ title: 'Request rejected', description: rejectReason.message });
+          }
+
           void WcHandler.respond({
             topic: request.topic,
             response: {

@@ -21,7 +21,7 @@ const isEip155NamespaceKey = (namespaceKey: string) => namespaceKey === 'eip155'
 
 const isEip155ChainAgnostic = (caipChainId: string) => caipChainId === EIP155_CHAIN_AGNOSTIC_ID;
 
-const getRequiredChains = (namespaceKey: string, namespace: ProposalTypes.RequiredNamespace) => {
+const getChains = (namespaceKey: string, namespace: ProposalTypes.RequiredNamespace) => {
   if (namespace.chains && namespace.chains.length > 0) {
     return namespace.chains;
   }
@@ -96,14 +96,17 @@ export const getSessionProposalRejectReason = (proposal: WalletKitTypes.SessionP
     return getSdkError('UNSUPPORTED_ACCOUNTS');
   }
 
-  const { requiredNamespaces } = proposal.params;
+  const { requiredNamespaces, optionalNamespaces } = proposal.params;
+  let allRequiredChains: string[] = [];
+  let supportedOptionalChains: string[] = [];
 
   for (const [namespaceKey, namespace] of Object.entries(requiredNamespaces)) {
     if (!isEip155NamespaceKey(namespaceKey)) {
       return getSdkError('UNSUPPORTED_NAMESPACE_KEY');
     }
 
-    const requiredChains = resolveConcreteWcChains(getRequiredChains(namespaceKey, namespace));
+    const requiredChains = resolveConcreteWcChains(getChains(namespaceKey, namespace));
+    allRequiredChains = allRequiredChains.concat(requiredChains);
 
     if (requiredChains.some(chain => !SUPPORTED_WC_CHAINS.includes(chain))) {
       return getSdkError('UNSUPPORTED_CHAINS');
@@ -112,6 +115,21 @@ export const getSessionProposalRejectReason = (proposal: WalletKitTypes.SessionP
     if (namespace.methods.some(method => !isSupportedWcMethod(method))) {
       return getSdkError('UNSUPPORTED_METHODS');
     }
+  }
+
+  for (const [namespaceKey, namespace] of Object.entries(optionalNamespaces)) {
+    if (!isEip155NamespaceKey(namespaceKey)) {
+      continue;
+    }
+
+    const optionalChains = resolveConcreteWcChains(getChains(namespaceKey, namespace));
+    supportedOptionalChains = supportedOptionalChains.concat(
+      optionalChains.filter(chain => SUPPORTED_WC_CHAINS.includes(chain) && namespace.methods.some(isSupportedWcMethod))
+    );
+  }
+
+  if (allRequiredChains.length === 0 && supportedOptionalChains.length === 0) {
+    return getSdkError('UNSUPPORTED_CHAINS');
   }
 
   return undefined;
