@@ -21,6 +21,7 @@ export enum ScreensEnum {
   ManageAssets = 'ManageAssets',
   Activity = 'Activity',
   ScanQrCode = 'ScanQrCode',
+  SyncQrCode = 'SyncQrCode',
   Notifications = 'Notifications',
   NotificationsItem = 'NotificationsItem',
   Collection = 'Collection',
@@ -79,6 +80,7 @@ export type ScreensParamList = {
   [ScreensEnum.ManageAssets]: { collectibles: boolean };
   [ScreensEnum.Activity]: undefined;
   [ScreensEnum.ScanQrCode]: undefined;
+  [ScreensEnum.SyncQrCode]: undefined;
   [ScreensEnum.Notifications]: undefined;
   [ScreensEnum.NotificationsItem]: { id: number };
   [ScreensEnum.Buy]: undefined;
