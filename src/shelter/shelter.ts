@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { nanoid } from '@reduxjs/toolkit';
 import { InMemorySigner } from '@taquito/signer';
-import { generateMnemonic, mnemonicToSeedSync, validateMnemonic } from 'bip39';
+import { generateMnemonic, mnemonicToSeed, mnemonicToSeedSync, validateMnemonic } from 'bip39';
 import { range } from 'lodash-es';
 import {
   getAllGenericPasswordServices,
@@ -11,8 +11,8 @@ import {
   setGenericPassword,
   UserCredentials
 } from 'react-native-keychain';
-import { BehaviorSubject, firstValueFrom, forkJoin, from, Observable, of } from 'rxjs';
-import { catchError, map, mapTo, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, firstValueFrom, forkJoin, from, Observable, of, timer } from 'rxjs';
+import { catchError, concatMap, finalize, map, mapTo, switchMap, tap, toArray } from 'rxjs/operators';
 import { isAddress as isEvmAddress } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 
@@ -33,14 +33,15 @@ import {
 } from 'src/utils/keychain.utils';
 import {
   AccountCredentials,
+  evmHdKeyToAccountCredentials,
   getEvmDerivationPath,
   getPublicKeyAndHash$,
   getTezosDerivationPath,
-  mnemonicToEvmAccountCredentials,
   mnemonicToPrivateKey,
-  mnemonicToTezosAccountCredentials,
   privateKeyToEvmAccountCredentials,
   privateKeyToTezosAccountCredentials,
+  seedToEvmHdKey,
+  seedToTezosAccountCredentials,
   seedToTezosPrivateKey
 } from 'src/utils/keys.utils';
 import { throwError$ } from 'src/utils/rxjs.utils';
@@ -241,23 +242,27 @@ export class Shelter {
     );
 
   private static deriveAndSaveHdAccount$ = ({
-    seedPhrase,
+    seed,
+    evmHdKey,
+    saplingSeed,
     name,
     hdIndex,
     passwordHash
   }: {
-    seedPhrase: string;
+    seed: Buffer;
+    evmHdKey: ReturnType<typeof seedToEvmHdKey>;
+    saplingSeed: Buffer;
     name: string;
     hdIndex: number;
     passwordHash?: string;
   }) =>
     forkJoin([
-      from(mnemonicToTezosAccountCredentials(seedPhrase, hdIndex)),
-      from(Promise.resolve().then(() => mnemonicToEvmAccountCredentials(seedPhrase, hdIndex)))
+      from(seedToTezosAccountCredentials(seed, hdIndex)),
+      of(evmHdKeyToAccountCredentials(evmHdKey, hdIndex))
     ]).pipe(
       switchMap(([tezosCredentials, evmCredentials]) =>
         forkJoin([
-          InMemorySpendingKey.deriveSaskFromMnemonic(seedPhrase, getSaplingDerivationPath(hdIndex)),
+          InMemorySpendingKey.deriveSaskFromSeed(saplingSeed, getSaplingDerivationPath(hdIndex)),
           Shelter.saveAccountCredentials$(tezosCredentials, passwordHash),
           Shelter.saveAccountCredentials$(evmCredentials, passwordHash)
         ]).pipe(
@@ -322,6 +327,10 @@ export class Shelter {
       return throwError$('Mnemonic not validated');
     }
 
+    if (!Number.isSafeInteger(hdAccountsLength) || hdAccountsLength < 1) {
+      return throwError$('Invalid HD accounts length');
+    }
+
     return hashPassword$(password).pipe(
       switchMap(passwordHash =>
         forkJoin([Promise.resolve(passwordHash), Shelter.setShelterVersion(Shelter.targetShelterVersion)])
@@ -336,18 +345,33 @@ export class Shelter {
           },
           passwordHash
         ).pipe(
-          switchMap(() =>
-            forkJoin(
-              range(0, hdAccountsLength).map(hdAccountIndex =>
-                Shelter.deriveAndSaveHdAccount$({
-                  seedPhrase,
-                  name: `Account ${hdAccountIndex + 1}`,
-                  hdIndex: hdAccountIndex,
-                  passwordHash
-                })
-              )
-            )
-          )
+          switchMap(() => from(mnemonicToSeed(seedPhrase))),
+          switchMap(seed => {
+            const evmHdKey = seedToEvmHdKey(seed);
+            const saplingSeed = InMemorySpendingKey.getSaplingSeed(seed);
+
+            return from(range(0, hdAccountsLength)).pipe(
+              concatMap(hdAccountIndex =>
+                timer(0).pipe(
+                  switchMap(() =>
+                    Shelter.deriveAndSaveHdAccount$({
+                      seed,
+                      evmHdKey,
+                      saplingSeed,
+                      name: `Account ${hdAccountIndex + 1}`,
+                      hdIndex: hdAccountIndex,
+                      passwordHash
+                    })
+                  )
+                )
+              ),
+              toArray(),
+              finalize(() => {
+                seed.fill(0);
+                saplingSeed.fill(0);
+              })
+            );
+          })
         );
       }),
       catchError(error => {
@@ -461,27 +485,40 @@ export class Shelter {
   ): Observable<Account | undefined> =>
     Shelter.revealSeedPhrase$().pipe(
       switchMap(seedPhrase =>
-        forkJoin([
-          from(mnemonicToTezosAccountCredentials(seedPhrase, accountIndex)),
-          from(Promise.resolve().then(() => mnemonicToEvmAccountCredentials(seedPhrase, accountIndex)))
-        ]).pipe(
-          switchMap(([tezosCredentials, evmCredentials]) => {
-            const collisionAccounts = explicitAccountIndex
-              ? existingAccounts
-              : existingAccounts.filter(({ type }) => type !== AccountTypeEnum.HD);
-            const hasCollision =
-              hasSameChainAddress(collisionAccounts, TempleChainKind.Tezos, tezosCredentials.address) ||
-              hasSameChainAddress(collisionAccounts, TempleChainKind.EVM, evmCredentials.address);
+        from(mnemonicToSeed(seedPhrase)).pipe(
+          switchMap(seed => {
+            const evmHdKey = seedToEvmHdKey(seed);
+            const saplingSeed = InMemorySpendingKey.getSaplingSeed(seed);
 
-            if (hasCollision) {
-              return explicitAccountIndex ? throwError$('Account already exists') : of(undefined);
-            }
+            return forkJoin([
+              from(seedToTezosAccountCredentials(seed, accountIndex)),
+              of(evmHdKeyToAccountCredentials(evmHdKey, accountIndex))
+            ]).pipe(
+              switchMap(([tezosCredentials, evmCredentials]) => {
+                const collisionAccounts = explicitAccountIndex
+                  ? existingAccounts
+                  : existingAccounts.filter(({ type }) => type !== AccountTypeEnum.HD);
+                const hasCollision =
+                  hasSameChainAddress(collisionAccounts, TempleChainKind.Tezos, tezosCredentials.address) ||
+                  hasSameChainAddress(collisionAccounts, TempleChainKind.EVM, evmCredentials.address);
 
-            return Shelter.deriveAndSaveHdAccount$({
-              seedPhrase,
-              name,
-              hdIndex: accountIndex
-            });
+                if (hasCollision) {
+                  return explicitAccountIndex ? throwError$('Account already exists') : of(undefined);
+                }
+
+                return Shelter.deriveAndSaveHdAccount$({
+                  seed,
+                  evmHdKey,
+                  saplingSeed,
+                  name,
+                  hdIndex: accountIndex
+                });
+              }),
+              finalize(() => {
+                seed.fill(0);
+                saplingSeed.fill(0);
+              })
+            );
           }),
           catchError(error =>
             explicitAccountIndex ? throwError$(error instanceof Error ? error.message : String(error)) : of(undefined)

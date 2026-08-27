@@ -1,4 +1,4 @@
-import { forkJoin, of, Subject, switchMap, tap } from 'rxjs';
+import { catchError, concatMap, EMPTY, finalize, forkJoin, of, Subject, tap } from 'rxjs';
 
 import { dispatch } from 'src/store';
 import {
@@ -8,36 +8,46 @@ import {
   showLoaderAction
 } from 'src/store/settings/settings-actions';
 import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
-import { addAccountAction, setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
+import { addAccountsAction, setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
 
 import { ImportWalletParams } from '../interfaces/import-wallet-params.interface';
 import { Shelter } from '../shelter';
 
-export const importWalletSubscription = (importWallet$: Subject<ImportWalletParams>) =>
+const IMPORT_WALLET_ERROR_MESSAGE = 'Failed to import wallet';
+
+export interface ImportWalletRequest {
+  params: ImportWalletParams;
+  resolve: EmptyFn;
+  reject: (error: Error) => void;
+}
+
+export const importWalletSubscription = (importWallet$: Subject<ImportWalletRequest>) =>
   importWallet$
     .pipe(
-      tap(() => dispatch(showLoaderAction())),
-      switchMap(({ seedPhrase, password, hdAccountsLength, useBiometry }) =>
-        forkJoin([
+      concatMap(({ params: { seedPhrase, password, hdAccountsLength, useBiometry }, resolve, reject }) => {
+        dispatch(showLoaderAction());
+
+        return forkJoin([
           Shelter.importWallet$(seedPhrase, password, hdAccountsLength),
           useBiometry === true ? Shelter.enableBiometryPassword$(password) : of(false)
-        ])
-      ),
-      tap(() => dispatch(hideLoaderAction()))
+        ]).pipe(
+          tap(([importedAccounts, isPasswordSaved]) => {
+            if (!importedAccounts?.length) {
+              throw new Error(IMPORT_WALLET_ERROR_MESSAGE);
+            }
+
+            dispatch(addAccountsAction(importedAccounts));
+            dispatch(setSelectedAccountIdAction(importedAccounts[0].id));
+            dispatch(loadWhitelistAction.submit());
+
+            isPasswordSaved !== false && dispatch(setIsBiometricsEnabled(true));
+
+            dispatch(setKoloForceLogoutOnNextOpenAction(true));
+          }),
+          tap({ next: resolve, error: reject }),
+          catchError(() => EMPTY),
+          finalize(() => dispatch(hideLoaderAction()))
+        );
+      })
     )
-    .subscribe(([importedAccounts, isPasswordSaved]) => {
-      if (importedAccounts !== undefined) {
-        const firstAccount = importedAccounts[0];
-        dispatch(setSelectedAccountIdAction(firstAccount.id));
-
-        for (const account of importedAccounts) {
-          dispatch(addAccountAction(account));
-        }
-
-        dispatch(loadWhitelistAction.submit());
-
-        isPasswordSaved !== false && dispatch(setIsBiometricsEnabled(true));
-
-        dispatch(setKoloForceLogoutOnNextOpenAction(true));
-      }
-    });
+    .subscribe();

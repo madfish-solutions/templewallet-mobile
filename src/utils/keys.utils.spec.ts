@@ -1,7 +1,10 @@
+import { mnemonicToSeedSync } from 'bip39';
+
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { mockAccountCredentials } from 'src/mocks/account-credentials.mock';
 
 import {
+  evmHdKeyToAccountCredentials,
   generateSeed,
   getEvmDerivationPath,
   getPublicKeyAndHash$,
@@ -13,6 +16,8 @@ import {
   mnemonicToPrivateKey,
   mnemonicToTezosAccountCredentials,
   privateKeyToEvmAccountCredentials,
+  seedToEvmHdKey,
+  seedToTezosAccountCredentials,
   seedToTezosPrivateKey
 } from './keys.utils';
 import { rxJsTestingHelper } from './testing.utils';
@@ -73,8 +78,29 @@ it('mnemonicToTezosAccountCreds should preserve Tezos derivation output', async 
   });
 });
 
+it('seedToTezosAccountCredentials should preserve Tezos derivation output', async () => {
+  const seed = mnemonicToSeedSync(mockAccountCredentials.seedPhrase);
+
+  await expect(seedToTezosAccountCredentials(seed, 0)).resolves.toEqual({
+    address: mockAccountCredentials.publicKeyHash,
+    publicKey: mockAccountCredentials.publicKey,
+    privateKey: 'edsk42B5mxHfZWnnmEFAEHcZvMwD7CH673F3s2NQkCQ5n6SXD8Vxqp'
+  });
+});
+
 it('mnemonicToEvmAccountCreds should return EVM account credentials for index 0', () => {
   expect(mnemonicToEvmAccountCredentials(mockAccountCredentials.seedPhrase, 0)).toEqual({
+    address: mockEvmAddressIndexZero,
+    publicKey:
+      '0x0499d1bccb7edd00944e5c0aec8375dc99faae3bbf1680b43facf89ad68f228592fd7118af99ae94d632b2a96593b8440253d8f4933c02b8725a97daa57d9a1aa9',
+    privateKey: mockEvmPrivateKeyIndexZero
+  });
+});
+
+it('evmHdKeyToAccountCredentials should preserve EVM derivation output', () => {
+  const seed = mnemonicToSeedSync(mockAccountCredentials.seedPhrase);
+
+  expect(evmHdKeyToAccountCredentials(seedToEvmHdKey(seed), 0)).toEqual({
     address: mockEvmAddressIndexZero,
     publicKey:
       '0x0499d1bccb7edd00944e5c0aec8375dc99faae3bbf1680b43facf89ad68f228592fd7118af99ae94d632b2a96593b8440253d8f4933c02b8725a97daa57d9a1aa9',

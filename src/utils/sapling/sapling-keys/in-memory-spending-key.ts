@@ -39,10 +39,21 @@ export class InMemorySpendingKey {
   static async deriveSaskFromMnemonic(mnemonic: string, derivationPath = 'm/'): Promise<string> {
     const fullSeed = await bip39.mnemonicToSeed(mnemonic);
 
-    const first32: Buffer = fullSeed.slice(0, 32);
-    const second32: Buffer = fullSeed.slice(32);
-    const seed = Buffer.from(first32.map((byte, index) => byte ^ second32[index]));
+    return InMemorySpendingKey.deriveSaskFromFullSeed(fullSeed, derivationPath);
+  }
 
+  static deriveSaskFromFullSeed(fullSeed: Buffer, derivationPath = 'm/'): Promise<string> {
+    return InMemorySpendingKey.deriveSaskFromSeed(InMemorySpendingKey.getSaplingSeed(fullSeed), derivationPath);
+  }
+
+  static getSaplingSeed(fullSeed: Buffer): Buffer {
+    const first32 = fullSeed.subarray(0, 32);
+    const second32 = fullSeed.subarray(32);
+
+    return Buffer.from(first32.map((byte, index) => byte ^ second32[index]));
+  }
+
+  static async deriveSaskFromSeed(seed: Buffer, derivationPath = 'm/'): Promise<string> {
     const spendingKeyArr = bufToUint8Array(
       Buffer.from(await getExtendedSpendingKey(toBase64(seed), derivationPath), 'base64')
     );

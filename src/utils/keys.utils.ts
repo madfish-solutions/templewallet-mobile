@@ -62,7 +62,8 @@ const evmPrivateKeyToHex = (privateKey: Uint8Array | nullish) => {
 
 export const getTezosDerivationPath = (accountIndex: number) => `m/44'/${TEZOS_BIP44_COINTYPE}'/${accountIndex}'/0'`;
 
-export const getEvmDerivationPath = (accountIndex: number) => `m/44'/${EVM_BIP44_COINTYPE}'/0'/0/${accountIndex}`;
+export const getEvmDerivationPath = (accountIndex: number): `m/44'/${typeof EVM_BIP44_COINTYPE}'/${string}` =>
+  `m/44'/${EVM_BIP44_COINTYPE}'/0'/0/${accountIndex}`;
 
 export const isEvmDerivationPath = (path: string): path is `m/44'/${typeof EVM_BIP44_COINTYPE}'/${string}` =>
   path.startsWith(`m/44'/${EVM_BIP44_COINTYPE}'`);
@@ -106,6 +107,11 @@ export const mnemonicToTezosAccountCredentials = (
   bip39Passphrase?: string
 ): Promise<TezosAccountCredentials> => {
   const seed = mnemonicToSeedSync(mnemonic, bip39Passphrase);
+
+  return seedToTezosAccountCredentials(seed, hdIndex);
+};
+
+export const seedToTezosAccountCredentials = (seed: Buffer, hdIndex: number): Promise<TezosAccountCredentials> => {
   const privateKey = seedToTezosPrivateKey(seed, getTezosDerivationPath(hdIndex));
 
   return privateKeyToTezosAccountCredentials(privateKey);
@@ -113,6 +119,18 @@ export const mnemonicToTezosAccountCredentials = (
 
 export const mnemonicToEvmAccountCredentials = (mnemonic: string, hdIndex: number): EvmAccountCredentials => {
   const account = mnemonicToAccount(mnemonic, { addressIndex: hdIndex });
+
+  return {
+    address: account.address,
+    publicKey: account.publicKey,
+    privateKey: evmPrivateKeyToHex(account.getHdKey().privateKey)
+  };
+};
+
+export const seedToEvmHdKey = (seed: Buffer): HDKey => HDKey.fromMasterSeed(new Uint8Array(seed));
+
+export const evmHdKeyToAccountCredentials = (hdKey: HDKey, hdIndex: number): EvmAccountCredentials => {
+  const account = hdKeyToAccount(hdKey, { path: getEvmDerivationPath(hdIndex) });
 
   return {
     address: account.address,

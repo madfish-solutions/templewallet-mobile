@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect, useMemo, useState } from 'react';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -18,6 +19,7 @@ import { isString } from 'src/utils/is-string';
 import CustomMarker from './custom-marker.svg';
 import { EmptyQrCode } from './empty-qr-code';
 import { useScanQrCodeStyles } from './scan-qr-code.styles';
+import { useSingleQrCodeRead } from './use-single-qr-code-read.hook';
 
 const positionsPriority: CameraPosition[] = ['back', 'external', 'front'];
 
@@ -47,6 +49,8 @@ export const QrCodeScanner = ({ onQrCodeRead }: Props) => {
 };
 
 const CameraView = ({ onQrCodeRead }: Props) => {
+  const isFocused = useIsFocused();
+  const { handleQrCodeRead, isScanEnabled } = useSingleQrCodeRead(onQrCodeRead);
   const styles = useScanQrCodeStyles();
   const { top: topInset } = useSafeAreaInsets();
   const headerHeight = useSuggestedHeaderHeight(false);
@@ -75,14 +79,19 @@ const CameraView = ({ onQrCodeRead }: Props) => {
       )?.value;
 
       if (data) {
-        onQrCodeRead(data);
+        handleQrCodeRead(data);
       }
     }
   });
 
   return (
     <>
-      <Camera style={styles.camera} codeScanner={codeScanner} device={cameraDevice} isActive />
+      <Camera
+        style={styles.camera}
+        codeScanner={codeScanner}
+        device={cameraDevice}
+        isActive={isFocused && isScanEnabled}
+      />
       <View style={[styles.markerContainer, { top: topInset }]}>
         <CustomMarker width={formatSize(223)} height={formatSize(223)} />
       </View>

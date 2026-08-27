@@ -27,7 +27,7 @@ export const AfterSyncQRScan = memo(() => {
   const { payload } = useModalParams<ModalsEnum.ConfirmSync>();
   usePageAnalytic(ModalsEnum.ConfirmSync);
 
-  const handleConfirmSyncFormSubmit = ({
+  const handleConfirmSyncFormSubmit = async ({
     usePrevPassword,
     password,
     analytics,
@@ -38,30 +38,41 @@ export const AfterSyncQRScan = memo(() => {
     dispatch(setIsAnalyticsEnabled(analytics));
     dispatch(showLoaderAction());
 
-    parseSyncPayload(payload, password)
-      .then(res => {
-        setUseBiometry(useBiometryValue === true);
-        setSeedPhrase(res.mnemonic);
-        setHdAccountsLength(res.hdAccountsLength);
+    let syncPayload: Awaited<ReturnType<typeof parseSyncPayload>>;
 
-        if (usePrevPassword === true) {
-          dispatch(enterPassword.success());
-          importWallet({
-            seedPhrase: res.mnemonic,
-            password,
-            useBiometry: useBiometryValue,
-            hdAccountsLength: res.hdAccountsLength
-          });
-        } else {
-          setInnerScreenIndex(1);
-        }
-      })
-      .catch(e => {
-        dispatch(enterPassword.fail());
+    try {
+      syncPayload = await parseSyncPayload(payload, password);
+    } catch (error) {
+      dispatch(enterPassword.fail());
+      dispatch(hideLoaderAction());
+      showErrorToast({ description: error instanceof Error ? error.message : 'Failed to parse sync payload' });
 
-        return showErrorToast({ description: e.message });
-      })
-      .finally(() => void dispatch(hideLoaderAction()));
+      return;
+    }
+
+    setUseBiometry(useBiometryValue === true);
+    setSeedPhrase(syncPayload.mnemonic);
+    setHdAccountsLength(syncPayload.hdAccountsLength);
+
+    if (usePrevPassword !== true) {
+      setInnerScreenIndex(1);
+      dispatch(hideLoaderAction());
+
+      return;
+    }
+
+    dispatch(enterPassword.success());
+
+    try {
+      await importWallet({
+        seedPhrase: syncPayload.mnemonic,
+        password,
+        useBiometry: useBiometryValue,
+        hdAccountsLength: syncPayload.hdAccountsLength
+      });
+    } catch (error) {
+      showErrorToast({ description: error instanceof Error ? error.message : 'Failed to import wallet' });
+    }
   };
 
   return (

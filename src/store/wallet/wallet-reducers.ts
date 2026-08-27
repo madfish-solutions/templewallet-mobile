@@ -8,6 +8,7 @@ import { loadWhitelistAction } from '../tokens-metadata/tokens-metadata-actions'
 
 import {
   addAccountAction,
+  addAccountsAction,
   addTokenAction,
   loadTezosBalanceActions,
   removeTokenAction,
@@ -25,6 +26,14 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
   builder.addCase(addAccountAction, (state, { payload: account }) => {
     state.accounts.push(account);
     state.accountsStateRecord[account.id] = initialAccountState;
+  });
+
+  builder.addCase(addAccountsAction, (state, { payload: accounts }) => {
+    state.accounts.push(...accounts);
+
+    for (const account of accounts) {
+      state.accountsStateRecord[account.id] = initialAccountState;
+    }
   });
 
   builder.addCase(updateAccountAction, (state, { payload: updatedAccount }) => {

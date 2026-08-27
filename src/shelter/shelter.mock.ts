@@ -30,7 +30,7 @@ export const mockShelter = {
 
     return of(isCorrectPassword);
   }),
-  importWallet$: jest.fn(() => of([mockHdAccount])),
+  importWallet$: jest.fn<Observable<Account[] | undefined>, [string, string, number?]>(() => of([mockHdAccount])),
   enableBiometryPassword$: jest.fn((password: string) => of(password === mockCorrectPassword)),
   createHdAccount$: jest.fn(() => of(mockNewHdAccount)),
   saveSaplingSpendingKey$: jest.fn(() => of(undefined)),

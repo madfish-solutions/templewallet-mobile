@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { EMPTY, Subject } from 'rxjs';
 
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -20,7 +20,7 @@ import {
 } from './utils/create-account-import-subscriptions.util';
 import { createHdAccountSubscription } from './utils/create-hd-account-subscription.util';
 import { enableBiometryPasswordSubscription } from './utils/enable-biometry-password-subscription.util';
-import { importWalletSubscription } from './utils/import-wallet-subscription.util';
+import { ImportWalletRequest, importWalletSubscription } from './utils/import-wallet-subscription.util';
 import { revealSecretsSubscription } from './utils/reveal-secrets-subscription.util';
 
 export const useShelter = () => {
@@ -28,7 +28,8 @@ export const useShelter = () => {
   const { dispatch: navigationDispatch } = useNavigation();
   const { trackErrorEvent } = useAnalytics();
 
-  const importWallet$ = useMemo(() => new Subject<ImportWalletParams>(), []);
+  const importWallet$ = useMemo(() => new Subject<ImportWalletRequest>(), []);
+  const pendingImportRef = useRef<Promise<void> | undefined>(undefined);
   const createHdAccount$ = useMemo(() => new Subject(), []);
   const revealSecretKey$ = useMemo(() => new Subject<RevealSecretKeyParams>(), []);
   const revealSeedPhrase$ = useMemo(() => new Subject<RevealSeedPhraseParams>(), []);
@@ -77,7 +78,23 @@ export const useShelter = () => {
     trackErrorEvent
   ]);
 
-  const importWallet = useCallback((params: ImportWalletParams) => importWallet$.next(params), [importWallet$]);
+  const importWallet = useCallback(
+    (params: ImportWalletParams) => {
+      if (pendingImportRef.current) {
+        return pendingImportRef.current;
+      }
+
+      const promise = new Promise<void>((resolve, reject) => importWallet$.next({ params, resolve, reject }));
+      pendingImportRef.current = promise;
+      promise.then(
+        () => (pendingImportRef.current = undefined),
+        () => (pendingImportRef.current = undefined)
+      );
+
+      return promise;
+    },
+    [importWallet$]
+  );
   const createHdAccount = useCallback(() => createHdAccount$.next(EMPTY), [createHdAccount$]);
   const revealSecretKey = useCallback(
     (params: RevealSecretKeyParams) => revealSecretKey$.next(params),

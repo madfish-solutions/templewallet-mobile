@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { useSelector } from 'react-redux';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { mockEvmImportedAccount, mockHdAccount, mockNewHdAccount } from 'src/interfaces/account.interface.mock';
@@ -12,9 +12,9 @@ import { StacksEnum } from 'src/navigator/enums/stacks.enum';
 import { dispatch as storeDispatch } from 'src/store';
 import { navigateAction } from 'src/store/root-state.actions';
 import { mockRootState } from 'src/store/root-state.mock';
-import { setIsBiometricsEnabled } from 'src/store/settings/settings-actions';
+import { hideLoaderAction, setIsBiometricsEnabled, showLoaderAction } from 'src/store/settings/settings-actions';
 import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
-import { addAccountAction, setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
+import { addAccountAction, addAccountsAction, setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
 import { mockShowErrorToast, mockShowSuccessToast, mockShowWarningToast } from 'src/toast/toast.utils.mock';
 import * as tokenBalanceUtils from 'src/utils/token-balance.utils';
 
@@ -56,10 +56,13 @@ describe('useShelter', () => {
     mockShowWarningToast.mockClear();
   });
 
-  it('should import wallet', () => {
+  it('should import wallet', async () => {
     const { result } = renderHook(() => useShelter());
 
-    result.current.importWallet({ seedPhrase: mockAccountCredentials.seedPhrase, password: mockCorrectPassword });
+    await result.current.importWallet({
+      seedPhrase: mockAccountCredentials.seedPhrase,
+      password: mockCorrectPassword
+    });
 
     expect(mockShelter.importWallet$).toHaveBeenCalledWith(
       mockAccountCredentials.seedPhrase,
@@ -68,8 +71,43 @@ describe('useShelter', () => {
     );
     expect(mockShelter.enableBiometryPassword$).not.toHaveBeenCalled();
 
+    expect(mockStoreDispatch).toHaveBeenCalledWith(addAccountsAction([mockHdAccount]));
     expect(mockStoreDispatch).toHaveBeenCalledWith(setSelectedAccountIdAction(mockHdAccount.id));
-    expect(mockStoreDispatch).toHaveBeenCalledWith(addAccountAction(mockHdAccount));
+    expect(mockStoreDispatch).toHaveBeenCalledWith(showLoaderAction());
+    expect(mockStoreDispatch).toHaveBeenCalledWith(hideLoaderAction());
+    expect(mockStoreDispatch).not.toHaveBeenCalledWith(addAccountAction(mockHdAccount));
+  });
+
+  it('should reject when wallet import fails', async () => {
+    mockShelter.importWallet$.mockReturnValueOnce(of(undefined));
+    const { result } = renderHook(() => useShelter());
+
+    await expect(
+      result.current.importWallet({
+        seedPhrase: mockAccountCredentials.seedPhrase,
+        password: mockCorrectPassword
+      })
+    ).rejects.toThrow('Failed to import wallet');
+
+    expect(mockStoreDispatch).toHaveBeenCalledWith(hideLoaderAction());
+    expect(mockStoreDispatch).not.toHaveBeenCalledWith(addAccountsAction(expect.anything()));
+  });
+
+  it('should reuse the pending wallet import', async () => {
+    const importResult$ = new Subject<(typeof mockHdAccount)[]>();
+    mockShelter.importWallet$.mockReturnValueOnce(importResult$);
+    const { result } = renderHook(() => useShelter());
+    const params = { seedPhrase: mockAccountCredentials.seedPhrase, password: mockCorrectPassword };
+
+    const firstImport = result.current.importWallet(params);
+    const secondImport = result.current.importWallet(params);
+
+    expect(secondImport).toBe(firstImport);
+    expect(mockShelter.importWallet$).toHaveBeenCalledTimes(1);
+
+    importResult$.next([mockHdAccount]);
+    importResult$.complete();
+    await firstImport;
   });
 
   it('should import wallet and enable biometry password', () => {
