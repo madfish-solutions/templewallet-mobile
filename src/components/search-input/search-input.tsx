@@ -1,5 +1,5 @@
 import { debounce } from 'lodash-es';
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleProp, TextInputProps, View, ViewStyle } from 'react-native';
 
 import { emptyFn } from 'src/config/general';
@@ -47,6 +47,9 @@ export const SearchInput: FC<Props> = ({
       }),
     [testID, trackEvent, onChangeText]
   );
+
+  useEffect(() => () => debouncedOnChange.cancel(), [debouncedOnChange]);
+
   const handleSearchQueryChange = useCallback(
     (newValue: string) => {
       setLocalValue(newValue);
