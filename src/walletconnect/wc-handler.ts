@@ -109,10 +109,11 @@ export class WcHandler {
   };
 
   public static readonly disconnectAllPairings = () => {
-    assert(WcHandler._walletKit, WALLET_KIT_ERROR);
-    const pairings = WcHandler._walletKit.core.pairing.getPairings();
+    if (isDefined(WcHandler._walletKit)) {
+      const pairings = WcHandler._walletKit.core.pairing.getPairings();
 
-    return Promise.all(pairings.map((pairing: PairingTypes.Struct) => WcHandler.disconnectPairing(pairing.topic)));
+      return Promise.all(pairings.map((pairing: PairingTypes.Struct) => WcHandler.disconnectPairing(pairing.topic)));
+    }
   };
 }
 
