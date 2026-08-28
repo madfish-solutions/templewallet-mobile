@@ -174,6 +174,17 @@ describe('Shelter', () => {
       });
     });
 
+    it('should import only ten HD accounts when the payload contains more', done => {
+      Shelter.importWallet$(mockAccountCredentials.seedPhrase, mockCorrectPassword, 11).subscribe({
+        next: importResult => {
+          expect(importResult?.accounts).toHaveLength(10);
+          expect(importResult?.saplingCredentials).toHaveLength(10);
+          done();
+        },
+        error: done
+      });
+    });
+
     it('should create HD account', done => {
       const mockName = 'mockName';
 

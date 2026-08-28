@@ -1,7 +1,13 @@
 import { SyncPayloadInterface } from 'src/interfaces/sync.interface';
 import { mockReactNativeThemis } from 'src/mocks/react-native-themis.mock';
 
-import { FAILED_TO_DECRYPT_ERROR, isSyncPayload, parseSyncPayload, TEMPLE_SYNC_PREFIX } from './sync.utils';
+import {
+  FAILED_TO_DECRYPT_ERROR,
+  INVALID_SYNC_ACCOUNTS_COUNT_ERROR,
+  isSyncPayload,
+  parseSyncPayload,
+  TEMPLE_SYNC_PREFIX
+} from './sync.utils';
 
 const prefixB64 = Buffer.from(TEMPLE_SYNC_PREFIX).toString('base64');
 const pseudoValidPayload = [prefixB64, Buffer.from(new Uint8Array(49)).toString('base64')].join('');
@@ -51,5 +57,35 @@ describe('parseSyncPayload', () => {
     );
 
     await expect(parseSyncPayload(validPayload, validPassword)).resolves.toEqual(validParsed);
+  });
+
+  it('should parse a payload with ten accounts', async () => {
+    mockReactNativeThemis.secureCellSealWithPassphraseDecrypt64.mockResolvedValueOnce(
+      JSON.stringify([validParsed.mnemonic, 10])
+    );
+
+    await expect(parseSyncPayload(validPayload, validPassword)).resolves.toEqual({
+      ...validParsed,
+      hdAccountsLength: 10
+    });
+  });
+
+  it('should limit a payload with more than ten accounts', async () => {
+    mockReactNativeThemis.secureCellSealWithPassphraseDecrypt64.mockResolvedValueOnce(
+      JSON.stringify([validParsed.mnemonic, 11])
+    );
+
+    await expect(parseSyncPayload(validPayload, validPassword)).resolves.toEqual({
+      ...validParsed,
+      hdAccountsLength: 10
+    });
+  });
+
+  it('should reject a payload with an invalid accounts count', async () => {
+    mockReactNativeThemis.secureCellSealWithPassphraseDecrypt64.mockResolvedValueOnce(
+      JSON.stringify([validParsed.mnemonic, 0])
+    );
+
+    await expect(parseSyncPayload(validPayload, validPassword)).rejects.toThrowError(INVALID_SYNC_ACCOUNTS_COUNT_ERROR);
   });
 });
