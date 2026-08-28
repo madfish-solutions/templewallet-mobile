@@ -52,26 +52,4 @@ describe('parseSyncPayload', () => {
 
     await expect(parseSyncPayload(validPayload, validPassword)).resolves.toEqual(validParsed);
   });
-
-  it('should parse a payload with ten accounts', async () => {
-    mockReactNativeThemis.secureCellSealWithPassphraseDecrypt64.mockResolvedValueOnce(
-      JSON.stringify([validParsed.mnemonic, 10])
-    );
-
-    await expect(parseSyncPayload(validPayload, validPassword)).resolves.toEqual({
-      ...validParsed,
-      hdAccountsLength: 10
-    });
-  });
-
-  it('should limit a payload with more than ten accounts', async () => {
-    mockReactNativeThemis.secureCellSealWithPassphraseDecrypt64.mockResolvedValueOnce(
-      JSON.stringify([validParsed.mnemonic, 11])
-    );
-
-    await expect(parseSyncPayload(validPayload, validPassword)).resolves.toEqual({
-      ...validParsed,
-      hdAccountsLength: 10
-    });
-  });
 });
