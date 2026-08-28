@@ -161,9 +161,9 @@ export const HeaderCardActionButtons = memo<Props>(
           testID={WalletSelectors.receiveButton}
         />
 
-        {!LIMIT_FIN_FEATURES && (
+        {isTezosKind && !LIMIT_FIN_FEATURES && (
           <ButtonMediumV2
-            disabled={!isTezosKind || !canUseTezos}
+            disabled={!canUseTezos}
             title="Buy"
             iconName={IconNameV2Enum.Cart}
             onPress={() => navigateToScreen({ screen: ScreensEnum.Buy })}
@@ -173,18 +173,20 @@ export const HeaderCardActionButtons = memo<Props>(
           />
         )}
 
-        <ButtonMediumV2
-          disabled={!isTezosKind || !canUseTezos || !isTezosMainnet}
-          title="Earn"
-          iconName={IconNameV2Enum.Dollar}
-          onPress={() => navigateToScreen({ screen: ScreensEnum.Earn })}
-          styleConfigOverrides={earnButtonStylesOverrides}
-          style={styles.buttonContainer}
-          testID={WalletSelectors.earnButton}
-          testIDProperties={{
-            isZeroBalance: totalBalance.isLessThanOrEqualTo(0)
-          }}
-        />
+        {isTezosKind && (
+          <ButtonMediumV2
+            disabled={!canUseTezos || !isTezosMainnet}
+            title="Earn"
+            iconName={IconNameV2Enum.Dollar}
+            onPress={() => navigateToScreen({ screen: ScreensEnum.Earn })}
+            styleConfigOverrides={earnButtonStylesOverrides}
+            style={styles.buttonContainer}
+            testID={WalletSelectors.earnButton}
+            testIDProperties={{
+              isZeroBalance: totalBalance.isLessThanOrEqualTo(0)
+            }}
+          />
+        )}
 
         <ButtonMediumV2
           disabled={disabledSendButton}
