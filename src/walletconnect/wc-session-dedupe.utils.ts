@@ -21,7 +21,7 @@ export const disconnectDuplicateWcSessionsForPeer = async (
   accountAddress: HexString
 ) => {
   const identityKey = getWcDappIdentityKey(getWcPeerOrigin(peerMetadata), accountAddress);
-  const sessions = Object.values(await WcHandler.getActiveSessions());
+  const sessions = Object.values(WcHandler.getActiveSessions());
   const duplicates = sessions.filter(session => getWcSessionDappIdentityKey(session) === identityKey);
 
   await disconnectSessionsQuietly(duplicates);
@@ -31,7 +31,7 @@ export const disconnectDuplicateWcSessionsForPeer = async (
  * Keeps one session per dApp identity and disconnects older duplicates left behind by reconnects.
  */
 export const cleanupDuplicateWcSessions = async (): Promise<SessionTypes.Struct[]> => {
-  const sessions = Object.values(await WcHandler.getActiveSessions());
+  const sessions = Object.values(WcHandler.getActiveSessions());
   const { kept, stale } = partitionUniqueWcSessions(sessions);
 
   if (stale.length > 0) {

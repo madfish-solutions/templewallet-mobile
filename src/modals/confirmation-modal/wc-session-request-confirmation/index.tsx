@@ -1,6 +1,5 @@
-import { WalletKitTypes } from '@reown/walletkit';
 import { getSdkError } from '@walletconnect/utils';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo } from 'react';
 import { Text } from 'react-native';
 import { SendTransactionRequest } from 'viem';
 
@@ -56,7 +55,7 @@ export const WcSessionRequestConfirmation: FC<Props> = ({ request }) => {
   const { goBack } = useNavigation();
   const accounts = useAllAccounts();
   const selectedAccount = useAccount();
-  const [peerMetadata, setPeerMetadata] = useState<WalletKitTypes.Metadata>();
+  const peerMetadata = useMemo(() => WcHandler.getActiveSession(request.topic)?.peer.metadata, [request.topic]);
 
   const { confirmRequest, isLoading, isConfirmed } = useRequestConfirmation(approveWcSessionRequest);
 
@@ -105,12 +104,6 @@ export const WcSessionRequestConfirmation: FC<Props> = ({ request }) => {
       ),
     [requestContent, request.params.chainId]
   );
-
-  useEffect(() => {
-    void WcHandler.getActiveSessions().then(sessions => {
-      setPeerMetadata(sessions[request.topic]?.peer.metadata);
-    });
-  }, [request.topic]);
 
   useEffect(
     () => () => {

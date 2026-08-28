@@ -1,9 +1,10 @@
 import { WalletKitTypes } from '@reown/walletkit';
+import { SessionTypes } from '@walletconnect/types';
 import { getSdkError } from '@walletconnect/utils';
-import { isAddressEqual } from 'viem';
+import { uniq } from 'lodash-es';
+import { Address, isAddressEqual } from 'viem';
 
 import { Account } from 'src/interfaces/account.interfaces';
-import { WalletConnectDAppConnection } from 'src/interfaces/dapp-connection.interface';
 import {
   isWcAccountsMethod,
   isWcModernTypedDataMethod,
@@ -13,6 +14,8 @@ import {
   isWcWatchAssetMethod,
   StrictWcSessionRequest
 } from 'src/types/strict-wc-session-request';
+import { getAccountAddressForEvm, hasEvmAddress } from 'src/utils/account.utils';
+import { parseEvmCaipAccountId, toEvmCaipAccountId } from 'src/utils/evm/caip.utils';
 import {
   validateOldSignTypedDataParams,
   validatePersonalSignParams,
@@ -20,11 +23,9 @@ import {
   validateSignTypedDataParams,
   validateWatchAssetParams
 } from 'src/utils/evm/validation-schemas';
-import { isDefined } from 'src/utils/is-defined';
 
 import { getWcRequestAddress } from './evm-request-method.utils';
 import { isSupportedWcChain } from './validate-session-proposal';
-import { resolveWcSessionRequestApprover } from './wc-account.utils';
 
 const makeInvalidRequestError = (message: string) => ({ code: -32602, message });
 
@@ -66,10 +67,11 @@ const toStrictWcSessionRequest = (request: WalletKitTypes.SessionRequest): Stric
 
 export const validateSessionRequest = (
   request: WalletKitTypes.SessionRequest,
-  wcSession: WalletConnectDAppConnection | undefined,
-  accounts: Account[],
-  selectedAccount?: Account
+  wcSession: SessionTypes.Struct | undefined,
+  accounts: Account[]
 ): StrictWcSessionRequest => {
+  const evmAccounts = accounts.filter(hasEvmAddress);
+
   if (!isSupportedWcChain(request.params.chainId)) {
     throw getSdkError('UNSUPPORTED_CHAINS');
   }
@@ -82,21 +84,25 @@ export const validateSessionRequest = (
     throw makeInvalidRequestError('Please approve the connection first');
   }
 
-  if (!wcSession.chains.includes(request.params.chainId)) {
+  const { accounts: sessionCaipAccounts, chains: sessionChains = [] } = wcSession.namespaces.eip155;
+  const sessionAddresses = uniq(sessionCaipAccounts.map(caipAccount => parseEvmCaipAccountId(caipAccount)![1]));
+
+  if (
+    requestAddress &&
+    !sessionCaipAccounts.includes(toEvmCaipAccountId(request.params.chainId, requestAddress as Address))
+  ) {
+    throw makeInvalidRequestError('Trying to use a different account-chain pair');
+  }
+
+  if (!sessionChains.includes(request.params.chainId)) {
     throw makeInvalidRequestError('Trying to use a different chain');
   }
 
-  if (requestAddress && !isAddressEqual(wcSession.accountAddress! as HexString, requestAddress as HexString)) {
-    throw makeInvalidRequestError('Trying to use a different account');
-  }
-
-  const approver = resolveWcSessionRequestApprover(
-    accounts,
-    selectedAccount,
-    getWcRequestAddress(validatedRequest.params.request)
+  const isKnownAccount = evmAccounts.some(account =>
+    sessionAddresses.some(address => isAddressEqual(getAccountAddressForEvm(account), address))
   );
 
-  if (!isDefined(approver)) {
+  if (!isKnownAccount) {
     throw getSdkError('UNSUPPORTED_ACCOUNTS');
   }
 

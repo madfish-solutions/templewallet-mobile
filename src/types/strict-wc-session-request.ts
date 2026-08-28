@@ -119,7 +119,7 @@ export const isWcSendTransactionRequestContent = (
 
 export interface WcWatchAssetRequestContent extends StrictWcSessionRequestContentBase {
   method: EvmWcWatchAssetMethod;
-  params: [ValidatedWatchAssetParams];
+  params: ValidatedWatchAssetParams;
 }
 
 export const isWcWatchAssetRequestContent = (

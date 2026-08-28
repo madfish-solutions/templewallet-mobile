@@ -1,15 +1,12 @@
 import { useEffect } from 'react';
 import { EmitterSubscription, Linking } from 'react-native';
 
-import { DAppConnectionProtocol } from '../enums/dapp-connection-protocol.enum';
 import { ConfirmationTypeEnum } from '../interfaces/confirm-payload/confirmation-type.enum';
-import { WalletConnectDAppConnection } from '../interfaces/dapp-connection.interface';
 import { ModalsEnum } from '../navigator/enums/modals.enum';
 import { useNavigateToModal, useNavigation } from '../navigator/hooks/use-navigation.hook';
 import { dispatch, store } from '../store';
 import { loadConnectionsActions } from '../store/d-apps/d-apps-actions';
 import { showErrorToast } from '../toast/error-toast.utils';
-import { getSelectedAccountFromWallet } from '../utils/get-selected-account-from-wallet.util';
 import { isDefined } from '../utils/is-defined';
 import { isString } from '../utils/is-string';
 import { getUrlQueryParams } from '../utils/url.utils';
@@ -81,17 +78,8 @@ export const useWcHandler = () => {
         const { wallet } = store.getState();
 
         try {
-          const connections = store.getState().dApps.connections.data;
-          const wcSession = connections.find(
-            (connection): connection is WalletConnectDAppConnection =>
-              connection.protocol === DAppConnectionProtocol.WalletConnect && connection.topic === request.topic
-          );
-          const validatedRequest = validateSessionRequest(
-            request,
-            wcSession,
-            wallet.accounts,
-            getSelectedAccountFromWallet(wallet)
-          );
+          const wcSession = WcHandler.getActiveSession(request.topic);
+          const validatedRequest = validateSessionRequest(request, wcSession, wallet.accounts);
 
           navigateToModal(ModalsEnum.Confirmation, {
             type: ConfirmationTypeEnum.WcSessionRequest,

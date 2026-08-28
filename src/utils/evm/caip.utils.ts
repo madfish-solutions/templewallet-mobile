@@ -16,7 +16,8 @@ export const parseEvmCaipAccountId = (caipAccountId: string): [number, Address] 
   return match ? [Number(match[1]), match[2] as Address] : undefined;
 };
 
-export const toEvmCaipAccountId = (caipChainId: string, accountAddress: Address) => `${caipChainId}:${accountAddress}`;
+export const toEvmCaipAccountId = (caipChainId: string, accountAddress: Address) =>
+  `${caipChainId}:${accountAddress.toLowerCase()}`;
 
 export const getEvmNetworkLabel = (caipChainId: string, evmChainsSpecs: EvmChainSpecs[]) => {
   const chainId = parseEvmCaipChainId(caipChainId);

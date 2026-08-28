@@ -73,11 +73,13 @@ export class WcHandler {
     return WcHandler._walletKit.respondSessionRequest(params);
   };
 
-  public static readonly getActiveSessions = (): Promise<Record<string, SessionTypes.Struct>> => {
+  public static readonly getActiveSessions = () => {
     assert(WcHandler._walletKit, WALLET_KIT_ERROR);
 
-    return Promise.resolve(WcHandler._walletKit.getActiveSessions());
+    return WcHandler._walletKit.getActiveSessions();
   };
+
+  public static readonly getActiveSession = (topic: string) => WcHandler._walletKit?.getActiveSessions()[topic];
 
   public static readonly getPairings = (): Promise<PairingTypes.Struct[]> => {
     assert(WcHandler._walletKit, WALLET_KIT_ERROR);
