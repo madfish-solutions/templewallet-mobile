@@ -37,7 +37,7 @@ export const WcApprovalPreview: FC<Props> = ({ transaction, chainId, accountAddr
 
   let amount: string | undefined;
   if (isDefined(approval)) {
-    amount = approval.amount.eq(MAX_UINT_256) ? UNLIMITED_AMOUNT_VALUE : approval.amount.toFixed();
+    amount = approval.amount.gte(MAX_UINT_256) ? UNLIMITED_AMOUNT_VALUE : approval.amount.toFixed();
   }
 
   const spender = approval?.spender;

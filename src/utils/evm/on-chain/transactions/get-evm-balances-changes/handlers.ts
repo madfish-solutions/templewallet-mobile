@@ -1,5 +1,7 @@
 import BigNumber from 'bignumber.js';
-import { SimulateContractReturnType } from 'viem';
+import { isAddressEqual, SimulateContractReturnType } from 'viem';
+
+import { toEvmAssetSlug } from 'src/utils/from-token-slug';
 
 import {
   erc1155BurnAbi,
@@ -33,7 +35,6 @@ import {
   targetIsErc20,
   targetIsErc721,
   toBigNumber,
-  toEvmAssetSlug,
   TxAbiFragment
 } from '../helpers';
 
@@ -55,13 +56,15 @@ const withOperationSimulation = async <AbiFragment extends TxAbiFragment>(
 const onErc721TransferParse: AssetsAmountsParseCallback<
   typeof erc721SafeTransferFromPayableAbi | typeof erc721SafeTransferFromNonpayableAbi | typeof erc721TransferFromAbi
 > = async ({ args: [tokensSender, recipient, tokenId], sender, to }) => {
-  if (recipient === tokensSender || (tokensSender !== sender && recipient !== sender)) {
+  const isSendingOwnTokens = isAddressEqual(tokensSender, sender);
+
+  if (isAddressEqual(recipient, tokensSender) || (!isSendingOwnTokens && !isAddressEqual(recipient, sender))) {
     return {};
   }
 
   return {
     [toEvmAssetSlug(to, tokenId.toString())]: {
-      atomicAmount: new BigNumber(tokensSender === sender ? -1 : 1),
+      atomicAmount: new BigNumber(isSendingOwnTokens ? -1 : 1),
       standard: EvmAssetStandard.ERC721,
       receiver: recipient
     }
@@ -71,7 +74,7 @@ const onErc721TransferParse: AssetsAmountsParseCallback<
 const onErc721MintParse: AssetsAmountsParseCallback<
   typeof erc721MintAbi | typeof erc721SafeMintAbi | typeof erc721SafeMintWithDataAbi
 > = async ({ args: [recipient], simulateOperation, sender, to }) =>
-  recipient === sender
+  isAddressEqual(recipient, sender)
     ? await withOperationSimulation<typeof erc721MintAbi | typeof erc721SafeMintAbi>(simulateOperation, tokenId => ({
         [toEvmAssetSlug(to, tokenId.toString())]: { atomicAmount: new BigNumber(1), standard: EvmAssetStandard.ERC721 }
       }))
@@ -82,7 +85,9 @@ const onErc1155TransfersParse: AssetsAmountsParseCallback<typeof erc1155SafeBatc
   sender,
   to
 }) => {
-  if (recipient === tokensSender || (tokensSender !== sender && recipient !== sender)) {
+  const isSendingOwnTokens = isAddressEqual(tokensSender, sender);
+
+  if (isAddressEqual(recipient, tokensSender) || (!isSendingOwnTokens && !isAddressEqual(recipient, sender))) {
     return {};
   }
 
@@ -90,7 +95,7 @@ const onErc1155TransfersParse: AssetsAmountsParseCallback<typeof erc1155SafeBatc
     ids.map((id, i) => [
       toEvmAssetSlug(to, id.toString()),
       {
-        atomicAmount: toBigNumber(tokensSender === sender ? -values[i] : values[i]),
+        atomicAmount: toBigNumber(isSendingOwnTokens ? -values[i] : values[i]),
         standard: EvmAssetStandard.ERC1155,
         receiver: recipient
       }
@@ -103,7 +108,7 @@ const onErc1155MintsParse: AssetsAmountsParseCallback<typeof erc1155MintBatchAbi
   sender,
   to
 }) =>
-  recipient === sender
+  isAddressEqual(recipient, sender)
     ? Object.fromEntries(
         ids.map((id, i) => [
           toEvmAssetSlug(to, id.toString()),
@@ -117,7 +122,7 @@ const onErc1155BurnsParse: AssetsAmountsParseCallback<typeof erc1155BurnBatchAbi
   sender,
   to
 }) =>
-  tokensSender === sender
+  isAddressEqual(tokensSender, sender)
     ? Object.fromEntries(
         ids.map((id, i) => [
           toEvmAssetSlug(to, id.toString()),
@@ -131,10 +136,13 @@ const onErc1155BurnsParse: AssetsAmountsParseCallback<typeof erc1155BurnBatchAbi
  * Each of them returns `null` if the transaction is not related to the function, or a record of balances changes otherwise.
  */
 export const knownOperationsHandlers = [
-  makeAbiFunctionHandler(erc20MintAbi, async ({ args: [account, value], sender, to }) =>
-    account === sender
-      ? { [toEvmAssetSlug(to)]: { atomicAmount: toBigNumber(value), standard: EvmAssetStandard.ERC20 } }
-      : {}
+  makeAbiFunctionHandler(
+    erc20MintAbi,
+    async ({ args: [account, value], sender, to }) =>
+      isAddressEqual(account, sender)
+        ? { [toEvmAssetSlug(to)]: { atomicAmount: toBigNumber(value), standard: EvmAssetStandard.ERC20 } }
+        : {},
+    targetIsErc20
   ),
   makeAbiFunctionHandler(
     erc20BurnAbi,
@@ -143,15 +151,18 @@ export const knownOperationsHandlers = [
     }),
     targetIsErc20
   ),
-  makeAbiFunctionHandler(erc20BurnFromAbi, async ({ args: [account, value], sender, to }) =>
-    account === sender
-      ? { [toEvmAssetSlug(to)]: { atomicAmount: toBigNumber(-value), standard: EvmAssetStandard.ERC20 } }
-      : {}
+  makeAbiFunctionHandler(
+    erc20BurnFromAbi,
+    async ({ args: [account, value], sender, to }) =>
+      isAddressEqual(account, sender)
+        ? { [toEvmAssetSlug(to)]: { atomicAmount: toBigNumber(-value), standard: EvmAssetStandard.ERC20 } }
+        : {},
+    targetIsErc20
   ),
   makeAbiFunctionHandler(
     erc20TransferAbi,
     async ({ args: [recipient, amount], sender, to }) =>
-      recipient === sender
+      isAddressEqual(recipient, sender)
         ? {}
         : {
             [toEvmAssetSlug(to)]: {
@@ -164,16 +175,19 @@ export const knownOperationsHandlers = [
   ),
   makeAbiFunctionHandler(
     erc20TransferFromAbi,
-    async ({ args: [tokensSender, recipient, amount], sender, to }) =>
-      recipient === tokensSender || (tokensSender !== sender && recipient !== sender)
+    async ({ args: [tokensSender, recipient, amount], sender, to }) => {
+      const isSendingOwnTokens = isAddressEqual(tokensSender, sender);
+
+      return isAddressEqual(recipient, tokensSender) || (!isSendingOwnTokens && !isAddressEqual(recipient, sender))
         ? {}
         : {
             [toEvmAssetSlug(to)]: {
-              atomicAmount: toBigNumber(tokensSender === sender ? -amount : amount),
+              atomicAmount: toBigNumber(isSendingOwnTokens ? -amount : amount),
               standard: EvmAssetStandard.ERC20,
               receiver: recipient
             }
-          },
+          };
+    },
     targetIsErc20
   ),
   makeAbiFunctionHandler(erc721SafeTransferFromPayableAbi, onErc721TransferParse, targetIsErc721),

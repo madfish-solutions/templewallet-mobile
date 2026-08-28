@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js';
 import type { TransactionSerializable } from 'viem';
 
 import { EVM_TOKEN_SLUG } from 'src/token/interfaces/token-metadata.interface';
+import { toEvmAssetSlug } from 'src/utils/from-token-slug';
 
 import { EvmAssetStandard } from '../../types';
 import {
@@ -27,7 +28,7 @@ import {
   transferFromErc20Data,
   transferFromErc721Data
 } from '../data.mock';
-import { AssetsAmounts, stripZeroBalancesChanges, toEvmAssetSlug } from '../helpers';
+import { AssetsAmounts, stripZeroBalancesChanges } from '../helpers';
 import { mockDetectTokenStandard, mockSimulateContract } from '../transactions.mock';
 
 import { getEvmBalancesChanges } from '.';

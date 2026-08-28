@@ -1,14 +1,9 @@
+import { toEvmAssetSlug } from 'src/utils/from-token-slug';
+
 import { erc20AllowanceAbi, erc20ApproveAbi, erc20IncreaseAllowanceAbi } from '../../abi/erc20.abi';
 import { erc721ApproveAbi } from '../../abi/erc721.abi';
 import { EvmAssetStandard } from '../../types';
-import {
-  Approval,
-  makeAbiFunctionHandler,
-  targetIsErc20,
-  targetIsErc721,
-  toBigNumber,
-  toEvmAssetSlug
-} from '../helpers';
+import { Approval, makeAbiFunctionHandler, targetIsErc20, targetIsErc721, toBigNumber } from '../helpers';
 
 export const knownOperationsHandlers = [
   makeAbiFunctionHandler(

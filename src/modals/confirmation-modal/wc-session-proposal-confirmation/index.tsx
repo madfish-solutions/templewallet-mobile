@@ -3,16 +3,17 @@ import { buildApprovedNamespaces, getSdkError } from '@walletconnect/utils';
 import React, { FC, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { from } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
 import { useRequestConfirmation } from 'src/hooks/request-confirmation/use-request-confirmation.hook';
 import { AccountWithEvmAddress } from 'src/interfaces/account.interfaces';
+import { loadConnectionsActions } from 'src/store/d-apps/d-apps-actions';
 import { navigateBackAction } from 'src/store/root-state.actions';
 import { setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
 import { useAllAccounts, useAccount } from 'src/store/wallet/wallet-selectors';
 import { showSuccessToast } from 'src/toast/toast.utils';
 import { getAccountAddressForEvm, hasEvmAddress } from 'src/utils/account.utils';
-import { toEvmCaipChainId } from 'src/utils/evm/caip.utils';
+import { toEvmCaipAccountId, toEvmCaipChainId } from 'src/utils/evm/caip.utils';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 import { EVM_WC_EVENTS, EVM_WC_METHODS } from 'src/walletconnect/constants';
 import { normalizeSessionProposalParams } from 'src/walletconnect/validate-session-proposal';
@@ -40,7 +41,7 @@ const approveWcSessionProposal = ({ proposal, address }: ApproveWcSessionProposa
         chains: [etherlinkCaipChainId],
         methods: [...EVM_WC_METHODS],
         events: [...EVM_WC_EVENTS],
-        accounts: [`${etherlinkCaipChainId}:${address.toLowerCase()}`]
+        accounts: [toEvmCaipAccountId(etherlinkCaipChainId, address)]
       }
     }
   });
@@ -54,10 +55,10 @@ const approveWcSessionProposal = ({ proposal, address }: ApproveWcSessionProposa
         })
       )
     ),
-    map(() => {
+    switchMap(() => {
       showSuccessToast({ description: 'Successfully approved!' });
 
-      return navigateBackAction();
+      return from([loadConnectionsActions.submit(), navigateBackAction()]);
     })
   );
 };

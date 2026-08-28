@@ -1,10 +1,9 @@
 import { AccessList, SignedAuthorization } from 'viem';
 
+import { ValidatedRpcAuthorization, ValidatedRpcTransactionRequest } from 'src/types/strict-wc-session-request';
 import { Eip1559Fees, LegacyFees } from 'src/utils/evm/estimate-evm-transaction';
 import { WcEvmRequestError } from 'src/utils/evm/wc-evm-request-error';
 import { isDefined } from 'src/utils/is-defined';
-
-import { ValidatedRpcAuthorization, ValidatedRpcTransactionRequest } from './validation-schemas';
 
 interface EvmRpcTransactionRequestBase {
   to?: HexString;

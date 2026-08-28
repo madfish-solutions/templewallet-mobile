@@ -1,6 +1,6 @@
 import { WalletKitTypes } from '@reown/walletkit';
 import { getInternalError, getSdkError } from '@walletconnect/utils';
-import { defer, from, of, throwError } from 'rxjs';
+import { defer, from, Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { Hash, isHash, SendTransactionRequest } from 'viem';
 
@@ -8,23 +8,25 @@ import { EvmChainAssetsRecord } from 'src/store/evm/assets/evm-assets-state';
 import { navigateBackAction } from 'src/store/root-state.actions';
 import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
 import { EvmNetworkEssentials } from 'src/types/networks';
+import {
+  isWcSendTransactionMethod,
+  isWcSigningMethod,
+  isWcWatchAssetMethod,
+  StrictWcSessionRequest,
+  StrictWcSessionRequestContent,
+  WcSendTransactionRequestContent
+} from 'src/types/strict-wc-session-request';
 import { loadEtherlinkBalancesOnChain } from 'src/utils/evm/etherlink-balances.utils';
 import { normalizeEvmTransactionError } from 'src/utils/evm/evm-transaction-error';
 import { evmTransactionSubmissionService } from 'src/utils/evm/evm-transaction-submission';
 import { getEvmTransactionExplorerUrl } from 'src/utils/evm/get-evm-transaction-explorer-url';
 import { WcEvmRequestError } from 'src/utils/evm/wc-evm-request-error';
 import { isDefined } from 'src/utils/is-defined';
-import {
-  isWcAccountsMethod,
-  isWcSendTransactionMethod,
-  isWcSigningMethod,
-  isWcWatchAssetMethod
-} from 'src/walletconnect/evm-request-method.utils';
 import { wcEvmRequestService } from 'src/walletconnect/evm-request-service';
 import { WcHandler } from 'src/walletconnect/wc-handler';
 
-interface ApproveWcSessionRequestPayload {
-  request: WalletKitTypes.SessionRequest;
+interface ApproveWcSessionRequestPayloadBase {
+  request: StrictWcSessionRequest;
   address: HexString;
   network?: EvmNetworkEssentials;
   chainName?: string;
@@ -40,6 +42,24 @@ interface ApproveWcSessionRequestPayload {
    */
   markResponded: EmptyFn;
 }
+
+interface ApproveWcTransactionRequestPayload extends ApproveWcSessionRequestPayloadBase {
+  request: StrictWcSessionRequest<WcSendTransactionRequestContent>;
+  network: EvmNetworkEssentials;
+  knownAssets: EvmChainAssetsRecord;
+  preparedTransaction: SendTransactionRequest;
+}
+
+interface ApproveWcOtherRequestPayload extends ApproveWcSessionRequestPayloadBase {
+  preparedTransaction?: undefined;
+  request: StrictWcSessionRequest<Exclude<StrictWcSessionRequestContent, WcSendTransactionRequestContent>>;
+}
+
+export type ApproveWcSessionRequestPayload = ApproveWcTransactionRequestPayload | ApproveWcOtherRequestPayload;
+
+const isApproveWcTransactionRequestPayload = (
+  payload: ApproveWcSessionRequestPayload
+): payload is ApproveWcTransactionRequestPayload => Boolean(payload.preparedTransaction);
 
 interface WaitForWcTransactionConfirmationParams
   extends Required<Omit<ApproveWcSessionRequestPayload, 'request' | 'markResponded' | 'preparedTransaction'>> {
@@ -88,8 +108,6 @@ const showWcRequestSuccessToast = (method: string, result: unknown, blockExplore
     });
   } else if (isWcSigningMethod(method)) {
     showSuccessToast({ description: 'Successfully signed!' });
-  } else if (isWcAccountsMethod(method)) {
-    showSuccessToast({ description: 'Successfully approved!' });
   } else if (isWcWatchAssetMethod(method)) {
     showSuccessToast({ description: 'Token successfully added' });
   } else {
@@ -147,18 +165,11 @@ const respondWcSessionRequest = (
     })
   );
 
-const handleWcSessionRequest = ({
-  request,
-  address,
-  network,
-  preparedTransaction
-}: Pick<ApproveWcSessionRequestPayload, 'request' | 'address' | 'network' | 'preparedTransaction'>) => {
-  const { method, params } = request.params.request;
-
-  if (isDefined(preparedTransaction) && isWcSendTransactionMethod(method)) {
-    if (!isDefined(network)) {
-      return throwError(() => new WcEvmRequestError('invalid-params', 'eth_sendTransaction requires a network'));
-    }
+function handleWcSessionRequest(payload: ApproveWcTransactionRequestPayload): Observable<Hash>;
+function handleWcSessionRequest(payload: ApproveWcOtherRequestPayload): Observable<unknown>;
+function handleWcSessionRequest(payload: ApproveWcSessionRequestPayload) {
+  if (isApproveWcTransactionRequestPayload(payload)) {
+    const { network, address, preparedTransaction } = payload;
 
     return defer(() =>
       from(
@@ -179,66 +190,66 @@ const handleWcSessionRequest = ({
     );
   }
 
-  return defer(() => from(wcEvmRequestService.handle({ method, params, address, network })));
-};
+  const { request, address, network } = payload;
 
-export const approveWcSessionRequest = ({
-  request,
-  address,
-  network,
-  chainName,
-  blockExplorerUrl,
-  knownAssets = {},
-  preparedTransaction,
-  markResponded
-}: ApproveWcSessionRequestPayload) => {
-  const { method } = request.params.request;
+  return defer(() => from(wcEvmRequestService.handle({ ...request.params.request, address, network })));
+}
 
-  return handleWcSessionRequest({ request, address, network, preparedTransaction }).pipe(
-    switchMap(result =>
-      respondWcSessionRequest(
-        request,
-        {
-          id: request.id,
-          jsonrpc: '2.0',
-          result
-        },
-        markResponded
-      ).pipe(
-        tap(() => {
-          showWcRequestSuccessToast(method, result, blockExplorerUrl);
+const onSuccess = (request: StrictWcSessionRequest, result: unknown, markResponded: EmptyFn) =>
+  respondWcSessionRequest(
+    request,
+    {
+      id: request.id,
+      jsonrpc: '2.0',
+      result
+    },
+    markResponded
+  );
 
-          if (
-            isWcSendTransactionMethod(method) &&
-            typeof result === 'string' &&
-            isHash(result) &&
-            isDefined(network) &&
-            isDefined(chainName) &&
-            isDefined(blockExplorerUrl)
-          ) {
-            void waitForWcTransactionConfirmation({
-              address,
-              network,
-              chainName,
-              blockExplorerUrl,
-              knownAssets,
-              hash: result
-            });
-          }
-        }),
-        map(() => navigateBackAction())
-      )
-    ),
-    catchError(error =>
-      respondWcSessionRequest(
-        request,
-        {
-          id: request.id,
-          jsonrpc: '2.0',
-          error: toWcJsonRpcError(error)
-        },
-        markResponded
-      ).pipe(switchMap(() => throwError(() => error)))
-    )
+const onError = (request: StrictWcSessionRequest, error: unknown, markResponded: EmptyFn) =>
+  respondWcSessionRequest(
+    request,
+    {
+      id: request.id,
+      jsonrpc: '2.0',
+      error: toWcJsonRpcError(error)
+    },
+    markResponded
+  ).pipe(switchMap(() => throwError(() => error)));
+
+export const approveWcSessionRequest = (payload: ApproveWcSessionRequestPayload) => {
+  if (isApproveWcTransactionRequestPayload(payload)) {
+    const { request, address, network, markResponded, blockExplorerUrl, chainName, knownAssets } = payload;
+
+    return handleWcSessionRequest(payload).pipe(
+      switchMap(result =>
+        onSuccess(request, result, markResponded).pipe(
+          tap(() => {
+            showWcRequestSuccessToast(request.params.request.method, result, blockExplorerUrl);
+
+            if (isDefined(chainName) && isDefined(blockExplorerUrl)) {
+              void waitForWcTransactionConfirmation({
+                address,
+                network,
+                chainName,
+                blockExplorerUrl,
+                knownAssets,
+                hash: result
+              });
+            }
+          }),
+          map(() => navigateBackAction())
+        )
+      ),
+      catchError(error => onError(request, error, markResponded))
+    );
+  }
+
+  const { request, markResponded } = payload;
+
+  return handleWcSessionRequest(payload).pipe(
+    switchMap(result => onSuccess(request, result, markResponded)),
+    map(() => navigateBackAction()),
+    catchError(error => onError(request, error, markResponded))
   );
 };

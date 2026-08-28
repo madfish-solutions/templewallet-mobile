@@ -17,6 +17,7 @@ export interface BeaconDAppConnection extends DAppConnectionBase {
 }
 
 export interface WalletConnectDAppConnection extends DAppConnectionBase {
+  chains: string[];
   protocol: DAppConnectionProtocol.WalletConnect;
   topic: string;
 }

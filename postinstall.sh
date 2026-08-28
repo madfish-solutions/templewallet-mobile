@@ -2,6 +2,16 @@ if [ "$(uname -s)" != "Linux" ]; then
   sed_mac_arg=true
 fi
 
+# Metro caches its file map in $TMPDIR and keys it only on config, not on
+# node_modules contents. After a clean install or branch switch Watchman clocks
+# and that cache go stale, so packages that exist on disk (es6-symbol, date-fns
+# internals, …) fail with "Unable to resolve module". Drop both so the next
+# bundler start recrawls from disk.
+if [ -x "$(command -v watchman)" ]; then
+  watchman watch-del-all >/dev/null 2>&1 || true
+fi
+find "${TMPDIR:-/tmp}" -maxdepth 1 \( -name 'haste-map-*' -o -name 'metro-*' -o -name 'react-*' \) -exec rm -rf {} + 2>/dev/null || true
+
 find node_modules -type f -name 'build.gradle' -exec sed -i ${sed_mac_arg:+""} 's/jcenter()/mavenCentral()/g' {} +
 
 # https://github.com/facebook/react-native/issues/56287

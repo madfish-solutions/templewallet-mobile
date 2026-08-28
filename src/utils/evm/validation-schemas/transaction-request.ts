@@ -121,30 +121,4 @@ const transactionRequestSchemas = [
   rpcTransactionRequestEIP7702ValidationSchema
 ];
 
-export interface ValidatedRpcAuthorization {
-  address: HexString;
-  chainId: HexString;
-  nonce: HexString;
-  r: HexString;
-  s: HexString;
-  yParity?: HexString;
-  v?: HexString;
-}
-
-export interface ValidatedRpcTransactionRequest {
-  from?: HexString;
-  to?: HexString;
-  data?: HexString;
-  gas?: HexString;
-  gasLimit?: HexString;
-  nonce?: HexString;
-  value?: HexString;
-  gasPrice?: HexString;
-  maxFeePerGas?: HexString;
-  maxPriorityFeePerGas?: HexString;
-  type?: '0x0' | '0x1' | '0x2' | '0x4';
-  accessList?: { address: HexString; storageKeys: HexString[] }[];
-  authorizationList?: ValidatedRpcAuthorization[];
-}
-
 export const rpcTransactionRequestValidationSchema = () => oneOfSchemas(transactionRequestSchemas);

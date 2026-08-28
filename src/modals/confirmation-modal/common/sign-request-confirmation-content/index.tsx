@@ -21,7 +21,7 @@ import { useSignRequestConfirmationContentStyles } from './styles';
 
 const PAYLOAD_PREVIEW_TYPE_INDEX = 0;
 
-interface Props {
+export interface SignRequestConfirmationContentProps {
   headerTitle?: string;
   appName: string;
   iconUri?: string;
@@ -39,7 +39,7 @@ interface Props {
   onConfirm: EmptyFn;
 }
 
-export const SignRequestConfirmationContent: FC<Props> = ({
+export const SignRequestConfirmationContent: FC<SignRequestConfirmationContentProps> = ({
   headerTitle = 'Confirm Sign',
   appName,
   iconUri,

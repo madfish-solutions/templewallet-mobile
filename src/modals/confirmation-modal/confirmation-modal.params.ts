@@ -5,6 +5,7 @@ import { ParamsWithKind } from '@taquito/taquito';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { EvmSendAsset } from 'src/types/send-asset';
+import { StrictWcSessionRequest } from 'src/types/strict-wc-session-request';
 
 export type ConfirmationModalParams =
   | InternalOperationsConfirmationModalParams
@@ -21,7 +22,7 @@ interface WcSessionProposalConfirmationModalParams {
 
 interface WcSessionRequestConfirmationModalParams {
   type: ConfirmationTypeEnum.WcSessionRequest;
-  request: WalletKitTypes.SessionRequest;
+  request: StrictWcSessionRequest;
 }
 export interface InternalOperationsConfirmationModalParams extends TestIdProps {
   type: ConfirmationTypeEnum.InternalOperations;

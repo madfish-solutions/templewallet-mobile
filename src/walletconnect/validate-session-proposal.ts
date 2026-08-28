@@ -4,10 +4,10 @@ import { getSdkError } from '@walletconnect/utils';
 import { uniq } from 'lodash-es';
 
 import { Account } from 'src/interfaces/account.interfaces';
+import { isSupportedWcEvent, isSupportedWcMethod } from 'src/types/strict-wc-session-request';
 import { toEvmCaipChainId } from 'src/utils/evm/caip.utils';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
-import { isSupportedWcMethod } from './evm-request-method.utils';
 import { hasEvmAccount } from './wc-account.utils';
 
 const SUPPORTED_WC_CHAINS = [toEvmCaipChainId(ETHERLINK_MAINNET_CHAIN_ID)];
@@ -114,6 +114,10 @@ export const getSessionProposalRejectReason = (proposal: WalletKitTypes.SessionP
 
     if (namespace.methods.some(method => !isSupportedWcMethod(method))) {
       return getSdkError('UNSUPPORTED_METHODS');
+    }
+
+    if (namespace.events.some(event => !isSupportedWcEvent(event))) {
+      return getSdkError('UNSUPPORTED_EVENTS');
     }
   }
 

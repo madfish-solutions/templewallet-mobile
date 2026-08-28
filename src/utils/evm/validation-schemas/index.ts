@@ -1,9 +1,10 @@
 import { Address, TypedDataDefinition } from 'viem';
-import { BaseSchema, string as stringSchema } from 'yup';
+import { BaseSchema, string as stringSchema, ValidationError } from 'yup';
 
+import { OldTypedData, ValidatedRpcTransactionRequest } from 'src/types/strict-wc-session-request';
 import { WcEvmRequestError } from 'src/utils/evm/wc-evm-request-error';
 
-import { rpcTransactionRequestValidationSchema, ValidatedRpcTransactionRequest } from './transaction-request';
+import { rpcTransactionRequestValidationSchema } from './transaction-request';
 import {
   evmAddressValidationSchema,
   hexByteStringSchema,
@@ -13,14 +14,6 @@ import {
   tupleSchema
 } from './utils';
 import { ValidatedWatchAssetParams, watchAssetParamsValidationSchema } from './watch-asset';
-
-export type { ValidatedRpcAuthorization, ValidatedRpcTransactionRequest } from './transaction-request';
-
-export type OldTypedDataField = {
-  name: string;
-  type: string;
-  value: unknown;
-};
 
 const ethOldSignTypedDataValidationSchema = tupleSchema([
   oldTypedDataValidationSchema().required(),
@@ -67,13 +60,17 @@ export const validatePersonalSignParams = (params: unknown): [HexString, Address
 export const validateSignTypedDataParams = (params: unknown): [Address, TypedDataDefinition] =>
   validateEvmRpcParams(ethSignTypedDataValidationSchema, params);
 
-export const validateOldSignTypedDataParams = (params: unknown): [OldTypedDataField[], Address] =>
+export const validateOldSignTypedDataParams = (params: unknown): [OldTypedData, Address] =>
   validateEvmRpcParams(ethOldSignTypedDataValidationSchema, params);
 
 export const validateSendTransactionParams = (params: unknown): [ValidatedRpcTransactionRequest] =>
   validateEvmRpcParams(sendTransactionPayloadValidationSchema, params);
 
 export const validateWatchAssetParams = (params: unknown): ValidatedWatchAssetParams => {
+  if (Array.isArray(params) && params.length !== 1) {
+    throw new ValidationError('The array must contain exactly one element');
+  }
+
   const normalized = Array.isArray(params) ? params[0] : params;
 
   return validateEvmRpcParams(watchAssetParamsValidationSchema(), normalized);

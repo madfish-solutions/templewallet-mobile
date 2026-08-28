@@ -31,9 +31,6 @@ export type Approval = {
   standard: EvmAssetStandard.ERC20 | EvmAssetStandard.ERC721;
 };
 
-export const toEvmAssetSlug = (to: HexString, tokenId?: string) =>
-  tokenId ? `${to.toLowerCase()}_${tokenId}` : to.toLowerCase();
-
 export const stripZeroBalancesChanges = (balancesChanges: AssetsAmounts) =>
   Object.fromEntries(Object.entries(balancesChanges).filter(([, { atomicAmount }]) => !atomicAmount.isZero()));
 

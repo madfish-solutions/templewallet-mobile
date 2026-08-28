@@ -1,10 +1,11 @@
 import { PermissionInfo } from '@airgap/beacon-sdk';
 import { SessionTypes } from '@walletconnect/types';
+import { Address } from 'viem';
 
 import { DAppConnectionProtocol } from 'src/enums/dapp-connection-protocol.enum';
 import { BeaconDAppConnection, WalletConnectDAppConnection } from 'src/interfaces/dapp-connection.interface';
 import { EvmChainSpecs } from 'src/types/networks';
-import { getEvmNetworkLabel } from 'src/utils/evm/caip.utils';
+import { getEvmNetworkLabel, parseEvmCaipAccountId, toEvmCaipChainId } from 'src/utils/evm/caip.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 export const mapBeaconPermissionToConnection = (permission: PermissionInfo): BeaconDAppConnection => ({
@@ -32,19 +33,26 @@ export const mapWcSessionToConnection = (
           return namespace.chains;
         }
 
-        return namespace.accounts.map(account => account.split(':').slice(0, 2).join(':'));
+        return namespace.accounts.map(account => toEvmCaipChainId(parseEvmCaipAccountId(account)![0]));
       })
     )
   );
 
+  let accountAddress: Address | undefined;
+  if (accounts.length > 0) {
+    const parseResult = parseEvmCaipAccountId(accounts[0]);
+    accountAddress = parseResult?.[1];
+  }
+
   return {
     id: `wc:${session.topic}`,
+    chains,
     protocol: DAppConnectionProtocol.WalletConnect,
     name: session.peer.metadata.name,
     iconUri: session.peer.metadata.icons?.[0],
     iconSeed: session.peer.metadata.url || session.peer.metadata.name,
     networkLabel: chains.map(caipChainId => getEvmNetworkLabel(caipChainId, evmChainsSpecs)).join(', ') || 'Unknown',
-    accountAddress: accounts[0]?.split(':')[2],
+    accountAddress,
     topic: session.topic
   };
 };
@@ -63,7 +71,7 @@ export const getWcPeerOrigin = (metadata: { url?: string; name?: string }) => me
 const getWcSessionAccountAddress = (session: SessionTypes.Struct) =>
   Object.values(session.namespaces)
     .flatMap(namespace => namespace.accounts)
-    .map(account => account.split(':')[2])
+    .map(account => parseEvmCaipAccountId(account)?.[1])
     .find(isDefined);
 
 export const getWcSessionDappIdentityKey = (session: SessionTypes.Struct) =>

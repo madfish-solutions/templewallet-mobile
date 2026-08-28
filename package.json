@@ -20,7 +20,7 @@
     "ts": "tsc --pretty",
     "clear:android": "cd android && ./gradlew clean",
     "clear:ios": "rm -rf ios/Pods && rm -rf ios/build && pod cache clean --all",
-    "clear:metro": "rm -rf $TMPDIR/haste-map-* || true && rm -rf $TMPDIR/metro-* || true",
+    "clear:metro": "find \"${TMPDIR:-/tmp}\" -maxdepth 1 \\( -name 'haste-map-*' -o -name 'metro-*' -o -name 'react-*' \\) -exec rm -rf {} + 2>/dev/null || true",
     "clear:watchman": "if [ -x \"$(command -v watchman)\" ]; then watchman watch-del-all; fi",
     "find-deadcode": "knip",
     "audit-deps": "node ./audit-deps.mjs"

@@ -6,8 +6,8 @@ export class AssertionError extends Error {
   }
 }
 
-export function assert(value: unknown, error?: unknown): asserts value {
+export function assert(value: unknown, error?: string | Error): asserts value {
   if (!isDefined(value)) {
-    throw error ?? new AssertionError(`The value ${value} is not truthy`, value);
+    throw error instanceof Error ? error : new AssertionError(error ?? `The value ${value} is not truthy`);
   }
 }

@@ -2,7 +2,8 @@
 
 import { encodePacked, hexToBytes, isHex, keccak256, numberToBytes, pad, toBytes } from 'viem';
 
-import { OldTypedDataField } from './validation-schemas';
+import { OldTypedData } from 'src/types/strict-wc-session-request';
+
 import { WcEvmRequestError } from './wc-evm-request-error';
 
 const ARRAY_REGEX = /^(?<type>.*)\[(?<length>\d*?)\]$/u;
@@ -252,7 +253,7 @@ function legacyToBuffer(value: ToBufferInputTypes) {
   return typeof value === 'string' && !isHex(value) ? Buffer.from(value) : toBuffer(value);
 }
 
-export function typedV1SignatureHash(typedData: OldTypedDataField[]) {
+export function typedV1SignatureHash(typedData: OldTypedData) {
   const normalizedData = typedData.map(({ name, type, value }) => {
     // Handle an edge case with `address[]` types.
     if (type === 'address[]') {

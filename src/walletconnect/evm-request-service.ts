@@ -1,6 +1,6 @@
 import { AnyAction } from '@reduxjs/toolkit';
 import { firstValueFrom } from 'rxjs';
-import { getAddress, Hash, Hex, isAddressEqual, TypedDataDefinition } from 'viem';
+import { getAddress, Hash, isAddressEqual, TypedDataDefinition } from 'viem';
 import { LocalAccount } from 'viem/accounts';
 
 import { Shelter } from 'src/shelter/shelter';
@@ -9,27 +9,26 @@ import { setEvmAssetManualAction } from 'src/store/evm/assets/evm-assets-actions
 import { processLoadedEvmTokensMetadataAction } from 'src/store/evm/tokens-metadata/evm-tokens-metadata-actions';
 import { EvmAssetStandardEnum, EvmTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { EvmNetworkEssentials } from 'src/types/networks';
+import {
+  OldTypedData,
+  StrictWcSessionRequestContent,
+  WcPersonalSignRequestContent,
+  WcSendTransactionRequestContent,
+  WcSignTypedDataRequestContent,
+  WcWatchAssetRequestContent,
+  isStrictWcSigningRequestContent,
+  isWcAccountsRequestContent,
+  isWcOldTypedDataRequestContent,
+  isWcPersonalSignRequestContent
+} from 'src/types/strict-wc-session-request';
 import { getEvmTokenMetadata } from 'src/utils/evm/on-chain/metadata';
 import { EvmTokenOnChainMetadata } from 'src/utils/evm/on-chain/types';
 import { ParsedEvmRpcTransactionRequest } from 'src/utils/evm/parse-rpc-transaction-request';
 import { typedV1SignatureHash } from 'src/utils/evm/typed-v1-signature-hash';
-import {
-  OldTypedDataField,
-  validateOldSignTypedDataParams,
-  validatePersonalSignParams,
-  validateSignTypedDataParams,
-  validateWatchAssetParams
-} from 'src/utils/evm/validation-schemas';
 import { WcEvmRequestError } from 'src/utils/evm/wc-evm-request-error';
 import { isDefined } from 'src/utils/is-defined';
 import { getViemWalletClient } from 'src/utils/rpc/evm-client.utils';
-import {
-  EvmWcTypedDataMethod,
-  isSupportedWcMethod,
-  isWcOldTypedDataMethod
-} from 'src/walletconnect/evm-request-method.utils';
-
-interface HandleWcEvmRequestParams {
+type HandleWcEvmRequestParams = Exclude<StrictWcSessionRequestContent, WcSendTransactionRequestContent> & {
   method: string;
   params: unknown;
   /**
@@ -40,7 +39,7 @@ interface HandleWcEvmRequestParams {
    * Required for `eth_sendTransaction` and `wallet_watchAsset`.
    */
   network?: EvmNetworkEssentials;
-}
+};
 
 interface WcEvmRequestServiceDependencies {
   getAccount: (address: HexString) => Promise<LocalAccount>;
@@ -75,36 +74,24 @@ class WcEvmRequestService {
     this.dependencies = { ...defaultDependencies, ...dependencies };
   }
 
-  async handle({ method, params, address, network }: HandleWcEvmRequestParams): Promise<unknown> {
-    if (!isSupportedWcMethod(method)) {
-      throw new WcEvmRequestError('unsupported-method', `Unsupported JSON-RPC method: ${method}`);
+  async handle({ address, network, ...requestContent }: HandleWcEvmRequestParams) {
+    if (isWcAccountsRequestContent(requestContent)) {
+      return [address];
     }
 
-    switch (method) {
-      case 'eth_accounts':
-      case 'eth_requestAccounts':
-        return [address];
-      case 'personal_sign':
-        return this.personalSign(address, asParamsArray(params));
-      case 'eth_signTypedData':
-      case 'eth_signTypedData_v1':
-      case 'eth_signTypedData_v3':
-      case 'eth_signTypedData_v4':
-        return this.signTypedData(address, asParamsArray(params), method);
-      case 'eth_sendTransaction':
-        throw new Error('Send transactions with evmTransactionSubmissionService instead');
-      case 'wallet_watchAsset':
-        return this.watchAsset(address, params, network);
-      default: {
-        const exhaustiveCheck: never = method;
-
-        throw new WcEvmRequestError('unsupported-method', `Unsupported JSON-RPC method: ${exhaustiveCheck}`);
-      }
+    if (isWcPersonalSignRequestContent(requestContent)) {
+      return this.personalSign(address, requestContent.params);
     }
+
+    if (isStrictWcSigningRequestContent(requestContent)) {
+      return this.signTypedData(address, requestContent);
+    }
+
+    return this.watchAsset(address, requestContent.params, network);
   }
 
-  private async personalSign(address: HexString, params: unknown[]): Promise<Hex> {
-    const [message, requestedAddress] = validatePersonalSignParams(params);
+  async personalSign(address: HexString, params: WcPersonalSignRequestContent['params']) {
+    const [message, requestedAddress] = params;
 
     this.assertMatchingAddress(requestedAddress, address);
 
@@ -117,13 +104,13 @@ class WcEvmRequestService {
     }
   }
 
-  private async signTypedData(address: HexString, params: unknown[], method: EvmWcTypedDataMethod): Promise<Hex> {
-    let typedData: TypedDataDefinition | OldTypedDataField[];
+  async signTypedData(address: HexString, requestContent: WcSignTypedDataRequestContent) {
+    let typedData: TypedDataDefinition | OldTypedData;
     let requestedAddress: HexString;
-    if (isWcOldTypedDataMethod(method)) {
-      [typedData, requestedAddress] = validateOldSignTypedDataParams(params);
+    if (isWcOldTypedDataRequestContent(requestContent)) {
+      [typedData, requestedAddress] = requestContent.params;
     } else {
-      [requestedAddress, typedData] = validateSignTypedDataParams(params);
+      [requestedAddress, typedData] = requestContent.params;
     }
 
     this.assertMatchingAddress(requestedAddress, address);
@@ -145,12 +132,15 @@ class WcEvmRequestService {
     }
   }
 
-  private async watchAsset(address: HexString, params: unknown, network?: EvmNetworkEssentials): Promise<true> {
+  async watchAsset(
+    address: HexString,
+    [{ options }]: WcWatchAssetRequestContent['params'],
+    network?: EvmNetworkEssentials
+  ) {
     if (!isDefined(network)) {
       throw new WcEvmRequestError('invalid-params', 'wallet_watchAsset requires a network');
     }
 
-    const { options } = validateWatchAssetParams(params);
     const tokenAddress = getAddress(options.address);
     const slug = tokenAddress.toLowerCase();
 
@@ -196,7 +186,7 @@ class WcEvmRequestService {
       })
     );
 
-    return true;
+    return true as const;
   }
 
   private async getVerifiedAccount(address: HexString): Promise<LocalAccount> {
@@ -245,13 +235,5 @@ class WcEvmRequestService {
     }
   }
 }
-
-const asParamsArray = (params: unknown): unknown[] => {
-  if (!Array.isArray(params)) {
-    throw new WcEvmRequestError('invalid-params', 'JSON-RPC params must be an array');
-  }
-
-  return params;
-};
 
 export const wcEvmRequestService = new WcEvmRequestService();

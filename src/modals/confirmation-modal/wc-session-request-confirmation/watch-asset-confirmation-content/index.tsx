@@ -1,10 +1,10 @@
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 import { Text, View } from 'react-native';
 
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { TokenIcon } from 'src/components/token-icon/token-icon';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
-import { validateWatchAssetParams } from 'src/utils/evm/validation-schemas';
+import { WcWatchAssetRequestContent } from 'src/types/strict-wc-session-request';
 
 import { ConfirmationLayout } from '../../common/confirmation-layout/confirmation-layout';
 import { WcSessionRequestConfirmationSelectors } from '../selectors';
@@ -12,7 +12,7 @@ import { WcSessionRequestConfirmationSelectors } from '../selectors';
 import { useWatchAssetConfirmationContentStyles } from './styles';
 
 interface WatchAssetConfirmationContentProps {
-  params: unknown;
+  requestContent: WcWatchAssetRequestContent;
   chainId: number;
   isLoading: boolean;
   onCancel: EmptyFn;
@@ -20,15 +20,14 @@ interface WatchAssetConfirmationContentProps {
 }
 
 export const WatchAssetConfirmationContent: FC<WatchAssetConfirmationContentProps> = ({
-  params,
+  requestContent,
   chainId,
   isLoading,
   onCancel,
   onConfirm
 }) => {
   const styles = useWatchAssetConfirmationContentStyles();
-  const parsedParams = useMemo(() => validateWatchAssetParams(params), [params]);
-  const { image, address, symbol, decimals } = parsedParams.options;
+  const { image, address, symbol, decimals } = requestContent.params[0].options;
 
   return (
     <ConfirmationLayout
