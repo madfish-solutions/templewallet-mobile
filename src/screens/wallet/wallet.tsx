@@ -80,7 +80,8 @@ export const Wallet = memo(() => {
     ) {
       bottomSheetController.open();
     }
-  }, [contactCandidateAddress, ignoredAddresses, contactsAddresses, accounts, bottomSheetController]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contactCandidateAddress]);
 
   useEffect(() => {
     if (shouldShowNewsletterModal && isAnyBackupMade) {

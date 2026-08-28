@@ -58,8 +58,12 @@ export const getActivityTitle = (
     return 'Bundle';
   }
 
+  if (isShielded === true) {
+    return 'Shielded transfer';
+  }
+
   if (kind === ActivityOperKindEnum.interaction) {
-    return isShielded === true ? 'Shielded transfer' : 'Interaction';
+    return 'Interaction';
   }
 
   if (kind === ActivityOperKindEnum.approve) {
@@ -109,7 +113,9 @@ export const getActivityOperTransferType = (operation?: TezosOperation | EvmOper
   operation?.kind === ActivityOperKindEnum.transfer ? operation.type : undefined;
 
 export const getTezosOperationIsShielded = (operation?: TezosOperation) =>
-  operation?.kind === ActivityOperKindEnum.interaction ? operation.isShielded : undefined;
+  operation?.kind === ActivityOperKindEnum.interaction || operation?.kind === ActivityOperKindEnum.transfer
+    ? operation.isShielded
+    : undefined;
 
 export const getTezosBundleIsShielded = (operations: TezosOperation[]) =>
   operations.some(operation => getTezosOperationIsShielded(operation) === true);
@@ -139,13 +145,11 @@ export const getTezosBundleFaceAsset = (
   operations: TezosOperation[],
   preferredAssetSlug?: string
 ): TezosBundleFaceAsset => {
-  // Candidates are judged by their net across the bundle - a round-trip (e.g. the TEZ legs of a swap routed through TEZ) is not a face
   const preferredSlug =
     preferredAssetSlug != null && !sumTezosTransfersOf(operations, preferredAssetSlug).isZero()
       ? preferredAssetSlug
       : undefined;
 
-  // A nonzero gas net is the bundle's outcome (sale proceeds / purchase cost)
   const gasSlug = sumTezosTransfersOf(operations, TEZ_TOKEN_SLUG).isZero() ? undefined : TEZ_TOKEN_SLUG;
 
   const faceSlug =
@@ -192,7 +196,6 @@ export const getEvmBundleFaceAsset = (
   operations: EvmOperation[],
   preferredContract?: string
 ): EvmActivityAsset | undefined => {
-  // Same net-based rule as the Tezos face: a candidate whose legs cancel out is not a face
   const findNonzeroNetTransfer = (matchesAsset: (asset: EvmActivityAsset) => boolean) =>
     operations.find(
       operation =>
@@ -224,7 +227,6 @@ export const getActivityRowAmountView = (
   fiatRate: number | undefined,
   nftBundleCount?: number
 ): ActivityRowAmountView => {
-  // An interaction can still carry a native-value asset (e.g. a contract call sending XTZ) - render it
   if (asset == null) {
     return { isPositive: false };
   }

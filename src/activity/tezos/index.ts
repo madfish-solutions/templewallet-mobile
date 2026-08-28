@@ -57,10 +57,11 @@ function parseTezosPreActivityOperation(preOperation: TezosPreActivityOperation,
 
   const withAddress = preOperation.destination.address;
 
-  // Only shielding (user -> sapling) stays a shielded interaction; unshielding payouts (sapling -> user) are plain tez transfers
   if (withAddress === SAPLING_CONTRACT_ADDRESS) {
     return { kind: ActivityOperKindEnum.interaction, withAddress, isShielded: true };
   }
+
+  const fromSapling = preOperation.sender.address === SAPLING_CONTRACT_ADDRESS;
 
   const firstTo = preOperation.to.at(0);
 
@@ -97,7 +98,8 @@ function parseTezosPreActivityOperation(preOperation: TezosPreActivityOperation,
       fromAddress,
       toAddress,
       assetSlug,
-      amountSigned
+      amountSigned,
+      isShielded: fromSapling ? true : undefined
     };
   }
 

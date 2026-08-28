@@ -37,7 +37,6 @@ import { useHeaderCardActionButtonsStyles } from './header-card-action-buttons.s
 interface Props {
   token: MultichainDisplayedToken;
   onSendPress?: EmptyFn;
-  /** Token pages scope Receive to the token's chain; the wallet home leaves it unscoped (all address cards) */
   scopeReceiveToTokenChain?: boolean;
   style?: StyleProp<ViewStyle>;
 }
@@ -78,7 +77,6 @@ export const HeaderCardActionButtons = memo<Props>(
       ? !canUseTezos || (emptyBalance && LIMIT_FIN_FEATURES)
       : evmAddress == null || (emptyBalance && LIMIT_FIN_FEATURES);
 
-    // Deliberately not memoized: ButtonMediumV2 rebuilds its style config each render anyway, and `[]` deps would go stale on a theme switch
     const actionButtonStylesOverrides = {
       titleStyle: styles.actionButtonTitle
     };

@@ -292,7 +292,6 @@ export const createActivityFeedController = ({
         }
       }
     } finally {
-      // An aborted cycle must not touch shared state - the cycle that superseded it already owns isLoadingMore
       if (!signal.aborted) {
         isLoadingMore = false;
         publish();
@@ -300,7 +299,7 @@ export const createActivityFeedController = ({
     }
   };
 
-  // An empty feed gives the user nothing to scroll, so the cycles a scroll would have triggered run here instead.
+  // An empty feed can't be scrolled, so run the load-more a scroll would have triggered
   const maybeAutoContinue = (signal: AbortSignal) => {
     if (!signal.aborted && getRenderableActivities(entries).length === 0 && canScanDeeper()) {
       void loadMore();

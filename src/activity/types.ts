@@ -59,6 +59,8 @@ interface TezosTransferOperation extends TezosOperationBase {
   type: ActivityOperTransferType;
   fromAddress: string;
   toAddress: string;
+  /** Unshielding payout from the mainnet sapling contract */
+  isShielded?: boolean;
 }
 
 interface TezosInteractionOperation extends TezosOperationBase {

@@ -24,7 +24,6 @@ export const getMultichainTokenIconProps = (
         chainKind: TempleChainKind.EVM,
         chainId: Number(token.chainId),
         address: token.slug,
-        // Native XTZ carries no iconURL, so it MUST fall back to the crypto logo
         iconName: token.slug === EVM_TOKEN_SLUG ? CryptoLogoNameEnum.Etherlink : undefined,
         iconURL: token.iconUri,
         size,

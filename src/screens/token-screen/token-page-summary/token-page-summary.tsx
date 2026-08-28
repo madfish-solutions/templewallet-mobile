@@ -30,9 +30,9 @@ const HISTORY_TAB_VALUES = ['Public', 'Private'];
 interface Props {
   token: MultichainDisplayedToken;
   scam?: boolean;
-  historyTabIndex?: number;
-  onHistoryTabChange?: (index: number) => void;
-  onRebalancePress?: EmptyFn;
+  historyTabIndex: number;
+  onHistoryTabChange: (index: number) => void;
+  onRebalancePress: EmptyFn;
   onSendPress?: EmptyFn;
   onRemoveScamToken?: EmptyFn;
 }
@@ -44,7 +44,6 @@ export const TokenPageSummary = memo<Props>(
 
     const isTezos = token.chainKind === TempleChainKind.Tezos;
     const isTezosGasToken = isTezos && token.slug === TEZ_TOKEN_SLUG;
-    const showsHistoryTabs = isTezosGasToken && isDefined(historyTabIndex) && isDefined(onHistoryTabChange);
     const { identityTitle, networkLabel } = getTokenPageTitles(token);
 
     const tokenAmount = useMemo(
@@ -107,7 +106,7 @@ export const TokenPageSummary = memo<Props>(
           </View>
         </View>
 
-        {showsHistoryTabs && (
+        {isTezosGasToken && (
           <View style={styles.tabsRow}>
             <TextSegmentControl
               selectedIndex={historyTabIndex}

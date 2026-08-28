@@ -77,8 +77,6 @@ export const TokenScreen = () => {
   }
   const lastResolved = lastResolvedRef.current;
 
-  // The ref outlives a token vanishing mid-session (send-whole-balance), never a descriptor change.
-  // The page stays alive, but every balance is zeroed - the remembered amount is gone by definition.
   const token = useMemo(
     () => resolvedToken ?? (lastResolved?.key === descriptorKey ? withZeroedBalances(lastResolved.token) : undefined),
     [resolvedToken, lastResolved, descriptorKey]
@@ -132,7 +130,6 @@ const TokenScreenContent = memo<TokenScreenContentProps>(({ token, descriptor })
   } = useActivityFeed(assetFilter);
 
   useEffect(() => {
-    // The gas token has no contract to query - its balance comes from the dedicated TEZ balance epic
     if (isTezosKind && tezosAddress != null && descriptor.slug !== TEZ_TOKEN_SLUG) {
       dispatch(highPriorityLoadTokenBalanceAction({ accountId, publicKeyHash: tezosAddress, slug: descriptor.slug }));
     }
@@ -228,9 +225,9 @@ const TokenScreenContent = memo<TokenScreenContentProps>(({ token, descriptor })
       <TokenPageSummary
         token={token}
         scam={scam}
-        historyTabIndex={isTezosGasToken ? historyTabIndex : undefined}
-        onHistoryTabChange={isTezosGasToken ? handleHistoryTabChange : undefined}
-        onRebalancePress={isTezosGasToken ? handleRebalancePress : undefined}
+        historyTabIndex={historyTabIndex}
+        onHistoryTabChange={handleHistoryTabChange}
+        onRebalancePress={handleRebalancePress}
         onSendPress={isSaplingAvailable ? handleSendPress : undefined}
         onRemoveScamToken={handleRemoveScamToken}
       />
@@ -238,7 +235,6 @@ const TokenScreenContent = memo<TokenScreenContentProps>(({ token, descriptor })
     [
       token,
       scam,
-      isTezosGasToken,
       historyTabIndex,
       handleHistoryTabChange,
       handleRebalancePress,

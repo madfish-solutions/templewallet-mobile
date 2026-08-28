@@ -1,4 +1,3 @@
-import { BigNumber } from 'bignumber.js';
 import React, { memo, useCallback, useMemo } from 'react';
 import { Text, TouchableOpacity } from 'react-native';
 
@@ -14,6 +13,7 @@ import { useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
 import { useThemeSelector } from 'src/store/settings/settings-selectors';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { formatApyPercent } from 'src/utils/apy.util';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { APY_LINK_SELECTORS } from 'src/utils/constants/apy';
 import { getDelegateText } from 'src/utils/get-delegate-text.util';
@@ -22,9 +22,7 @@ import { useOpenUrl } from 'src/utils/linking';
 
 import { useTokenApyPillStyles } from './token-apy-pill.styles';
 
-const DECIMAL_VALUE = 2;
-
-const TEZ_APY_LABEL = `${new BigNumber(delegationApy).decimalPlaces(DECIMAL_VALUE).toFixed(DECIMAL_VALUE)}% APY`;
+const TEZ_APY_LABEL = `${formatApyPercent(delegationApy)}% APY`;
 
 interface Props {
   token: MultichainDisplayedToken;
@@ -43,10 +41,7 @@ export const TokenApyPill = memo<Props>(({ token, isTezosGasToken }) => {
 
   const { rate = 0, link } = useTokenApyInfo(token.slug);
 
-  const youvesLabel = useMemo(
-    () => `${new BigNumber(rate).decimalPlaces(DECIMAL_VALUE).toFixed(DECIMAL_VALUE)}% ${getDelegateText(token)}`,
-    [rate, token]
-  );
+  const youvesLabel = useMemo(() => `${formatApyPercent(rate)}% ${getDelegateText(token)}`, [rate, token]);
 
   const handleTezPress = useCallback(() => navigateToScreen({ screen: ScreensEnum.Delegation }), [navigateToScreen]);
 

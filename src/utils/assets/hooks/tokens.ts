@@ -32,7 +32,6 @@ export const useCurrentAccountTokens = (enabledOnly = false) => {
       accountTokens.reduce<UsableAccountAsset[]>((acc, curr) => {
         const metadata = allMetadatas[curr.slug];
 
-        // `accountTokens` r already filtered for metadata presence
         if (metadata == null) {
           return acc;
         }
@@ -89,7 +88,7 @@ const useAccountTkeyToken = (): UsableAccountAsset => {
   return useMemo(() => buildUsableAccountAsset(token, TEMPLE_TOKEN_METADATA, exchageRate), [token, exchageRate]);
 };
 
-/** Every Tezos token the account can open a page for: the gas token and TKEY are synthesized, not stored */
+// Every Tezos token the account can open a page for, the gas token and TKEY are synthesized, not stored
 export const useTezosAccountTokens = (): TokenInterface[] => {
   const tezosAddress = useAccountAddressForTezos();
   const tezosToken = useTezosTokenOfCurrentAccount();

@@ -13,6 +13,7 @@ export const getNetworkLabel = (chainKind: TempleChainKind) =>
 export const getTokenPageTitles = ({ name, symbol, chainKind }: TokenTitlesSource) => {
   const networkLabel = getNetworkLabel(chainKind);
   const identityTitle = name === networkLabel ? symbol : name;
+  const headerTitle = name === networkLabel ? name : symbol;
 
-  return { identityTitle, headerTitle: identityTitle === name ? symbol : name, networkLabel };
+  return { identityTitle, headerTitle, networkLabel };
 };

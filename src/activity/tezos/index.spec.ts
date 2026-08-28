@@ -25,7 +25,7 @@ const baseOp = (overrides: Partial<TzktTransactionOperation>): TzktTransactionOp
 });
 
 describe('parseTezosOperationsGroup - sapling direction', () => {
-  it('keeps a shielding call as a shielded interaction, but treats an unshielding payout as a tez receive', () => {
+  it('keeps a shielding call as a shielded interaction and parses an unshielding payout as a shielded tez receive', () => {
     const shieldingOp = baseOp({
       id: 1,
       sender: alias(ACCOUNT_ADDRESS),
@@ -60,14 +60,14 @@ describe('parseTezosOperationsGroup - sapling direction', () => {
         kind: ActivityOperKindEnum.transfer,
         type: ActivityOperTransferType.receive,
         assetSlug: 'tez',
-        amountSigned: '100000'
+        amountSigned: '100000',
+        isShielded: true
       })
     );
   });
 });
 
 describe('parseTezosOperationsGroup - self transfer', () => {
-  // Crashed the pre-TW-2302 pipeline: a self-send produced a group both branches claimed
   it('parses a send-to-self as a single send operation', () => {
     const selfSendOp = baseOp({
       sender: alias(ACCOUNT_ADDRESS),

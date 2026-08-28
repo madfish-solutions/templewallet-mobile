@@ -11,7 +11,6 @@ import { usePublicShieldedBalancePillsStyles } from './public-shielded-balance-p
 interface Props {
   atomicBalance: string;
   shieldedAtomicBalance?: string;
-  /** Rendered between the two pills */
   children?: ReactNode;
 }
 

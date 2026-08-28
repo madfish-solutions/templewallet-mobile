@@ -10,10 +10,10 @@ import { isTruthy } from 'src/utils/is-truthy';
 import { useTokenMetadataGetter } from 'src/utils/token-metadata.utils';
 
 const LOAD_CHUNK_SIZE = 50;
-// Bounded retries: the epic's switchMap lets a concurrent dispatcher (use-metadata-loading) cancel our batch, while slugs the API answers `null` for get parked after the last attempt
+// Retry canceled batches (epic switchMaps), but give up on slugs after 3 tries so unknown tokens aren't requested forever
 const MAX_LOAD_ATTEMPTS = 3;
 
-/** Fetches metadata for Tezos assets seen in the feed but absent from the store (e.g. received NFTs) */
+// Fetches metadata for Tezos assets seen in the feed but absent from the store (received NFTs, for example)
 export const useLoadTezosActivityMetadata = (activities: Activity[], resetKey: string) => {
   const getMetadata = useTokenMetadataGetter();
   const metadataLoading = useAreMetadatasLoadingSelector();
