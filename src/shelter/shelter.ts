@@ -16,12 +16,12 @@ import { catchError, concatMap, finalize, map, mapTo, switchMap, tap, toArray } 
 import { isAddress as isEvmAddress } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 
+import { MAX_SYNCED_HD_ACCOUNTS } from 'src/config/wallet.const.ts';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { Account, HDAccount, ImportedMultichainAccount } from 'src/interfaces/account.interfaces';
 import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { decryptString$, EncryptedData, encryptString$, hashPassword$ } from 'src/utils/crypto.util';
-import { getHdAccountsLengthForImport } from 'src/utils/hd-accounts.utils';
 import { isDefined } from 'src/utils/is-defined';
 import {
   getBiometryKeychainOptions,
@@ -340,11 +340,7 @@ export class Shelter {
       return throwError$('Mnemonic not validated');
     }
 
-    const accountsLengthForImport = getHdAccountsLengthForImport(hdAccountsLength);
-
-    if (accountsLengthForImport === undefined) {
-      return throwError$('Invalid HD accounts length');
-    }
+    const clampedHdAccountsLength = Math.min(hdAccountsLength, MAX_SYNCED_HD_ACCOUNTS);
 
     return hashPassword$(password).pipe(
       switchMap(passwordHash =>
@@ -365,7 +361,7 @@ export class Shelter {
             const evmHdKey = seedToEvmHdKey(seed);
             const saplingSeed = InMemorySpendingKey.getSaplingSeed(seed);
 
-            return from(range(0, accountsLengthForImport)).pipe(
+            return from(range(0, clampedHdAccountsLength)).pipe(
               concatMap(hdAccountIndex =>
                 timer(0).pipe(
                   switchMap(() =>

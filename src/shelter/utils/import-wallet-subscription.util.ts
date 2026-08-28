@@ -14,8 +14,6 @@ import { addAccountsAction, setSelectedAccountIdAction } from 'src/store/wallet/
 import { ImportWalletParams } from '../interfaces/import-wallet-params.interface';
 import { Shelter } from '../shelter';
 
-const IMPORT_WALLET_ERROR_MESSAGE = 'Failed to import wallet';
-
 export interface ImportWalletRequest {
   params: ImportWalletParams;
   resolve: EmptyFn;
@@ -34,7 +32,7 @@ export const importWalletSubscription = (importWallet$: Subject<ImportWalletRequ
         ]).pipe(
           tap(([importResult, isPasswordSaved]) => {
             if (!importResult?.accounts.length) {
-              throw new Error(IMPORT_WALLET_ERROR_MESSAGE);
+              throw new Error('Failed to import wallet');
             }
 
             const { accounts, saplingCredentials } = importResult;
