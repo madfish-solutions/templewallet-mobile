@@ -27,7 +27,6 @@ export const WatchAssetConfirmationContent: FC<WatchAssetConfirmationContentProp
   onConfirm
 }) => {
   const styles = useWatchAssetConfirmationContentStyles();
-  console.log('oy vey 1', requestContent);
   const { image, address, symbol, decimals } = requestContent.params.options;
 
   return (
