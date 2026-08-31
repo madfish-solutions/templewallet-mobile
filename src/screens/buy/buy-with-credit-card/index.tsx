@@ -41,6 +41,7 @@ import { useBuyWithCreditCardStyles } from './styles';
 import { getTopUpOutputAsset } from './utils';
 
 const FORM_REFRESH_INTERVAL = 20000;
+const outputSelection = { start: 0, end: 0 };
 
 const newTopUpAssetAmountFn = (
   _: TopUpAssetAmountInterface,
@@ -187,6 +188,7 @@ export const BuyWithCreditCard: FC = () => {
               emptyListText="Not found crypto currency"
               editable={false}
               isSearchable
+              selectionOptions={outputSelection}
               newValueFn={newTopUpOutputAssetAmountFn}
               onValueChange={handleOutputValueChange}
               assetsList={filteredCryptoCurrencies}
