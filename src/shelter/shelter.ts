@@ -372,12 +372,11 @@ export class Shelter {
                       name: `Account ${hdAccountIndex + 1}`,
                       hdIndex: hdAccountIndex,
                       passwordHash
-                    }).pipe(
-                      switchMap(({ account, saplingSpendingKey }) =>
-                        from(new InMemorySpendingKey(saplingSpendingKey).getSaplingCredentials()).pipe(
-                          map(saplingCredentials => ({ account, saplingCredentials }))
-                        )
-                      )
+                    })
+                  ),
+                  switchMap(({ account, saplingSpendingKey }) =>
+                    from(new InMemorySpendingKey(saplingSpendingKey).getSaplingCredentials()).pipe(
+                      map(saplingCredentials => ({ account, saplingCredentials }))
                     )
                   )
                 )
