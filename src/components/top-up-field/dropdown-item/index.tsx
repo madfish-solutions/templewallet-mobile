@@ -22,6 +22,7 @@ const preloadedTokensIcons: Record<string, ImageRequireSource> = {
   CNY: require('../fiat-icons/cny.png'),
   EGP: require('../fiat-icons/egp.png'),
   HKD: require('../fiat-icons/hkd.png'),
+  HUF: require('../fiat-icons/huf.png'),
   INR: require('../fiat-icons/inr.png'),
   JOD: require('../fiat-icons/jod.png'),
   JPY: require('../fiat-icons/jpy.png'),

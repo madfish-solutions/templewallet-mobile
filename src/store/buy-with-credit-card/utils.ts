@@ -74,10 +74,10 @@ export const mapMtPelerinProviderCurrencies = ({
 }: MtPelerinCurrenciesResponse): TopUpProviderCurrencies => ({
   fiat: fiatCurrencies
     .filter(({ isBuySupported }) => isBuySupported)
-    .map(({ name, symbol, iconUrl }) => ({
+    .map(({ name, symbol }) => ({
       name,
       code: symbol.toUpperCase(),
-      icon: iconUrl,
+      icon: getMoonPayIconUrl(symbol),
       precision: 2
     })),
   crypto: cryptoTokens
