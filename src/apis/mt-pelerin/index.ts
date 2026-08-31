@@ -17,6 +17,7 @@ import {
 } from './types';
 
 const mtPelerinApi = axios.create({ baseURL: MT_PELERIN_API_URL });
+const cardPaymentFiatCodes = ['CHF', 'EUR', 'USD', 'GBP'];
 
 export const getMtPelerinAssets = () =>
   templeWalletApi.get<MtPelerinCurrenciesResponse>('/mtpelerin-assets').then(({ data }) => data);
@@ -110,7 +111,9 @@ export const buildMtPelerinBuyUrl = ({
   url.searchParams.set('crys', cryptoCode);
   url.searchParams.set('dnet', network);
   url.searchParams.set('nets', network);
-  url.searchParams.set('pm', 'card');
+  if (cardPaymentFiatCodes.includes(fiatCode)) {
+    url.searchParams.set('pm', 'card');
+  }
   url.searchParams.set('primary', MT_PELERIN_PRIMARY_COLOR);
   url.searchParams.set('mylogo', MT_PELERIN_LOGO_URL);
   url.searchParams.set('addr', accountPkh);
