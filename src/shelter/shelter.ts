@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { nanoid } from '@reduxjs/toolkit';
 import { InMemorySigner } from '@taquito/signer';
-import { generateMnemonic, mnemonicToSeedSync, validateMnemonic } from 'bip39';
+import { generateMnemonic, mnemonicToSeed, mnemonicToSeedSync, validateMnemonic } from 'bip39';
 import { range } from 'lodash-es';
 import {
   getAllGenericPasswordServices,
@@ -11,14 +11,15 @@ import {
   setGenericPassword,
   UserCredentials
 } from 'react-native-keychain';
-import { BehaviorSubject, firstValueFrom, forkJoin, from, Observable, of } from 'rxjs';
-import { catchError, map, mapTo, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, firstValueFrom, forkJoin, from, Observable, of, timer } from 'rxjs';
+import { catchError, concatMap, finalize, map, mapTo, switchMap, tap, toArray } from 'rxjs/operators';
 import { isAddress as isEvmAddress } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 
+import { MAX_SYNCED_HD_ACCOUNTS } from 'src/config/wallet.const.ts';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
-import { Account, ImportedMultichainAccount } from 'src/interfaces/account.interfaces';
+import { Account, HDAccount, ImportedMultichainAccount } from 'src/interfaces/account.interfaces';
 import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { decryptString$, EncryptedData, encryptString$, hashPassword$ } from 'src/utils/crypto.util';
 import { isDefined } from 'src/utils/is-defined';
@@ -33,20 +34,22 @@ import {
 } from 'src/utils/keychain.utils';
 import {
   AccountCredentials,
+  evmHdKeyToAccountCredentials,
   getEvmDerivationPath,
   getPublicKeyAndHash$,
   getTezosDerivationPath,
-  mnemonicToEvmAccountCredentials,
   mnemonicToPrivateKey,
-  mnemonicToTezosAccountCredentials,
   privateKeyToEvmAccountCredentials,
   privateKeyToTezosAccountCredentials,
+  seedToEvmHdKey,
+  seedToTezosAccountCredentials,
   seedToTezosPrivateKey
 } from 'src/utils/keys.utils';
 import { throwError$ } from 'src/utils/rxjs.utils';
 import { getSaplingDerivationPath } from 'src/utils/sapling/address-utils';
 import { InMemorySpendingKey } from 'src/utils/sapling/sapling-keys';
 
+import { ImportWalletResult } from './interfaces/import-wallet-result.interface';
 import { hasSameChainAddress } from './utils/common.utils.ts';
 import { deriveSaskFromPrivateKey } from './utils/derive-sask-from-private-key.util';
 
@@ -59,6 +62,11 @@ interface PasswordServiceMigrationResultBase {
   isSuccess: boolean;
   error?: unknown;
   readPassword: false | UserCredentials;
+}
+
+interface DerivedHdAccount {
+  account: HDAccount;
+  saplingSpendingKey: string;
 }
 
 interface SuccessPasswordServiceMigrationResult extends PasswordServiceMigrationResultBase {
@@ -241,37 +249,47 @@ export class Shelter {
     );
 
   private static deriveAndSaveHdAccount$ = ({
-    seedPhrase,
+    seed,
+    evmHdKey,
+    saplingSeed,
     name,
     hdIndex,
     passwordHash
   }: {
-    seedPhrase: string;
+    seed: Buffer;
+    evmHdKey: ReturnType<typeof seedToEvmHdKey>;
+    saplingSeed: Buffer;
     name: string;
     hdIndex: number;
     passwordHash?: string;
   }) =>
     forkJoin([
-      from(mnemonicToTezosAccountCredentials(seedPhrase, hdIndex)),
-      from(Promise.resolve().then(() => mnemonicToEvmAccountCredentials(seedPhrase, hdIndex)))
+      from(seedToTezosAccountCredentials(seed, hdIndex)),
+      of(evmHdKeyToAccountCredentials(evmHdKey, hdIndex))
     ]).pipe(
       switchMap(([tezosCredentials, evmCredentials]) =>
         forkJoin([
-          InMemorySpendingKey.deriveSaskFromMnemonic(seedPhrase, getSaplingDerivationPath(hdIndex)),
+          InMemorySpendingKey.deriveSaskFromSeed(saplingSeed, getSaplingDerivationPath(hdIndex)),
           Shelter.saveAccountCredentials$(tezosCredentials, passwordHash),
           Shelter.saveAccountCredentials$(evmCredentials, passwordHash)
         ]).pipe(
-          switchMap(([sask]) => Shelter.saveSaplingSpendingKey$(tezosCredentials.address, sask, passwordHash)),
-          mapTo<Account>({
-            id: nanoid(),
-            type: AccountTypeEnum.HD,
-            name,
-            tezosAddress: tezosCredentials.address,
-            tezosPublicKey: tezosCredentials.publicKey,
-            evmAddress: evmCredentials.address,
-            evmPublicKey: evmCredentials.publicKey,
-            hdIndex
-          })
+          switchMap(([sask]) =>
+            Shelter.saveSaplingSpendingKey$(tezosCredentials.address, sask, passwordHash).pipe(
+              mapTo<DerivedHdAccount>({
+                account: {
+                  id: nanoid(),
+                  type: AccountTypeEnum.HD,
+                  name,
+                  tezosAddress: tezosCredentials.address,
+                  tezosPublicKey: tezosCredentials.publicKey,
+                  evmAddress: evmCredentials.address,
+                  evmPublicKey: evmCredentials.publicKey,
+                  hdIndex
+                },
+                saplingSpendingKey: sask
+              })
+            )
+          )
         )
       )
     );
@@ -317,10 +335,12 @@ export class Shelter {
     seedPhrase: string,
     password: string,
     hdAccountsLength = 1
-  ): Observable<Account[] | undefined> => {
+  ): Observable<ImportWalletResult | undefined> => {
     if (!validateMnemonic(seedPhrase)) {
       return throwError$('Mnemonic not validated');
     }
+
+    const clampedHdAccountsLength = Math.min(hdAccountsLength, MAX_SYNCED_HD_ACCOUNTS);
 
     return hashPassword$(password).pipe(
       switchMap(passwordHash =>
@@ -336,18 +356,45 @@ export class Shelter {
           },
           passwordHash
         ).pipe(
-          switchMap(() =>
-            forkJoin(
-              range(0, hdAccountsLength).map(hdAccountIndex =>
-                Shelter.deriveAndSaveHdAccount$({
-                  seedPhrase,
-                  name: `Account ${hdAccountIndex + 1}`,
-                  hdIndex: hdAccountIndex,
-                  passwordHash
-                })
-              )
-            )
-          )
+          switchMap(() => from(mnemonicToSeed(seedPhrase))),
+          switchMap(seed => {
+            const evmHdKey = seedToEvmHdKey(seed);
+            const saplingSeed = InMemorySpendingKey.getSaplingSeed(seed);
+
+            return from(range(0, clampedHdAccountsLength)).pipe(
+              concatMap(hdAccountIndex =>
+                timer(0).pipe(
+                  switchMap(() =>
+                    Shelter.deriveAndSaveHdAccount$({
+                      seed,
+                      evmHdKey,
+                      saplingSeed,
+                      name: `Account ${hdAccountIndex + 1}`,
+                      hdIndex: hdAccountIndex,
+                      passwordHash
+                    })
+                  ),
+                  switchMap(({ account, saplingSpendingKey }) =>
+                    from(new InMemorySpendingKey(saplingSpendingKey).getSaplingCredentials()).pipe(
+                      map(saplingCredentials => ({ account, saplingCredentials }))
+                    )
+                  )
+                )
+              ),
+              toArray(),
+              map(importedAccounts => ({
+                accounts: importedAccounts.map(({ account }) => account),
+                saplingCredentials: importedAccounts.map(({ account, saplingCredentials }) => ({
+                  publicKeyHash: account.tezosAddress,
+                  ...saplingCredentials
+                }))
+              })),
+              finalize(() => {
+                seed.fill(0);
+                saplingSeed.fill(0);
+              })
+            );
+          })
         );
       }),
       catchError(error => {
@@ -461,27 +508,40 @@ export class Shelter {
   ): Observable<Account | undefined> =>
     Shelter.revealSeedPhrase$().pipe(
       switchMap(seedPhrase =>
-        forkJoin([
-          from(mnemonicToTezosAccountCredentials(seedPhrase, accountIndex)),
-          from(Promise.resolve().then(() => mnemonicToEvmAccountCredentials(seedPhrase, accountIndex)))
-        ]).pipe(
-          switchMap(([tezosCredentials, evmCredentials]) => {
-            const collisionAccounts = explicitAccountIndex
-              ? existingAccounts
-              : existingAccounts.filter(({ type }) => type !== AccountTypeEnum.HD);
-            const hasCollision =
-              hasSameChainAddress(collisionAccounts, TempleChainKind.Tezos, tezosCredentials.address) ||
-              hasSameChainAddress(collisionAccounts, TempleChainKind.EVM, evmCredentials.address);
+        from(mnemonicToSeed(seedPhrase)).pipe(
+          switchMap(seed => {
+            const evmHdKey = seedToEvmHdKey(seed);
+            const saplingSeed = InMemorySpendingKey.getSaplingSeed(seed);
 
-            if (hasCollision) {
-              return explicitAccountIndex ? throwError$('Account already exists') : of(undefined);
-            }
+            return forkJoin([
+              from(seedToTezosAccountCredentials(seed, accountIndex)),
+              of(evmHdKeyToAccountCredentials(evmHdKey, accountIndex))
+            ]).pipe(
+              switchMap(([tezosCredentials, evmCredentials]) => {
+                const collisionAccounts = explicitAccountIndex
+                  ? existingAccounts
+                  : existingAccounts.filter(({ type }) => type !== AccountTypeEnum.HD);
+                const hasCollision =
+                  hasSameChainAddress(collisionAccounts, TempleChainKind.Tezos, tezosCredentials.address) ||
+                  hasSameChainAddress(collisionAccounts, TempleChainKind.EVM, evmCredentials.address);
 
-            return Shelter.deriveAndSaveHdAccount$({
-              seedPhrase,
-              name,
-              hdIndex: accountIndex
-            });
+                if (hasCollision) {
+                  return explicitAccountIndex ? throwError$('Account already exists') : of(undefined);
+                }
+
+                return Shelter.deriveAndSaveHdAccount$({
+                  seed,
+                  evmHdKey,
+                  saplingSeed,
+                  name,
+                  hdIndex: accountIndex
+                }).pipe(map(({ account }) => account));
+              }),
+              finalize(() => {
+                seed.fill(0);
+                saplingSeed.fill(0);
+              })
+            );
           }),
           catchError(error =>
             explicitAccountIndex ? throwError$(error instanceof Error ? error.message : String(error)) : of(undefined)

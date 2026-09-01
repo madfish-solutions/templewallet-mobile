@@ -55,7 +55,7 @@ export const SyncInstructions = memo<Props>(({ onBackPress }) => {
         <ButtonLargeSecondary title="Back" onPress={onBackPress} testID={SyncInstructionsSelectors.backButton} />
         <ButtonLargePrimary
           title="Scan QR"
-          onPress={() => navigateToScreen({ screen: ScreensEnum.ScanQrCode })}
+          onPress={() => navigateToScreen({ screen: ScreensEnum.SyncQrCode })}
           testID={SyncInstructionsSelectors.scanQRButton}
         />
       </ModalButtonsFloatingContainer>

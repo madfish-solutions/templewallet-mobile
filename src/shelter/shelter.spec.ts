@@ -130,13 +130,16 @@ describe('Shelter', () => {
       Shelter.importWallet$(mockAccountCredentials.seedPhrase, mockCorrectPassword)
         .pipe(withLatestFrom(Shelter.isLocked$))
         .subscribe(
-          rxJsTestingHelper(([accounts, isLocked]) => {
-            expect(accounts?.[0].name).toEqual('Account 1');
-            expect(accounts?.[0].type).toEqual(AccountTypeEnum.HD);
-            expect(accounts?.[0]).toMatchObject({
+          rxJsTestingHelper(([importResult, isLocked]) => {
+            expect(importResult?.accounts[0].name).toEqual('Account 1');
+            expect(importResult?.accounts[0].type).toEqual(AccountTypeEnum.HD);
+            expect(importResult?.accounts[0]).toMatchObject({
               hdIndex: 0,
               tezosAddress: mockAccountCredentials.publicKeyHash,
               evmAddress: mockEvmCredentials.address
+            });
+            expect(importResult?.saplingCredentials[0]).toMatchObject({
+              publicKeyHash: mockAccountCredentials.publicKeyHash
             });
 
             expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
@@ -168,6 +171,17 @@ describe('Shelter', () => {
           expect(err.message).toBe('Mnemonic not validated');
           done();
         }
+      });
+    });
+
+    it('should import only ten HD accounts when the payload contains more', done => {
+      Shelter.importWallet$(mockAccountCredentials.seedPhrase, mockCorrectPassword, 11).subscribe({
+        next: importResult => {
+          expect(importResult?.accounts).toHaveLength(10);
+          expect(importResult?.saplingCredentials).toHaveLength(10);
+          done();
+        },
+        error: done
       });
     });
 
