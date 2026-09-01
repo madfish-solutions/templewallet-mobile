@@ -10,7 +10,7 @@ import { isTezosDomainNameValid } from 'src/utils/dns.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isValidAddress as isTezosAddress } from 'src/utils/tezos.util';
 
-export const buildContactValidationSchema = ({
+const buildContactValidationSchema = ({
   contactsNames,
   contactsAddresses,
   ownAccounts
