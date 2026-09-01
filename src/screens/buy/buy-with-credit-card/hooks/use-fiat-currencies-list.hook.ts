@@ -9,18 +9,18 @@ import { mergeProvidersLimits } from '../utils';
 
 import { useFilteredCurrencies } from './use-filtered-currencies';
 
-export const useFiatCurrenciesList = (inputCurrencySymbol: string, outputTokenSymbol: string) => {
+export const useFiatCurrenciesList = (inputCurrencySymbol: string, outputTokenSlug: string) => {
   const moonpayFiatCurrencies = useFiatCurrenciesSelector(TopUpProviderEnum.MoonPay);
-  const utorgFiatCurrencies = useFiatCurrenciesSelector(TopUpProviderEnum.Utorg);
+  const mtPelerinFiatCurrencies = useFiatCurrenciesSelector(TopUpProviderEnum.MtPelerin);
 
-  const pairLimitsByProviders = usePairLimitsByProvidersSelector(inputCurrencySymbol, outputTokenSymbol);
+  const pairLimitsByProviders = usePairLimitsByProvidersSelector(inputCurrencySymbol, outputTokenSlug);
 
   const pairLimits = useMemo(() => mergeProvidersLimits(pairLimitsByProviders), [pairLimitsByProviders]);
 
   const noPairLimitsFiatCurrencies = useMemo(
     () =>
       Object.values(
-        [...moonpayFiatCurrencies, ...utorgFiatCurrencies].reduce<Record<string, TopUpInputInterface>>(
+        [...moonpayFiatCurrencies, ...mtPelerinFiatCurrencies].reduce<Record<string, TopUpInputInterface>>(
           (acc, currency) => {
             if (isDefined(acc[currency.code])) {
               const newTopUpCurrency = { ...acc[currency.code] };
@@ -40,7 +40,7 @@ export const useFiatCurrenciesList = (inputCurrencySymbol: string, outputTokenSy
           {}
         )
       ).sort(({ code: aCode }, { code: bCode }) => aCode.localeCompare(bCode)),
-    [moonpayFiatCurrencies, utorgFiatCurrencies]
+    [moonpayFiatCurrencies, mtPelerinFiatCurrencies]
   );
 
   const currenciesWithPairLimits = useMemo(() => {

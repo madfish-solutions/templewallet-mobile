@@ -73,7 +73,7 @@ export enum IconNameEnum {
   TriangleDown = 'TriangleDown',
   MoonPay = 'MoonPay',
   Exolix = 'Exolix',
-  Utorg = 'Utorg',
+  MtPelerin = 'MtPelerin',
   Ramp = 'Ramp',
   Check = 'Check',
   CheckCircle = 'CheckCircle',

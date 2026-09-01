@@ -17,6 +17,7 @@ export interface FiatCurrency extends CurrencyBase {
   type: CurrencyType.Fiat;
   minBuyAmount: number;
   maxBuyAmount: number;
+  isSellSupported: boolean;
   /** @deprecated */
   minAmount: number;
   /** @deprecated */
@@ -35,6 +36,10 @@ export interface CryptoCurrency extends CurrencyBase {
 }
 
 export type Currency = FiatCurrency | CryptoCurrency;
+
+export interface LimitsResponse {
+  moonPayErrorCode?: string;
+}
 
 export interface QuoteResponse {
   baseCurrencyAmount: number;
