@@ -36,7 +36,7 @@ const INITIAL_ROWS_TO_RENDER = 8;
 const GRID_GAPS_TOTAL_WIDTH = GRID_GAP * (ITEMS_PER_ROW - 1);
 
 const keyExtractor = (item: DisplayedCollectible) =>
-  item.chainKind === TempleChainKind.EVM ? toChainAssetSlug(item.chainKind, item.chainId, item.slug) : item.slug;
+  item.chainKind === TempleChainKind.EVM ? toChainAssetSlug(item, item.slug) : item.slug;
 
 const getCollectibleBalance = (collectible: DisplayedCollectible) =>
   collectible.chainKind === TempleChainKind.EVM ? collectible.balance : collectible.asset.balance;

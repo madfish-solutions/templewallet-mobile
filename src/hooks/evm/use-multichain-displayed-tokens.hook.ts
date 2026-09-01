@@ -15,7 +15,7 @@ import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
-import { ETHERLINK_MAINNET_CHAIN_SPECS } from 'src/types/networks';
+import { ChainRef, ETHERLINK_MAINNET_CHAIN_SPECS } from 'src/types/networks';
 import { buildEvmAssetCatalog, toEvmDisplayedAsset } from 'src/utils/assets/evm';
 import { useTezosAccountTokens } from 'src/utils/assets/hooks';
 import { getDollarValue } from 'src/utils/balance.utils';
@@ -25,10 +25,8 @@ import { isPositiveNumber } from 'src/utils/number.util';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 import { mutezToTz } from 'src/utils/tezos.util';
 
-export interface MultichainDisplayedToken {
+export type MultichainDisplayedToken = ChainRef & {
   slug: string;
-  chainKind: TempleChainKind;
-  chainId: string | number;
   symbol: string;
   name: string;
   iconUri?: string;
@@ -38,7 +36,7 @@ export interface MultichainDisplayedToken {
   /** Set only on the TEZ gas-token row, whose atomicBalance is the combined public + shielded amount */
   shieldedAtomicBalance?: string;
   original?: TokenInterface;
-}
+};
 
 export const buildTezosDisplayedToken = (
   token: TokenInterface,

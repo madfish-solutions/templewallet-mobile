@@ -73,7 +73,7 @@ export const CollectiblesHome = memo(() => {
 
   return (
     <View style={styles.screen}>
-      <HeaderCard hasInsetTop={true} style={styles.headerCard}>
+      <HeaderCard hasInsetTop style={styles.headerCard}>
         <View style={styles.accountContainer}>
           <CurrentAccountDropdown isCollectibleScreen />
         </View>

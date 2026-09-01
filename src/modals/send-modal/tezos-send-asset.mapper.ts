@@ -14,7 +14,7 @@ export const toTezosSendAsset = (token: TokenInterface): TezosSendAsset => {
 
   return {
     ...token,
-    assetKey: toChainAssetSlug(TempleChainKind.Tezos, ChainIds.MAINNET, assetSlug),
+    assetKey: toChainAssetSlug({ chainKind: TempleChainKind.Tezos, chainId: ChainIds.MAINNET }, assetSlug),
     assetSlug,
     chainKind: TempleChainKind.Tezos,
     chainId: ChainIds.MAINNET,

@@ -68,7 +68,7 @@ export const toEvmDisplayedAsset = (
       : tokenMetadata?.iconURL,
     balance,
     exchangeRate,
-    assetKey: toChainAssetSlug(TempleChainKind.EVM, network.chainId, assetSlug),
+    assetKey: toChainAssetSlug({ chainKind: TempleChainKind.EVM, chainId: network.chainId }, assetSlug),
     assetSlug,
     chainKind: TempleChainKind.EVM,
     chainId: network.chainId,

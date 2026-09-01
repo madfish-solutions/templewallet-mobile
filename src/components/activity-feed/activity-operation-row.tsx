@@ -101,9 +101,9 @@ export const ActivityOperationRow = memo<Props>(
                 <FormattedAmount
                   numberOfLines={1}
                   amount={amountView.fiatValue}
-                  isDollarValue={true}
-                  hideApproximateSign={true}
-                  showAllDecimalPlaces={true}
+                  isDollarValue
+                  hideApproximateSign
+                  showAllDecimalPlaces
                   showMinusSign={amountView.fiatValue.isLessThan(0)}
                   showPlusSign={amountView.fiatValue.isGreaterThan(0)}
                   style={styles.noteText}

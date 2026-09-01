@@ -20,7 +20,8 @@ import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 
-import { getTokenPageTitles } from './get-token-page-titles';
+import { useTokenPageTitles } from '../use-token-page-titles.hook';
+
 import { TokenApyPill } from './token-apy-pill';
 import { useTokenPageSummaryStyles } from './token-page-summary.styles';
 
@@ -44,7 +45,7 @@ export const TokenPageSummary = memo<Props>(
 
     const isTezos = token.chainKind === TempleChainKind.Tezos;
     const isTezosGasToken = isTezos && token.slug === TEZ_TOKEN_SLUG;
-    const { identityTitle, networkLabel } = getTokenPageTitles(token);
+    const { identityTitle, networkLabel } = useTokenPageTitles(token);
 
     const tokenAmount = useMemo(
       () => mutezToTz(new BigNumber(token.atomicBalance), token.decimals),

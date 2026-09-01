@@ -97,7 +97,9 @@ export const HeaderCardActionButtons = memo<Props>(
         animationPlayedTimesCount.current = 0;
 
         return;
-      } else if (isLoaderBeingShown) {
+      }
+
+      if (isLoaderBeingShown) {
         return;
       }
 
@@ -120,24 +122,26 @@ export const HeaderCardActionButtons = memo<Props>(
     };
 
     const handleSendButton = () => {
-      if (!emptyBalance) {
-        if (onSendPress) {
-          return onSendPress();
+      if (emptyBalance) {
+        showErrorToast({ description: errorMessage });
+
+        if (isTezosKind && isTezBalanceTooLow && !LIMIT_FIN_FEATURES) {
+          dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
         }
 
-        if (isTezosKind && original) {
-          return navigateToModal(ModalsEnum.Send, { token: original });
-        }
-
-        return navigateToModal(ModalsEnum.Send, {
-          assetKey: toChainAssetSlug(TempleChainKind.EVM, token.chainId, token.slug)
-        });
+        return;
       }
 
-      showErrorToast({ description: errorMessage });
+      if (onSendPress) {
+        return onSendPress();
+      }
 
-      if (isTezosKind && isTezBalanceTooLow && !LIMIT_FIN_FEATURES) {
-        dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
+      if (!isTezosKind) {
+        return navigateToModal(ModalsEnum.Send, { assetKey: toChainAssetSlug(token, token.slug) });
+      }
+
+      if (original) {
+        return navigateToModal(ModalsEnum.Send, { token: original });
       }
     };
 

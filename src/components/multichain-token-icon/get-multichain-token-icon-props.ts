@@ -22,7 +22,7 @@ export const getMultichainTokenIconProps = (
       }
     : {
         chainKind: TempleChainKind.EVM,
-        chainId: Number(token.chainId),
+        chainId: token.chainId,
         address: token.slug,
         iconName: token.slug === EVM_TOKEN_SLUG ? CryptoLogoNameEnum.Etherlink : undefined,
         iconURL: token.iconUri,

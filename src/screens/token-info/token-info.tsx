@@ -10,8 +10,8 @@ import { useMultichainDisplayedTokens } from 'src/hooks/evm/use-multichain-displ
 import { useTokenStandard } from 'src/hooks/use-token-standard';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useScreenParams } from 'src/navigator/hooks/use-navigation.hook';
-import { getNetworkLabel } from 'src/screens/token-screen/token-page-summary/get-token-page-titles';
 import { findDisplayedToken } from 'src/screens/token-screen/token-screen-descriptor';
+import { useNetworkLabel } from 'src/screens/token-screen/use-token-page-titles.hook';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { EVM_TOKEN_SLUG, TezosTokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import type { TokenInterface } from 'src/token/interfaces/token.interface';
@@ -31,7 +31,7 @@ export const TokenInfo = () => {
   const decimals = token?.decimals;
   const isTezosKind = descriptor.chainKind === TempleChainKind.Tezos;
   const isNativeToken = isTezosKind ? descriptor.slug === TEZ_TOKEN_SLUG : descriptor.slug === EVM_TOKEN_SLUG;
-  const networkLabel = getNetworkLabel(descriptor.chainKind);
+  const networkLabel = useNetworkLabel(descriptor);
   const original = token?.original;
 
   const tezosContractToken =

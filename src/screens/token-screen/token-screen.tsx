@@ -46,10 +46,10 @@ import { isDefined } from 'src/utils/is-defined';
 import { jsonEqualityFn } from 'src/utils/store.utils';
 
 import { PrivateTezosTokenHistory } from './private-tezos-token-history/private-tezos-token-history';
-import { getTokenPageTitles } from './token-page-summary/get-token-page-titles';
 import { PUBLIC_TAB_INDEX, TokenPageSummary } from './token-page-summary/token-page-summary';
 import { findDisplayedToken, toActivityAssetFilter, TokenScreenDescriptor } from './token-screen-descriptor';
 import { useTokenScreenStyles } from './token-screen.styles';
+import { useTokenPageTitles } from './use-token-page-titles.hook';
 
 const withZeroedBalances = (token: MultichainDisplayedToken): MultichainDisplayedToken => ({
   ...token,
@@ -63,7 +63,7 @@ export const TokenScreen = () => {
   const { descriptor } = useScreenParams<ScreensEnum.TokenScreen>();
   const displayedTokens = useMultichainDisplayedTokens();
 
-  const descriptorKey = toChainAssetSlug(descriptor.chainKind, descriptor.chainId, descriptor.slug);
+  const descriptorKey = toChainAssetSlug(descriptor, descriptor.slug);
 
   const resolvedToken = useMemoWithCompare(
     () => findDisplayedToken(displayedTokens, descriptor),
@@ -135,7 +135,7 @@ const TokenScreenContent = memo<TokenScreenContentProps>(({ token, descriptor })
     }
   }, [accountId, tezosAddress, isTezosKind, descriptor.slug]);
 
-  const { headerTitle } = getTokenPageTitles(token);
+  const { headerTitle } = useTokenPageTitles(token);
 
   const handleInfoIconClick = useCallback(
     () => navigateToScreen({ screen: ScreensEnum.TokenInfo, params: { descriptor } }),

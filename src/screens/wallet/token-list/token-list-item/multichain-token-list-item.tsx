@@ -17,6 +17,7 @@ import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { MultichainDisplayedToken } from 'src/hooks/evm/use-multichain-displayed-tokens.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
+import { toTokenScreenDescriptor } from 'src/screens/token-screen/token-screen-descriptor';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
@@ -56,9 +57,9 @@ export const MultichainTokenListItem = memo<Props>(({ token, scam, apy }) => {
     () =>
       navigateToScreen({
         screen: ScreensEnum.TokenScreen,
-        params: { descriptor: { chainKind: token.chainKind, chainId: token.chainId, slug: token.slug } }
+        params: { descriptor: toTokenScreenDescriptor(token) }
       }),
-    [token.chainKind, token.chainId, token.slug, navigateToScreen]
+    [token, navigateToScreen]
   );
 
   const content = (

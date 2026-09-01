@@ -58,8 +58,7 @@ const FILLER_SLUG_PREFIX = 'filler';
 
 const emptyListItems: ListItem[] = [];
 
-const keyExtractor = (item: ListItem) =>
-  item === AD_PLACEHOLDER ? item : toChainAssetSlug(item.chainKind, item.chainId, item.slug);
+const keyExtractor = (item: ListItem) => (item === AD_PLACEHOLDER ? item : toChainAssetSlug(item, item.slug));
 const getItemType = (item: ListItem) => (typeof item === 'string' ? 'promotion' : 'row');
 
 export const TokensList = memo(() => {

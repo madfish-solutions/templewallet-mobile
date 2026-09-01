@@ -49,7 +49,7 @@ export const EvmCollectibleModalContent = memo<Props>(({ chainId, slug }) => {
 
   usePageAnalytic(ModalsEnum.CollectibleModal);
 
-  const assetKey = useMemo(() => toChainAssetSlug(TempleChainKind.EVM, chainId, slug), [chainId, slug]);
+  const assetKey = useMemo(() => toChainAssetSlug({ chainKind: TempleChainKind.EVM, chainId }, slug), [chainId, slug]);
   const name = metadata?.collectibleName ?? metadata?.name;
   const collectionName = metadata?.name ?? 'Unknown collection';
   const tokenStandard = metadata?.standard ? metadata.standard.replace('erc', 'ERC ') : '---';
