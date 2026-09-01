@@ -1,3 +1,4 @@
+import { isAddress as isEvmAddress } from 'viem';
 import { object, SchemaOf, string } from 'yup';
 
 import { makeRequiredErrorMessage } from 'src/form/validation/messages';
@@ -5,9 +6,9 @@ import { Contact } from 'src/interfaces/contact.interface';
 import { useContactsAddresses, useContactsNames } from 'src/store/contact-book/contact-book-selectors';
 import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
-import { isValidContactAddress } from 'src/utils/contact.utils';
 import { isTezosDomainNameValid } from 'src/utils/dns.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { isValidAddress as isTezosAddress } from 'src/utils/tezos.util';
 
 export const buildContactValidationSchema = ({
   contactsNames,
@@ -58,3 +59,5 @@ export const useEditContactFormValidationSchema = (editContactIndex: number): Sc
 
   return buildContactValidationSchema({ contactsNames, contactsAddresses, ownAccounts });
 };
+
+const isValidContactAddress = (address: string) => isEvmAddress(address) || isTezosAddress(address);

@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { Alert } from 'react-native';
-import { useDispatch } from 'react-redux';
 
 import { Contact } from 'src/interfaces/contact.interface';
+import { dispatch } from 'src/store';
 import { deleteContactAction } from 'src/store/contact-book/contact-book-actions';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
@@ -13,7 +13,6 @@ enum DeleteContactAnalyticsEvents {
 }
 
 export const useDeleteContact = (onDeleted?: EmptyFn) => {
-  const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
 
   return useCallback(
@@ -34,6 +33,6 @@ export const useDeleteContact = (onDeleted?: EmptyFn) => {
           }
         }
       ]),
-    [dispatch, onDeleted, trackEvent]
+    [onDeleted, trackEvent]
   );
 };

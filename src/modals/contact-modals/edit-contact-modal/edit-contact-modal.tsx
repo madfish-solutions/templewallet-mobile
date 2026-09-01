@@ -2,7 +2,6 @@ import { Formik } from 'formik';
 import { FormikProps } from 'formik/dist/types';
 import React, { FC, useMemo, useRef, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
-import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
@@ -17,10 +16,10 @@ import { Contact } from 'src/interfaces/contact.interface';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useModalParams, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
-import { editContactAction, loadContactTezosBalance } from 'src/store/contact-book/contact-book-actions';
+import { dispatch } from 'src/store';
+import { editContactAction } from 'src/store/contact-book/contact-book-actions';
 import { useColors } from 'src/styles/use-colors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { isTezosContactAddress } from 'src/utils/contact.utils';
 import { tezosDomainsResolver } from 'src/utils/dns.utils';
 
 import { handleContactSubmission } from '../utils/handle-contact-submission.util';
@@ -33,7 +32,6 @@ export const EditContactModal: FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const styles = useEditContactModalStyles();
   const colors = useColors();
-  const dispatch = useDispatch();
   const { goBack } = useNavigation();
   const { contact, index } = useModalParams<ModalsEnum.EditContact>();
   const editContactFormValidationSchema = useEditContactFormValidationSchema(index);
@@ -45,9 +43,6 @@ export const EditContactModal: FC = () => {
 
   const editContact = (contact: Contact) => {
     dispatch(editContactAction({ contact, index }));
-    if (isTezosContactAddress(contact.address)) {
-      dispatch(loadContactTezosBalance.submit(contact.address));
-    }
     goBack();
   };
 
@@ -55,14 +50,13 @@ export const EditContactModal: FC = () => {
 
   return (
     <Formik
-      innerRef={formik}
-      validateOnBlur
       validateOnChange
+      innerRef={formik}
       initialValues={contact}
       validationSchema={editContactFormValidationSchema}
       onSubmit={values => handleContactSubmission(values, formik, resolver, setIsLoading, editContact)}
     >
-      {({ submitForm, isValid }) => (
+      {({ submitForm, isValid, submitCount }) => (
         <>
           <ScreenContainer isFullScreenMode>
             <View>
@@ -85,15 +79,11 @@ export const EditContactModal: FC = () => {
             </View>
           </ScreenContainer>
           <ModalButtonsFloatingContainer>
-            <ButtonLargeSecondary
-              title="Close"
-              disabled={isLoading}
-              onPress={goBack}
-              testID={EditContactModalSelectors.closeButton}
-            />
+            <ButtonLargeSecondary title="Close" onPress={goBack} testID={EditContactModalSelectors.closeButton} />
             <ButtonLargePrimary
               title="Save"
-              disabled={!isValid || isLoading}
+              isLoading={isLoading}
+              disabled={submitCount !== 0 && (!isValid || isLoading)}
               onPress={submitForm}
               testID={EditContactModalSelectors.saveButton}
             />

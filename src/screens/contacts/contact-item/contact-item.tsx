@@ -11,7 +11,6 @@ import { TruncatedText } from 'src/components/truncated-text';
 import { Contact } from 'src/interfaces/contact.interface';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
-import { truncateContactAddress } from 'src/utils/contact.utils';
 
 import { useContactItemStyles } from './contact-item.styles';
 import { ContactItemSelector } from './selectors';
@@ -61,3 +60,6 @@ export const ContactDeleteButton: FC<DeleteButtonProps> = ({ onPress }) => {
     </View>
   );
 };
+
+const truncateContactAddress = (address: string) =>
+  address.length > 10 ? `${address.slice(0, 6)}...${address.slice(-4)}` : address;

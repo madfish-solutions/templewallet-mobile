@@ -2,7 +2,6 @@ import { Formik } from 'formik';
 import { FormikProps } from 'formik/dist/types';
 import React, { FC, useMemo, useRef, useState } from 'react';
 import { View } from 'react-native';
-import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
@@ -14,9 +13,9 @@ import { Contact } from 'src/interfaces/contact.interface';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useModalParams, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
-import { addContactAction, loadContactTezosBalance } from 'src/store/contact-book/contact-book-actions';
+import { dispatch } from 'src/store';
+import { addContactAction } from 'src/store/contact-book/contact-book-actions';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { isTezosContactAddress } from 'src/utils/contact.utils';
 import { tezosDomainsResolver } from 'src/utils/dns.utils';
 
 import { handleContactSubmission } from '../utils/handle-contact-submission.util';
@@ -26,7 +25,6 @@ import { AddContactModalSelectors } from './add-contact-modal.selectors';
 
 export const AddContactModal: FC = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const dispatch = useDispatch();
   const { goBack } = useNavigation();
   const params = useModalParams<ModalsEnum.AddContact>();
   const validationSchema = useAddContactFormValidationSchema();
@@ -37,9 +35,6 @@ export const AddContactModal: FC = () => {
 
   const addContact = (contact: Contact) => {
     dispatch(addContactAction(contact));
-    if (isTezosContactAddress(contact.address)) {
-      dispatch(loadContactTezosBalance.submit(contact.address));
-    }
     goBack();
   };
 
@@ -52,14 +47,13 @@ export const AddContactModal: FC = () => {
 
   return (
     <Formik
-      innerRef={formik}
-      validateOnBlur
       validateOnChange
+      innerRef={formik}
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={values => handleContactSubmission(values, formik, resolver, setIsLoading, addContact)}
     >
-      {({ submitForm, isValid }) => (
+      {({ submitForm, isValid, submitCount }) => (
         <>
           <ScreenContainer isFullScreenMode>
             <View>
@@ -74,15 +68,11 @@ export const AddContactModal: FC = () => {
             </View>
           </ScreenContainer>
           <ModalButtonsFloatingContainer>
-            <ButtonLargeSecondary
-              title="Close"
-              disabled={isLoading}
-              onPress={goBack}
-              testID={AddContactModalSelectors.closeButton}
-            />
+            <ButtonLargeSecondary title="Close" onPress={goBack} testID={AddContactModalSelectors.closeButton} />
             <ButtonLargePrimary
               title="Save"
-              disabled={!isValid || isLoading}
+              isLoading={isLoading}
+              disabled={submitCount !== 0 && (!isValid || isLoading)}
               onPress={submitForm}
               testID={AddContactModalSelectors.saveButton}
             />
