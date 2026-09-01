@@ -1,79 +1,63 @@
-import React, { FC } from 'react';
-import { Alert, View } from 'react-native';
-import { useDispatch } from 'react-redux';
+import React, { FC, memo } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { isAddress as isEvmAddress } from 'viem';
 
-import { Divider } from 'src/components/divider/divider';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
+import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
+import { NetworkIcon } from 'src/components/network-icon';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
+import { TouchableIconV2 } from 'src/components/touchable-icon-v2';
 import { TruncatedText } from 'src/components/truncated-text';
-import { WalletAddress } from 'src/components/wallet-address/wallet-address';
 import { Contact } from 'src/interfaces/contact.interface';
-import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
-import { deleteContactAction } from 'src/store/contact-book/contact-book-actions';
 import { formatSize } from 'src/styles/format-size';
-import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
-import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { useColors } from 'src/styles/use-colors';
+import { truncateContactAddress } from 'src/utils/contact.utils';
 
-import { ContactItemAnalyticsEvents } from './analytics-events';
 import { useContactItemStyles } from './contact-item.styles';
 import { ContactItemSelector } from './selectors';
 
 interface Props {
   contact: Contact;
-  index: number;
+  onPress: EmptyFn;
 }
 
-export const ContactItem: FC<Props> = ({ contact, index }) => {
-  const dispatch = useDispatch();
-  const navigateToModal = useNavigateToModal();
+export const ContactItem = memo<Props>(({ contact, onPress }) => {
   const styles = useContactItemStyles();
-  const { trackEvent } = useAnalytics();
-
-  const handleDeleteContact = (contact: Contact) => () =>
-    Alert.alert(`Delete “${contact.name}” from Contacts?`, undefined, [
-      {
-        text: 'Cancel',
-        style: 'cancel',
-        onPress: () => trackEvent(ContactItemAnalyticsEvents.DELETE_CONTACT_CANCEL, AnalyticsEventCategory.General)
-      },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: () => {
-          dispatch(deleteContactAction(contact));
-          trackEvent(ContactItemAnalyticsEvents.DELETE_CONTACT_SUCCESS, AnalyticsEventCategory.General);
-        }
-      }
-    ]);
-
-  const hadleEditItem = () => navigateToModal(ModalsEnum.EditContact, { contact, index });
+  const network = isEvmAddress(contact.address) ? CryptoLogoNameEnum.Etherlink : CryptoLogoNameEnum.Tezos;
 
   return (
-    <View style={styles.root}>
+    <TouchableOpacity style={styles.root} activeOpacity={0.7} onPress={onPress} testID={ContactItemSelector.item}>
       <View style={styles.accountContainer}>
-        <RobotIcon seed={contact.address} />
+        <RobotIcon seed={contact.address} size={formatSize(36)} color="blue" />
         <View style={styles.accountContainerData}>
           <TruncatedText style={styles.name}>{contact.name}</TruncatedText>
-          <WalletAddress isLocalDomainNameShowing publicKeyHash={contact.address} />
+          <Text style={styles.address}>{truncateContactAddress(contact.address)}</Text>
         </View>
       </View>
-      <View style={styles.actions}>
-        <TouchableIcon
-          name={IconNameEnum.Edit}
-          size={formatSize(16)}
-          testID={ContactItemSelector.editButton}
-          onPress={hadleEditItem}
-        />
-        <Divider size={formatSize(24)} />
-        <TouchableIcon
-          name={IconNameEnum.Trash}
-          size={formatSize(16)}
-          testID={ContactItemSelector.deleteButton}
-          onPress={handleDeleteContact(contact)}
-        />
-      </View>
+      <NetworkIcon name={network} variant="nftBadge" />
+    </TouchableOpacity>
+  );
+});
+
+interface DeleteButtonProps {
+  onPress: EmptyFn;
+}
+
+export const ContactDeleteButton: FC<DeleteButtonProps> = ({ onPress }) => {
+  const colors = useColors();
+  const styles = useContactItemStyles();
+
+  return (
+    <View style={styles.hiddenRoot}>
+      <TouchableIconV2
+        name={IconNameV2Enum.Trash}
+        size={formatSize(36)}
+        iconSize={16}
+        color={colors.destructive}
+        style={styles.deleteButton}
+        testID={ContactItemSelector.deleteButton}
+        onPress={onPress}
+      />
     </View>
   );
 };

@@ -16,11 +16,16 @@ export const contactBookReducers = createReducer<ContactBookState>(contactBookIn
   });
   builder.addCase(editContactAction, (state, { payload }) => {
     const contactsCopy = [...state.contacts];
+    const previousAddress = contactsCopy[payload.index]?.address;
     contactsCopy[payload.index] = payload.contact;
     state.contacts = contactsCopy;
+    if (previousAddress && previousAddress !== payload.contact.address) {
+      delete state.contactsStateRecord[previousAddress];
+    }
   });
   builder.addCase(deleteContactAction, (state, { payload }) => {
     state.contacts = state.contacts.filter(contact => contact.address !== payload.address);
+    delete state.contactsStateRecord[payload.address];
   });
   builder.addCase(addContactCandidateAddressAction, (state, { payload }) => {
     state.contactCandidateAddress = payload;

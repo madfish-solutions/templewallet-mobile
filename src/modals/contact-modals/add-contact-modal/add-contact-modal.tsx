@@ -16,6 +16,7 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useModalParams, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { addContactAction, loadContactTezosBalance } from 'src/store/contact-book/contact-book-actions';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { isTezosContactAddress } from 'src/utils/contact.utils';
 import { tezosDomainsResolver } from 'src/utils/dns.utils';
 
 import { handleContactSubmission } from '../utils/handle-contact-submission.util';
@@ -36,7 +37,9 @@ export const AddContactModal: FC = () => {
 
   const addContact = (contact: Contact) => {
     dispatch(addContactAction(contact));
-    dispatch(loadContactTezosBalance.submit(contact.address));
+    if (isTezosContactAddress(contact.address)) {
+      dispatch(loadContactTezosBalance.submit(contact.address));
+    }
     goBack();
   };
 
@@ -63,7 +66,11 @@ export const AddContactModal: FC = () => {
               <Label label="Name" />
               <FormTextInput name="name" testID={AddContactModalSelectors.nameInput} />
               <Label label="Address" />
-              <FormAddressInput name="address" testID={AddContactModalSelectors.addressInput} />
+              <FormAddressInput
+                name="address"
+                placeholder="EVM or Tezos"
+                testID={AddContactModalSelectors.addressInput}
+              />
             </View>
           </ScreenContainer>
           <ModalButtonsFloatingContainer>
