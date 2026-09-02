@@ -59,7 +59,7 @@ export const EditContactModal: FC = () => {
       {({ submitForm, isValid, submitCount }) => (
         <>
           <ScreenContainer isFullScreenMode>
-            <View>
+            <View style={styles.container}>
               <Label label="Name" />
               <FormTextInput name="name" testID={EditContactModalSelectors.nameInput} />
               <Label label="Address" />
@@ -78,7 +78,7 @@ export const EditContactModal: FC = () => {
               </TouchableOpacity>
             </View>
           </ScreenContainer>
-          <ModalButtonsFloatingContainer>
+          <ModalButtonsFloatingContainer variant="bordered">
             <ButtonLargeSecondary title="Close" onPress={goBack} testID={EditContactModalSelectors.closeButton} />
             <ButtonLargePrimary
               title="Save"

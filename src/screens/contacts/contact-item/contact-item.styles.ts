@@ -25,7 +25,7 @@ export const useContactItemStyles = createUseStyles(({ colors, typography }) => 
     flexShrink: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: formatSize(4)
+    gap: formatSize(6)
   },
   accountContainerData: {
     flex: 1,

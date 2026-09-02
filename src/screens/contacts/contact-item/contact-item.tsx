@@ -33,7 +33,7 @@ export const ContactItem = memo<Props>(({ contact, onPress }) => {
           <Text style={styles.address}>{truncateContactAddress(contact.address)}</Text>
         </View>
       </View>
-      <NetworkIcon name={network} variant="nftBadge" />
+      <NetworkIcon name={network} variant="badge" />
     </TouchableOpacity>
   );
 });

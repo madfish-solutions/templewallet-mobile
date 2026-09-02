@@ -17,8 +17,9 @@ export const useContactsStyles = createUseStyles(({ colors }) => ({
     flexGrow: 1
   },
   emptyContainer: {
-    flex: 1,
+    flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'flex-start',
+    paddingTop: formatSize(128)
   }
 }));

@@ -22,9 +22,11 @@ import { handleContactSubmission } from '../utils/handle-contact-submission.util
 import { useAddContactFormValidationSchema } from '../validation-schema';
 
 import { AddContactModalSelectors } from './add-contact-modal.selectors';
+import { useAddContactModalStyles } from './add-contact-modal.styles.ts';
 
 export const AddContactModal: FC = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const styles = useAddContactModalStyles();
   const { goBack } = useNavigation();
   const params = useModalParams<ModalsEnum.AddContact>();
   const validationSchema = useAddContactFormValidationSchema();
@@ -56,13 +58,13 @@ export const AddContactModal: FC = () => {
       {({ submitForm, isValid, submitCount }) => (
         <>
           <ScreenContainer isFullScreenMode>
-            <View>
+            <View style={styles.container}>
               <Label label="Name" />
-              <FormTextInput name="name" testID={AddContactModalSelectors.nameInput} />
+              <FormTextInput name="name" placeholder="e.g Degen" testID={AddContactModalSelectors.nameInput} />
               <Label label="Address" />
               <FormAddressInput
                 name="address"
-                placeholder="EVM or Tezos"
+                placeholder="Etherlink or Tezos"
                 testID={AddContactModalSelectors.addressInput}
               />
             </View>
