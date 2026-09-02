@@ -1,4 +1,4 @@
-import { getAddress, isAddress as isEvmAddress } from 'viem';
+import { isAddress as isEvmAddress } from 'viem';
 import { object, SchemaOf, string } from 'yup';
 
 import { makeRequiredErrorMessage } from 'src/form/validation/messages';
@@ -7,6 +7,7 @@ import { useContactsAddresses, useContactsNames } from 'src/store/contact-book/c
 import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
 import { isTezosDomainNameValid } from 'src/utils/dns.utils';
+import { equalsIgnoreCase } from 'src/utils/evm/on-chain/common.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isValidAddress as isTezosAddress } from 'src/utils/tezos.util';
 
@@ -28,16 +29,19 @@ const buildContactValidationSchema = ({
         isDefined(value) ? value === value.trim() : false
       ),
     address: string()
-      .transform(value => (isEvmAddress(value) ? getAddress(value) : value))
       .required(makeRequiredErrorMessage('Address'))
-      .notOneOf(contactsAddresses, 'Contact with the same address already exists')
+      .test(
+        'is-unique-address',
+        'Contact with the same address already exists',
+        value => !contactsAddresses.some(address => equalsIgnoreCase(address, value))
+      )
       .test('is-valid-address', 'Invalid address', value =>
         isDefined(value) ? isValidContactAddress(value) || isTezosDomainNameValid(value) : false
       )
       .test(
         'is-own-account',
         'Your account cannot be added to contacts',
-        value => isDefined(value) && !ownAccounts.includes(value)
+        value => !ownAccounts.some(address => equalsIgnoreCase(address, value))
       )
   });
 
