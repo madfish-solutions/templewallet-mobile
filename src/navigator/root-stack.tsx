@@ -128,12 +128,12 @@ export const RootStackScreen = () => {
             <RootStack.Screen
               name={ModalsEnum.RevealSeedPhrase}
               component={RevealSeedPhraseModal}
-              options={useModalOptions('Reveal Seed')}
+              options={useModalOptions('Reveal seed')}
             />
             <RootStack.Screen
               name={ModalsEnum.RevealPrivateKey}
               component={RevealPrivateKeyModal}
-              options={useModalOptions('Reveal Private key')}
+              options={useModalOptions('Reveal private key')}
             />
             <RootStack.Screen
               name={ModalsEnum.Confirmation}

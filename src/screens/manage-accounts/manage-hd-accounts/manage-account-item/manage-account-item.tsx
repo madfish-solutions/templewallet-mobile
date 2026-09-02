@@ -2,26 +2,14 @@ import React, { FC } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
+import { AccountCard } from 'src/components/account-card';
 import { ButtonSmallSecondary } from 'src/components/button/button-small/button-small-secondary/button-small-secondary';
-import { Divider } from 'src/components/divider/divider';
-import { HideBalance } from 'src/components/hide-balance/hide-balance';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
-import { RobotIcon } from 'src/components/robot-icon/robot-icon';
-import { getSeedFromAccount } from 'src/components/robot-icon/robot-icon.utils.ts';
 import { Switch } from 'src/components/switch/switch';
-import { TruncatedText } from 'src/components/truncated-text';
-import { WalletAddress } from 'src/components/wallet-address/wallet-address';
 import { Account } from 'src/interfaces/account.interfaces';
-import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { setAccountVisibility } from 'src/store/wallet/wallet-actions';
 import { useIsAccountVisibleSelector } from 'src/store/wallet/wallet-selectors';
-import { formatSize } from 'src/styles/format-size';
 import { showWarningToast } from 'src/toast/toast.utils';
-import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
-import { useTezosTokenOfKnownAccount } from 'src/utils/wallet.utils';
+import { getAccountAddressForTezos } from 'src/utils/account.utils';
 
 import { ManageAccountItemSelectors } from './manage-account-item.selectors';
 import { useManageAccountItemStyles } from './manage-account-item.styles';
@@ -29,18 +17,14 @@ import { useManageAccountItemStyles } from './manage-account-item.styles';
 interface Props {
   account: Account;
   selectedAccount: Account;
-  onRevealButtonPress: SyncFn<Account>;
+  onManageButtonPress: SyncFn<Account>;
 }
 
-export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevealButtonPress }) => {
+export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onManageButtonPress }) => {
   const dispatch = useDispatch();
-  const navigateToModal = useNavigateToModal();
   const styles = useManageAccountItemStyles();
 
   const tezosAddress = getAccountAddressForTezos(account);
-  const evmAddress = getAccountAddressForEvm(account);
-
-  const tezosToken = useTezosTokenOfKnownAccount(account.id);
   const isVisible = useIsAccountVisibleSelector(account.id) ?? true;
 
   const isVisibilitySwitchDisabled = !tezosAddress || account.id === selectedAccount.id;
@@ -55,26 +39,17 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
       };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.upperContainer}>
-        <View style={styles.accountContainer}>
-          <RobotIcon seed={getSeedFromAccount(account)} />
-          <View style={styles.accountContainerData}>
-            <TruncatedText style={styles.accountText}>{account.name}</TruncatedText>
-            <WalletAddress publicKeyHash={tezosAddress ?? evmAddress ?? ''} />
-          </View>
-        </View>
-
-        <View style={styles.actionsContainer}>
-          <Divider size={formatSize(16)} />
-          <TouchableIcon
-            name={IconNameEnum.Edit}
-            size={formatSize(16)}
-            onPress={() => navigateToModal(ModalsEnum.RenameAccount, { account })}
-            testID={ManageAccountItemSelectors.editButton}
+    <AccountCard
+      account={account}
+      showAllAddresses
+      detailsContainerStyle={styles.accountDetails}
+      footer={
+        <View style={styles.footer}>
+          <ButtonSmallSecondary
+            title="Manage"
+            onPress={() => onManageButtonPress(account)}
+            testID={ManageAccountItemSelectors.manageButton}
           />
-          <Divider size={formatSize(16)} />
-
           <View onTouchStart={() => void (isVisibilitySwitchDisabled && showWarningToast(visibilityWarning))}>
             <Switch
               value={isVisible}
@@ -92,27 +67,7 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
             />
           </View>
         </View>
-      </View>
-
-      <Divider size={formatSize(16)} />
-
-      <View style={styles.lowerContainer}>
-        <View style={styles.lowerContainerData}>
-          <HideBalance textStyle={styles.balanceText}>
-            <AssetValueText asset={tezosToken} amount={tezosToken.balance} />
-          </HideBalance>
-          <HideBalance textStyle={styles.equityText}>
-            <AssetValueText convertToDollar asset={tezosToken} amount={tezosToken.balance} />
-          </HideBalance>
-        </View>
-
-        <ButtonSmallSecondary
-          title="Reveal"
-          marginBottom={formatSize(8)}
-          onPress={() => onRevealButtonPress(account)}
-          testID={ManageAccountItemSelectors.revealButton}
-        />
-      </View>
-    </View>
+      }
+    />
   );
 };

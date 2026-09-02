@@ -1,8 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import { Text, View } from 'react-native';
 
-import { BottomSheet } from 'src/components/bottom-sheet/bottom-sheet';
-import { BottomSheetActionButton } from 'src/components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
 import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
 import { ButtonSmallSecondary } from 'src/components/button/button-small/button-small-secondary/button-small-secondary';
 import { Divider } from 'src/components/divider/divider';
@@ -15,7 +13,7 @@ import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { useHDAccounts, useAccount } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 
-import { InfoText } from '../info-text/info-text';
+import { ManageAccountActionsBottomSheet } from '../manage-account-actions-bottom-sheet';
 
 import { ManageAccountItem } from './manage-account-item/manage-account-item';
 import { ManageHdAccountsSelectors } from './manage-hd-accounts.selectors';
@@ -24,7 +22,7 @@ import { useManageHdAccountsStyles } from './manage-hd-accounts.styles';
 export const ManageHdAccounts = () => {
   const navigateToModal = useNavigateToModal();
   const styles = useManageHdAccountsStyles();
-  const revealSelectBottomSheetController = useBottomSheetController();
+  const manageBottomSheetController = useBottomSheetController();
 
   const selectedAccount = useAccount();
   const hdAccounts = useHDAccounts();
@@ -32,23 +30,9 @@ export const ManageHdAccounts = () => {
 
   const [managedAccount, setManagedAccount] = useState<Account | null>(null);
 
-  const handleRevealButtonPress = (account: Account) => {
+  const handleManageButtonPress = (account: Account) => {
     setManagedAccount(account);
-    revealSelectBottomSheetController.open();
-  };
-
-  const handleRevealPrivateKeyButtonPress = () => {
-    if (!managedAccount) return;
-
-    navigateToModal(ModalsEnum.RevealPrivateKey, { account: managedAccount });
-    revealSelectBottomSheetController.close();
-  };
-
-  const handleRevealSeedPhraseButtonPress = () => {
-    if (!managedAccount) return;
-
-    navigateToModal(ModalsEnum.RevealSeedPhrase, { account: managedAccount });
-    revealSelectBottomSheetController.close();
+    manageBottomSheetController.open();
   };
 
   return (
@@ -66,21 +50,20 @@ export const ManageHdAccounts = () => {
           title="Seed phrase"
           marginTop={formatSize(4)}
           marginBottom={formatSize(4)}
-          onPress={() => navigateToModal(ModalsEnum.RevealSeedPhrase, {})}
+          onPress={() => navigateToModal(ModalsEnum.RevealSeedPhrase)}
           testID={ManageHdAccountsSelectors.seedPhraseButton}
         />
       </View>
 
       <Divider size={formatSize(16)} />
 
-      <InfoText />
       <ScreenContainer>
         {filteredAccountList.map(account => (
           <Fragment key={account.id}>
             <ManageAccountItem
               account={account}
               selectedAccount={selectedAccount}
-              onRevealButtonPress={handleRevealButtonPress}
+              onManageButtonPress={handleManageButtonPress}
             />
             <Divider size={formatSize(16)} />
           </Fragment>
@@ -88,22 +71,7 @@ export const ManageHdAccounts = () => {
 
         <Divider />
 
-        <BottomSheet
-          description="Select what do you want to reveal:"
-          contentHeight={formatSize(180)}
-          controller={revealSelectBottomSheetController}
-        >
-          <BottomSheetActionButton
-            title="Reveal Private key"
-            onPress={handleRevealPrivateKeyButtonPress}
-            testID={ManageHdAccountsSelectors.revealPrivateKeyButton}
-          />
-          <BottomSheetActionButton
-            title="Reveal Seed Phrase"
-            onPress={handleRevealSeedPhraseButtonPress}
-            testID={ManageHdAccountsSelectors.revealSeedPhraseButton}
-          />
-        </BottomSheet>
+        <ManageAccountActionsBottomSheet account={managedAccount} controller={manageBottomSheetController} />
       </ScreenContainer>
     </>
   );
