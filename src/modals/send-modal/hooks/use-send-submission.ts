@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
+import { getAddress } from 'viem';
 
 import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
@@ -48,7 +49,10 @@ export const useSendSubmission = ({
   const executeIntent = useCallback(
     (intent: SendIntent, transferBetweenOwnAccounts: boolean) => {
       if (!transferBetweenOwnAccounts && (intent.type === 'evm-transfer' || intent.type === 'tezos-transfer')) {
-        dispatch(addContactCandidateAddressAction(intent.receiverAddress));
+        const contactCandidateAddress =
+          intent.type === 'evm-transfer' ? getAddress(intent.receiverAddress) : intent.receiverAddress;
+
+        dispatch(addContactCandidateAddressAction(contactCandidateAddress));
       }
 
       switch (intent.type) {

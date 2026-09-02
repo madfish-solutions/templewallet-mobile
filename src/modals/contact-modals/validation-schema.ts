@@ -1,4 +1,4 @@
-import { isAddress as isEvmAddress } from 'viem';
+import { getAddress, isAddress as isEvmAddress } from 'viem';
 import { object, SchemaOf, string } from 'yup';
 
 import { makeRequiredErrorMessage } from 'src/form/validation/messages';
@@ -28,6 +28,7 @@ const buildContactValidationSchema = ({
         isDefined(value) ? value === value.trim() : false
       ),
     address: string()
+      .transform(value => (isEvmAddress(value) ? getAddress(value) : value))
       .required(makeRequiredErrorMessage('Address'))
       .notOneOf(contactsAddresses, 'Contact with the same address already exists')
       .test('is-valid-address', 'Invalid address', value =>
