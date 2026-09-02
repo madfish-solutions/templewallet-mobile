@@ -1,5 +1,5 @@
 import React, { FC, memo } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { isAddress as isEvmAddress } from 'viem';
 
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
@@ -25,7 +25,7 @@ export const ContactItem = memo<Props>(({ contact, onPress }) => {
   const network = isEvmAddress(contact.address) ? CryptoLogoNameEnum.Etherlink : CryptoLogoNameEnum.Tezos;
 
   return (
-    <TouchableOpacity style={styles.root} activeOpacity={0.7} onPress={onPress} testID={ContactItemSelector.item}>
+    <Pressable style={styles.root} onPress={onPress} testID={ContactItemSelector.item}>
       <View style={styles.accountContainer}>
         <RobotIcon seed={contact.address} size={formatSize(36)} color="blue" />
         <View style={styles.accountContainerData}>
@@ -34,7 +34,7 @@ export const ContactItem = memo<Props>(({ contact, onPress }) => {
         </View>
       </View>
       <NetworkIcon name={network} variant="badge" />
-    </TouchableOpacity>
+    </Pressable>
   );
 });
 
