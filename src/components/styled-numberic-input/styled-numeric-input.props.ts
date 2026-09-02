@@ -6,7 +6,10 @@ import { StyledTextInputProps } from '../styled-text-input/styled-text-input.pro
 
 export interface StyledNumericInputProps
   extends TestIdProps,
-    Pick<StyledTextInputProps, 'editable' | 'placeholder' | 'isError' | 'isShowCleanButton' | 'onBlur' | 'onFocus'> {
+    Pick<
+      StyledTextInputProps,
+      'editable' | 'placeholder' | 'isError' | 'isShowCleanButton' | 'onBlur' | 'onFocus' | 'style'
+    > {
   value?: BigNumber;
   minValue?: BigNumber.Value;
   maxValue?: BigNumber.Value;

@@ -16,8 +16,8 @@ export const useLabelStyles = createUseStyles(({ colors, typography }) => ({
     alignItems: 'baseline'
   },
   isOptionalLabel: {
-    ...typography.caption11Regular,
-    color: colors.gray1
+    ...typography.caption13Regular,
+    color: colors.gray2
   }
 }));
 

@@ -1,4 +1,4 @@
-import React, { FC, memo, useMemo } from 'react';
+import React, { FC, memo, useEffect, useMemo } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 import { SvgWithCss } from 'react-native-svg/css';
 import { WebView } from 'react-native-webview';
@@ -7,8 +7,11 @@ import {
   fixSvgXml,
   getXmlFromSvgDataUriInUtf8Encoding,
   isImgUriDataUri,
-  isSvgDataUriInBase64Encoding
+  isSvgDataUriInBase64Encoding,
+  svgRequiresWebViewRendering
 } from 'src/utils/image.utils';
+
+import { ErrorBoundary } from './error-boundary';
 
 interface Props extends Omit<AnimatedDataUriImageProps, 'xml'> {
   dataUri: string;
@@ -34,12 +37,22 @@ export const DataUriImage = memo<Props>(({ dataUri, animated, width, height, sty
     [dataUri, isBase64Encoded]
   );
 
-  return animated || xml.includes('<foreignObject') ? (
+  const SvgRenderFallback = useMemo(() => () => <NotifyingFallback onError={onError} />, [onError]);
+
+  return animated || svgRequiresWebViewRendering(xml) ? (
     <AnimatedDataUriImage xml={xml} width={width} height={height} style={style} onLoad={onLoad} onError={onError} />
   ) : (
-    <SvgWithCss xml={xml} width={width} height={height} style={style} onLoad={onLoad} onError={onError} />
+    <ErrorBoundary Fallback={SvgRenderFallback}>
+      <SvgWithCss xml={xml} width={width} height={height} style={style} onLoad={onLoad} onError={onError} />
+    </ErrorBoundary>
   );
 });
+
+const NotifyingFallback: FC<{ onError?: EmptyFn }> = ({ onError }) => {
+  useEffect(() => void onError?.(), [onError]);
+
+  return null;
+};
 
 interface AnimatedDataUriImageProps {
   xml: string;
