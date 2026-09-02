@@ -1,7 +1,7 @@
 import { Formik } from 'formik';
 import { FormikProps } from 'formik/dist/types';
 import React, { FC, useMemo, useRef, useState } from 'react';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
@@ -15,6 +15,7 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useModalParams, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { dispatch } from 'src/store';
 import { addContactAction } from 'src/store/contact-book/contact-book-actions';
+import { formatSize } from 'src/styles/format-size.ts';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { tezosDomainsResolver } from 'src/utils/dns.utils';
 
@@ -22,11 +23,9 @@ import { handleContactSubmission } from '../utils/handle-contact-submission.util
 import { useAddContactFormValidationSchema } from '../validation-schema';
 
 import { AddContactModalSelectors } from './add-contact-modal.selectors';
-import { useAddContactModalStyles } from './add-contact-modal.styles.ts';
 
 export const AddContactModal: FC = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const styles = useAddContactModalStyles();
   const { goBack } = useNavigation();
   const params = useModalParams<ModalsEnum.AddContact>();
   const validationSchema = useAddContactFormValidationSchema();
@@ -69,7 +68,7 @@ export const AddContactModal: FC = () => {
               />
             </View>
           </ScreenContainer>
-          <ModalButtonsFloatingContainer>
+          <ModalButtonsFloatingContainer variant="bordered">
             <ButtonLargeSecondary title="Close" onPress={goBack} testID={AddContactModalSelectors.closeButton} />
             <ButtonLargePrimary
               title="Save"
@@ -84,3 +83,9 @@ export const AddContactModal: FC = () => {
     </Formik>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    marginTop: formatSize(16)
+  }
+});
