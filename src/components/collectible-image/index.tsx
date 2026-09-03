@@ -7,7 +7,7 @@ import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useEvmCollectibleImagesStack, useTezosCollectibleImagesStack } from 'src/hooks/use-images-stack';
 import { formatSize } from 'src/styles/format-size';
 import { AssetMediaURIs } from 'src/utils/assets/types';
-import { isImgUriDataUri, isSvgDataUriInBase64Encoding } from 'src/utils/image.utils';
+import { isImgUriDataUri, isSvgDataUriInBase64Encoding, svgRequiresWebViewRendering } from 'src/utils/image.utils';
 
 import { ActivityIndicator } from '../activity-indicator';
 import { BlurredImageBackground } from '../blurred-image-frame';
@@ -183,7 +183,7 @@ const Base64SvgImage = memo<Base64SvgImageProps>(({ dataUri, size, isLoading, is
   const base64Data = dataUri.replace(/^data:image\/svg\+xml;base64,/, '');
   const svgXml = Buffer.from(base64Data, 'base64').toString('utf8');
 
-  if (svgXml.includes('<foreignObject')) {
+  if (svgRequiresWebViewRendering(svgXml)) {
     const html = `
     <html>
       <body style="margin:0;padding:0;background:transparent;">

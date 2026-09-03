@@ -1,13 +1,13 @@
 import axios from 'axios';
 import { pickBy } from 'lodash-es';
-import { BaseError, erc20Abi, erc721Abi, HttpRequestError, parseAbi, RpcRequestError, TimeoutError } from 'viem';
+import { erc20Abi, erc721Abi, parseAbi } from 'viem';
 
 import { EvmNetworkEssentials } from 'src/types/networks';
-import { toHttpMetadataUri } from 'src/utils/evm/metadata-uri';
+import { parseJsonDataUri, toHttpMetadataUri } from 'src/utils/evm/metadata-uri';
 import { normalizeIpfsUri } from 'src/utils/image.utils';
 
 import { erc1155Abi } from './abi/erc1155.abi';
-import { detectTokenStandard } from './common.utils';
+import { detectTokenStandard, isRetryableRpcError } from './common.utils';
 import { executeEvmReadContract } from './evm-rpc-requests-executor';
 import {
   EvmAssetStandard,
@@ -18,10 +18,6 @@ import {
 
 const nameAbi = parseAbi(['function name() external view returns (string)']);
 const symbolAbi = parseAbi(['function symbol() external view returns (string)']);
-
-const isRetryableRpcError = (error: unknown): boolean =>
-  error instanceof BaseError &&
-  error.walk(e => e instanceof HttpRequestError || e instanceof TimeoutError || e instanceof RpcRequestError) != null;
 
 export const getEvmTokenMetadata = async (
   network: EvmNetworkEssentials,
@@ -249,12 +245,19 @@ const fetchCollectibleJsonMetadata = async (
     'collectibleName' | 'image' | 'description' | 'attributes' | 'externalUrl' | 'animationUrl'
   >
 > => {
-  const httpUri = toHttpMetadataUri(metadataUri);
-  if (!httpUri) {
-    throw new Error('Could not build an http link from the metadata uri');
-  }
+  let data: CollectibleJsonMetadata;
 
-  const { data } = await axios.get<CollectibleJsonMetadata>(httpUri);
+  const dataUriMetadata = parseJsonDataUri<CollectibleJsonMetadata>(metadataUri);
+  if (dataUriMetadata) {
+    data = dataUriMetadata;
+  } else {
+    const httpUri = toHttpMetadataUri(metadataUri);
+    if (!httpUri) {
+      throw new Error('Could not build an http link from the metadata uri');
+    }
+
+    data = (await axios.get<CollectibleJsonMetadata>(httpUri)).data;
+  }
 
   if (typeof data !== 'object' || !data.image) {
     throw new Error('Fetched collectible metadata is missing an image');
