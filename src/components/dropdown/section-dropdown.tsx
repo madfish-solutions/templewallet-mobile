@@ -95,7 +95,7 @@ const SectionDropdownComponent = <T extends unknown>({
 
       return (
         <TouchableOpacity key={index} onPress={handlePress}>
-          <DropdownItemContainer hasMargin={true} isSelected={isSelected} style={itemContainerStyle}>
+          <DropdownItemContainer hasMargin isSelected={isSelected} style={itemContainerStyle}>
             {renderListItem({ item, isSelected })}
           </DropdownItemContainer>
         </TouchableOpacity>

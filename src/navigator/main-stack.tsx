@@ -1,16 +1,14 @@
 import { PortalProvider } from '@gorhom/portal';
 import type { RouteProp } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { memo, useCallback, useMemo } from 'react';
+import React, { memo, useCallback } from 'react';
 
 import { exolixScreenOptions } from 'src/components/header/exolix-screen-options';
 import { generateScreenOptions } from 'src/components/header/generate-screen-options.util';
 import { HeaderAction } from 'src/components/header/header-action/header-actions';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
-import { HeaderTokenInfo } from 'src/components/header/header-token-info/header-token-info';
 import { ScreenStatusBar } from 'src/components/screen-status-bar/screen-status-bar';
 import { emptyFn } from 'src/config/general';
-import { transparent } from 'src/config/styles';
 import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { useEvmChains } from 'src/hooks/evm/use-evm-chains.hook';
 import { useMainHooks } from 'src/hooks/main-hooks';
@@ -51,16 +49,12 @@ import { SecureSettings } from 'src/screens/secure-settings/secure-settings';
 import { Settings } from 'src/screens/settings/settings';
 import { SwapSettingsScreen } from 'src/screens/swap/settings/swap-settings';
 import { SwapScreen } from 'src/screens/swap/swap';
-import { TezosTokenScreen } from 'src/screens/tezos-token-screen/tezos-token-screen';
 import { TokenInfo } from 'src/screens/token-info/token-info';
 import { TokenScreen } from 'src/screens/token-screen/token-screen';
 import { Wallet } from 'src/screens/wallet/wallet';
 import { Welcome } from 'src/screens/welcome/welcome';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
 import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
-import { useColors } from 'src/styles/use-colors';
-import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
-import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { cloudTitle } from 'src/utils/cloud-backup';
 
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
@@ -79,18 +73,8 @@ export const MainStackScreen = memo(() => {
   const { isLocked } = useAppLock();
 
   const styleScreenOptions = useStackNavigatorStyleOptions();
-  const colors = useColors();
   const tezosChains = useTezosChains();
   const evmChains = useEvmChains();
-
-  const tokenScreenHeaderStyle = useMemo(
-    () => ({
-      backgroundColor: colors.navigation,
-      borderBottomWidth: 0,
-      shadowColor: transparent
-    }),
-    [colors]
-  );
 
   useMainHooks(isLocked, isAuthorised);
 
@@ -102,9 +86,7 @@ export const MainStackScreen = memo(() => {
     ({ route }: { route: RouteProp<ScreensParamList, ScreensEnum.NetworkSettings> }) => {
       const { chainId } = route.params;
       const chain =
-        typeof chainId === 'string'
-          ? tezosChains.find(chain => chain.chainId === chainId)
-          : evmChains.find(chain => chain.chainId === chainId);
+        tezosChains.find(chain => chain.chainId === chainId) ?? evmChains.find(chain => chain.chainId === chainId);
 
       return generateScreenOptions(<HeaderTitle title={chain?.name ?? 'Unknown network'} />);
     },
@@ -146,24 +128,9 @@ export const MainStackScreen = memo(() => {
                 options={{ animation: 'none', headerShown: false }}
               />
               <MainStack.Screen
-                name={ScreensEnum.TezosTokenScreen}
-                component={TezosTokenScreen}
-                options={generateScreenOptions(
-                  <HeaderTokenInfo token={TEZ_TOKEN_METADATA} />,
-                  null,
-                  true,
-                  tokenScreenHeaderStyle
-                )}
-              />
-              <MainStack.Screen
                 name={ScreensEnum.TokenScreen}
                 component={TokenScreen}
-                options={generateScreenOptions(
-                  <HeaderTokenInfo token={emptyTokenMetadata} />,
-                  null,
-                  true,
-                  tokenScreenHeaderStyle
-                )}
+                options={generateScreenOptions(<HeaderTitle title="" />, null, true)}
               />
               <MainStack.Screen
                 name={ScreensEnum.TokenInfo}

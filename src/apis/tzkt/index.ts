@@ -1,5 +1,3 @@
-// Deliberately parallels the TZKT queries in token-operations.util.ts - the old activity pipeline
-// coexists with this file until TW-2302 deletes it
 import { stringify } from 'qs';
 
 import { tzktApi } from 'src/api.service';

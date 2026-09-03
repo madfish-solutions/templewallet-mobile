@@ -11,9 +11,10 @@ interface Props {
   chainId: number;
   hash: string;
   operation?: EvmOperation;
+  withoutAssetIcon?: boolean;
 }
 
-export const EvmActivityOperationItem = memo<Props>(({ chainId, hash, operation }) => {
+export const EvmActivityOperationItem = memo<Props>(({ chainId, hash, operation, withoutAssetIcon }) => {
   const chainRef = useEvmChainRef(chainId);
   const { asset, fiatRate } = useEvmActivityAsset(chainId, operation?.asset);
 
@@ -25,6 +26,7 @@ export const EvmActivityOperationItem = memo<Props>(({ chainId, hash, operation 
       hash={hash}
       asset={asset}
       fiatRate={fiatRate}
+      withoutAssetIcon={withoutAssetIcon}
     />
   );
 });

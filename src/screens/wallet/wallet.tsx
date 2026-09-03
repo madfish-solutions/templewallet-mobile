@@ -1,5 +1,5 @@
 import { StackActions, useFocusEffect } from '@react-navigation/native';
-import React, { memo, useCallback, useEffect } from 'react';
+import React, { memo, useCallback, useEffect, useMemo } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -12,6 +12,7 @@ import { HeaderCard } from 'src/components/header-card/header-card';
 import { HeaderCardActionButtons } from 'src/components/header-card-action-buttons/header-card-action-buttons';
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
 import { useEtherlinkDataLoading } from 'src/hooks/evm/use-etherlink-data-loading.hook';
+import { buildTezosDisplayedToken } from 'src/hooks/evm/use-multichain-displayed-tokens.hook';
 import { useApkBuildIdEvent } from 'src/hooks/use-apk-build-id-event';
 import { usePushNotificationsEvent } from 'src/hooks/use-push-notifications-event';
 import { KoloCryptoCardPreview } from 'src/modals/kolo-card';
@@ -50,6 +51,7 @@ export const Wallet = memo(() => {
   const isAnyBackupMade = useIsAnyBackupMadeSelector();
   const accounts = useAllAccounts();
   const tezosToken = useTezosTokenOfCurrentAccount();
+  const headerActionsToken = useMemo(() => buildTezosDisplayedToken(tezosToken, undefined), [tezosToken]);
   const contactCandidateAddress = useContactCandidateAddressSelector();
   const ignoredAddresses = useIgnoredAddressesSelector();
   const contactsAddresses = useContactsAddresses();
@@ -78,6 +80,7 @@ export const Wallet = memo(() => {
     ) {
       bottomSheetController.open();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contactCandidateAddress]);
 
   useEffect(() => {
@@ -90,13 +93,13 @@ export const Wallet = memo(() => {
 
       navigateToModal(ModalsEnum.Newsletter);
     }
-  }, [shouldShowNewsletterModal, isAnyBackupMade]);
+  }, [shouldShowNewsletterModal, isAnyBackupMade, getState, navigationDispatch, navigateToModal]);
 
   useEffect(() => {
     if (!hasSeenSaplingAnnouncement) {
       navigateToModal(ModalsEnum.ShieldedAnnouncement);
     }
-  }, [hasSeenSaplingAnnouncement]);
+  }, [hasSeenSaplingAnnouncement, navigateToModal]);
 
   useEffect(() => {
     if (hasSeenSaplingAnnouncement && !hasSeenRewardsAnnouncement) {
@@ -106,11 +109,11 @@ export const Wallet = memo(() => {
 
   const trackPageOpened = useCallback(() => {
     pageEvent(ScreensEnum.Wallet, '');
-  }, []);
+  }, [pageEvent]);
 
   useFocusEffect(trackPageOpened);
 
-  useEffect(() => void dispatch(walletOpenedAction()), []);
+  useEffect(() => void dispatch(walletOpenedAction()), [dispatch]);
 
   return (
     <>
@@ -126,7 +129,7 @@ export const Wallet = memo(() => {
         <TokenEquityValue token={tezosToken} forTotalBalance={true} />
         <Divider size={formatSize(24)} />
 
-        <HeaderCardActionButtons token={tezosToken} />
+        <HeaderCardActionButtons token={headerActionsToken} />
 
         <View style={WalletStyles.cryptoCardContainer}>
           <KoloCryptoCardPreview

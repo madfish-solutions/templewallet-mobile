@@ -17,25 +17,6 @@ export const useMultichainTokenListItemStyles = createUseStyles(({ colors, typog
     marginBottom: formatSize(8),
     gap: formatSize(8)
   },
-  balancePill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: formatSize(4),
-    borderWidth: formatSize(1),
-    borderColor: colors.lines,
-    borderRadius: formatSize(56),
-    paddingHorizontal: formatSize(12),
-    paddingVertical: formatSize(8),
-    backgroundColor: colors.cardBG
-  },
-  balancePillText: {
-    ...typography.numbersRegular11,
-    color: colors.gray1
-  },
-  balancePillTextNumber: {
-    ...typography.numbersRegular11,
-    color: colors.black
-  },
   infoButton: {
     marginLeft: 'auto'
   },

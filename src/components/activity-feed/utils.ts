@@ -9,13 +9,15 @@ import {
 } from 'src/activity/types';
 import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { formatDayMonthYear, isToday, isYesterday } from 'src/utils/date.utils';
+import { equalsIgnoreCase } from 'src/utils/evm/on-chain/common.utils';
 import { toEvmAssetSlug } from 'src/utils/from-token-slug';
 import { formatAssetAmount, ZERO } from 'src/utils/number.util';
 import { mutezToTz } from 'src/utils/tezos.util';
 import { concatUrlPath } from 'src/utils/url.utils';
 
-import { ActivityFaceKind, ActivityRowAsset, BUNDLE_FACE_KIND } from './types';
+import { ActivityFaceKind, ActivityRowAsset, ActivityRowKind, BUNDLE_FACE_KIND } from './types';
 
 interface ActivityRowAmountView {
   amountText?: string;
@@ -40,51 +42,73 @@ export const shortenHash = (hash: string) =>
 const truncateSymbol = (symbol: string) =>
   symbol.length > MAX_SYMBOL_LENGTH ? `${symbol.slice(0, MAX_SYMBOL_LENGTH)}…` : symbol;
 
-const transferTypeTitles: Record<ActivityOperTransferType, string> = {
-  [ActivityOperTransferType.sendToAccount]: 'Send',
-  [ActivityOperTransferType.receiveFromAccount]: 'Receive',
-  [ActivityOperTransferType.send]: 'Transfer',
-  [ActivityOperTransferType.receive]: 'Transfer'
+const transferRowKinds: Record<ActivityOperTransferType, ActivityRowKind> = {
+  [ActivityOperTransferType.sendToAccount]: ActivityRowKind.send,
+  [ActivityOperTransferType.receiveFromAccount]: ActivityRowKind.receive,
+  [ActivityOperTransferType.send]: ActivityRowKind.transfer,
+  [ActivityOperTransferType.receive]: ActivityRowKind.transfer
 };
 
-export const getActivityTitle = (
+// Shielding and unshielding go through the sapling contract, but read as plain sends and receives
+const shieldedTransferRowKinds: Record<ActivityOperTransferType, ActivityRowKind> = {
+  [ActivityOperTransferType.sendToAccount]: ActivityRowKind.send,
+  [ActivityOperTransferType.receiveFromAccount]: ActivityRowKind.receive,
+  [ActivityOperTransferType.send]: ActivityRowKind.send,
+  [ActivityOperTransferType.receive]: ActivityRowKind.receive
+};
+
+export const getActivityRowKind = (
   kind: ActivityFaceKind,
   transferType?: ActivityOperTransferType,
   isShielded?: boolean
 ) => {
   if (kind === BUNDLE_FACE_KIND) {
-    return 'Bundle';
-  }
-
-  if (kind === ActivityOperKindEnum.interaction) {
-    return isShielded === true ? 'Shielded transfer' : 'Interaction';
+    return ActivityRowKind.bundle;
   }
 
   if (kind === ActivityOperKindEnum.approve) {
-    return 'Approve';
+    return ActivityRowKind.approve;
   }
 
-  return transferType == null ? 'Interaction' : transferTypeTitles[transferType];
-};
-
-const transferTypeIconNames: Record<ActivityOperTransferType, IconNameV2Enum> = {
-  [ActivityOperTransferType.sendToAccount]: IconNameV2Enum.Send,
-  [ActivityOperTransferType.receiveFromAccount]: IconNameV2Enum.Income,
-  [ActivityOperTransferType.send]: IconNameV2Enum.Documents,
-  [ActivityOperTransferType.receive]: IconNameV2Enum.Documents
-};
-
-export const getActivityKindIconName = (kind: ActivityFaceKind, transferType?: ActivityOperTransferType) => {
-  if (kind === ActivityOperKindEnum.approve) {
-    return IconNameV2Enum.Ok;
+  if (kind === ActivityOperKindEnum.interaction || transferType == null) {
+    return ActivityRowKind.interaction;
   }
 
-  if (kind === BUNDLE_FACE_KIND || kind === ActivityOperKindEnum.interaction || transferType == null) {
-    return IconNameV2Enum.Documents;
-  }
-
-  return transferTypeIconNames[transferType];
+  return (isShielded === true ? shieldedTransferRowKinds : transferRowKinds)[transferType];
 };
+
+const activityRowTitles: Record<ActivityRowKind, string> = {
+  [ActivityRowKind.send]: 'Send',
+  [ActivityRowKind.receive]: 'Receive',
+  [ActivityRowKind.transfer]: 'Transfer',
+  [ActivityRowKind.interaction]: 'Interaction',
+  [ActivityRowKind.approve]: 'Approve',
+  [ActivityRowKind.bundle]: 'Bundle'
+};
+
+export const getActivityRowTitle = (rowKind: ActivityRowKind) => activityRowTitles[rowKind];
+
+const assetPlaceholderIconNames: Record<ActivityRowKind, IconNameV2Enum> = {
+  [ActivityRowKind.send]: IconNameV2Enum.Send,
+  [ActivityRowKind.receive]: IconNameV2Enum.Income,
+  [ActivityRowKind.transfer]: IconNameV2Enum.Documents,
+  [ActivityRowKind.interaction]: IconNameV2Enum.Documents,
+  [ActivityRowKind.approve]: IconNameV2Enum.Ok,
+  [ActivityRowKind.bundle]: IconNameV2Enum.Documents
+};
+
+// Rows without an asset logo (token page) name the operation with the glyph itself
+const operationIconNames: Record<ActivityRowKind, IconNameV2Enum> = {
+  [ActivityRowKind.send]: IconNameV2Enum.Send,
+  [ActivityRowKind.receive]: IconNameV2Enum.Income,
+  [ActivityRowKind.transfer]: IconNameV2Enum.DocumentGear,
+  [ActivityRowKind.interaction]: IconNameV2Enum.DocumentGear,
+  [ActivityRowKind.approve]: IconNameV2Enum.LockOpen,
+  [ActivityRowKind.bundle]: IconNameV2Enum.Cube
+};
+
+export const getActivityRowIconName = (rowKind: ActivityRowKind, withoutAssetIcon = false) =>
+  (withoutAssetIcon ? operationIconNames : assetPlaceholderIconNames)[rowKind];
 
 export const buildActivityExplorerUrl = (explorerUrl: string, hash: string, chain: TempleChainKind) =>
   concatUrlPath(explorerUrl, chain === TempleChainKind.Tezos ? hash : `tx/${hash}`);
@@ -107,60 +131,68 @@ export const getActivityOperTransferType = (operation?: TezosOperation | EvmOper
   operation?.kind === ActivityOperKindEnum.transfer ? operation.type : undefined;
 
 export const getTezosOperationIsShielded = (operation?: TezosOperation) =>
-  operation?.kind === ActivityOperKindEnum.interaction ? operation.isShielded : undefined;
+  operation?.kind === ActivityOperKindEnum.interaction || operation?.kind === ActivityOperKindEnum.transfer
+    ? operation.isShielded
+    : undefined;
+
+export const getTezosBundleIsShielded = (operations: TezosOperation[]) =>
+  operations.some(operation => getTezosOperationIsShielded(operation) === true);
 
 interface TezosBundleFaceAsset {
   assetSlug?: string;
   amountSigned?: string;
 }
 
-export const getTezosBundleFaceAsset = (operations: TezosOperation[]): TezosBundleFaceAsset => {
-  const faceSlug = operations.find(
-    operation =>
-      operation.kind === ActivityOperKindEnum.transfer &&
-      operation.assetSlug != null &&
-      operation.amountSigned != null &&
-      Number(operation.amountSigned) !== 0
-  )?.assetSlug;
-
-  if (faceSlug == null) {
-    return {};
-  }
-
+const sumTezosTransfersOf = (operations: TezosOperation[], assetSlug: string) => {
   let amount = ZERO;
 
   for (const operation of operations) {
     if (
       operation.kind === ActivityOperKindEnum.transfer &&
-      operation.assetSlug === faceSlug &&
+      operation.assetSlug === assetSlug &&
       operation.amountSigned != null
     ) {
       amount = amount.plus(operation.amountSigned);
     }
   }
 
-  return { assetSlug: faceSlug, amountSigned: amount.toFixed() };
+  return amount;
+};
+
+export const getTezosBundleFaceAsset = (
+  operations: TezosOperation[],
+  preferredAssetSlug?: string
+): TezosBundleFaceAsset => {
+  const preferredSlug =
+    preferredAssetSlug != null && !sumTezosTransfersOf(operations, preferredAssetSlug).isZero()
+      ? preferredAssetSlug
+      : undefined;
+
+  const gasSlug = sumTezosTransfersOf(operations, TEZ_TOKEN_SLUG).isZero() ? undefined : TEZ_TOKEN_SLUG;
+
+  const faceSlug =
+    preferredSlug ??
+    gasSlug ??
+    operations.find(
+      operation =>
+        operation.kind === ActivityOperKindEnum.transfer &&
+        operation.assetSlug != null &&
+        operation.assetSlug !== TEZ_TOKEN_SLUG &&
+        !sumTezosTransfersOf(operations, operation.assetSlug).isZero()
+    )?.assetSlug;
+
+  if (faceSlug == null) {
+    return {};
+  }
+
+  return { assetSlug: faceSlug, amountSigned: sumTezosTransfersOf(operations, faceSlug).toFixed() };
 };
 
 export const getNftTransfersCount = (operations: EvmOperation[]) =>
   operations.filter(operation => operation.kind === ActivityOperKindEnum.transfer && operation.asset?.nft === true)
     .length;
 
-export const getEvmBundleFaceAsset = (operations: EvmOperation[]): EvmActivityAsset | undefined => {
-  const faceOperation = operations.find(
-    operation =>
-      operation.kind === ActivityOperKindEnum.transfer &&
-      operation.asset?.amountSigned != null &&
-      Number(operation.asset.amountSigned) !== 0
-  );
-
-  const faceAsset = faceOperation?.asset;
-
-  if (faceAsset == null) {
-    return undefined;
-  }
-
-  const faceSlug = toEvmAssetSlug(faceAsset.contract, faceAsset.tokenId);
+const sumEvmTransfersOf = (operations: EvmOperation[], faceSlug: string) => {
   let amount = ZERO;
 
   for (const operation of operations) {
@@ -175,7 +207,36 @@ export const getEvmBundleFaceAsset = (operations: EvmOperation[]): EvmActivityAs
     }
   }
 
-  return { ...faceAsset, amountSigned: amount.toFixed() };
+  return amount;
+};
+
+export const getEvmBundleFaceAsset = (
+  operations: EvmOperation[],
+  preferredContract?: string
+): EvmActivityAsset | undefined => {
+  const findNonzeroNetTransfer = (matchesAsset: (asset: EvmActivityAsset) => boolean) =>
+    operations.find(
+      operation =>
+        operation.kind === ActivityOperKindEnum.transfer &&
+        operation.asset?.amountSigned != null &&
+        matchesAsset(operation.asset) &&
+        !sumEvmTransfersOf(operations, toEvmAssetSlug(operation.asset.contract, operation.asset.tokenId)).isZero()
+    );
+
+  const preferredOperation =
+    preferredContract == null
+      ? undefined
+      : findNonzeroNetTransfer(asset => equalsIgnoreCase(asset.contract, preferredContract));
+
+  const faceAsset = (preferredOperation ?? findNonzeroNetTransfer(() => true))?.asset;
+
+  if (faceAsset == null) {
+    return undefined;
+  }
+
+  const faceSlug = toEvmAssetSlug(faceAsset.contract, faceAsset.tokenId);
+
+  return { ...faceAsset, amountSigned: sumEvmTransfersOf(operations, faceSlug).toFixed() };
 };
 
 export const getActivityRowAmountView = (
@@ -184,7 +245,7 @@ export const getActivityRowAmountView = (
   fiatRate: number | undefined,
   nftBundleCount?: number
 ): ActivityRowAmountView => {
-  if (asset == null || kind === ActivityOperKindEnum.interaction) {
+  if (asset == null) {
     return { isPositive: false };
   }
 

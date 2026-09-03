@@ -152,3 +152,7 @@ export const DEFAULT_EVM_CHAINS_SPECS = [ETHERLINK_MAINNET_CHAIN_SPECS];
 export type ChainOfKind<T extends TempleChainKind> = T extends TempleChainKind.Tezos ? TezosChain : EvmChain;
 
 export type ChainId<T extends TempleChainKind = TempleChainKind> = ChainOfKind<T>['chainId'];
+
+export type ChainRef =
+  | { chainKind: TempleChainKind.Tezos; chainId: string }
+  | { chainKind: TempleChainKind.EVM; chainId: number };
