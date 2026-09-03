@@ -6,12 +6,13 @@ import { emptyFn } from '../config/general';
 import { isDefined } from '../utils/is-defined';
 
 const DEFAULT_MIN_VALUE = 0;
+const DEFAULT_MAX_VALUE = Number.MAX_SAFE_INTEGER;
 
 export const useNumericInput = (
   value: BigNumber | undefined,
   decimals: number,
   minValue: BigNumber.Value = DEFAULT_MIN_VALUE,
-  maxValue: BigNumber.Value | undefined,
+  maxValue: BigNumber.Value = DEFAULT_MAX_VALUE,
   onChange: SyncFn<BigNumber | undefined>,
   onBlur: EmptyFn = emptyFn,
   onFocus: TextInputProps['onFocus'] = emptyFn,
@@ -52,7 +53,7 @@ export const useNumericInput = (
         normalizedStringValue = normalizedStringValue.substring(0, indexOfDot + decimals + 1);
       }
 
-      if (newValue.gte(minValue) && (!isDefined(maxValue) || newValue.lte(maxValue))) {
+      if (newValue.gte(minValue) && newValue.lte(maxValue)) {
         setStringValue(normalizedStringValue);
         onChange(normalizedStringValue !== '' ? newValue : undefined);
       }

@@ -18,11 +18,13 @@ interface Props
     TestIdProps {
   name: string;
   maxValue?: BigNumber;
+  maxInputValue?: StyledNumericInputProps['maxValue'];
 }
 
 export const FormNumericInput: FC<Props> = ({
   name,
   maxValue,
+  maxInputValue,
   decimals,
   editable,
   placeholder,
@@ -40,6 +42,7 @@ export const FormNumericInput: FC<Props> = ({
       <StyledNumericInput
         value={field.value}
         decimals={decimalsWithFallback}
+        maxValue={maxInputValue}
         editable={editable}
         placeholder={placeholder}
         isError={isError}

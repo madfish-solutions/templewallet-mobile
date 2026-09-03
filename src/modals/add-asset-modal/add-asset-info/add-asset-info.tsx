@@ -14,16 +14,15 @@ import { FormNumericInput } from 'src/form/form-numeric-input/form-numeric-input
 import { FormTextInput } from 'src/form/form-text-input';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { setEvmAssetManualAction, setEvmAssetVisibilityAction } from 'src/store/evm/assets/evm-assets-actions';
-import { processLoadedEvmCollectiblesMetadataAction } from 'src/store/evm/collectibles-metadata/evm-collectibles-metadata-actions';
+import { putEvmCollectiblesMetadataAction } from 'src/store/evm/collectibles-metadata/evm-collectibles-metadata-actions';
 import { processLoadedEvmExchangeRatesAction } from 'src/store/evm/exchange-rates/evm-exchange-rates-actions';
-import { processLoadedEvmTokensMetadataAction } from 'src/store/evm/tokens-metadata/evm-tokens-metadata-actions';
+import { putEvmTokensMetadataAction } from 'src/store/evm/tokens-metadata/evm-tokens-metadata-actions';
 import { putTokenMetadataAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
 import { useAddTokenSuggestionSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { addTokenAction } from 'src/store/wallet/wallet-actions';
 import { useAccountAddressForEvm } from 'src/store/wallet/wallet-selectors';
 import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
 import { EvmCollectibleMetadata, EvmTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
-import { conditionalStyle } from 'src/utils/conditional-style';
 import { toEvmAssetSlug } from 'src/utils/from-token-slug';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
@@ -41,9 +40,14 @@ interface Props {
   onFormSubmitted: EmptyFn;
 }
 
+const getEvmSuggestionName = (suggestion: EvmAssetSuggestion) =>
+  suggestion.type === 'collectible'
+    ? suggestion.metadata.collectibleName ?? suggestion.metadata.name
+    : suggestion.metadata.name;
+
 const getEvmInitialValues = (suggestion: EvmAssetSuggestion): AddTokenInfoFormValues => ({
   symbol: suggestion.metadata.symbol ?? '',
-  name: suggestion.metadata.name ?? '',
+  name: getEvmSuggestionName(suggestion) ?? '',
   decimals: new BigNumber(suggestion.type === 'collectible' ? 0 : suggestion.metadata.decimals),
   thumbnailUri:
     suggestion.type === 'collectible'
@@ -57,7 +61,6 @@ export const AddAssetInfo: FC<Props> = ({ evmSuggestion, onCancelButtonPress, on
   const tokenSuggestion = useAddTokenSuggestionSelector();
   const evmAccount = useAccountAddressForEvm();
 
-  const isEvm = isDefined(evmSuggestion);
   const isCollectible = evmSuggestion?.type === 'collectible';
 
   const tezosInitialValues = { ...tokenSuggestion.data, decimals: new BigNumber(tokenSuggestion.data.decimals) };
@@ -77,13 +80,12 @@ export const AddAssetInfo: FC<Props> = ({ evmSuggestion, onCancelButtonPress, on
     if (suggestion.type === 'collectible') {
       const metadata: EvmCollectibleMetadata = {
         ...suggestion.metadata,
-        name: data.name,
+        collectibleName: data.name,
         symbol: data.symbol,
-        image: userIconUri ?? suggestion.metadata.image,
-        iconURL: userIconUri ?? suggestion.metadata.iconURL
+        image: userIconUri
       };
 
-      dispatch(processLoadedEvmCollectiblesMetadataAction({ chainId, metadata: { [slug]: metadata } }));
+      dispatch(putEvmCollectiblesMetadataAction({ chainId, metadata: { [slug]: metadata } }));
 
       return;
     }
@@ -96,7 +98,7 @@ export const AddAssetInfo: FC<Props> = ({ evmSuggestion, onCancelButtonPress, on
       iconURL: userIconUri
     };
 
-    dispatch(processLoadedEvmTokensMetadataAction({ chainId, metadata: { [slug]: metadata } }));
+    dispatch(putEvmTokensMetadataAction({ chainId, metadata: { [slug]: metadata } }));
 
     if (isDefined(suggestion.exchangeRate)) {
       dispatch(processLoadedEvmExchangeRatesAction({ chainId, rates: { [slug]: suggestion.exchangeRate } }));
@@ -149,8 +151,8 @@ export const AddAssetInfo: FC<Props> = ({ evmSuggestion, onCancelButtonPress, on
                   <FormNumericInput
                     name="decimals"
                     decimals={0}
-                    editable={!isEvm}
-                    style={[styles.input, conditionalStyle(isEvm, styles.disabledInput)]}
+                    editable={false}
+                    style={[styles.input, styles.disabledInput]}
                     testID={AddAssetInfoSelectors.decimalsInput}
                   />
                 </>

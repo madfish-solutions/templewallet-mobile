@@ -1,8 +1,9 @@
+import { BigNumber } from 'bignumber.js';
 import { Formik, FormikProps } from 'formik';
 import React, { FC, useCallback, useEffect, useRef } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { isAddress } from 'viem';
+import { isAddress, maxUint256 } from 'viem';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
@@ -54,6 +55,8 @@ const nftWithoutIdErrorMessage = 'This is an NFT — enter its Token ID';
 const erc20WithIdErrorMessage = 'This is a token contract — remove the Token ID to add it';
 const nftNotFoundErrorMessage = 'NFT not found';
 const noEvmAccountErrorMessage = 'Etherlink is not available for the current account';
+
+const evmTokenIdMaxValue = new BigNumber(maxUint256.toString());
 
 export const AddAssetAddress: FC<Props> = ({ network, onNetworkSelect, onCloseButtonPress, onFormSubmitted }) => {
   const styles = useAddAssetModalStyles();
@@ -225,6 +228,7 @@ export const AddAssetAddress: FC<Props> = ({ network, onNetworkSelect, onCloseBu
               <FormNumericInput
                 name="id"
                 decimals={0}
+                maxInputValue={isTezos ? undefined : evmTokenIdMaxValue}
                 placeholder="0"
                 style={styles.input}
                 testID={AddAssetAddressSelectors.tokenIdInput}
