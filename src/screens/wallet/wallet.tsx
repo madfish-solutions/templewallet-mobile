@@ -1,12 +1,8 @@
 import { StackActions, useFocusEffect } from '@react-navigation/native';
 import React, { memo, useCallback, useEffect } from 'react';
 import { View } from 'react-native';
-import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-account-dropdown';
-import { BottomSheet } from 'src/components/bottom-sheet/bottom-sheet';
-import { BottomSheetActionButton } from 'src/components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
-import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
 import { Divider } from 'src/components/divider/divider';
 import { HeaderCard } from 'src/components/header-card/header-card';
 import { HeaderCardActionButtons } from 'src/components/header-card-action-buttons/header-card-action-buttons';
@@ -18,23 +14,17 @@ import { KoloCryptoCardPreview } from 'src/modals/kolo-card';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToModal, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
-import { addBlacklistedContactAction } from 'src/store/contact-book/contact-book-actions';
-import {
-  useContactCandidateAddressSelector,
-  useContactsAddresses,
-  useIgnoredAddressesSelector
-} from 'src/store/contact-book/contact-book-selectors';
+import { dispatch } from 'src/store';
 import { useShouldShowNewsletterModalSelector } from 'src/store/newsletter/newsletter-selectors';
 import { useHasSeenRewardsAnnouncementSelector } from 'src/store/rewards/rewards-selectors';
 import { useHasSeenSaplingAnnouncementSelector } from 'src/store/sapling';
 import { setKoloCardAnimationShownAction, walletOpenedAction } from 'src/store/settings/settings-actions';
 import { useIsAnyBackupMadeSelector, useIsKoloCardAnimationShownSelector } from 'src/store/settings/settings-selectors';
-import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
+import { ContactSuggestion } from './contact-suggestion.tsx';
 import { NotificationsBell } from './notifications-bell';
 import { Settings } from './settings';
 import { TokensList } from './token-list/token-list';
@@ -43,17 +33,11 @@ import { WalletSelectors } from './wallet.selectors';
 import { WalletStyles } from './wallet.styles';
 
 export const Wallet = memo(() => {
-  const dispatch = useDispatch();
   const { pageEvent } = useAnalytics();
   const navigateToModal = useNavigateToModal();
   const { dispatch: navigationDispatch, getState } = useNavigation();
   const isAnyBackupMade = useIsAnyBackupMadeSelector();
-  const accounts = useAllAccounts();
   const tezosToken = useTezosTokenOfCurrentAccount();
-  const contactCandidateAddress = useContactCandidateAddressSelector();
-  const ignoredAddresses = useIgnoredAddressesSelector();
-  const contactsAddresses = useContactsAddresses();
-  const bottomSheetController = useBottomSheetController();
   const shouldShowNewsletterModal = useShouldShowNewsletterModalSelector();
   const hasSeenSaplingAnnouncement = useHasSeenSaplingAnnouncementSelector();
   const hasSeenRewardsAnnouncement = useHasSeenRewardsAnnouncementSelector();
@@ -61,24 +45,11 @@ export const Wallet = memo(() => {
 
   const handleKoloCardAnimationComplete = useCallback(() => {
     dispatch(setKoloCardAnimationShownAction());
-  }, [dispatch]);
+  }, []);
 
   useApkBuildIdEvent();
   usePushNotificationsEvent();
   useEtherlinkDataLoading();
-
-  const handleCloseButtonPress = () => dispatch(addBlacklistedContactAction(contactCandidateAddress));
-
-  useEffect(() => {
-    if (
-      contactCandidateAddress &&
-      !ignoredAddresses.includes(contactCandidateAddress) &&
-      !contactsAddresses.includes(contactCandidateAddress) &&
-      !accounts.find(account => getAccountAddressForTezos(account) === contactCandidateAddress)
-    ) {
-      bottomSheetController.open();
-    }
-  }, [contactCandidateAddress]);
 
   useEffect(() => {
     if (shouldShowNewsletterModal && isAnyBackupMade) {
@@ -141,26 +112,7 @@ export const Wallet = memo(() => {
 
       <WalletOverlay />
 
-      <BottomSheet
-        title="Add this address to Contacts?"
-        description={contactCandidateAddress}
-        cancelButtonText="Not now"
-        contentHeight={formatSize(180)}
-        controller={bottomSheetController}
-        onCancelButtonPress={handleCloseButtonPress}
-      >
-        <BottomSheetActionButton
-          title="Add address"
-          onPress={() => {
-            navigateToModal(ModalsEnum.AddContact, {
-              name: '',
-              address: contactCandidateAddress
-            });
-            bottomSheetController.close();
-          }}
-          testID={WalletSelectors.addAddressButton}
-        />
-      </BottomSheet>
+      <ContactSuggestion />
     </>
   );
 });

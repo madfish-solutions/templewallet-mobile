@@ -153,7 +153,7 @@ const CollectibleItemView = memo<CollectibleItemViewProps>(
           {image}
           {showInfo && isDefined(balance) ? <Balance balance={balance} /> : null}
           <View style={styles.networkBadge}>
-            <NetworkIcon name={networkIcon} variant="nftBadge" />
+            <NetworkIcon name={networkIcon} variant="badge" />
           </View>
         </View>
 

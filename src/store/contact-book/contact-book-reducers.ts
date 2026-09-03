@@ -5,14 +5,16 @@ import {
   addContactAction,
   addContactCandidateAddressAction,
   deleteContactAction,
-  editContactAction,
-  loadContactTezosBalance
+  editContactAction
 } from './contact-book-actions';
 import { contactBookInitialState, ContactBookState } from './contact-book-state';
 
 export const contactBookReducers = createReducer<ContactBookState>(contactBookInitialState, builder => {
   builder.addCase(addContactAction, (state, { payload }) => {
     state.contacts = [...state.contacts, payload];
+    if (state.contactCandidateAddress === payload.address) {
+      state.contactCandidateAddress = '';
+    }
   });
   builder.addCase(editContactAction, (state, { payload }) => {
     const contactsCopy = [...state.contacts];
@@ -21,17 +23,14 @@ export const contactBookReducers = createReducer<ContactBookState>(contactBookIn
   });
   builder.addCase(deleteContactAction, (state, { payload }) => {
     state.contacts = state.contacts.filter(contact => contact.address !== payload.address);
+    if (state.contactCandidateAddress === payload.address) {
+      state.contactCandidateAddress = '';
+    }
   });
   builder.addCase(addContactCandidateAddressAction, (state, { payload }) => {
     state.contactCandidateAddress = payload;
   });
   builder.addCase(addBlacklistedContactAction, (state, { payload }) => {
     state.ignoredAddresses = [...state.ignoredAddresses, payload];
-  });
-  builder.addCase(loadContactTezosBalance.success, (state, { payload: { address, tezosBalance } }) => {
-    state.contactsStateRecord = {
-      ...state.contactsStateRecord,
-      [address]: { tezosBalance }
-    };
   });
 });

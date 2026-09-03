@@ -156,7 +156,7 @@ const ChainValue = memo<ChainValueProps>(({ name, network }) => {
   return (
     <View style={styles.chainValue}>
       <Text style={styles.chainName}>{name}</Text>
-      <NetworkIcon name={network} variant="nftBadge" />
+      <NetworkIcon name={network} variant="badge" />
     </View>
   );
 });
