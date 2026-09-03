@@ -25,6 +25,7 @@ import { getTokenSlug, isValidTokenContract } from 'src/token/utils/token.utils'
 import { toEvmNetworkEssentials } from 'src/types/networks';
 import { resolveErc20Token, resolveEvmCollectible } from 'src/utils/evm/resolve-evm-asset';
 import { toEvmAssetSlug } from 'src/utils/from-token-slug';
+import { useWillUnmount } from 'src/utils/hooks/use-will-unmount';
 import { isDefined } from 'src/utils/is-defined';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
@@ -71,6 +72,11 @@ export const AddAssetAddress: FC<Props> = ({ network, onNetworkSelect, onCloseBu
 
   const formikRef = useRef<FormikProps<AddTokenAddressFormValues>>(null);
   const isInitialNetworkRef = useRef(true);
+  const isUnmountedRef = useRef(false);
+
+  useWillUnmount(() => {
+    isUnmountedRef.current = true;
+  });
 
   useEffect(() => {
     if (isInitialNetworkRef.current) {
@@ -110,6 +116,10 @@ export const AddAssetAddress: FC<Props> = ({ network, onNetworkSelect, onCloseBu
     return tezos.contract
       .at(address)
       .then(contract => {
+        if (isUnmountedRef.current) {
+          return;
+        }
+
         if (!isValidTokenContract(contract)) {
           showErrorToast({ description: invalidTokenAddressErrorMessage });
         } else if (assets?.some(item => item.slug === slug)) {
@@ -119,7 +129,11 @@ export const AddAssetAddress: FC<Props> = ({ network, onNetworkSelect, onCloseBu
           onFormSubmitted();
         }
       })
-      .catch(() => showWarningToast({ description: genericErrorMessage }));
+      .catch(() => {
+        if (!isUnmountedRef.current) {
+          showWarningToast({ description: genericErrorMessage });
+        }
+      });
   };
 
   const onEvmSubmit = async ({ address, id }: AddTokenAddressFormValues) => {
@@ -138,7 +152,7 @@ export const AddAssetAddress: FC<Props> = ({ network, onNetworkSelect, onCloseBu
     }
 
     const tokenId = id?.toFixed();
-    const slug = isDefined(tokenId) ? toEvmAssetSlug(address, tokenId) : toEvmAssetSlug(address);
+    const slug = toEvmAssetSlug(address, tokenId);
     const storedAsset = evmAssets[slug];
 
     if (isDefined(storedAsset) && storedAsset.visibility !== VisibilityEnum.Hidden) {
@@ -148,35 +162,33 @@ export const AddAssetAddress: FC<Props> = ({ network, onNetworkSelect, onCloseBu
     }
 
     try {
-      if (isDefined(tokenId)) {
-        const result = await resolveEvmCollectible(evmNetwork, address, tokenId);
+      const result = isDefined(tokenId)
+        ? await resolveEvmCollectible(evmNetwork, address, tokenId)
+        : await resolveErc20Token(evmNetwork, address);
 
-        switch (result.type) {
-          case 'collectible':
-            return onFormSubmitted({ type: 'collectible', metadata: result.metadata });
-          case 'erc20-with-id':
-            return void showErrorToast({ description: erc20WithIdErrorMessage });
-          case 'unavailable':
-            return void showWarningToast({ description: genericErrorMessage });
-          case 'not-found':
-            return void showErrorToast({ description: nftNotFoundErrorMessage });
-        }
+      if (isUnmountedRef.current) {
+        return;
       }
-
-      const result = await resolveErc20Token(evmNetwork, address);
 
       switch (result.type) {
         case 'erc20':
-          return onFormSubmitted({ type: 'erc20', metadata: result.metadata, exchangeRate: result.exchangeRate });
+        case 'collectible':
+          return onFormSubmitted(result);
+        case 'erc20-with-id':
+          return void showErrorToast({ description: erc20WithIdErrorMessage });
         case 'not-erc20':
           return void showErrorToast({ description: nftWithoutIdErrorMessage });
         case 'unavailable':
           return void showWarningToast({ description: genericErrorMessage });
         case 'not-found':
-          return void showErrorToast({ description: invalidTokenAddressErrorMessage });
+          return void showErrorToast({
+            description: isDefined(tokenId) ? nftNotFoundErrorMessage : invalidTokenAddressErrorMessage
+          });
       }
     } catch {
-      return void showWarningToast({ description: genericErrorMessage });
+      if (!isUnmountedRef.current) {
+        showWarningToast({ description: genericErrorMessage });
+      }
     }
   };
 
@@ -203,6 +215,7 @@ export const AddAssetAddress: FC<Props> = ({ network, onNetworkSelect, onCloseBu
               <FormAddressInput
                 name="address"
                 placeholder={isTezos ? 'KT1v9CmPy…' : '0x0f5d2fb2…'}
+                inputStyle={styles.input}
                 testID={AddAssetAddressSelectors.addressInput}
               />
 

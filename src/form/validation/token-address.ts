@@ -20,9 +20,10 @@ export const tokenAddressValidation = string()
       return true;
     }
 
-    const wrongNetworkError =
-      getAddressNetwork(value) !== 'Sapling' ? getWrongNetworkAddressError(value, 'Tezos') : undefined;
+    const enteredNetwork = getAddressNetwork(value);
 
-    return isDefined(wrongNetworkError) ? this.createError({ message: wrongNetworkError }) : false;
+    return isDefined(enteredNetwork) && enteredNetwork !== 'Sapling' && enteredNetwork !== 'Tezos'
+      ? this.createError({ message: getWrongNetworkAddressError(value, 'Tezos') })
+      : false;
   })
   .test('is-valid-address', invalidAddressError, value => (isDefined(value) ? isValidAddress(value) : false));

@@ -42,7 +42,7 @@ export const DataUriImage = memo<Props>(({ dataUri, animated, width, height, sty
   return animated || svgRequiresWebViewRendering(xml) ? (
     <AnimatedDataUriImage xml={xml} width={width} height={height} style={style} onLoad={onLoad} onError={onError} />
   ) : (
-    <ErrorBoundary Fallback={SvgRenderFallback}>
+    <ErrorBoundary key={dataUri} Fallback={SvgRenderFallback}>
       <SvgWithCss xml={xml} width={width} height={height} style={style} onLoad={onLoad} onError={onError} />
     </ErrorBoundary>
   );
@@ -63,15 +63,19 @@ interface AnimatedDataUriImageProps {
   onError?: EmptyFn;
 }
 
-const AnimatedDataUriImage: FC<AnimatedDataUriImageProps> = ({ xml, width, height, style, onLoad, onError }) => (
+const AnimatedDataUriImage = ({ xml, width, height, style, onLoad, onError }: AnimatedDataUriImageProps) => (
   <WebView
     source={{ html: buildWebViewHTML(xml) }}
     style={[style, { width, height }]}
+    javaScriptEnabled={false}
+    scrollEnabled={false}
+    pointerEvents="none"
     onLoadEnd={onLoad}
     onError={onError}
   />
 );
 
+// an SVG inside <img> cannot run scripts or navigate, unlike inline markup
 const buildWebViewHTML = (svgContent: string) =>
   `
 <!DOCTYPE html>
@@ -89,18 +93,17 @@ const buildWebViewHTML = (svgContent: string) =>
         overflow: hidden;
         background-color: transparent;
       }
-      svg {
+      img {
         position: fixed;
         top: 0;
         left: 0;
         height: 100%;
         width: 100%;
-        overflow: hidden;
         user-select: none;
       }
     </style>
   </head>
   <body>
-    ${svgContent}
+    <img alt="" src="data:image/svg+xml;base64,${Buffer.from(svgContent, 'utf8').toString('base64')}" />
   </body>
 </html>`;

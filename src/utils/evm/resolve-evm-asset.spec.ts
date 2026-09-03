@@ -3,6 +3,7 @@ import { getAddress } from 'viem';
 import { fetchGetTokenInfo, EtherlinkTokenInfo } from 'src/apis/etherlink';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
 import { EvmNetworkEssentials } from 'src/types/networks';
+import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
 import { detectTokenStandard } from './on-chain/common.utils';
 import { getEvmCollectibleMetadata, getEvmTokenMetadata } from './on-chain/metadata';
@@ -20,7 +21,7 @@ const mockGetEvmCollectibleMetadata = jest.mocked(getEvmCollectibleMetadata);
 const ADDRESS = '0x0f5d2fb29fb7d3cfee444a200298f468908cc942';
 const CHECKSUMMED_ADDRESS = getAddress(ADDRESS);
 
-const network: EvmNetworkEssentials = { rpcBaseURL: 'https://rpc.test', chainId: 42793 };
+const network: EvmNetworkEssentials = { rpcBaseURL: 'https://rpc.test', chainId: ETHERLINK_MAINNET_CHAIN_ID };
 
 const makeTokenInfo = (overrides: Partial<EtherlinkTokenInfo> = {}): EtherlinkTokenInfo => ({
   icon_url: 'https://icons.test/tst.png',
@@ -201,6 +202,16 @@ describe('resolveEvmCollectible', () => {
     });
   });
 
+  it('falls back to on-chain detection when the explorer reports a type outside the known standards', async () => {
+    // the explorer emits types the typed union does not know, e.g. ERC-404
+    mockFetchGetTokenInfo.mockResolvedValue(Object.assign(makeTokenInfo(), { type: 'ERC-404' }));
+    mockDetectTokenStandard.mockResolvedValue(EvmAssetStandardEnum.ERC721);
+    mockGetEvmCollectibleMetadata.mockResolvedValue(onChainMetadata);
+
+    await expect(resolveEvmCollectible(network, ADDRESS, TOKEN_ID)).resolves.toMatchObject({ type: 'collectible' });
+    expect(mockDetectTokenStandard).toHaveBeenCalledWith(network, ADDRESS);
+  });
+
   it('rejects a chain-detected ERC-20 contract as erc20-with-id', async () => {
     mockFetchGetTokenInfo.mockRejectedValue(makeAxiosError(404));
     mockDetectTokenStandard.mockResolvedValue(EvmAssetStandardEnum.ERC20);
@@ -219,6 +230,13 @@ describe('resolveEvmCollectible', () => {
     mockDetectTokenStandard.mockResolvedValue(undefined);
 
     await expect(resolveEvmCollectible(network, ADDRESS, TOKEN_ID)).resolves.toEqual({ type: 'unavailable' });
+  });
+
+  it('propagates an RPC outage from standard detection instead of reporting not-found', async () => {
+    mockFetchGetTokenInfo.mockRejectedValue(makeAxiosError(404));
+    mockDetectTokenStandard.mockRejectedValue(new Error('rpc down'));
+
+    await expect(resolveEvmCollectible(network, ADDRESS, TOKEN_ID)).rejects.toThrow('rpc down');
   });
 
   it('treats a failed metadata read for a valid NFT contract as not-found', async () => {

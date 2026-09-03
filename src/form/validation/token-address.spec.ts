@@ -1,9 +1,5 @@
 import { tokenAddressValidation } from './token-address';
 
-jest.mock('src/utils/sapling/address-utils', () => ({
-  isSaplingAddress: (address: string) => address.startsWith('zet1')
-}));
-
 describe('tokenAddressValidation', () => {
   it('accepts a valid KT contract address', async () => {
     await expect(tokenAddressValidation.isValid('KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn')).resolves.toEqual(true);
@@ -23,7 +19,7 @@ describe('tokenAddressValidation', () => {
 
   it('rejects a sapling address with the contract-only message instead of a network mismatch', async () => {
     await expect(
-      tokenAddressValidation.validate('zet14CMN2T4x1NpsK8wRow9jGGSDGm8VgTB79QiZbDDJgHRLZzUUsdRmc11cM1s6HTGx4')
+      tokenAddressValidation.validate('zet12TQi4Fqt9UcyH2u8TfxqVHFaF8SX3HwBhsAqnhYKS6UnFxPPQ75yXiPuyW6LQVjco')
     ).rejects.toThrow('Only KT... contract address allowed');
   });
 

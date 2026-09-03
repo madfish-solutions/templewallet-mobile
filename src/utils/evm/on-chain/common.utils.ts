@@ -1,4 +1,12 @@
-import { erc20Abi, parseAbi } from 'viem';
+import {
+  BaseError,
+  erc20Abi,
+  ExecutionRevertedError,
+  HttpRequestError,
+  parseAbi,
+  RpcRequestError,
+  TimeoutError
+} from 'viem';
 
 import { EvmNetworkEssentials } from 'src/types/networks';
 
@@ -11,6 +19,15 @@ const ERC721_INTERFACE_ID: HexString = '0x80ac58cd';
 const ERC1155_INTERFACE_ID: HexString = '0xd9b67a26';
 
 export const equalsIgnoreCase = (a?: string, b?: string) => a?.toLowerCase() === b?.toLowerCase();
+
+const isRevertError = (error: unknown) => error instanceof ExecutionRevertedError;
+
+const isTransportError = (error: unknown) =>
+  error instanceof HttpRequestError || error instanceof TimeoutError || error instanceof RpcRequestError;
+
+// a reverted eth_call keeps the raw RPC error in its cause chain, so reverts must be ruled out first
+export const isRetryableRpcError = (error: unknown): boolean =>
+  error instanceof BaseError && error.walk(isRevertError) == null && error.walk(isTransportError) != null;
 
 export const detectTokenStandard = async (
   network: EvmNetworkEssentials,
@@ -38,7 +55,10 @@ export const detectTokenStandard = async (
     if (isErc1155Supported) {
       return EvmAssetStandard.ERC1155;
     }
-  } catch {
+  } catch (error) {
+    if (isRetryableRpcError(error)) {
+      throw error;
+    }
     // fall through to the ERC-20 check
   }
 
@@ -50,7 +70,11 @@ export const detectTokenStandard = async (
     });
 
     return EvmAssetStandard.ERC20;
-  } catch {
+  } catch (error) {
+    if (isRetryableRpcError(error)) {
+      throw error;
+    }
+
     return undefined;
   }
 };

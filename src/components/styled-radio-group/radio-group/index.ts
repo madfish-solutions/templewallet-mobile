@@ -5,3 +5,5 @@
 export type { RadioItemInterface } from './types';
 
 export { RadioGroup } from './radio-group';
+
+export { RadioCircle } from './radio-circle';

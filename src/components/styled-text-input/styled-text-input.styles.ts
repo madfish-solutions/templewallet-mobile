@@ -22,9 +22,6 @@ export const useStyledTextInputStyles = createUseStyles(({ colors, typography })
     error: {
       borderColor: colors.destructive
     },
-    disabled: {
-      color: colors.gray2
-    },
     view: {
       position: 'relative'
     },

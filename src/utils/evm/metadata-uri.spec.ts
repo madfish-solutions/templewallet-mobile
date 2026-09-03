@@ -15,6 +15,16 @@ describe('parseJsonDataUri', () => {
     expect(parseJsonDataUri(uri)).toEqual(metadata);
   });
 
+  it('parses a base64 json data uri with extra parameters', () => {
+    const base64 = Buffer.from(JSON.stringify(metadata), 'utf8').toString('base64');
+
+    expect(parseJsonDataUri(`data:application/json;charset=utf-8;base64,${base64}`)).toEqual(metadata);
+  });
+
+  it('parses a raw utf8 json data uri', () => {
+    expect(parseJsonDataUri(`data:application/json;utf8,${JSON.stringify(metadata)}`)).toEqual(metadata);
+  });
+
   it('returns undefined for http and ipfs uris', () => {
     expect(parseJsonDataUri('https://example.com/meta.json')).toBeUndefined();
     expect(parseJsonDataUri('ipfs://QmHash')).toBeUndefined();

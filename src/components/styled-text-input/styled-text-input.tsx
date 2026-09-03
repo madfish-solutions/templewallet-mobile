@@ -20,7 +20,6 @@ export const StyledTextInput: FCWithRef<TextInput, StyledTextInputProps> = ({
   isError = false,
   isPasswordInput = false,
   isShowCleanButton = false,
-  editable,
   onChangeText = emptyFn,
   onBlur = emptyFn,
   testID,
@@ -40,16 +39,9 @@ export const StyledTextInput: FCWithRef<TextInput, StyledTextInputProps> = ({
     <View style={styles.view}>
       <PatchedTextInput
         ref={ref}
-        style={[
-          styles.regular,
-          isError && styles.error,
-          editable === false && styles.disabled,
-          isPasswordInput && styles.passwordPadding,
-          style
-        ]}
+        style={[styles.regular, isError && styles.error, isPasswordInput && styles.passwordPadding, style]}
         placeholderTextColor={colors.gray1}
         selectionColor={colors.orange}
-        editable={editable}
         value={value}
         onChangeText={onChangeText}
         onBlur={onBlur}

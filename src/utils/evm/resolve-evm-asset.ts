@@ -16,23 +16,23 @@ import { detectTokenStandard } from './on-chain/common.utils';
 import { getEvmCollectibleMetadata, getEvmTokenMetadata } from './on-chain/metadata';
 import { EvmCollectibleAssetStandard, EvmContractAssetStandard } from './on-chain/types';
 
-const EXPLORER_TIMEOUT = 5000;
-const COLLECTIBLE_METADATA_TIMEOUT = 15_000;
+const EXPLORER_TIMEOUT_MS = 5_000;
+const COLLECTIBLE_METADATA_TIMEOUT_MS = 15_000;
 const METADATA_TIMED_OUT = Symbol('collectible-metadata-timeout');
 
-type Erc20TokenResolutionResult =
+export type Erc20TokenResolutionResult =
   | { type: 'erc20'; metadata: EvmTokenMetadata & { decimals: number }; exchangeRate?: number }
   | { type: 'not-erc20' }
   | { type: 'not-found' }
   | { type: 'unavailable' };
 
-type EvmCollectibleResolutionResult =
+export type EvmCollectibleResolutionResult =
   | { type: 'collectible'; metadata: EvmCollectibleMetadata & { standard: EvmCollectibleAssetStandard } }
   | { type: 'erc20-with-id' }
   | { type: 'not-found' }
   | { type: 'unavailable' };
 
-const parseApiRate = (value: string | null | undefined): number | undefined => {
+const parseApiNumber = (value: string | null | undefined): number | undefined => {
   if (value == null || value.trim() === '') {
     return undefined;
   }
@@ -43,29 +43,31 @@ const parseApiRate = (value: string | null | undefined): number | undefined => {
 };
 
 const parseApiDecimals = (value: string | null | undefined): number | undefined => {
-  const parsed = parseApiRate(value);
+  const parsed = parseApiNumber(value);
 
   return parsed !== undefined && Number.isInteger(parsed) && parsed >= 0 && parsed <= 255 ? parsed : undefined;
 };
 
 const isNotFoundError = (error: unknown) => isAxiosError(error) && error.response?.status === 404;
 
+const fetchTokenInfoWithTimeout = async (address: HexString) => {
+  const abortController = new AbortController();
+  const timeout = setTimeout(() => abortController.abort(), EXPLORER_TIMEOUT_MS);
+
+  try {
+    return { tokenInfo: await fetchGetTokenInfo(address, abortController.signal), explorerUnavailable: false };
+  } catch (error) {
+    return { tokenInfo: undefined, explorerUnavailable: !isNotFoundError(error) };
+  } finally {
+    clearTimeout(timeout);
+  }
+};
+
 export const resolveErc20Token = async (
   network: EvmNetworkEssentials,
   address: HexString
 ): Promise<Erc20TokenResolutionResult> => {
-  let explorerUnavailable = false;
-
-  const abortController = new AbortController();
-  const timeout = setTimeout(() => abortController.abort(), EXPLORER_TIMEOUT);
-
-  const tokenInfo = await fetchGetTokenInfo(address, abortController.signal)
-    .catch((error: unknown) => {
-      explorerUnavailable = !isNotFoundError(error);
-
-      return undefined;
-    })
-    .finally(() => clearTimeout(timeout));
+  const { tokenInfo, explorerUnavailable } = await fetchTokenInfoWithTimeout(address);
 
   if (isDefined(tokenInfo) && tokenInfo.type !== 'ERC-20') {
     return { type: 'not-erc20' };
@@ -73,7 +75,7 @@ export const resolveErc20Token = async (
 
   const checksummedAddress = getAddress(address);
   const apiDecimals = parseApiDecimals(tokenInfo?.decimals);
-  const exchangeRate = parseApiRate(tokenInfo?.exchange_rate);
+  const exchangeRate = parseApiNumber(tokenInfo?.exchange_rate);
 
   if (isDefined(tokenInfo) && isDefined(apiDecimals)) {
     return {
@@ -122,18 +124,7 @@ export const resolveEvmCollectible = async (
   address: HexString,
   tokenId: string
 ): Promise<EvmCollectibleResolutionResult> => {
-  let explorerUnavailable = false;
-
-  const abortController = new AbortController();
-  const timeout = setTimeout(() => abortController.abort(), EXPLORER_TIMEOUT);
-
-  const tokenInfo = await fetchGetTokenInfo(address, abortController.signal)
-    .catch((error: unknown) => {
-      explorerUnavailable = !isNotFoundError(error);
-
-      return undefined;
-    })
-    .finally(() => clearTimeout(timeout));
+  const { tokenInfo, explorerUnavailable } = await fetchTokenInfoWithTimeout(address);
 
   if (tokenInfo?.type === 'ERC-20') {
     return { type: 'erc20-with-id' };
@@ -163,7 +154,7 @@ export const resolveEvmCollectible = async (
   const metadata = await Promise.race([
     getEvmCollectibleMetadata(network, checksummedAddress, tokenId, standard),
     new Promise<typeof METADATA_TIMED_OUT>(resolve => {
-      metadataTimeout = setTimeout(() => resolve(METADATA_TIMED_OUT), COLLECTIBLE_METADATA_TIMEOUT);
+      metadataTimeout = setTimeout(() => resolve(METADATA_TIMED_OUT), COLLECTIBLE_METADATA_TIMEOUT_MS);
     })
   ]).finally(() => clearTimeout(metadataTimeout));
 
