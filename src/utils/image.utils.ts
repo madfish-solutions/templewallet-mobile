@@ -278,7 +278,7 @@ export const getXmlFromSvgDataUriInUtf8Encoding = (uri: string) =>
 export const fixSvgXml = (xml: string) => xml.replace(/(\d*\.?\d+)-(\d*)/g, '$1 -$2');
 
 // react-native-svg has no foreignObject, feImage or SMIL animation support and can crash on them
-export const svgRequiresWebViewRendering = (xml: string) => /<foreignObject|<feImage|<animate/i.test(xml);
+export const svgRequiresWebViewRendering = (xml: string) => /<foreignObject|<feImage|<animate|<set\b/i.test(xml);
 
 export const formatCollectibleArtifactUri = (artifactUri: string) => formatObjktMediaUri(artifactUri, 'artifact');
 
