@@ -16,7 +16,7 @@ import { ActivitySpinner } from './activity-spinner';
 import { useOpenActivityExplorer } from './hooks/use-open-activity-explorer.hook';
 import { ActivityFeedSelectors } from './selectors';
 import { ActivityChainRef, ActivityFaceKind, ActivityRowAsset } from './types';
-import { getActivityRowAmountView, getActivityTitle } from './utils';
+import { getActivityRowAmountView, getActivityRowKind, getActivityRowTitle } from './utils';
 
 interface Props {
   chainRef: ActivityChainRef;
@@ -28,14 +28,16 @@ interface Props {
   asset?: ActivityRowAsset;
   fiatRate?: number;
   nftBundleCount?: number;
+  withoutAssetIcon?: boolean;
 }
 
 export const ActivityOperationRow = memo<Props>(
-  ({ chainRef, kind, transferType, isShielded, hash, status, asset, fiatRate, nftBundleCount }) => {
+  ({ chainRef, kind, transferType, isShielded, hash, status, asset, fiatRate, nftBundleCount, withoutAssetIcon }) => {
     const styles = useActivityOperationRowStyles();
     const colors = useColors();
 
-    const title = getActivityTitle(kind, transferType, isShielded);
+    const rowKind = getActivityRowKind(kind, transferType, isShielded);
+    const title = getActivityRowTitle(rowKind);
     const amountView = useMemo(
       () => getActivityRowAmountView(kind, asset, fiatRate, nftBundleCount),
       [kind, asset, fiatRate, nftBundleCount]
@@ -59,10 +61,10 @@ export const ActivityOperationRow = memo<Props>(
       >
         <ActivityAssetImage
           chain={chainRef.chain}
-          kind={kind}
-          transferType={transferType}
+          kind={rowKind}
           source={asset?.image}
           isNft={asset?.isNft}
+          withoutAssetIcon={withoutAssetIcon}
         />
 
         <View style={styles.infoContainer}>

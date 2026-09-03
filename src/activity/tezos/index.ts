@@ -1,3 +1,5 @@
+import { BigNumber } from 'bignumber.js';
+
 import { SAPLING_CONTRACT_ADDRESS } from 'src/config/sapling';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
@@ -26,15 +28,31 @@ export function parseTezosOperationsGroup(
 
   const { hash, addedAt, operations: preOperations, status } = preActivity;
 
+  const operations = preOperations.map(operation => parseTezosPreActivityOperation(operation, address));
+
   return {
     hash,
     chain: TempleChainKind.Tezos,
     chainId,
-    operations: preOperations.map(operation => parseTezosPreActivityOperation(operation, address)),
+    operations: withoutUnshieldingCall(operations),
     addedAt: new Date(addedAt).getTime(),
     status: toActivityStatus(status)
   };
 }
+
+const isShieldedPayout = (operation: TezosOperation) =>
+  operation.kind === ActivityOperKindEnum.transfer &&
+  operation.isShielded === true &&
+  operation.toAddress !== SAPLING_CONTRACT_ADDRESS;
+
+const isShieldedInteraction = (operation: TezosOperation) =>
+  operation.kind === ActivityOperKindEnum.interaction && operation.isShielded === true;
+
+// An unshielding is one zero-amount sapling call plus its payout; only the payout is the user's activity
+const withoutUnshieldingCall = (operations: TezosOperation[]) =>
+  operations.filter(isShieldedInteraction).length === 1 && operations.some(isShieldedPayout)
+    ? operations.filter(operation => !isShieldedInteraction(operation))
+    : operations;
 
 const toActivityStatus = (status: TezosPreActivityStatus): ActivityStatus => {
   switch (status) {
@@ -56,12 +74,12 @@ function parseTezosPreActivityOperation(preOperation: TezosPreActivityOperation,
   }
 
   const withAddress = preOperation.destination.address;
+  const isShielded =
+    withAddress === SAPLING_CONTRACT_ADDRESS || preOperation.sender.address === SAPLING_CONTRACT_ADDRESS;
 
-  if (withAddress === SAPLING_CONTRACT_ADDRESS) {
+  if (withAddress === SAPLING_CONTRACT_ADDRESS && new BigNumber(preOperation.amountSigned).isZero()) {
     return { kind: ActivityOperKindEnum.interaction, withAddress, isShielded: true };
   }
-
-  const fromSapling = preOperation.sender.address === SAPLING_CONTRACT_ADDRESS;
 
   const firstTo = preOperation.to.at(0);
 
@@ -87,7 +105,8 @@ function parseTezosPreActivityOperation(preOperation: TezosPreActivityOperation,
       fromAddress,
       toAddress,
       assetSlug,
-      amountSigned
+      amountSigned,
+      isShielded: isShielded ? true : undefined
     };
   }
 
@@ -99,7 +118,7 @@ function parseTezosPreActivityOperation(preOperation: TezosPreActivityOperation,
       toAddress,
       assetSlug,
       amountSigned,
-      isShielded: fromSapling ? true : undefined
+      isShielded: isShielded ? true : undefined
     };
   }
 

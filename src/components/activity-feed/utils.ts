@@ -17,7 +17,7 @@ import { formatAssetAmount, ZERO } from 'src/utils/number.util';
 import { mutezToTz } from 'src/utils/tezos.util';
 import { concatUrlPath } from 'src/utils/url.utils';
 
-import { ActivityFaceKind, ActivityRowAsset, BUNDLE_FACE_KIND } from './types';
+import { ActivityFaceKind, ActivityRowAsset, ActivityRowKind, BUNDLE_FACE_KIND } from './types';
 
 interface ActivityRowAmountView {
   amountText?: string;
@@ -42,55 +42,73 @@ export const shortenHash = (hash: string) =>
 const truncateSymbol = (symbol: string) =>
   symbol.length > MAX_SYMBOL_LENGTH ? `${symbol.slice(0, MAX_SYMBOL_LENGTH)}…` : symbol;
 
-const transferTypeTitles: Record<ActivityOperTransferType, string> = {
-  [ActivityOperTransferType.sendToAccount]: 'Send',
-  [ActivityOperTransferType.receiveFromAccount]: 'Receive',
-  [ActivityOperTransferType.send]: 'Transfer',
-  [ActivityOperTransferType.receive]: 'Transfer'
+const transferRowKinds: Record<ActivityOperTransferType, ActivityRowKind> = {
+  [ActivityOperTransferType.sendToAccount]: ActivityRowKind.send,
+  [ActivityOperTransferType.receiveFromAccount]: ActivityRowKind.receive,
+  [ActivityOperTransferType.send]: ActivityRowKind.transfer,
+  [ActivityOperTransferType.receive]: ActivityRowKind.transfer
 };
 
-export const getActivityTitle = (
+// Shielding and unshielding go through the sapling contract, but read as plain sends and receives
+const shieldedTransferRowKinds: Record<ActivityOperTransferType, ActivityRowKind> = {
+  [ActivityOperTransferType.sendToAccount]: ActivityRowKind.send,
+  [ActivityOperTransferType.receiveFromAccount]: ActivityRowKind.receive,
+  [ActivityOperTransferType.send]: ActivityRowKind.send,
+  [ActivityOperTransferType.receive]: ActivityRowKind.receive
+};
+
+export const getActivityRowKind = (
   kind: ActivityFaceKind,
   transferType?: ActivityOperTransferType,
   isShielded?: boolean
 ) => {
   if (kind === BUNDLE_FACE_KIND) {
-    return 'Bundle';
-  }
-
-  if (isShielded === true) {
-    return 'Shielded transfer';
-  }
-
-  if (kind === ActivityOperKindEnum.interaction) {
-    return 'Interaction';
+    return ActivityRowKind.bundle;
   }
 
   if (kind === ActivityOperKindEnum.approve) {
-    return 'Approve';
+    return ActivityRowKind.approve;
   }
 
-  return transferType == null ? 'Interaction' : transferTypeTitles[transferType];
-};
-
-const transferTypeIconNames: Record<ActivityOperTransferType, IconNameV2Enum> = {
-  [ActivityOperTransferType.sendToAccount]: IconNameV2Enum.Send,
-  [ActivityOperTransferType.receiveFromAccount]: IconNameV2Enum.Income,
-  [ActivityOperTransferType.send]: IconNameV2Enum.Documents,
-  [ActivityOperTransferType.receive]: IconNameV2Enum.Documents
-};
-
-export const getActivityKindIconName = (kind: ActivityFaceKind, transferType?: ActivityOperTransferType) => {
-  if (kind === ActivityOperKindEnum.approve) {
-    return IconNameV2Enum.Ok;
+  if (kind === ActivityOperKindEnum.interaction || transferType == null) {
+    return ActivityRowKind.interaction;
   }
 
-  if (kind === BUNDLE_FACE_KIND || kind === ActivityOperKindEnum.interaction || transferType == null) {
-    return IconNameV2Enum.Documents;
-  }
-
-  return transferTypeIconNames[transferType];
+  return (isShielded === true ? shieldedTransferRowKinds : transferRowKinds)[transferType];
 };
+
+const activityRowTitles: Record<ActivityRowKind, string> = {
+  [ActivityRowKind.send]: 'Send',
+  [ActivityRowKind.receive]: 'Receive',
+  [ActivityRowKind.transfer]: 'Transfer',
+  [ActivityRowKind.interaction]: 'Interaction',
+  [ActivityRowKind.approve]: 'Approve',
+  [ActivityRowKind.bundle]: 'Bundle'
+};
+
+export const getActivityRowTitle = (rowKind: ActivityRowKind) => activityRowTitles[rowKind];
+
+const assetPlaceholderIconNames: Record<ActivityRowKind, IconNameV2Enum> = {
+  [ActivityRowKind.send]: IconNameV2Enum.Send,
+  [ActivityRowKind.receive]: IconNameV2Enum.Income,
+  [ActivityRowKind.transfer]: IconNameV2Enum.Documents,
+  [ActivityRowKind.interaction]: IconNameV2Enum.Documents,
+  [ActivityRowKind.approve]: IconNameV2Enum.Ok,
+  [ActivityRowKind.bundle]: IconNameV2Enum.Documents
+};
+
+// Rows without an asset logo (token page) name the operation with the glyph itself
+const operationIconNames: Record<ActivityRowKind, IconNameV2Enum> = {
+  [ActivityRowKind.send]: IconNameV2Enum.Send,
+  [ActivityRowKind.receive]: IconNameV2Enum.Income,
+  [ActivityRowKind.transfer]: IconNameV2Enum.DocumentGear,
+  [ActivityRowKind.interaction]: IconNameV2Enum.DocumentGear,
+  [ActivityRowKind.approve]: IconNameV2Enum.LockOpen,
+  [ActivityRowKind.bundle]: IconNameV2Enum.Cube
+};
+
+export const getActivityRowIconName = (rowKind: ActivityRowKind, withoutAssetIcon = false) =>
+  (withoutAssetIcon ? operationIconNames : assetPlaceholderIconNames)[rowKind];
 
 export const buildActivityExplorerUrl = (explorerUrl: string, hash: string, chain: TempleChainKind) =>
   concatUrlPath(explorerUrl, chain === TempleChainKind.Tezos ? hash : `tx/${hash}`);

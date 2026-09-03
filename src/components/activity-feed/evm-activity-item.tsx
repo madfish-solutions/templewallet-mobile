@@ -12,9 +12,10 @@ import { getEvmBundleFaceAsset, getNftTransfersCount } from './utils';
 interface Props {
   activity: EvmActivity;
   faceAssetContract?: string;
+  withoutAssetIcon?: boolean;
 }
 
-const EvmActivityBundleItem = memo<Props>(({ activity, faceAssetContract }) => {
+const EvmActivityBundleItem = memo<Props>(({ activity, faceAssetContract, withoutAssetIcon }) => {
   const { chainId, hash, operations } = activity;
 
   const chainRef = useEvmChainRef(chainId);
@@ -33,16 +34,30 @@ const EvmActivityBundleItem = memo<Props>(({ activity, faceAssetContract }) => {
       asset={asset}
       fiatRate={fiatRate}
       nftBundleCount={nftBundleCount}
+      withoutAssetIcon={withoutAssetIcon}
     />
   );
 });
 
-export const EvmActivityItem = memo<Props>(({ activity, faceAssetContract }) => {
+export const EvmActivityItem = memo<Props>(({ activity, faceAssetContract, withoutAssetIcon }) => {
   const { chainId, hash, operations } = activity;
 
   if (operations.length > 1) {
-    return <EvmActivityBundleItem activity={activity} faceAssetContract={faceAssetContract} />;
+    return (
+      <EvmActivityBundleItem
+        activity={activity}
+        faceAssetContract={faceAssetContract}
+        withoutAssetIcon={withoutAssetIcon}
+      />
+    );
   }
 
-  return <EvmActivityOperationItem chainId={chainId} hash={hash} operation={operations.at(0)} />;
+  return (
+    <EvmActivityOperationItem
+      chainId={chainId}
+      hash={hash}
+      operation={operations.at(0)}
+      withoutAssetIcon={withoutAssetIcon}
+    />
+  );
 });

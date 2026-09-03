@@ -12,6 +12,8 @@ import CheckboxEmptyIcon from './assets/checkbox-empty.svg';
 import ChevronRightIcon from './assets/chevron-right.svg';
 import ClockIcon from './assets/clock.svg';
 import CopyIcon from './assets/copy.svg';
+import CubeIcon from './assets/cube.svg';
+import DocumentGearIcon from './assets/document-gear.svg';
 import DocumentsIcon from './assets/documents.svg';
 import DollarIcon from './assets/dollar.svg';
 import DropdownDownIcon from './assets/dropdown-down.svg';
@@ -20,6 +22,7 @@ import ImportIcon from './assets/import.svg';
 import IncomeIcon from './assets/income.svg';
 import InfoFillIcon from './assets/info-fill.svg';
 import InfoIcon from './assets/info.svg';
+import LockOpenIcon from './assets/lock-open.svg';
 import LogoutIcon from './assets/logout.svg';
 import NotificationIcon from './assets/notification.svg';
 import OkIcon from './assets/ok.svg';
@@ -77,5 +80,8 @@ export const IconNameV2Map: Record<IconNameV2Enum, FC<SvgProps>> = {
   [IconNameV2Enum.OutLink]: OutLinkIcon,
   [IconNameV2Enum.Shield]: ShieldIcon,
   [IconNameV2Enum.ScamInfo]: ScamInfoIcon,
-  [IconNameV2Enum.SwapArrow]: SwapArrowIcon
+  [IconNameV2Enum.SwapArrow]: SwapArrowIcon,
+  [IconNameV2Enum.LockOpen]: LockOpenIcon,
+  [IconNameV2Enum.Cube]: CubeIcon,
+  [IconNameV2Enum.DocumentGear]: DocumentGearIcon
 };

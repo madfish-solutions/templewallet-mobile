@@ -5,7 +5,12 @@ import { ActivityOperKindEnum, ActivityOperTransferType } from 'src/activity/typ
 import { ActivityAssetImage } from 'src/components/activity-feed/activity-asset-image';
 import { useActivityOperationRowStyles } from 'src/components/activity-feed/activity-operation-row.styles';
 import { useTezosActivityAsset } from 'src/components/activity-feed/hooks/use-tezos-activity-asset.hook';
-import { getActivityRowAmountView, getActivityTitle, shortenHash } from 'src/components/activity-feed/utils';
+import {
+  getActivityRowAmountView,
+  getActivityRowKind,
+  getActivityRowTitle,
+  shortenHash
+} from 'src/components/activity-feed/utils';
 import { FormattedAmount } from 'src/components/formatted-amount';
 import { IconV2 } from 'src/components/icon-v2';
 import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
@@ -40,7 +45,8 @@ export const PrivateActivityItem = memo<Props>(({ transaction }) => {
     [asset, fiatRate]
   );
 
-  const title = getActivityTitle(ActivityOperKindEnum.transfer, transferType);
+  const rowKind = getActivityRowKind(ActivityOperKindEnum.transfer, transferType);
+  const title = getActivityRowTitle(rowKind);
 
   const handleCopyAddress = useCallback(
     () => copyStringToClipboard(transaction.paymentAddress),
@@ -59,12 +65,7 @@ export const PrivateActivityItem = memo<Props>(({ transaction }) => {
       onPress={handleCopyAddress}
       testID="PrivateTezosTokenHistory/ActivityItem"
     >
-      <ActivityAssetImage
-        chain={TempleChainKind.Tezos}
-        kind={ActivityOperKindEnum.transfer}
-        transferType={transferType}
-        source={asset?.image}
-      />
+      <ActivityAssetImage chain={TempleChainKind.Tezos} kind={rowKind} withoutAssetIcon />
 
       <View style={styles.infoContainer}>
         <View style={styles.line}>

@@ -7,6 +7,7 @@ import {
   isTzktOperParam_LiquidityBaking,
   ParameterFa2Transfer
 } from 'src/apis/tzkt/utils';
+import { SAPLING_CONTRACT_ADDRESS } from 'src/config/sapling';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { isTruthy } from 'src/utils/is-truthy';
 import { ZERO } from 'src/utils/number.util';
@@ -119,11 +120,19 @@ function reduceOneTzktTransactionOperation(
   const parameter = operation.parameter;
 
   if (parameter == null) {
-    if (operation.target.address !== address && operation.sender.address !== address) return null;
+    // An unshielding payout to another address leaves the pool on the account's behalf: it is the account's own send
+    const from =
+      operation.sender.address === SAPLING_CONTRACT_ADDRESS &&
+      operation.target.address !== address &&
+      operation.initiator?.address === address
+        ? operation.initiator
+        : operation.sender;
+
+    if (operation.target.address !== address && from.address !== address) return null;
 
     return _buildReturn({
       amount: String(operation.amount),
-      from: operation.sender,
+      from,
       to: operation.target,
       contract: TEZ_TOKEN_SLUG,
       subtype: 'transfer'

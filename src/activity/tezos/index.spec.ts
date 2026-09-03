@@ -24,38 +24,26 @@ const baseOp = (overrides: Partial<TzktTransactionOperation>): TzktTransactionOp
   ...overrides
 });
 
-describe('parseTezosOperationsGroup - sapling direction', () => {
-  it('keeps a shielding call as a shielded interaction and parses an unshielding payout as a shielded tez receive', () => {
-    const shieldingOp = baseOp({
-      id: 1,
-      sender: alias(ACCOUNT_ADDRESS),
-      target: alias(SAPLING_CONTRACT_ADDRESS),
-      amount: 0
-    });
+const saplingCallOp = (overrides: Partial<TzktTransactionOperation>) =>
+  baseOp({ parameter: { entrypoint: 'default', value: {} }, ...overrides });
 
-    const payoutOp = baseOp({
-      id: 2,
-      sender: alias(SAPLING_CONTRACT_ADDRESS),
-      target: alias(ACCOUNT_ADDRESS),
-      amount: 100000
-    });
+const saplingPayoutOp = (overrides: Partial<TzktTransactionOperation>) =>
+  baseOp({
+    sender: alias(SAPLING_CONTRACT_ADDRESS),
+    initiator: alias(ACCOUNT_ADDRESS),
+    target: alias(ACCOUNT_ADDRESS),
+    ...overrides
+  });
 
+describe('parseTezosOperationsGroup - unshielding', () => {
+  it('drops the sapling call and keeps the payout as a shielded tez receive', () => {
     const activity = parseTezosOperationsGroup(
-      { hash: HASH, operations: [shieldingOp, payoutOp] },
+      { hash: HASH, operations: [saplingCallOp({ id: 1 }), saplingPayoutOp({ id: 2, amount: 100000 })] },
       CHAIN_ID,
       ACCOUNT_ADDRESS
     );
 
-    expect(activity).not.toBeNull();
-    expect(activity?.operations).toHaveLength(2);
-
-    const [shieldingResult, payoutResult] = activity?.operations ?? [];
-
-    expect(shieldingResult).toEqual(
-      expect.objectContaining({ kind: ActivityOperKindEnum.interaction, isShielded: true })
-    );
-
-    expect(payoutResult).toEqual(
+    expect(activity?.operations).toEqual([
       expect.objectContaining({
         kind: ActivityOperKindEnum.transfer,
         type: ActivityOperTransferType.receive,
@@ -63,7 +51,20 @@ describe('parseTezosOperationsGroup - sapling direction', () => {
         amountSigned: '100000',
         isShielded: true
       })
+    ]);
+  });
+
+  it('keeps every sapling call when a batch has more than one of them', () => {
+    const activity = parseTezosOperationsGroup(
+      {
+        hash: HASH,
+        operations: [saplingCallOp({ id: 1 }), saplingCallOp({ id: 2 }), saplingPayoutOp({ id: 3, amount: 100000 })]
+      },
+      CHAIN_ID,
+      ACCOUNT_ADDRESS
     );
+
+    expect(activity?.operations).toHaveLength(3);
   });
 });
 

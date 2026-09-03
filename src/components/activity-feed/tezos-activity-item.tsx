@@ -12,9 +12,10 @@ import { getTezosBundleFaceAsset, getTezosBundleIsShielded } from './utils';
 interface Props {
   activity: TezosActivity;
   faceAssetSlug?: string;
+  withoutAssetIcon?: boolean;
 }
 
-const TezosActivityBundleItem = memo<Props>(({ activity, faceAssetSlug }) => {
+const TezosActivityBundleItem = memo<Props>(({ activity, faceAssetSlug, withoutAssetIcon }) => {
   const { chainId, hash, operations, status } = activity;
 
   const chainRef = useTezosChainRef(chainId);
@@ -30,16 +31,27 @@ const TezosActivityBundleItem = memo<Props>(({ activity, faceAssetSlug }) => {
       status={status}
       asset={asset}
       fiatRate={fiatRate}
+      withoutAssetIcon={withoutAssetIcon}
     />
   );
 });
 
-export const TezosActivityItem = memo<Props>(({ activity, faceAssetSlug }) => {
+export const TezosActivityItem = memo<Props>(({ activity, faceAssetSlug, withoutAssetIcon }) => {
   const { chainId, hash, operations, status } = activity;
 
   if (operations.length > 1) {
-    return <TezosActivityBundleItem activity={activity} faceAssetSlug={faceAssetSlug} />;
+    return (
+      <TezosActivityBundleItem activity={activity} faceAssetSlug={faceAssetSlug} withoutAssetIcon={withoutAssetIcon} />
+    );
   }
 
-  return <TezosActivityOperationItem chainId={chainId} hash={hash} operation={operations.at(0)} status={status} />;
+  return (
+    <TezosActivityOperationItem
+      chainId={chainId}
+      hash={hash}
+      operation={operations.at(0)}
+      status={status}
+      withoutAssetIcon={withoutAssetIcon}
+    />
+  );
 });

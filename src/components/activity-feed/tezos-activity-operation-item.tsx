@@ -12,9 +12,10 @@ interface Props {
   hash: string;
   operation?: TezosOperation;
   status?: ActivityStatus;
+  withoutAssetIcon?: boolean;
 }
 
-export const TezosActivityOperationItem = memo<Props>(({ chainId, hash, operation, status }) => {
+export const TezosActivityOperationItem = memo<Props>(({ chainId, hash, operation, status, withoutAssetIcon }) => {
   const chainRef = useTezosChainRef(chainId);
   const { asset, fiatRate } = useTezosActivityAsset(operation?.assetSlug, operation?.amountSigned);
 
@@ -28,6 +29,7 @@ export const TezosActivityOperationItem = memo<Props>(({ chainId, hash, operatio
       status={status}
       asset={asset}
       fiatRate={fiatRate}
+      withoutAssetIcon={withoutAssetIcon}
     />
   );
 });

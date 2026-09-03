@@ -6,6 +6,15 @@ export const BUNDLE_FACE_KIND = 'bundle';
 
 export type ActivityFaceKind = ActivityOperKindEnum | typeof BUNDLE_FACE_KIND;
 
+export enum ActivityRowKind {
+  send,
+  receive,
+  transfer,
+  interaction,
+  approve,
+  bundle
+}
+
 export enum ActivityAssetImageKind {
   tokenIcon,
   cryptoLogo,

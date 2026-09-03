@@ -12,16 +12,20 @@ interface Props {
   faceAssetFilter?: ActivityFeedAssetFilter;
 }
 
-export const ActivityFeedItem = memo<Props>(({ activity, faceAssetFilter }) =>
-  activity.chain === TempleChainKind.Tezos ? (
+export const ActivityFeedItem = memo<Props>(({ activity, faceAssetFilter }) => {
+  const withoutAssetIcon = faceAssetFilter != null;
+
+  return activity.chain === TempleChainKind.Tezos ? (
     <TezosActivityItem
       activity={activity}
       faceAssetSlug={faceAssetFilter?.chainKind === TempleChainKind.Tezos ? faceAssetFilter.assetSlug : undefined}
+      withoutAssetIcon={withoutAssetIcon}
     />
   ) : (
     <EvmActivityItem
       activity={activity}
       faceAssetContract={faceAssetFilter?.chainKind === TempleChainKind.EVM ? faceAssetFilter.contract : undefined}
+      withoutAssetIcon={withoutAssetIcon}
     />
-  )
-);
+  );
+});
