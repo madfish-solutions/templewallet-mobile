@@ -2,7 +2,13 @@ import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
 export const useCopyableDerivationPathStyles = createUseStyles(() => ({
-  container: {
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: formatSize(16)
+  },
+  inputContainer: {
+    flex: 1,
     position: 'relative'
   },
   input: {

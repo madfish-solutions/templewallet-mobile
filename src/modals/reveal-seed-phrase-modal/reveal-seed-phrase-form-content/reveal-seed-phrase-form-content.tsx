@@ -2,6 +2,7 @@ import { FormikProps } from 'formik/dist/types';
 import React from 'react';
 
 import { AccountCard } from 'src/components/account-card';
+import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { DisclaimerV2 } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
@@ -23,7 +24,7 @@ import { RevealSeedPhraseView } from './reveal-seed-phrase-view/reveal-seed-phra
 export const RevealSeedPhraseFormContent: SyncFC<FormikProps<RevealSeedPhraseModalFormValues>> = ({ values }) => {
   const tezosAddress = getAccountAddressForTezos(values.account);
   const evmAddress = getAccountAddressForEvm(values.account);
-  const supportsBothChains = Boolean(tezosAddress && evmAddress);
+  const hasDerivationPath = isDefined(tezosAddress) || isDefined(evmAddress);
   const accountIndex = values.account.type === AccountTypeEnum.HD ? values.account.hdIndex : 0;
 
   return (
@@ -34,33 +35,27 @@ export const RevealSeedPhraseFormContent: SyncFC<FormikProps<RevealSeedPhraseMod
         <Label label="Account" description="Reveal a seed phrase from your HD account" />
         <AccountCard account={values.account} showAllAddresses />
         <Divider size={formatSize(24)} />
-        {isDefined(tezosAddress) && (
+        {hasDerivationPath && (
           <>
             <Label
-              label={supportsBothChains ? 'Tezos derivation path' : 'Derivation path'}
-              description="This is your HD wallet key hierarchy blueprint to regenerate your account from seed phrase."
+              label="Derivation path"
+              description="This is key hierarchy blueprint to regenerate account from seed phrase."
             />
-            <CopyableDerivationPath
-              value={getTezosDerivationPath(accountIndex)}
-              testID={RevealSeedPharaseSelectors.tezosDerivationPath}
-            />
-            <Divider size={formatSize(16)} />
-          </>
-        )}
-        {isDefined(evmAddress) && (
-          <>
-            <Label
-              label={supportsBothChains ? 'EVM derivation path' : 'Derivation path'}
-              description={
-                tezosAddress
-                  ? undefined
-                  : 'This is your HD wallet key hierarchy blueprint to regenerate your account from seed phrase.'
-              }
-            />
-            <CopyableDerivationPath
-              value={getEvmDerivationPath(accountIndex)}
-              testID={RevealSeedPharaseSelectors.evmDerivationPath}
-            />
+            {isDefined(tezosAddress) && (
+              <CopyableDerivationPath
+                value={getTezosDerivationPath(accountIndex)}
+                network={CryptoLogoNameEnum.Tezos}
+                testID={RevealSeedPharaseSelectors.tezosDerivationPath}
+              />
+            )}
+            {isDefined(tezosAddress) && isDefined(evmAddress) && <Divider size={formatSize(16)} />}
+            {isDefined(evmAddress) && (
+              <CopyableDerivationPath
+                value={getEvmDerivationPath(accountIndex)}
+                network={CryptoLogoNameEnum.Etherlink}
+                testID={RevealSeedPharaseSelectors.evmDerivationPath}
+              />
+            )}
             <Divider size={formatSize(16)} />
           </>
         )}

@@ -20,6 +20,13 @@ export const useNetworkLogoStyles = createUseStylesMemoized(({ colors }) => ({
     height: formatSize(16),
     width: formatSize(16)
   },
+  medium: {
+    backgroundColor: colors.cardBG,
+    borderColor: colors.lines,
+    borderRadius: formatSize(12),
+    height: formatSize(24),
+    width: formatSize(24)
+  },
   tokenBadge: {
     backgroundColor: colors.pageBG,
     borderColor: colors.lines,

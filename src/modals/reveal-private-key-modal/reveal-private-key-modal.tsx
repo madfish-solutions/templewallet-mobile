@@ -57,14 +57,14 @@ export const RevealPrivateKeyModal = () => {
             <Divider size={formatSize(24)} />
             {isDefined(tezosAddress) && (
               <>
-                <Label label={isDefined(evmAddress) ? 'Tezos Private Key' : 'Private Key'} />
+                <Label label="Tezos Private Key" description="Access to your Tezos account. Keep it in secret." />
                 <RevealPrivateKeyView address={tezosAddress} />
                 <Divider size={formatSize(16)} />
               </>
             )}
             {isDefined(evmAddress) && (
               <>
-                <Label label={isDefined(tezosAddress) ? 'EVM Private Key' : 'Private Key'} />
+                <Label label="EVM Private Key" description="Access to your Etherlink account. Keep it in secret." />
                 <RevealPrivateKeyView address={evmAddress} />
                 <Divider size={formatSize(16)} />
               </>
