@@ -17,7 +17,7 @@ export const useDeleteContact = (onDeleted?: EmptyFn) => {
 
   return useCallback(
     (contact: Contact) =>
-      Alert.alert(`Delete “${contact.name}” from Contacts?`, undefined, [
+      Alert.alert('Delete contact?', `Are you sure you want to delete “${contact.name}” from Contacts?`, [
         {
           text: 'Cancel',
           style: 'cancel',
