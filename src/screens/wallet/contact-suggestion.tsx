@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useMemo } from 'react';
+import React, { memo, useCallback, useEffect } from 'react';
 
 import { BottomSheet } from 'src/components/bottom-sheet/bottom-sheet';
 import { BottomSheetActionButton } from 'src/components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
@@ -26,18 +26,15 @@ export const ContactSuggestion = memo(() => {
   const accounts = useAllAccounts();
   const controller = useBottomSheetController();
 
-  const shouldShowSuggestion = useMemo(
-    () =>
-      Boolean(contactCandidateAddress) &&
-      !ignoredAddresses.includes(contactCandidateAddress) &&
-      !contactsAddresses.includes(contactCandidateAddress) &&
-      !accounts.some(
-        account =>
-          getAccountAddressForTezos(account) === contactCandidateAddress ||
-          getAccountAddressForEvm(account) === contactCandidateAddress
-      ),
-    [accounts, contactCandidateAddress, contactsAddresses, ignoredAddresses]
-  );
+  const shouldShowSuggestion =
+    Boolean(contactCandidateAddress) &&
+    !ignoredAddresses.includes(contactCandidateAddress) &&
+    !contactsAddresses.includes(contactCandidateAddress) &&
+    !accounts.some(
+      account =>
+        getAccountAddressForTezos(account) === contactCandidateAddress ||
+        getAccountAddressForEvm(account) === contactCandidateAddress
+    );
 
   useEffect(() => {
     if (shouldShowSuggestion) {
