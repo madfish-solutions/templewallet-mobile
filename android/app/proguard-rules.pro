@@ -39,4 +39,4 @@
 }
 -keep public class com.sun.jna.** { *; }
 -keep class com.sun.jna.** { *; }
--keep class java.awt.GraphicsEnvironment { *; };
+-dontwarn java.awt.**
