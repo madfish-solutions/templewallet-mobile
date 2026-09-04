@@ -1,4 +1,5 @@
 import React, { Fragment, useState } from 'react';
+import { StyleSheet } from 'react-native';
 
 import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
@@ -36,8 +37,8 @@ export const ManageImportedAccounts = () => {
         onChangeText={debouncedSetSearch}
         testID={ManageImportedAccountsSelectors.searchAccountsInput}
       />
-      <Divider size={formatSize(8)} />
-      <ScreenContainer>
+      <Divider size={formatSize(12)} />
+      <ScreenContainer contentContainerStyle={styles.container}>
         {filteredAccountList.map(account => (
           <Fragment key={account.id}>
             <ManageAccountItem
@@ -55,3 +56,9 @@ export const ManageImportedAccounts = () => {
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    paddingTop: formatSize(16)
+  }
+});

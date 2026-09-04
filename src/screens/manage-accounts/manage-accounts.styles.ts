@@ -4,6 +4,8 @@ import { formatSize } from 'src/styles/format-size';
 export const useManageAccountsStyles = createUseStyles(() => ({
   segmentControlContainer: {
     padding: formatSize(2),
-    marginHorizontal: formatSize(16)
+    marginHorizontal: formatSize(16),
+    marginTop: formatSize(16),
+    marginBottom: formatSize(28)
   }
 }));

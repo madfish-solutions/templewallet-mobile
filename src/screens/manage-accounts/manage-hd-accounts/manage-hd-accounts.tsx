@@ -42,22 +42,18 @@ export const ManageHdAccounts = () => {
         onChangeText={debouncedSetSearch}
         testID={ManageHdAccountsSelectors.searchAccountsInput}
       />
-      <Divider size={formatSize(8)} />
+      <Divider size={formatSize(12)} />
       <View style={styles.revealSeedPhraseContainer}>
         <Text style={styles.revealSeedPhraseText}>Seed phrase is the same for all your HD accounts</Text>
-        <Divider size={formatSize(16)} />
+        <Divider size={formatSize(8)} />
         <ButtonSmallSecondary
           title="Seed phrase"
-          marginTop={formatSize(4)}
-          marginBottom={formatSize(4)}
           onPress={() => navigateToModal(ModalsEnum.RevealSeedPhrase)}
           testID={ManageHdAccountsSelectors.seedPhraseButton}
         />
       </View>
 
-      <Divider size={formatSize(16)} />
-
-      <ScreenContainer>
+      <ScreenContainer contentContainerStyle={styles.scrollableContentContainer}>
         {filteredAccountList.map(account => (
           <Fragment key={account.id}>
             <ManageAccountItem
