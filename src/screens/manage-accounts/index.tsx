@@ -19,10 +19,10 @@ import { formatSize } from 'src/styles/format-size';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
-import { ManageAccountsSelectors } from './manage-accounts.selectors';
-import { useManageAccountsStyles } from './manage-accounts.styles';
-import { ManageHdAccounts } from './manage-hd-accounts/manage-hd-accounts';
-import { ManageImportedAccounts } from './manage-imported-accounts/manage-imported-accounts';
+import { ManageHdAccounts } from './manage-hd-accounts';
+import { ManageImportedAccounts } from './manage-imported-accounts';
+import { ManageAccountsSelectors } from './selectors.ts';
+import { useManageAccountsStyles } from './styles.ts';
 
 const manageHdAccountsIndex = 0;
 

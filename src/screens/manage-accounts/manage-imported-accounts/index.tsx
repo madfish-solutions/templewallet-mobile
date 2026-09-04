@@ -4,7 +4,7 @@ import { useImportedAccounts } from 'src/store/wallet/wallet-selectors';
 
 import { ManageAccountsList } from '../manage-accounts-list';
 
-import { ManageImportedAccountsSelectors } from './manage-imported-accounts.selectors';
+import { ManageImportedAccountsSelectors } from './selectors.ts';
 
 export const ManageImportedAccounts = () => {
   const importedAccounts = useImportedAccounts();

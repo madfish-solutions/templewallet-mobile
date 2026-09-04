@@ -10,8 +10,8 @@ import { formatSize } from 'src/styles/format-size';
 
 import { ManageAccountsList } from '../manage-accounts-list';
 
-import { ManageHdAccountsSelectors } from './manage-hd-accounts.selectors';
-import { useManageHdAccountsStyles } from './manage-hd-accounts.styles';
+import { ManageHdAccountsSelectors } from './selectors.ts';
+import { useManageHdAccountsStyles } from './styles.ts';
 
 export const ManageHdAccounts = () => {
   const navigateToModal = useNavigateToModal();

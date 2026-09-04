@@ -11,8 +11,8 @@ import { useIsAccountVisibleSelector } from 'src/store/wallet/wallet-selectors';
 import { showWarningToast } from 'src/toast/toast.utils';
 import { getAccountAddressForTezos } from 'src/utils/account.utils';
 
-import { ManageAccountItemSelectors } from './manage-account-item.selectors';
-import { useManageAccountItemStyles } from './manage-account-item.styles';
+import { ManageAccountItemSelectors } from './selectors.ts';
+import { useManageAccountItemStyles } from './styles.ts';
 
 interface Props {
   account: Account;

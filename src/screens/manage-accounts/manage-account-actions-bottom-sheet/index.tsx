@@ -1,14 +1,14 @@
 import React, { FC } from 'react';
 
-import { BottomSheet } from 'src/components/bottom-sheet/bottom-sheet';
-import { BottomSheetActionButton } from 'src/components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
-import { BottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
-import { Account } from 'src/interfaces/account.interfaces';
-import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
-import { formatSize } from 'src/styles/format-size';
+import { BottomSheetActionButton } from 'src/components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button.tsx';
+import { BottomSheet } from 'src/components/bottom-sheet/bottom-sheet.tsx';
+import { BottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller.ts';
+import { Account } from 'src/interfaces/account.interfaces.ts';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum.ts';
+import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook.ts';
+import { formatSize } from 'src/styles/format-size.ts';
 
-import { ManageAccountActionsBottomSheetSelectors } from './manage-account-actions-bottom-sheet.selectors';
+import { ManageAccountActionsBottomSheetSelectors } from './selectors.ts';
 
 interface Props {
   account: Account | null;

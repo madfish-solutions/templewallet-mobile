@@ -1,20 +1,20 @@
 import React, { FC, Fragment, ReactNode, useState } from 'react';
 import { View } from 'react-native';
 
-import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
-import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
-import { Divider } from 'src/components/divider/divider';
-import { ScreenContainer } from 'src/components/screen-container/screen-container';
-import { SearchInput } from 'src/components/search-input/search-input';
-import { useFilteredAccountList } from 'src/hooks/use-filtered-account-list.hook';
-import { Account } from 'src/interfaces/account.interfaces';
-import { useAccount } from 'src/store/wallet/wallet-selectors';
-import { formatSize } from 'src/styles/format-size';
+import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller.ts';
+import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder.tsx';
+import { Divider } from 'src/components/divider/divider.tsx';
+import { ScreenContainer } from 'src/components/screen-container/screen-container.tsx';
+import { SearchInput } from 'src/components/search-input/search-input.tsx';
+import { Account } from 'src/interfaces/account.interfaces.ts';
+import { useFilteredAccountList } from 'src/screens/manage-accounts/hooks/use-filtered-account-list.ts';
+import { useAccount } from 'src/store/wallet/wallet-selectors.ts';
+import { formatSize } from 'src/styles/format-size.ts';
 
-import { ManageAccountActionsBottomSheet } from './manage-account-actions-bottom-sheet';
-import { useManageAccountsStyles } from './manage-accounts.styles';
-import { ManageAccountItem } from './manage-hd-accounts/manage-account-item/manage-account-item';
-import { useIsAccountsListScrolled } from './use-is-accounts-list-scrolled.hook';
+import { useIsAccountsListScrolled } from '../hooks/use-is-accounts-list-scrolled.ts';
+import { ManageAccountActionsBottomSheet } from '../manage-account-actions-bottom-sheet';
+import { ManageAccountItem } from '../manage-hd-accounts/manage-account-item';
+import { useManageAccountsStyles } from '../styles.ts';
 
 interface Props {
   accounts: Account[];
