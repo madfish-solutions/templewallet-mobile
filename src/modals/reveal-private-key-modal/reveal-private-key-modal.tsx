@@ -54,7 +54,11 @@ export const RevealPrivateKeyModal = () => {
               useAccountCard
               testID={RevealPrivateKeySelectors.accountDropdown}
             />
-            <Divider size={formatSize(24)} />
+            <DisclaimerV2
+              title="Attention!"
+              texts={['DO NOT share this set of chars with anyone!', 'It can be used to steal your current account.']}
+            />
+            <Divider size={formatSize(16)} />
             {isDefined(tezosAddress) && (
               <>
                 <Label label="Tezos Private Key" description="Access to your Tezos account. Keep it in secret." />
@@ -69,10 +73,7 @@ export const RevealPrivateKeyModal = () => {
                 <Divider size={formatSize(16)} />
               </>
             )}
-            <DisclaimerV2
-              title="Attention!"
-              texts={['DO NOT share this set of chars with anyone!', 'It can be used to steal your current account.']}
-            />
+            <Divider size={formatSize(24)} />
           </ScreenContainer>
         );
       }}

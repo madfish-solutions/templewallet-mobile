@@ -5,7 +5,6 @@ import { AccountCard } from 'src/components/account-card';
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { DisclaimerV2 } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
-import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { Label } from 'src/components/label/label';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
@@ -59,18 +58,18 @@ export const RevealSeedPhraseFormContent: SyncFC<FormikProps<RevealSeedPhraseMod
             <Divider size={formatSize(16)} />
           </>
         )}
+        <DisclaimerV2
+          title="Attention!"
+          texts={['DO NOT share this set of chars with anyone!', 'It can be used to steal your current account.']}
+        />
+        <Divider size={formatSize(16)} />
         <Label
           label="Seed phrase"
           description="Master key for all your accounts to access wallet if you switch browser or device. Keep it in secret."
         />
         <RevealSeedPhraseView publicKeyHash={tezosAddress ?? evmAddress ?? ''} />
-        <Divider size={formatSize(16)} />
-        <DisclaimerV2
-          title="Attention!"
-          texts={['DO NOT share this set of chars with anyone!', 'It can be used to steal your current account.']}
-        />
+        <Divider size={formatSize(24)} />
       </ScreenContainer>
-      <InsetSubstitute type="bottom" />
     </>
   );
 };
