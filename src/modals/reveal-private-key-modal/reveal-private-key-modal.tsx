@@ -1,8 +1,8 @@
 import { Formik } from 'formik';
 import React from 'react';
 
-import { AccountFormDropdown } from 'src/components/account-dropdown/account-form-dropdown';
-import { Disclaimer } from 'src/components/disclaimer/disclaimer';
+import { AccountCardFormDropdown } from 'src/components/account-dropdown/account-form-dropdown';
+import { DisclaimerV2 } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
 import { Label } from 'src/components/label/label';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
@@ -46,29 +46,33 @@ export const RevealPrivateKeyModal = () => {
         return (
           <ScreenContainer>
             <ModalStatusBar />
-            <Label
-              label="Account"
-              description="If you want to reveal a private key from another account - you should select it in the top-right dropdown."
+            <Divider size={formatSize(8)} />
+            <Label label="Account" description="Reveal a private key from your accounts in the wallet." />
+            <AccountCardFormDropdown
+              name="account"
+              list={accounts}
+              testID={RevealPrivateKeySelectors.accountDropdown}
             />
-            <AccountFormDropdown name="account" list={accounts} testID={RevealPrivateKeySelectors.accountDropdown} />
+            <DisclaimerV2
+              title="Attention!"
+              texts={['DO NOT share this set of chars with anyone!', 'It can be used to steal your current account.']}
+            />
+            <Divider size={formatSize(16)} />
             {isDefined(tezosAddress) && (
               <>
-                <Label label="Tezos Private Key" />
+                <Label label="Tezos Private Key" description="Access to your Tezos account. Keep it in secret." />
                 <RevealPrivateKeyView address={tezosAddress} />
                 <Divider size={formatSize(16)} />
               </>
             )}
             {isDefined(evmAddress) && (
               <>
-                <Label label="EVM Private Key" />
+                <Label label="EVM Private Key" description="Access to your Etherlink account. Keep it in secret." />
                 <RevealPrivateKeyView address={evmAddress} />
                 <Divider size={formatSize(16)} />
               </>
             )}
-            <Disclaimer
-              title="Attention!"
-              texts={['DO NOT share this set of chars with anyone!', 'It can be used to steal your current account.']}
-            />
+            <Divider size={formatSize(24)} />
           </ScreenContainer>
         );
       }}

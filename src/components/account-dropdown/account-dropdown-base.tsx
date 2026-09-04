@@ -7,9 +7,8 @@ import { Account } from 'src/interfaces/account.interfaces';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { useGetSaplingAddressForAccount } from 'src/store/sapling/sapling-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
+import { accountMatchesSearch } from 'src/utils/account.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { includesIgnoreCase } from 'src/utils/string.utils';
 
 import { Dropdown, DropdownActionButtonsComponent, DropdownValueBaseProps } from '../dropdown/dropdown';
 import { OptionsPopupController } from '../options-popup';
@@ -71,18 +70,7 @@ export const AccountDropdownBase = memo<Props>(
     const groupedList = useMemo(
       () =>
         Array.from(list)
-          .filter(account => {
-            const tezosAddress = getAccountAddressForTezos(account);
-            const evmAddress = getAccountAddressForEvm(account);
-            const saplingAddress = getSaplingAddressForAccount(account);
-
-            return (
-              includesIgnoreCase(account.name, searchValue) ||
-              (tezosAddress && includesIgnoreCase(tezosAddress, searchValue)) ||
-              (saplingAddress && includesIgnoreCase(saplingAddress, searchValue)) ||
-              (evmAddress && includesIgnoreCase(evmAddress, searchValue))
-            );
-          })
+          .filter(account => accountMatchesSearch(account, searchValue, getSaplingAddressForAccount(account)))
           .sort((accountA, accountB) => getAccountSectionWeight(accountA) - getAccountSectionWeight(accountB)),
       [getSaplingAddressForAccount, list, searchValue]
     );

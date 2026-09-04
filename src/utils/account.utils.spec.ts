@@ -1,7 +1,12 @@
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { mockEvmImportedAccount, mockHdAccount, mockTezosImportedAccount } from 'src/interfaces/account.interface.mock';
 
-import { getAccountAddressForEvm, getAccountAddressForTezos, getAccountForChain } from './account.utils';
+import {
+  accountMatchesSearch,
+  getAccountAddressForEvm,
+  getAccountAddressForTezos,
+  getAccountForChain
+} from './account.utils';
 
 describe('account facade helpers', () => {
   it('returns Tezos and EVM addresses for HD accounts', () => {
@@ -20,5 +25,18 @@ describe('account facade helpers', () => {
   it('returns imported account address for chain facades', () => {
     expect(getAccountAddressForTezos(mockTezosImportedAccount)).toEqual(mockTezosImportedAccount.address);
     expect(getAccountAddressForEvm(mockEvmImportedAccount)).toEqual(mockEvmImportedAccount.address);
+  });
+
+  it.each([
+    ['name', 'hd account', undefined],
+    ['Tezos address', mockHdAccount.tezosAddress.toUpperCase(), undefined],
+    ['EVM address', mockHdAccount.evmAddress.toLowerCase(), undefined],
+    ['shielded address', 'zet1ShieldedAddress', 'zet1ShieldedAddress']
+  ])('matches accounts by %s', (_, searchValue, saplingAddress) => {
+    expect(accountMatchesSearch(mockHdAccount, searchValue, saplingAddress)).toBe(true);
+  });
+
+  it('rejects an unrelated account search', () => {
+    expect(accountMatchesSearch(mockHdAccount, 'unrelated')).toBe(false);
   });
 });

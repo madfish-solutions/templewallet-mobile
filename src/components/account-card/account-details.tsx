@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
-import { GestureResponderEvent, StyleProp, Text, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { StyleProp, Text, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
 
-import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { FormattedAmount } from 'src/components/formatted-amount';
 import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { IconV2 } from 'src/components/icon-v2';
@@ -13,15 +12,10 @@ import { Account } from 'src/interfaces/account.interfaces';
 import { formatSize } from 'src/styles/format-size';
 import { truncateAccountAddress } from 'src/utils/account.utils';
 
+import { AccountAddressDetails } from './account-address-details.utils';
 import { useAccountCardStyles } from './styles';
 
-export interface AccountAddressDetails {
-  address: string;
-  network: CryptoLogoNameEnum;
-  onPress?: (event?: GestureResponderEvent) => void;
-}
-
-interface Props {
+interface AccountDetailsProps {
   account?: Account;
   avatarSeed: string;
   name: string;
@@ -31,11 +25,12 @@ interface Props {
   addressIconVariant?: NetworkIconVariant;
   compactAddresses?: boolean;
   fixedBalanceWidth?: boolean;
+  containerStyle?: StyleProp<ViewStyle>;
   balanceContainerStyle?: StyleProp<ViewStyle>;
   balanceTextStyle?: StyleProp<TextStyle>;
 }
 
-export const AccountDetails: FC<Props> = ({
+export const AccountDetails: FC<AccountDetailsProps> = ({
   account,
   avatarSeed,
   name,
@@ -45,13 +40,14 @@ export const AccountDetails: FC<Props> = ({
   addressIconVariant,
   compactAddresses = false,
   fixedBalanceWidth = true,
+  containerStyle,
   balanceContainerStyle,
   balanceTextStyle
 }) => {
   const styles = useAccountCardStyles();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, containerStyle]}>
       <View style={styles.header}>
         <RobotIcon seed={avatarSeed} size={formatSize(24)} />
         <Text numberOfLines={1} style={styles.name}>

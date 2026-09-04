@@ -35,7 +35,7 @@ import { DelegationScreen } from 'src/screens/delegation-screen/delegation-scree
 import { Earn } from 'src/screens/earn';
 import { Farming } from 'src/screens/farming';
 import { FiatSettings } from 'src/screens/fiat-settings/fiat-settings';
-import { ManageAccounts } from 'src/screens/manage-accounts/manage-accounts';
+import { ManageAccounts } from 'src/screens/manage-accounts';
 import { ManageAssets } from 'src/screens/manage-assets/manage-assets';
 import { ManageAssetsHeaderRight } from 'src/screens/manage-assets/manage-assets-header-right';
 import { ManualBackup } from 'src/screens/manual-backup/manual-backup';
