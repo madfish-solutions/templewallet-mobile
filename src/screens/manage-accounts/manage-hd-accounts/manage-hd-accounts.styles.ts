@@ -12,8 +12,5 @@ export const useManageHdAccountsStyles = createUseStyles(({ colors, typography }
     ...typography.caption13Regular,
     color: colors.gray1,
     flexShrink: 1
-  },
-  scrollableContentContainer: {
-    paddingTop: formatSize(16)
   }
 }));

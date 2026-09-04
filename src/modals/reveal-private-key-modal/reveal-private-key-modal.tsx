@@ -1,7 +1,7 @@
 import { Formik } from 'formik';
 import React from 'react';
 
-import { AccountFormDropdown } from 'src/components/account-dropdown/account-form-dropdown';
+import { AccountCardFormDropdown } from 'src/components/account-dropdown/account-form-dropdown';
 import { DisclaimerV2 } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
 import { Label } from 'src/components/label/label';
@@ -48,10 +48,9 @@ export const RevealPrivateKeyModal = () => {
             <ModalStatusBar />
             <Divider size={formatSize(8)} />
             <Label label="Account" description="Reveal a private key from your accounts in the wallet." />
-            <AccountFormDropdown
+            <AccountCardFormDropdown
               name="account"
               list={accounts}
-              useAccountCard
               testID={RevealPrivateKeySelectors.accountDropdown}
             />
             <DisclaimerV2

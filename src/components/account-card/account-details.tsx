@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
-import { GestureResponderEvent, StyleProp, Text, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { StyleProp, Text, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
 
-import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { FormattedAmount } from 'src/components/formatted-amount';
 import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { IconV2 } from 'src/components/icon-v2';
@@ -13,13 +12,8 @@ import { Account } from 'src/interfaces/account.interfaces';
 import { formatSize } from 'src/styles/format-size';
 import { truncateAccountAddress } from 'src/utils/account.utils';
 
+import { AccountAddressDetails } from './account-address-details.utils';
 import { useAccountCardStyles } from './styles';
-
-interface AccountAddressDetails {
-  address: string;
-  network: CryptoLogoNameEnum;
-  onPress?: (event?: GestureResponderEvent) => void;
-}
 
 interface AccountDetailsProps {
   account?: Account;

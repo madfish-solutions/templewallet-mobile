@@ -18,7 +18,6 @@ import { accountEqualityFn } from './account-equality-fn';
 interface Props extends TestIdProps {
   name: string;
   list: Account[];
-  useAccountCard?: boolean;
 }
 
 const renderAccountValue: DropdownValueComponent<Account> = ({ value }) => (
@@ -31,7 +30,7 @@ const renderAccountCardValue: AccountDropdownValueComponent = ({ value }) => (
   <AccountCard account={value} showAllAddresses showDropdownDown />
 );
 
-const AccountCardFormDropdown: FC<Props> = ({ name, list, testID, testIDProperties }) => {
+export const AccountCardFormDropdown: FC<Props> = ({ name, list, testID, testIDProperties }) => {
   const [field, meta, helpers] = useField<Account>(name);
   const handleValueChange = (account: Account) => void helpers.setValue(account);
 
@@ -51,15 +50,12 @@ const AccountCardFormDropdown: FC<Props> = ({ name, list, testID, testIDProperti
   );
 };
 
-export const AccountFormDropdown: FC<Props> = ({ useAccountCard = false, ...props }) =>
-  useAccountCard ? (
-    <AccountCardFormDropdown {...props} />
-  ) : (
-    <FormDropdown
-      {...props}
-      description="Accounts"
-      equalityFn={accountEqualityFn}
-      renderValue={renderAccountValue}
-      renderListItem={renderAccountListItem}
-    />
-  );
+export const AccountFormDropdown: FC<Props> = props => (
+  <FormDropdown
+    {...props}
+    description="Accounts"
+    equalityFn={accountEqualityFn}
+    renderValue={renderAccountValue}
+    renderListItem={renderAccountListItem}
+  />
+);

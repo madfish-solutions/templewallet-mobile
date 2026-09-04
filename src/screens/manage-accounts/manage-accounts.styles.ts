@@ -13,5 +13,8 @@ export const useManageAccountsStyles = createUseStyles(() => ({
   },
   fixedContentShadow: {
     boxShadow: '0px 8px 8px -8px rgba(0, 0, 0, 0.10)'
+  },
+  scrollableContentContainer: {
+    paddingTop: formatSize(16)
   }
 }));
