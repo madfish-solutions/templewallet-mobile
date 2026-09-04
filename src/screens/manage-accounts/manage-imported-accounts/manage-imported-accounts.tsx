@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
@@ -12,17 +12,21 @@ import { useImportedAccounts, useAccount } from 'src/store/wallet/wallet-selecto
 import { formatSize } from 'src/styles/format-size';
 
 import { ManageAccountActionsBottomSheet } from '../manage-account-actions-bottom-sheet';
+import { useManageAccountsStyles } from '../manage-accounts.styles';
 import { ManageAccountItem } from '../manage-hd-accounts/manage-account-item/manage-account-item';
+import { useIsAccountsListScrolled } from '../use-is-accounts-list-scrolled.hook';
 
 import { ManageImportedAccountsSelectors } from './manage-imported-accounts.selectors';
 
 export const ManageImportedAccounts = () => {
+  const manageAccountsStyles = useManageAccountsStyles();
   const selectedAccount = useAccount();
   const importedAccounts = useImportedAccounts();
   const { debouncedSetSearch, filteredAccountList } = useFilteredAccountList(importedAccounts);
 
   const accountsLength = importedAccounts.length;
   const manageBottomSheetController = useBottomSheetController();
+  const { isScrolled, handleScroll, scrollViewRef } = useIsAccountsListScrolled();
   const [managedAccount, setManagedAccount] = useState<Account | null>(null);
 
   const handleManageButtonPress = (account: Account) => {
@@ -32,13 +36,22 @@ export const ManageImportedAccounts = () => {
 
   return (
     <>
-      <SearchInput
-        placeholder="Search accounts"
-        onChangeText={debouncedSetSearch}
-        testID={ManageImportedAccountsSelectors.searchAccountsInput}
-      />
-      <Divider size={formatSize(12)} />
-      <ScreenContainer contentContainerStyle={styles.container}>
+      <View
+        style={[manageAccountsStyles.fixedContent, isScrolled ? manageAccountsStyles.fixedContentShadow : undefined]}
+      >
+        <SearchInput
+          placeholder="Search accounts"
+          onChangeText={debouncedSetSearch}
+          testID={ManageImportedAccountsSelectors.searchAccountsInput}
+        />
+        <Divider size={formatSize(12)} />
+      </View>
+      <ScreenContainer
+        contentContainerStyle={styles.container}
+        scrollViewRef={scrollViewRef}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+      >
         {filteredAccountList.map(account => (
           <Fragment key={account.id}>
             <ManageAccountItem

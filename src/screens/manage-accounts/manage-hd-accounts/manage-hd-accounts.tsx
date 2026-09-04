@@ -14,6 +14,8 @@ import { useHDAccounts, useAccount } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 
 import { ManageAccountActionsBottomSheet } from '../manage-account-actions-bottom-sheet';
+import { useManageAccountsStyles } from '../manage-accounts.styles';
+import { useIsAccountsListScrolled } from '../use-is-accounts-list-scrolled.hook';
 
 import { ManageAccountItem } from './manage-account-item/manage-account-item';
 import { ManageHdAccountsSelectors } from './manage-hd-accounts.selectors';
@@ -22,7 +24,9 @@ import { useManageHdAccountsStyles } from './manage-hd-accounts.styles';
 export const ManageHdAccounts = () => {
   const navigateToModal = useNavigateToModal();
   const styles = useManageHdAccountsStyles();
+  const manageAccountsStyles = useManageAccountsStyles();
   const manageBottomSheetController = useBottomSheetController();
+  const { isScrolled, handleScroll, scrollViewRef } = useIsAccountsListScrolled();
 
   const selectedAccount = useAccount();
   const hdAccounts = useHDAccounts();
@@ -37,23 +41,32 @@ export const ManageHdAccounts = () => {
 
   return (
     <>
-      <SearchInput
-        placeholder="Search accounts"
-        onChangeText={debouncedSetSearch}
-        testID={ManageHdAccountsSelectors.searchAccountsInput}
-      />
-      <Divider size={formatSize(12)} />
-      <View style={styles.revealSeedPhraseContainer}>
-        <Text style={styles.revealSeedPhraseText}>Seed phrase is the same for all your HD accounts</Text>
-        <Divider size={formatSize(8)} />
-        <ButtonSmallSecondary
-          title="Seed phrase"
-          onPress={() => navigateToModal(ModalsEnum.RevealSeedPhrase)}
-          testID={ManageHdAccountsSelectors.seedPhraseButton}
+      <View
+        style={[manageAccountsStyles.fixedContent, isScrolled ? manageAccountsStyles.fixedContentShadow : undefined]}
+      >
+        <SearchInput
+          placeholder="Search accounts"
+          onChangeText={debouncedSetSearch}
+          testID={ManageHdAccountsSelectors.searchAccountsInput}
         />
+        <Divider size={formatSize(12)} />
+        <View style={styles.revealSeedPhraseContainer}>
+          <Text style={styles.revealSeedPhraseText}>Seed phrase is the same for all your HD accounts</Text>
+          <Divider size={formatSize(8)} />
+          <ButtonSmallSecondary
+            title="Seed phrase"
+            onPress={() => navigateToModal(ModalsEnum.RevealSeedPhrase)}
+            testID={ManageHdAccountsSelectors.seedPhraseButton}
+          />
+        </View>
       </View>
 
-      <ScreenContainer contentContainerStyle={styles.scrollableContentContainer}>
+      <ScreenContainer
+        contentContainerStyle={styles.scrollableContentContainer}
+        scrollViewRef={scrollViewRef}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+      >
         {filteredAccountList.map(account => (
           <Fragment key={account.id}>
             <ManageAccountItem
