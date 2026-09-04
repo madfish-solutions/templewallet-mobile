@@ -2,11 +2,13 @@ import { debounce } from 'lodash-es';
 import { useEffect, useState } from 'react';
 
 import { Account } from 'src/interfaces/account.interfaces';
+import { useGetSaplingAddressForAccount } from 'src/store/sapling/sapling-selectors';
 import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils.ts';
 import { isString } from 'src/utils/is-string';
 
 export const useFilteredAccountList = (accountList: Account[]) => {
   const [searchValue, setSearchValue] = useState<string>();
+  const getSaplingAddressForAccount = useGetSaplingAddressForAccount();
 
   const [filteredAccountList, setFilteredAccountList] = useState<Account[]>(accountList);
 
@@ -20,11 +22,13 @@ export const useFilteredAccountList = (accountList: Account[]) => {
         const { name } = account;
         const tezosAddress = getAccountAddressForTezos(account);
         const evmAddress = getAccountAddressForEvm(account);
+        const saplingAddress = getSaplingAddressForAccount(account);
 
         if (
           name.toLowerCase().includes(lowerCaseSearchValue) ||
           tezosAddress?.toLowerCase().includes(lowerCaseSearchValue) ||
-          evmAddress?.toLowerCase().includes(lowerCaseSearchValue)
+          evmAddress?.toLowerCase().includes(lowerCaseSearchValue) ||
+          saplingAddress?.toLowerCase().includes(lowerCaseSearchValue)
         ) {
           result.push(account);
         }
@@ -34,7 +38,7 @@ export const useFilteredAccountList = (accountList: Account[]) => {
     } else {
       setFilteredAccountList(accountList);
     }
-  }, [searchValue, accountList]);
+  }, [searchValue, accountList, getSaplingAddressForAccount]);
 
   const debouncedSetSearch = debounce(setSearchValue);
 

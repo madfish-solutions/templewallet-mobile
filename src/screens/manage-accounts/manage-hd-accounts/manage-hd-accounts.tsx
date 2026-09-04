@@ -3,6 +3,7 @@ import { Text, View } from 'react-native';
 
 import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
 import { ButtonSmallSecondary } from 'src/components/button/button-small/button-small-secondary/button-small-secondary';
+import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { Divider } from 'src/components/divider/divider';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { SearchInput } from 'src/components/search-input/search-input';
@@ -77,6 +78,8 @@ export const ManageHdAccounts = () => {
             <Divider size={formatSize(16)} />
           </Fragment>
         ))}
+
+        {filteredAccountList.length === 0 && <DataPlaceholder text="No records found." />}
 
         <Divider />
 

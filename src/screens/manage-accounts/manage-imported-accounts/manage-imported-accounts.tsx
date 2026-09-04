@@ -24,7 +24,6 @@ export const ManageImportedAccounts = () => {
   const importedAccounts = useImportedAccounts();
   const { debouncedSetSearch, filteredAccountList } = useFilteredAccountList(importedAccounts);
 
-  const accountsLength = importedAccounts.length;
   const manageBottomSheetController = useBottomSheetController();
   const { isScrolled, handleScroll, scrollViewRef } = useIsAccountsListScrolled();
   const [managedAccount, setManagedAccount] = useState<Account | null>(null);
@@ -63,7 +62,7 @@ export const ManageImportedAccounts = () => {
           </Fragment>
         ))}
         <Divider size={formatSize(10)} />
-        {accountsLength === 0 && <DataPlaceholder text="No found accounts" />}
+        {filteredAccountList.length === 0 && <DataPlaceholder text="No records found." />}
         <ManageAccountActionsBottomSheet account={managedAccount} controller={manageBottomSheetController} />
       </ScreenContainer>
     </>
