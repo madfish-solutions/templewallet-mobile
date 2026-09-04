@@ -2,21 +2,21 @@ import { createReducer } from '@reduxjs/toolkit';
 
 import { createEntity } from '../create-entity';
 
-import { loadTokensApyActions, loadDAppsListActions, loadPermissionsActions } from './d-apps-actions';
+import { loadTokensApyActions, loadDAppsListActions, loadConnectionsActions } from './d-apps-actions';
 import { dAppsInitialState, DAppsState } from './d-apps-state';
 
 export const dAppsReducers = createReducer<DAppsState>(dAppsInitialState, builder => {
-  builder.addCase(loadPermissionsActions.submit, state => ({
+  builder.addCase(loadConnectionsActions.submit, state => ({
     ...state,
-    permissions: createEntity(state.permissions.data, true)
+    connections: createEntity(state.connections.data, true)
   }));
-  builder.addCase(loadPermissionsActions.success, (state, { payload: permissions }) => ({
+  builder.addCase(loadConnectionsActions.success, (state, { payload: connections }) => ({
     ...state,
-    permissions: createEntity(permissions, false)
+    connections: createEntity(connections, false)
   }));
-  builder.addCase(loadPermissionsActions.fail, (state, { payload: error }) => ({
+  builder.addCase(loadConnectionsActions.fail, (state, { payload: error }) => ({
     ...state,
-    permissions: createEntity([], false, error)
+    connections: createEntity(state.connections.data, false, error)
   }));
 
   builder.addCase(loadDAppsListActions.submit, state => ({

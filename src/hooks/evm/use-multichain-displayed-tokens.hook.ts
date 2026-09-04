@@ -4,13 +4,12 @@ import { uniqBy } from 'lodash-es';
 import { useMemo } from 'react';
 
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
-import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
 import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-assets-selectors';
 import { useEvmAccountChainBalancesSelector } from 'src/store/evm/balances/evm-balances-selectors';
 import { useEvmChainExchangeRatesSelector } from 'src/store/evm/exchange-rates/evm-exchange-rates-selectors';
 import { useEvmChainTokensMetadataSelector } from 'src/store/evm/tokens-metadata/evm-tokens-metadata-selectors';
 import { useShieldedBalanceSelector } from 'src/store/sapling';
-import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
+import { useAssetExchangeRateGetter, useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 import { useAccountAddressForEvm, useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
@@ -87,7 +86,7 @@ export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
   const tezosToken = useTezosTokenOfCurrentAccount();
   const tkeyToken = useAccountTkeyToken();
   const visibleTokensList = useCurrentAccountTokens(true);
-  const getExchangeRate = useTokenExchangeRateGetter();
+  const getExchangeRate = useAssetExchangeRateGetter();
 
   const tezosAddress = useAccountAddressForTezos();
   const evmAddress = useAccountAddressForEvm();
@@ -168,11 +167,11 @@ export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
     tkeyToken,
     visibleTokensList,
     getExchangeRate,
+    fiatToUsdRate,
+    evmExchangeRates,
     shieldedBalanceMutez,
     evmBalances,
     evmAssets,
-    evmMetadata,
-    evmExchangeRates,
-    fiatToUsdRate
+    evmMetadata
   ]);
 };

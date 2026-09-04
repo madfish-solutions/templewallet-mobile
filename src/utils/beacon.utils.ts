@@ -4,6 +4,7 @@ import { of } from 'rxjs';
 
 import { BeaconHandler } from 'src/beacon/beacon-handler';
 import { SemiPartialTezosOperation } from 'src/types/semi-partial-tezos-operation';
+import { WcHandler } from 'src/walletconnect/wc-handler';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const mapBeaconToTaquitoParams = (op: SemiPartialTezosOperation): ParamsWithKind => {
@@ -48,10 +49,15 @@ export const mapBeaconToTaquitoParams = (op: SemiPartialTezosOperation): ParamsW
 
 const stringToNumber = (str?: string) => (Boolean(str) ? Number(str) : undefined);
 
-// pseudo async function as we don't need to wait until Beacon will remove all connections
+// pseudo async function as we don't need to wait until Beacon / WalletConnect will remove all connections
 // (common async solution does not work without the Internet connection)
 export const resetBeacon$ = () => {
-  Promise.all([BeaconHandler.removeAllPermissions(), BeaconHandler.removeAllPeers()]);
+  Promise.all([
+    BeaconHandler.removeAllPermissions(),
+    BeaconHandler.removeAllPeers(),
+    WcHandler.disconnectAllSessions(),
+    WcHandler.disconnectAllPairings()
+  ]);
 
   return of(0);
 };

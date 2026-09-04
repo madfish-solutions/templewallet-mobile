@@ -1,36 +1,21 @@
 import { BeaconMessageType, PermissionRequestOutput } from '@airgap/beacon-sdk';
-import { Formik } from 'formik';
 import React, { FC, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { from } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { BeaconHandler } from 'src/beacon/beacon-handler';
-import { AccountFormDropdown } from 'src/components/account-dropdown/account-form-dropdown';
-import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
-import { Divider } from 'src/components/divider/divider';
-import { HeaderTitle } from 'src/components/header/header-title/header-title';
-import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
-import { Label } from 'src/components/label/label';
-import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { ApprovePermissionRequestActionPayloadInterface } from 'src/hooks/request-confirmation/approve-permission-request-action-payload.interface';
 import { useDappRequestConfirmation } from 'src/hooks/request-confirmation/use-dapp-request-confirmation.hook';
-import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { AccountWithTezosAddress } from 'src/interfaces/account.interfaces';
 import { navigateBackAction } from 'src/store/root-state.actions';
 import { setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
 import { useAllAccounts, useAccount } from 'src/store/wallet/wallet-selectors';
-import { formatSize } from 'src/styles/format-size';
 import { showSuccessToast } from 'src/toast/toast.utils';
-import { getAccountAddressForTezos, getAccountPublicKeyForTezos } from 'src/utils/account.utils';
+import { getAccountPublicKeyForTezos, hasTezosAddress } from 'src/utils/account.utils';
 
-import { AppMetadataConnectionView } from './app-metadata-connection-view/app-metadata-connection-view';
-import {
-  PermissionRequestConfirmationFormValues,
-  permissionRequestConfirmationModalValidationSchema
-} from './permission-request-confirmation.form';
-import { PermissionRequestConfirmationSelectors } from './permission-request-confirmation.selectors';
+import { ConnectionRequestConfirmationContent } from '../../common/connection-request-confirmation/connection-request-confirmation-content';
+import { ConnectionRequestConfirmationFormValues } from '../../common/connection-request-confirmation/form';
 
 interface Props {
   message: PermissionRequestOutput;
@@ -55,68 +40,36 @@ const approvePermissionRequest = ({ message, publicKey }: ApprovePermissionReque
   );
 
 export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
+  const { name: appName, icon: iconUri, senderId: iconSeed } = message.appMetadata;
   const dispatch = useDispatch();
-  const { goBack } = useNavigation();
   const accounts = useAllAccounts();
   const selectedAccount = useAccount();
-  const tezosAccounts = useMemo(() => accounts.filter(account => getAccountAddressForTezos(account)), [accounts]);
+  const tezosAccounts = useMemo(() => accounts.filter(hasTezosAddress), [accounts]);
 
   const { confirmRequest, isLoading } = useDappRequestConfirmation(message, approvePermissionRequest);
 
-  const formInitialValues = useMemo<PermissionRequestConfirmationFormValues>(
-    () => ({ approver: getAccountAddressForTezos(selectedAccount) ? selectedAccount : tezosAccounts[0] }),
+  const formInitialValues = useMemo<ConnectionRequestConfirmationFormValues<AccountWithTezosAddress>>(
+    () => ({ approver: hasTezosAddress(selectedAccount) ? selectedAccount : tezosAccounts[0] }),
     [selectedAccount, tezosAccounts]
   );
 
-  const onSubmit = ({ approver }: PermissionRequestConfirmationFormValues) => {
+  const onSubmit = ({ approver }: ConnectionRequestConfirmationFormValues<AccountWithTezosAddress>) => {
     if (approver.id !== selectedAccount.id) {
       dispatch(setSelectedAccountIdAction(approver.id));
     }
 
-    const publicKey = getAccountPublicKeyForTezos(approver);
-
-    if (!publicKey) {
-      return;
-    }
-
-    confirmRequest({
-      message,
-      publicKey
-    });
+    confirmRequest({ message, publicKey: getAccountPublicKeyForTezos(approver) });
   };
 
-  useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Confirm Connection" /> }, []);
-
   return (
-    <Formik
+    <ConnectionRequestConfirmationContent
+      appName={appName}
+      iconUri={iconUri}
+      iconSeed={iconSeed}
+      accounts={tezosAccounts}
       initialValues={formInitialValues}
-      validationSchema={permissionRequestConfirmationModalValidationSchema}
+      isLoading={isLoading}
       onSubmit={onSubmit}
-    >
-      {({ submitForm }) => (
-        <>
-          <ScreenContainer>
-            <AppMetadataConnectionView appMetadata={message.appMetadata} />
-            <Divider size={formatSize(24)} />
-            <Label label="Account" description="To be connected with dApp." />
-            <AccountFormDropdown name="approver" list={tezosAccounts} />
-          </ScreenContainer>
-          <ModalButtonsFloatingContainer variant="bordered">
-            <ButtonLargeSecondary
-              title="Cancel"
-              disabled={isLoading}
-              onPress={goBack}
-              testID={PermissionRequestConfirmationSelectors.cancelButton}
-            />
-            <ButtonLargePrimary
-              title="Confirm"
-              disabled={isLoading}
-              onPress={submitForm}
-              testID={PermissionRequestConfirmationSelectors.confirmButton}
-            />
-          </ModalButtonsFloatingContainer>
-        </>
-      )}
-    </Formik>
+    />
   );
 };

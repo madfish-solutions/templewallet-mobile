@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -29,6 +29,8 @@ import { isString } from 'src/utils/is-string';
 import { isSyncPayload } from 'src/utils/sync.utils';
 import { isValidAddress } from 'src/utils/tezos.util';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
+import { wcDeepLinkHandler } from 'src/walletconnect/use-wc-handler.hook';
+import { isWcUniversalLink, isWcUri } from 'src/walletconnect/wc-handler';
 
 import { ScanQrCodeAnalyticsEvents } from './analytics-events';
 import CustomMarker from './custom-marker.svg';
@@ -66,11 +68,16 @@ const CameraView = () => {
   const isAuthorised = useIsAuthorisedSelector();
   const { trackEvent } = useAnalytics();
   const { top: topInset } = useSafeAreaInsets();
+  const qrCodeHasBeenReadRef = useRef(false);
 
   usePageAnalytic(ScreensEnum.ScanQrCode);
 
   const handleRead = useCallback(
     (codes: Code[]) => {
+      if (qrCodeHasBeenReadRef.current) {
+        return;
+      }
+      qrCodeHasBeenReadRef.current = true;
       goBack();
       const data = codes.filter(
         (code): code is Code & { value: string } => code.type === 'qr' && isString(code.value)
@@ -112,6 +119,30 @@ const CameraView = () => {
           if (dataWasIgnored) {
             trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_DATA_IGNORED, AnalyticsEventCategory.General, { data });
           }
+        } else if (isWcUri(data) || isWcUniversalLink(data)) {
+          let dataWasIgnored = true;
+          wcDeepLinkHandler(
+            data,
+            () => {
+              dataWasIgnored = false;
+            },
+            errorMessage => {
+              dataWasIgnored = false;
+              goBack();
+              trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_HANDLE_ERROR, AnalyticsEventCategory.General, {
+                errorMessage
+              });
+              showErrorToast({ description: errorMessage });
+            }
+          )
+            .then(() => {
+              if (dataWasIgnored) {
+                trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_DATA_IGNORED, AnalyticsEventCategory.General, {
+                  data
+                });
+              }
+            })
+            .catch(e => console.error(e));
         } else {
           trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_INVALID_QR_CODE, AnalyticsEventCategory.General);
           showErrorToast({ description: 'Invalid QR code' });

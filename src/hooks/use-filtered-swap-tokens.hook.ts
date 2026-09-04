@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 
+import { useAssetExchangeRateGetter } from 'src/store/settings/settings-selectors';
 import { useSwapTokensMetadataSelector } from 'src/store/swap/swap-selectors';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { useAccountTokensBalancesRecord } from 'src/utils/assets/hooks';
@@ -9,8 +10,6 @@ import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 import { TokenInterface } from '../token/interfaces/token.interface';
 import { isString } from '../utils/is-string';
 import { isNonZeroBalance } from '../utils/tezos.util';
-
-import { useTokenExchangeRateGetter } from './use-token-exchange-rate-getter.hook';
 
 export enum TokensInputsEnum {
   From = 'From',
@@ -23,7 +22,7 @@ export const useFilteredSwapTokensList = (
 ) => {
   const { data: swapTokensMetadata } = useSwapTokensMetadataSelector();
   const tezosToken = useTezosTokenOfCurrentAccount();
-  const getTokenExchangeRate = useTokenExchangeRateGetter();
+  const getTokenExchangeRate = useAssetExchangeRateGetter();
 
   const balances = useAccountTokensBalancesRecord();
 

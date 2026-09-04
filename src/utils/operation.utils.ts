@@ -166,8 +166,8 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
     }
 
     activities.push({
-      ...(isDefined(contractAddress) ? { address: contractAddress } : {}),
       ...activityBase,
+      address: contractAddress ?? undefined,
       source,
       destination,
       amount: source.address === address ? `-${amount}` : amount

@@ -10,31 +10,31 @@ import { WhiteContainer } from 'src/components/white-container/white-container';
 import { WhiteContainerAction } from 'src/components/white-container/white-container-action/white-container-action';
 import { WhiteContainerText } from 'src/components/white-container/white-container-text/white-container-text';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { loadPermissionsActions } from 'src/store/d-apps/d-apps-actions';
-import { usePermissionsSelector } from 'src/store/d-apps/d-apps-selectors';
+import { loadConnectionsActions } from 'src/store/d-apps/d-apps-actions';
+import { useConnectionsSelector } from 'src/store/d-apps/d-apps-selectors';
 import { setIsInAppBrowserEnabledAction } from 'src/store/settings/settings-actions';
 import { useIsInAppBrowserEnabledSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
+import { ConnectionItem } from './connection-item';
 import { useDAppsSettingsStyles } from './d-apps-settings.styles';
 import { DAppsSettingsSelectors } from './d-apps.settings.selectors';
-import { PermissionItem } from './permission-item/permission-item';
 
 export const DAppsSettings = () => {
   const dispatch = useDispatch();
   const styles = useDAppsSettingsStyles();
 
-  const permissions = usePermissionsSelector();
+  const connections = useConnectionsSelector();
   const isInAppBrowserEnabled = useIsInAppBrowserEnabledSelector();
 
   usePageAnalytic(ScreensEnum.DAppsSettings);
-  useEffect(() => void dispatch(loadPermissionsActions.submit()), []);
+  useEffect(() => void dispatch(loadConnectionsActions.submit()), []);
 
   return (
     <ScreenContainer contentContainerStyle={styles.contentContainerStyle}>
       <Divider size={formatSize(16)} />
-      <Label label="Authorized DApps" description="Click on the trash icon to reset permissions." />
+      <Label label="Authorized DApps" description="Click on the trash icon to reset connections." />
       <Divider size={formatSize(12)} />
       <WhiteContainer style={styles.whiteContainer}>
         <WhiteContainerAction
@@ -51,12 +51,10 @@ export const DAppsSettings = () => {
         </WhiteContainerAction>
       </WhiteContainer>
       <Divider size={formatSize(16)} />
-      {permissions.data.length === 0 ? (
+      {connections.data.length === 0 ? (
         <DataPlaceholder text="No connected DApps." />
       ) : (
-        permissions.data.map(permission => (
-          <PermissionItem key={permission.accountIdentifier} permission={permission} />
-        ))
+        connections.data.map(connection => <ConnectionItem key={connection.id} connection={connection} />)
       )}
     </ScreenContainer>
   );

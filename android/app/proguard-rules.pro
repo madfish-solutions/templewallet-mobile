@@ -33,3 +33,10 @@
 -dontwarn org.ietf.jgss.GSSManager
 -dontwarn org.ietf.jgss.GSSName
 -dontwarn org.ietf.jgss.Oid
+-dontwarn java.awt.Component
+-keepclassmembers class * extends com.sun.jna.** {
+    *;<fields>;
+}
+-keep public class com.sun.jna.** { *; }
+-keep class com.sun.jna.** { *; }
+-dontwarn java.awt.**

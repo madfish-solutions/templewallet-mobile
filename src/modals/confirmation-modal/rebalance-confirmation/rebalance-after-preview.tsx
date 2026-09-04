@@ -2,23 +2,23 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
-import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
 import { Divider } from 'src/components/divider/divider';
 import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
-import { RobotIcon } from 'src/components/robot-icon/robot-icon';
-import { TruncatedText } from 'src/components/truncated-text';
 import { useSaplingAddressSelector } from 'src/store/sapling';
 import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
 import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { useColors } from 'src/styles/use-colors';
 import { TEZ_TOKEN_DECIMALS, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { getDollarValue } from 'src/utils/balance.utils';
 import { mutezToTz } from 'src/utils/tezos.util';
 import { useTezosToken } from 'src/utils/wallet.utils';
 
-import { useOperationsPreviewItemStyles } from '../operations-confirmation/operations-preview/operations-preview-item/operations-preview-item.styles';
+import { OperationPreviewAssetAmounts } from '../common/operation-preview-asset-amounts';
+import { OperationPreviewCard } from '../common/operation-preview-card';
+import { OperationPreviewDescription } from '../common/operation-preview-description';
+
+import { useRebalanceAfterPreviewStyles } from './rebalance-after-preview.styles';
 
 interface Props {
   amount: string;
@@ -26,8 +26,7 @@ interface Props {
 }
 
 export const RebalanceAfterPreview: FC<Props> = ({ amount, direction }) => {
-  const styles = useOperationsPreviewItemStyles();
-  const colors = useColors();
+  const styles = useRebalanceAfterPreviewStyles();
   const tezosAddress = useAccountAddressForTezos();
 
   if (!tezosAddress) {
@@ -54,62 +53,53 @@ export const RebalanceAfterPreview: FC<Props> = ({ amount, direction }) => {
 
   return (
     <>
-      <View style={styles.container}>
-        <View style={styles.contentWrapper}>
-          <View style={styles.infoContainer}>
-            <RobotIcon seed={tezosAddress} size={formatSize(40)} />
-            <Divider size={formatSize(10)} />
-            <View>
-              <TruncatedText style={styles.description}>{minusLabel}</TruncatedText>
-              {isUnshield && !!saplingAddress && (
-                <>
-                  <Divider size={formatSize(4)} />
-                  <PublicKeyHashText publicKeyHash={saplingAddress} />
-                </>
-              )}
-            </View>
-          </View>
-        </View>
+      <OperationPreviewCard
+        iconSeed={tezosAddress}
+        iconSize={formatSize(40)}
+        description={
+          <RebalanceOperationDescription label={minusLabel} saplingAddress={isUnshield ? saplingAddress : null} />
+        }
+      >
         <View>
-          <AssetValueText amount={amount} asset={amountToken} style={styles.amountToken} showMinusSign />
-          <Divider size={formatSize(8)} />
-          <AssetValueText
-            convertToDollar
-            amount={amount}
-            asset={amountToken}
-            style={styles.amountDollar}
-            showMinusSign
-          />
+          <OperationPreviewAssetAmounts amount={amount} asset={amountToken} showMinusSign />
         </View>
-      </View>
+      </OperationPreviewCard>
       <Divider size={formatSize(8)} />
 
-      <View style={styles.container}>
-        <View style={styles.contentWrapper}>
-          <View style={styles.infoContainer}>
-            <RobotIcon seed={tezosAddress} size={formatSize(40)} />
-            <Divider size={formatSize(10)} />
-            <View>
-              <TruncatedText style={styles.description}>{plusLabel}</TruncatedText>
-              {!isUnshield && !!saplingAddress && (
-                <>
-                  <Divider size={formatSize(4)} />
-                  <PublicKeyHashText publicKeyHash={saplingAddress} />
-                </>
-              )}
-            </View>
-          </View>
-        </View>
+      <OperationPreviewCard
+        iconSeed={tezosAddress}
+        iconSize={formatSize(40)}
+        description={
+          <RebalanceOperationDescription label={plusLabel} saplingAddress={isUnshield ? null : saplingAddress} />
+        }
+      >
         <View>
-          <Text style={[styles.amountToken, { color: colors.adding }]}>+ {formattedAmount} TEZ</Text>
+          <Text style={styles.creditAmount}>+ {formattedAmount} TEZ</Text>
           {dollarValue !== null && (
             <>
               <Divider size={formatSize(8)} />
-              <Text style={[styles.amountDollar, { color: colors.adding }]}>≈ + {dollarValue}$</Text>
+              <Text style={styles.creditDollar}>≈ + {dollarValue}$</Text>
             </>
           )}
         </View>
-      </View>
+      </OperationPreviewCard>
     </>
   );
 };
+
+interface RebalanceOperationDescriptionProps {
+  label: string;
+  saplingAddress: string | null;
+}
+
+const RebalanceOperationDescription: FC<RebalanceOperationDescriptionProps> = ({ label, saplingAddress }) => (
+  <View>
+    <OperationPreviewDescription>{label}</OperationPreviewDescription>
+    {!!saplingAddress && (
+      <>
+        <Divider size={formatSize(4)} />
+        <PublicKeyHashText publicKeyHash={saplingAddress} />
+      </>
+    )}
+  </View>
+);

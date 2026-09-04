@@ -2,6 +2,16 @@ if [ "$(uname -s)" != "Linux" ]; then
   sed_mac_arg=true
 fi
 
+# Metro caches its file map in $TMPDIR and keys it only on config, not on
+# node_modules contents. After a clean install or branch switch Watchman clocks
+# and that cache go stale, so packages that exist on disk (es6-symbol, date-fns
+# internals, …) fail with "Unable to resolve module". Drop both so the next
+# bundler start recrawls from disk.
+if [ -x "$(command -v watchman)" ]; then
+  watchman watch-del-all >/dev/null 2>&1 || true
+fi
+find "${TMPDIR:-/tmp}" -maxdepth 1 \( -name 'haste-map-*' -o -name 'metro-*' -o -name 'react-*' \) -exec rm -rf {} + 2>/dev/null || true
+
 find node_modules -type f -name 'build.gradle' -exec sed -i ${sed_mac_arg:+""} 's/jcenter()/mavenCentral()/g' {} +
 
 # https://github.com/facebook/react-native/issues/56287
@@ -32,4 +42,20 @@ orientation_locker_m="node_modules/react-native-orientation-locker/iOS/RCTOrient
 if [ -f "$orientation_locker_m" ]; then
   sed -i ${sed_mac_arg:+""} '/\[self addListener:@"orientationDidChange"\];/d' "$orientation_locker_m"
   sed -i ${sed_mac_arg:+""} '/\[self removeListeners:1\];/d' "$orientation_locker_m"
+fi
+
+# Skip WalletConnect Pay's UniFFI native module. @walletconnect/react-native-compat
+# (pulled in by @reown/walletkit) always resolves RNWalletConnectPay on import.
+# That instantiates yttrium-wcpay / JNA and crashes on Android with:
+#   Structure.getFieldOrder() on class uniffi.yttrium_wcpay.RustBuffer$ByValue
+#   does not provide enough names [0] ([]) to match declared fields [3]
+# Temple does not use Pay; both branches below would load it (TurboModuleRegistry.get
+# on new arch, NativeModules.RNWalletConnectPay on old arch). Forcing undefined keeps
+# the JS Pay helpers as no-ops without loading JNA.
+# Remove this block to integrate WalletConnect Pay, then add JNA keep rules in
+# android/app/proguard-rules.pro and verify debug + release on Android 11.
+wc_compat_pay_module="node_modules/@walletconnect/react-native-compat/module/index.ts"
+if [ -f "$wc_compat_pay_module" ] && grep -q 'require("./NativeRNWalletConnectPay.ts").default' "$wc_compat_pay_module"; then
+  sed -i ${sed_mac_arg:+""} 's|require("./NativeRNWalletConnectPay.ts").default|undefined|' "$wc_compat_pay_module"
+  sed -i ${sed_mac_arg:+""} 's|: NativeModules.RNWalletConnectPay;|: undefined;|' "$wc_compat_pay_module"
 fi

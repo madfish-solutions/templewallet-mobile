@@ -10,6 +10,8 @@ const supportsInterfaceAbi = parseAbi(['function supportsInterface(bytes4 interf
 const ERC721_INTERFACE_ID: HexString = '0x80ac58cd';
 const ERC1155_INTERFACE_ID: HexString = '0xd9b67a26';
 
+export const MAX_UINT_256: bigint = 2n ** 256n - 1n;
+
 export const equalsIgnoreCase = (a?: string, b?: string) => a?.toLowerCase() === b?.toLowerCase();
 
 export const detectTokenStandard = async (

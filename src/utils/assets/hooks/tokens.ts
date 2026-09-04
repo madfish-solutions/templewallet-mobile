@@ -3,8 +3,7 @@ import { useMemo } from 'react';
 
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { useMemoWithCompare } from 'src/hooks/use-memo-with-compare';
-import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
-import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
+import { useAssetExchangeRate, useAssetExchangeRateGetter } from 'src/store/settings/settings-selectors';
 import { useTokensMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { useAssetBalanceSelector, useCurrentAccountStoredAssetsSelector } from 'src/store/wallet/wallet-selectors';
 import { TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
@@ -18,7 +17,7 @@ import { buildUsableAccountAsset } from './utils';
 export const useCurrentAccountTokens = (enabledOnly = false) => {
   const accountTokens = useCurrentAccountStoredAssetsSelector('tokens');
   const allMetadatas = useTokensMetadataSelector();
-  const getExchangeRate = useTokenExchangeRateGetter();
+  const getExchangeRate = useAssetExchangeRateGetter();
 
   return useMemo(
     () =>

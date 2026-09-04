@@ -24,7 +24,6 @@ import CheckboxOnIcon from './assets/checkbox-on.svg';
 import ChevronRightIcon from './assets/chevron-right.svg';
 import ChevronUpIcon from './assets/chevron-up.svg';
 import ClipboardIcon from './assets/clipboard.svg';
-import CloseIcon from './assets/close.svg';
 import CloudFillOnDarkIcon from './assets/cloud-fill-on-dark.svg';
 import CloudFillIcon from './assets/cloud-fill.svg';
 import CloudIcon from './assets/cloud.svg';
@@ -34,7 +33,6 @@ import CreditCardIcon from './assets/credit-card.svg';
 import CycleStatusFutureIcon from './assets/cycle-status-future.svg';
 import CycleStatusInProgressIcon from './assets/cycle-status-in-progress.svg';
 import CycleStatusUnlockedIcon from './assets/cycle-status-unlocked.svg';
-import DAppsIcon from './assets/dapps.svg';
 import DataIcon from './assets/data.svg';
 import DatabaseIcon from './assets/database.svg';
 import DealIcon from './assets/deal.svg';
@@ -72,20 +70,15 @@ import GoogleDriveIcon from './assets/google-drive.svg';
 import HelpCircleIcon from './assets/help-circle.svg';
 import HourGlassesIcon from './assets/hourglasses.svg';
 import ImportSquareIcon from './assets/import-square.svg';
-import InfoAltIcon from './assets/info-alt.svg';
 import InfoFilledAltIcon from './assets/info-filled-alt.svg';
 import InfoFilledIcon from './assets/info-gray.svg';
 import InputXCircleIcon from './assets/input-x-circle.svg';
-import InvertedCheckboxOffIcon from './assets/inverted-checkbox-off.svg';
-import InvertedCheckboxOnIcon from './assets/inverted-checkbox-on.svg';
-import IosSearchIcon from './assets/ios-search.svg';
 import KeyIcon from './assets/key.svg';
 import LinkIcon from './assets/link.svg';
 import LiquidityBakingLogo from './assets/liquidity-baking-logo.svg';
 import LockIcon from './assets/lock.svg';
 import LogOutIcon from './assets/log-out.svg';
 import ManualBackupIcon from './assets/manual-backup.svg';
-import MarketIcon from './assets/market.svg';
 import MegaphoneIcon from './assets/megaphone.svg';
 import MessageCircleIcon from './assets/message-circle.svg';
 import MissedEndorsementsIcon from './assets/missed-endorsements.svg';
@@ -94,17 +87,14 @@ import MoonPayIcon from './assets/moonpay.svg';
 import MoreHorizontalIcon from './assets/more-horizontal.svg';
 import NewsIcon from './assets/news.svg';
 import NFTCollectionIcon from './assets/nft-collection.svg';
-import NFT from './assets/nft.svg';
 import NoConnectionIcon from './assets/no-connection.svg';
 import NoResultIcon from './assets/no-result.svg';
 import NotificationDotIcon from './assets/notification-dot.svg';
 import OwnBlocksIcon from './assets/own-blocks.svg';
 import OXtzIcon from './assets/oxtz.svg';
 import PlentyIcon from './assets/plenty.svg';
-import PlusIconOrange from './assets/plus-icon-orange.svg';
 import PlusSquareIcon from './assets/plus-square.svg';
 import QrScannerBoldIcon from './assets/qr-scanner-bold.svg';
-import QrScannerIcon from './assets/qr-scanner.svg';
 import QsEarnSource from './assets/qs-earn-source.svg';
 import QuipuSwapIcon from './assets/quipuswap.svg';
 import QuipuSwapDarkIcon from './assets/quipuswapDark.svg';
@@ -121,15 +111,12 @@ import SpicyIcon from './assets/spicy.svg';
 import StakeIcon from './assets/stake.svg';
 import SuccessIcon from './assets/success.svg';
 import SwapArrowIcon from './assets/swap-arrow.svg';
-import SwapInfo from './assets/swap-info.svg';
 import SwapSettings from './assets/swap-settings.svg';
-import SwapIcon from './assets/swap.svg';
 import SyncIcon from './assets/sync.svg';
 import TempleLogoBottomIcon from './assets/temple-logo-bottom.svg';
 import TempleLogoUpIcon from './assets/temple-logo-up.svg';
 import TempleLogoWithTextIcon from './assets/temple-logo-with-text.svg';
 import TempleLogoIcon from './assets/temple-logo.svg';
-import TezWalletIcon from './assets/tez-wallet.svg';
 import NoNameTokenIcon from './assets/tokens/no-name.svg';
 import SwapTokenPlaceholderIcon from './assets/tokens/swap-token-placeholder.svg';
 import TezTokenIcon from './assets/tokens/tez.svg';
@@ -177,13 +164,9 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Globe]: GlobeIcon,
   [IconNameEnum.HourGlasses]: HourGlassesIcon,
   [IconNameEnum.ImportSquare]: ImportSquareIcon,
-  [IconNameEnum.InvertedCheckboxOff]: InvertedCheckboxOffIcon,
-  [IconNameEnum.InvertedCheckboxOn]: InvertedCheckboxOnIcon,
   [IconNameEnum.PlusSquare]: PlusSquareIcon,
   [IconNameEnum.HelpCircle]: HelpCircleIcon,
   [IconNameEnum.SwapArrow]: SwapArrowIcon,
-  [IconNameEnum.SwapInfo]: SwapInfo,
-  [IconNameEnum.Swap]: SwapIcon,
   [IconNameEnum.SwapSettings]: SwapSettings,
   [IconNameEnum.InputXCircle]: InputXCircleIcon,
   [IconNameEnum.X]: XIcon,
@@ -192,7 +175,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.MoreHorizontal]: MoreHorizontalIcon,
   [IconNameEnum.EyeClosedBold]: EyeClosedBoldIcon,
   [IconNameEnum.EyeOpenBold]: EyeOpenBoldIcon,
-  [IconNameEnum.TezWallet]: TezWalletIcon,
   [IconNameEnum.Plenty]: PlentyIcon,
   [IconNameEnum.Spicy]: SpicyIcon,
   [IconNameEnum.WTez]: WTezIcon,
@@ -201,8 +183,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Vortex]: VortexIcon,
   [IconNameEnum.QuipuSwap]: QuipuSwapIcon,
   [IconNameEnum.QuipuSwapDark]: QuipuSwapDarkIcon,
-  [IconNameEnum.DApps]: DAppsIcon,
-  [IconNameEnum.Close]: CloseIcon,
   [IconNameEnum.TezToken]: TezTokenIcon,
   [IconNameEnum.InfoFilled]: InfoFilledIcon,
   [IconNameEnum.InfoFilledAlt]: InfoFilledAltIcon,
@@ -226,7 +206,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Share]: ShareIcon,
   [IconNameEnum.Copy]: CopyIcon,
   [IconNameEnum.CopyBold]: CopyBoldIcon,
-  [IconNameEnum.QrScanner]: QrScannerIcon,
   [IconNameEnum.QrScannerBold]: QrScannerBoldIcon,
   [IconNameEnum.TriangleDown]: TriangleDownIcon,
   [IconNameEnum.Check]: CheckIcon,
@@ -238,7 +217,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.DownloadCloud]: DownloadCloudIcon,
   [IconNameEnum.AlertCircle]: AlertCircleIcon,
   [IconNameEnum.AlertTriangle]: AlertTriangleIcon,
-  [IconNameEnum.InfoAlt]: InfoAltIcon,
   [IconNameEnum.ChevronRight]: ChevronRightIcon,
   [IconNameEnum.ChevronUp]: ChevronUpIcon,
   [IconNameEnum.NoResult]: NoResultIcon,
@@ -249,7 +227,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.TempleLogoWithText]: TempleLogoWithTextIcon,
   [IconNameEnum.ExternalLink]: ExternalLinkIcon,
   [IconNameEnum.ExternalLinkTag]: ExternalLinkTagIcon,
-  [IconNameEnum.IosSearch]: IosSearchIcon,
   [IconNameEnum.SearchNew]: SearchNewIcon,
   [IconNameEnum.Alert]: AlertIcon,
   [IconNameEnum.AlertMonochrome]: AlertMonochromeIcon,
@@ -268,15 +245,12 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Link]: LinkIcon,
   [IconNameEnum.Success]: SuccessIcon,
   [IconNameEnum.RetryIcon]: RetryIcon,
-  [IconNameEnum.PlusIconOrange]: PlusIconOrange,
-  [IconNameEnum.Market]: MarketIcon,
   [IconNameEnum.EarnDapp]: EarnDappIcon,
   [IconNameEnum.Buy]: BuyIcon,
   [IconNameEnum.BuyWithCrypto]: BuyWithCryptoIcon,
   [IconNameEnum.CreditCard]: CreditCardIcon,
   [IconNameEnum.Favourite]: FavoriteIcon,
   [IconNameEnum.Update]: UpdateIcon,
-  [IconNameEnum.NFT]: NFT,
   [IconNameEnum.NotificationDot]: NotificationDotIcon,
   [IconNameEnum.CheckboxOn]: CheckboxOnIcon,
   [IconNameEnum.CheckboxOff]: CheckboxOffIcon,

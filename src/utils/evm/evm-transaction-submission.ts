@@ -67,7 +67,7 @@ class EvmTransactionSubmissionService {
     receiptOptions,
     onBroadcast
   }: SubmitEvmTransactionParams): Promise<EvmTransactionSubmissionResult> {
-    const broadcastResult = await this.signAndBroadcast(network, sourceAddress, transaction);
+    const broadcastResult = await this.broadcast({ network, sourceAddress, transaction });
 
     if (!broadcastResult.success) {
       return broadcastResult;
@@ -77,6 +77,31 @@ class EvmTransactionSubmissionService {
 
     onBroadcast?.(transactionHash);
 
+    return this.waitForConfirmation(network, transactionHash, receiptOptions);
+  }
+
+  /**
+   * Sign and broadcast only. Used when the caller must return the hash before
+   * waiting for confirmation (e.g. WalletConnect `eth_sendTransaction`).
+   */
+  async broadcast({
+    network,
+    sourceAddress,
+    transaction
+  }: Omit<SubmitEvmTransactionParams, 'receiptOptions' | 'onBroadcast'>): Promise<EvmTransactionBroadcastResult> {
+    return this.signAndBroadcast(network, sourceAddress, transaction);
+  }
+
+  /**
+   * Wait for a previously broadcast transaction and validate the receipt
+   * (replacements, reverts). Used when broadcast already happened elsewhere
+   * (e.g. WalletConnect must return the hash to the dApp first).
+   */
+  async waitForConfirmation(
+    network: EvmNetworkEssentials,
+    transactionHash: Hash,
+    receiptOptions?: ReceiptOptions
+  ): Promise<EvmTransactionSubmissionResult> {
     let replacementReason: 'cancelled' | 'replaced' | 'repriced' | undefined;
     let receipt: TransactionReceipt;
 
