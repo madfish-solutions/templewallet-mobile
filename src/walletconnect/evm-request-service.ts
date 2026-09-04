@@ -134,7 +134,7 @@ class WcEvmRequestService {
 
   async watchAsset(
     address: HexString,
-    [{ options }]: WcWatchAssetRequestContent['params'],
+    { options }: WcWatchAssetRequestContent['params'],
     network?: EvmNetworkEssentials
   ) {
     if (!isDefined(network)) {
