@@ -196,7 +196,7 @@ describe('loadTokensMetadata$', () => {
     expect(mockTezosMetadataApi.post).toHaveBeenCalledTimes(1);
   });
 
-  it('stops further null retries when the remaining list does not shrink to half of the full request', async () => {
+  it('stops further null retries when remaining nulls stay above 90% of that wave', async () => {
     mockTezosMetadataApi.post
       .mockResolvedValueOnce({ data: [token('A'), null, null, null] })
       .mockResolvedValueOnce({ data: [null, null, null] });

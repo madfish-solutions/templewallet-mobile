@@ -217,10 +217,10 @@ export const mapMetadataChunkResponses = (
 
 /**
  * Retry API `null`s while they look like flakes, not "this service has no metadata".
- * Compared against the full submit (all chunks), not each HTTP chunk: a 100-slug NFT
- * batch can be majority-null even when leftover nulls are a minority of the wallet.
- * The first extra attempt is always allowed. Further attempts only if remaining nulls
- * are at most half of that original submit.
+ * Compared against that wave's input (all chunks together), not each HTTP chunk.
+ * Huge NFT collections often return a high null rate on early waves, so the first
+ * extra attempt is always allowed and later waves continue while remaining nulls
+ * are at most 90% of that round's input (up to METADATA_NULL_RETRY_MAX_ROUNDS).
  */
 export const shouldRetryMetadataNulls = (nullCount: number, inputCount: number, extraRound: number): boolean => {
   if (nullCount === 0 || extraRound >= METADATA_NULL_RETRY_MAX_ROUNDS) {

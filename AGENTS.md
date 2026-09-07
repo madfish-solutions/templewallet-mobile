@@ -58,7 +58,7 @@ Optimize for clarity, polish, and performance in every change.
 
 ## Tezos token metadata (batch POST)
 - `loadTokensMetadata$` POSTs slugs in chunks of 100, concurrency 2, HTTP retries (2, exponential backoff), and a 1s `bufferTime` so Redux is not updated on every response.
-- API `null` is often a flake for NFTs (unlike Objkt details, where `null` means "no row"). After all chunks of a wave finish, remaining nulls are retried against the **full submit**: always once, then while `|nulls| * 2 <= |original slugs|`, max 3 extra rounds. Each retry wave waits `1s * 2^extraRound` (1s, 2s, 4s) so the metadata API can catch up. Per-chunk 2× shrink gives up too early on NFT-heavy 100-slug POSTs.
+- API `null` is often a flake for NFTs (unlike Objkt details, where `null` means "no row"). After all chunks of a wave finish, remaining nulls are retried against **that wave's input**: always once, then while `|nulls| / |wave slugs| <= 0.9`, max 10 extra rounds. Huge NFT collections stay majority-null for several waves; a 50% shrink rule gives up too early. Each retry wave waits `min(20s, 1s * 2^extraRound)`.
 - Streamed `success` keeps `isLoading`; `{ done: true }` or `fail` clears it. `use-metadata-loading` submits all missing slugs (fetch already chunks); a `Set` skips slugs already requested. Remaining nulls after retries are not fetched again.
 - Bulk metadata loading: `concatMap` so same-account slug deltas do not cancel in-flight work; `switchMap` on `selectedAccountPublicKeyHash` so account switches drop the queue. `setSelectedAccountAction` clears `isLoading`.
 
