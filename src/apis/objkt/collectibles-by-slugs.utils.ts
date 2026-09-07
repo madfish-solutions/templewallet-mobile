@@ -19,19 +19,19 @@ export type ObjktCollectiblesChunkResult =
 export const aggregateObjktCollectiblesChunkResults = (
   results: ObjktCollectiblesChunkResult[]
 ): ObjktCollectiblesBySlugsBatch => {
-  const tokens: ObjktCollectibleDetails[] = [];
+  let tokens: ObjktCollectibleDetails[] = [];
   const missingSlugs: string[] = [];
-  const failedSlugs: string[] = [];
+  let failedSlugs: string[] = [];
   const errors: ObjktCollectiblesBySlugsError[] = [];
 
   for (const result of results) {
     if ('error' in result) {
-      failedSlugs.push(...result.slugs);
+      failedSlugs = failedSlugs.concat(result.slugs);
       errors.push(result.error);
       continue;
     }
 
-    tokens.push(...result.tokens);
+    tokens = tokens.concat(result.tokens);
 
     const returnedSlugs = new Set(result.tokens.map(token => toTokenSlug(token.fa_contract, token.token_id)));
 

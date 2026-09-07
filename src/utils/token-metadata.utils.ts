@@ -154,7 +154,7 @@ export const loadTokenMetadata$ = memoizee(
   }
 );
 
-const METADATA_CHUNK_SIZE = 100;
+const METADATA_CHUNK_SIZE = 50;
 
 /** In-flight metadata POSTs. Keep low to avoid saturating mobile + the metadata API. */
 const METADATA_QUERY_CONCURRENCY = 2;
