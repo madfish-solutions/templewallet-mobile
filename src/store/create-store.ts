@@ -15,7 +15,15 @@ const epicMiddleware = createEpicMiddleware();
 const middlewares: Middleware<object, RootState>[] = [epicMiddleware];
 
 if (__DEV__ && !isDefined(process.env.JEST_WORKER_ID)) {
-  middlewares.push(createLogger({ diff: true, collapsed: true }));
+  const skipLoggerTypePrefixes = ['collectibles/LOAD_COLLECTIBLES_DETAILS', 'assets/LOAD_TOKENS_METADATA'];
+
+  middlewares.push(
+    createLogger({
+      diff: true,
+      collapsed: true,
+      predicate: (_getState, action) => !skipLoggerTypePrefixes.some(prefix => String(action.type).startsWith(prefix))
+    })
+  );
 }
 
 export const createStore = (...epics: Epic[]) => {

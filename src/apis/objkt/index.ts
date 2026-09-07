@@ -5,23 +5,30 @@
 
 import BigNumber from 'bignumber.js';
 import { chunk } from 'lodash-es';
-import { catchError, from, map, mergeMap, Observable, of, reduce, retry, throwError, timer } from 'rxjs';
+import { bufferTime, catchError, filter, from, map, mergeMap, Observable, of, retry, throwError, timer } from 'rxjs';
 
 import { Collection } from 'src/store/collectons/collections-state';
 import { fromTokenSlug } from 'src/utils/from-token-slug';
 import { isDefined } from 'src/utils/is-defined';
 
 import {
+  aggregateObjktCollectiblesChunkResults,
+  ObjktCollectiblesBySlugsBatch,
+  ObjktCollectiblesChunkResult
+} from './collectibles-by-slugs.utils';
+import {
   apolloObjktClient,
   FA_COLLECTION_PAGINATION_STEP,
   GALLERY_COLLECTION_PAGINATION_STEP,
   HIDDEN_CONTRACTS,
+  OBJKT_COLLECTIBLES_EMIT_BUFFER_MS,
   OBJKT_COLLECTIBLES_QUERY_CHUNK_SIZE,
   OBJKT_COLLECTIBLES_QUERY_CONCURRENCY,
   OBJKT_COLLECTIBLES_QUERY_RETRY_BASE_DELAY_MS,
   OBJKT_COLLECTIBLES_QUERY_RETRY_COUNT,
   OBJKT_COLLECTIBLES_QUERY_TIMEOUT_MS
 } from './constants';
+import { ObjktCollectiblesBySlugsError } from './errors';
 import {
   buildGetCollectiblesByCollectionQuery,
   buildGetCollectionsQuery,
@@ -32,7 +39,6 @@ import {
   buildGetCollectibleExtraQuery
 } from './queries';
 import {
-  ObjktCollectibleDetails,
   CollectiblesByCollectionResponse,
   CollectiblesByGalleriesResponse,
   FA2AttributeCountQueryResponse,
@@ -42,6 +48,8 @@ import {
   CollectiblesBySlugsResponse
 } from './types';
 import { transformObjktCollectionItem } from './utils';
+
+export { ObjktCollectiblesBySlugsError } from './errors';
 
 export const fetchCollections$ = (accountPkh: string): Observable<Collection[]> => {
   const request = buildGetCollectionsQuery(accountPkh);
@@ -114,9 +122,9 @@ export const fetchCollectiblesOfCollection = (
     });
 };
 
-export const fetchObjktCollectiblesBySlugs$ = (slugs: string[]): Observable<ObjktCollectibleDetails[]> => {
+export const fetchObjktCollectiblesBySlugs$ = (slugs: string[]): Observable<ObjktCollectiblesBySlugsBatch> => {
   if (slugs.length === 0) {
-    return of([]);
+    return of({ tokens: [], missingSlugs: [], failedSlugs: [] });
   }
 
   return from(chunk(slugs, OBJKT_COLLECTIBLES_QUERY_CHUNK_SIZE)).pipe(
@@ -129,11 +137,24 @@ export const fetchObjktCollectiblesBySlugs$ = (slugs: string[]): Observable<Objk
               isRetryableObjktQueryError(error)
                 ? timer(OBJKT_COLLECTIBLES_QUERY_RETRY_BASE_DELAY_MS * 2 ** (retryCount - 1))
                 : throwError(() => error)
-          })
+          }),
+          map((result): ObjktCollectiblesChunkResult => ({ slugs: slugsChunk, tokens: result.token })),
+          catchError(
+            (error: unknown): Observable<ObjktCollectiblesChunkResult> =>
+              of({
+                slugs: slugsChunk,
+                error:
+                  error instanceof ObjktCollectiblesBySlugsError
+                    ? error
+                    : new ObjktCollectiblesBySlugsError(slugsChunk, error)
+              })
+          )
         ),
       OBJKT_COLLECTIBLES_QUERY_CONCURRENCY
     ),
-    reduce<CollectiblesBySlugsResponse, ObjktCollectibleDetails[]>((acc, curr) => acc.concat(curr.token), [])
+    bufferTime(OBJKT_COLLECTIBLES_EMIT_BUFFER_MS),
+    filter(results => results.length > 0),
+    map(aggregateObjktCollectiblesChunkResults)
   );
 };
 
@@ -150,7 +171,7 @@ const fetchObjktCollectiblesBySlugsChunk$ = (slugs: string[]) =>
       )
       .then(data => {
         if (!isDefined(data)) {
-          subscriber.error(new Error('Empty Objkt collectibles response'));
+          subscriber.error(new ObjktCollectiblesBySlugsError(slugs));
 
           return;
         }
@@ -158,7 +179,11 @@ const fetchObjktCollectiblesBySlugsChunk$ = (slugs: string[]) =>
         subscriber.next(data);
         subscriber.complete();
       })
-      .catch(error => subscriber.error(error))
+      .catch(error => {
+        subscriber.error(
+          error instanceof ObjktCollectiblesBySlugsError ? error : new ObjktCollectiblesBySlugsError(slugs, error)
+        );
+      })
       .finally(() => clearTimeout(timeoutId));
 
     return () => {

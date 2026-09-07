@@ -14,3 +14,6 @@ export const useOneCollectibleDetailsLoadingSelector = () =>
 
 export const useCollectibleIsAdultSelector = (slug: string): boolean | undefined =>
   useSelector(state => state.collectibles.adultFlags[slug]?.val);
+
+export const useCollectiblesDetailsInFlightSelector = () =>
+  useSelector(state => state.collectibles.collectiblesDetailsInFlight);

@@ -2,8 +2,23 @@ import { BigNumber } from 'bignumber.js';
 import { chunk } from 'lodash-es';
 import memoizee from 'memoizee';
 import { useCallback } from 'react';
-import { forkJoin, from, Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {
+  bufferTime,
+  catchError,
+  concat,
+  defer,
+  EMPTY,
+  expand,
+  filter,
+  from,
+  map,
+  mergeMap,
+  Observable,
+  of,
+  retry,
+  tap,
+  timer
+} from 'rxjs';
 
 import { scamlistApi, tezosMetadataApi, whitelistApi } from 'src/api.service';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
@@ -141,31 +156,148 @@ export const loadTokenMetadata$ = memoizee(
 
 const METADATA_CHUNK_SIZE = 100;
 
-export const loadTokensMetadata$ = (slugs: string[]): Observable<TokenMetadataInterface[]> =>
-  forkJoin(
-    // Parallelizing
-    chunk(slugs, METADATA_CHUNK_SIZE).map(slugsChunk =>
-      tezosMetadataApi.post<(TokenMetadataResponse | null)[]>('/', slugsChunk).then(({ data }) => data)
-    )
-  ).pipe(
-    map(tokensChunks => tokensChunks.flat()),
-    map(tokens =>
-      tokens.map((token, index) => {
-        const slug = slugs[index]!;
-        const [address, id] = slug.split('_');
-        const overridenTokenMetadata = OVERRIDEN_MAINNET_TOKENS_METADATA.find(
-          token => token.address === address && token.id === Number(id)
-        );
+/** In-flight metadata POSTs. Keep low to avoid saturating mobile + the metadata API. */
+const METADATA_QUERY_CONCURRENCY = 2;
 
-        if (overridenTokenMetadata) {
-          return overridenTokenMetadata;
-        }
+const METADATA_HTTP_RETRY_COUNT = 2;
 
-        return token && transformDataToTokenMetadata(token, address, Number(id));
-      })
-    ),
-    map(tokens => tokens.filter(isDefined))
+const METADATA_HTTP_RETRY_BASE_DELAY_MS = 400;
+
+/** Coalesce streamed chunk results so Redux/UI is not updated on every HTTP response. */
+const METADATA_EMIT_BUFFER_MS = 1000;
+
+/** Extra POSTs of remaining `null` slugs after the first successful response. */
+const METADATA_NULL_RETRY_MAX_ROUNDS = 10;
+
+/** Delay before the first null-retry wave; doubles for each extra round. */
+const METADATA_NULL_RETRY_BASE_DELAY_MS = 1000;
+
+interface MetadataChunkMapping {
+  metadata: TokenMetadataInterface[];
+  nullSlugs: string[];
+}
+
+type MetadataWaveTokens = { kind: 'tokens'; metadata: TokenMetadataInterface[] };
+
+type MetadataWaveRound = { kind: 'round'; nullSlugs: string[]; extraRound: number; inputSize: number };
+
+type MetadataWaveEvent = MetadataWaveTokens | MetadataWaveRound;
+
+export const mapMetadataChunkResponses = (
+  slugs: string[],
+  data: (TokenMetadataResponse | null)[]
+): MetadataChunkMapping => {
+  const metadata: TokenMetadataInterface[] = [];
+  const nullSlugs: string[] = [];
+
+  slugs.forEach((slug, index) => {
+    const [address, id] = slug.split('_');
+    const numericId = Number(id);
+    const overridenTokenMetadata = OVERRIDEN_MAINNET_TOKENS_METADATA.find(
+      token => token.address === address && token.id === numericId
+    );
+
+    if (overridenTokenMetadata) {
+      metadata.push(overridenTokenMetadata);
+
+      return;
+    }
+
+    const token = data[index];
+
+    if (token) {
+      metadata.push(transformDataToTokenMetadata(token, address, numericId));
+    } else {
+      nullSlugs.push(slug);
+    }
+  });
+
+  return { metadata, nullSlugs };
+};
+
+/**
+ * Retry API `null`s while they look like flakes, not "this service has no metadata".
+ * Compared against the full submit (all chunks), not each HTTP chunk: a 100-slug NFT
+ * batch can be majority-null even when leftover nulls are a minority of the wallet.
+ * The first extra attempt is always allowed. Further attempts only if remaining nulls
+ * are at most half of that original submit.
+ */
+export const shouldRetryMetadataNulls = (nullCount: number, inputCount: number, extraRound: number): boolean => {
+  if (nullCount === 0 || extraRound >= METADATA_NULL_RETRY_MAX_ROUNDS) {
+    return false;
+  }
+
+  if (extraRound === 0) {
+    return true;
+  }
+
+  return nullCount / inputCount <= 0.9;
+};
+
+const fetchMetadataChunk$ = (slugs: string[]) =>
+  defer(() => from(tezosMetadataApi.post<(TokenMetadataResponse | null)[]>('/', slugs).then(({ data }) => data))).pipe(
+    retry({
+      count: METADATA_HTTP_RETRY_COUNT,
+      delay: (_error, retryCount) => timer(METADATA_HTTP_RETRY_BASE_DELAY_MS * 2 ** (retryCount - 1))
+    })
   );
+
+const fetchSlugsInChunks$ = (slugs: string[]): Observable<MetadataChunkMapping> =>
+  from(chunk(slugs, METADATA_CHUNK_SIZE)).pipe(
+    mergeMap(
+      slugsChunk =>
+        fetchMetadataChunk$(slugsChunk).pipe(
+          map(data => mapMetadataChunkResponses(slugsChunk, data)),
+          catchError((error: unknown) => {
+            console.error('loadTokensMetadata$ chunk failed', slugsChunk, error);
+
+            return of({ metadata: [], nullSlugs: slugsChunk });
+          })
+        ),
+      METADATA_QUERY_CONCURRENCY
+    )
+  );
+
+const fetchMetadataWave$ = (slugs: string[], extraRound: number): Observable<MetadataWaveEvent> => {
+  let nullSlugs: string[] = [];
+
+  return concat(
+    fetchSlugsInChunks$(slugs).pipe(
+      tap(mapping => {
+        nullSlugs = nullSlugs.concat(mapping.nullSlugs);
+      }),
+      mergeMap(mapping =>
+        mapping.metadata.length > 0 ? of({ kind: 'tokens' as const, metadata: mapping.metadata }) : EMPTY
+      )
+    ),
+    defer(() => of({ kind: 'round' as const, nullSlugs, extraRound, inputSize: slugs.length }))
+  );
+};
+
+export const loadTokensMetadata$ = (slugs: string[]): Observable<TokenMetadataInterface[]> => {
+  if (slugs.length === 0) {
+    return EMPTY;
+  }
+
+  return fetchMetadataWave$(slugs, 0).pipe(
+    expand(event => {
+      if (
+        event.kind !== 'round' ||
+        !shouldRetryMetadataNulls(event.nullSlugs.length, event.inputSize, event.extraRound)
+      ) {
+        return EMPTY;
+      }
+
+      return timer(Math.min(20000, METADATA_NULL_RETRY_BASE_DELAY_MS * 2 ** event.extraRound)).pipe(
+        mergeMap(() => fetchMetadataWave$(event.nullSlugs, event.extraRound + 1))
+      );
+    }),
+    mergeMap(event => (event.kind === 'tokens' ? of(event.metadata) : EMPTY)),
+    bufferTime(METADATA_EMIT_BUFFER_MS),
+    filter(batches => batches.length > 0),
+    map(batches => batches.flat())
+  );
+};
 
 interface SearchableAsset extends Pick<TokenInterface, 'name' | 'symbol'> {
   address?: string;

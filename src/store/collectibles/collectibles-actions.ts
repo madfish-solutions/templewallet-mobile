@@ -11,7 +11,7 @@ export const loadCollectiblesDetailsActions = createActions<
     /** In milliseconds */
     timestamp: number;
   },
-  string
+  { slugs: string[]; error: string }
 >('collectibles/LOAD_COLLECTIBLES_DETAILS');
 
 /** A trapdoor for loading single collectible details beyond the general queue */

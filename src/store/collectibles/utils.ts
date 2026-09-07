@@ -3,6 +3,9 @@ import { pick } from 'lodash-es';
 import type { ObjktCollectibleDetails } from 'src/apis/objkt/types';
 import { checkForAdultery } from 'src/apis/objkt/utils';
 import type { CollectibleDetailsInterface } from 'src/token/interfaces/collectible-interfaces.interface';
+import { toTokenSlug } from 'src/token/utils/token.utils';
+
+import type { CollectibleDetailsRecord } from './collectibles-state';
 
 export const convertCollectibleObjktInfoToStateDetailsType = (
   info: ObjktCollectibleDetails
@@ -30,3 +33,20 @@ export const convertCollectibleObjktInfoToStateDetailsType = (
   listingsActive: info.listings_active,
   isAdultContent: checkForAdultery(info.attributes, info.tags)
 });
+
+export const collectiblesDetailsRecordFromObjktBatch = (
+  tokens: ObjktCollectibleDetails[],
+  missingSlugs: string[]
+): CollectibleDetailsRecord => {
+  const details: CollectibleDetailsRecord = {};
+
+  for (const info of tokens) {
+    details[toTokenSlug(info.fa_contract, info.token_id)] = convertCollectibleObjktInfoToStateDetailsType(info);
+  }
+
+  for (const slug of missingSlugs) {
+    details[slug] = null;
+  }
+
+  return details;
+};

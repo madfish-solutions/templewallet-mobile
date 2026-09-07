@@ -86,6 +86,9 @@ export const OBJKT_COLLECTIBLES_QUERY_RETRY_COUNT = 2;
 
 export const OBJKT_COLLECTIBLES_QUERY_RETRY_BASE_DELAY_MS = 400;
 
-export const OBJKT_COLLECTIBLES_QUERY_TIMEOUT_MS = 20_000;
+export const OBJKT_COLLECTIBLES_QUERY_TIMEOUT_MS = 60_000;
+
+/** Coalesce streamed chunk results so Redux/UI is not updated on every HTTP response. */
+export const OBJKT_COLLECTIBLES_EMIT_BUFFER_MS = 1000;
 
 export const GALLERY_COLLECTION_PAGINATION_STEP = 15;

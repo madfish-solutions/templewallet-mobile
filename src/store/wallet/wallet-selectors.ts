@@ -81,6 +81,8 @@ export const useCurrentAccountStoredAssetsListSelector = () => {
   return useMemo(() => allAssets?.stored.filter(a => !allAssets.removed.some(slug => slug === a.slug)), [allAssets]);
 };
 
+const WR_TOKEN_SLUG = toTokenSlug(WR_TOKEN_METADATA.address, WR_TOKEN_METADATA.id);
+
 /** @todo Store tokens & collectibles separately */
 export const useCurrentAccountStoredAssetsSelector = (type: 'tokens' | 'collectibles') => {
   const assets = useAllCurrentAccountAssetsSelector();
@@ -101,8 +103,7 @@ export const useCurrentAccountStoredAssetsSelector = (type: 'tokens' | 'collecti
           return false;
         }
 
-        const assetIsCollectible =
-          isCollectible(metadata) && asset.slug !== toTokenSlug(WR_TOKEN_METADATA.address, WR_TOKEN_METADATA.id);
+        const assetIsCollectible = isCollectible(metadata) && asset.slug !== WR_TOKEN_SLUG;
 
         return type === 'collectibles' ? assetIsCollectible : assetIsCollectible === false;
       });
