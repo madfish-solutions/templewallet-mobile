@@ -48,19 +48,5 @@ Optimize for clarity, polish, and performance in every change.
 - General utils: `src/utils/`
 - Secure storage implementation: `src/shelter`
 
-## Objkt collectibles-by-slug
-- `MAX_OBJKT_QUERY_RESPONSE_ITEMS` (500) is Hasura's max rows, used for collection pagination — not a safe request size for nested token queries.
-- Collectibles-by-slug uses `OBJKT_COLLECTIBLES_QUERY_CHUNK_SIZE` (50), concurrency 2, per-chunk retries, a 60s abort timeout, and a 1s `bufferTime` so Redux is not updated on every HTTP response.
-- Failed chunks throw/wrap `ObjktCollectiblesBySlugsError` with the chunk slugs; those slugs stay `undefined` in details (retryable). Successful chunks may still mark some slugs `null` (Objkt had no row).
-- Bulk details loading: `concatMap` so same-account slug deltas do not cancel in-flight work; `switchMap` on `selectedAccountPublicKeyHash` so account switches drop the queue and abort HTTP. `isLoading` follows remaining `collectiblesDetailsInFlight`.
-- Submit marks in-flight by replacing the record (plain object, not per-key Immer writes). The hook concatenates priority groups into one `submit`. redux-logger skips these bulk collectibles/metadata actions — `diff: true` on tens of thousands of slugs stalls the JS thread in `__DEV__`.
-- Load-priority grouping must parse mint timestamps once per token, never inside `sort` comparators — `new Date()` on Hermes is too slow for whale collections.
-
-## Tezos token metadata (batch POST)
-- `loadTokensMetadata$` POSTs slugs in chunks of 100, concurrency 2, HTTP retries (2, exponential backoff), and a 1s `bufferTime` so Redux is not updated on every response.
-- API `null` is often a flake for NFTs (unlike Objkt details, where `null` means "no row"). After all chunks of a wave finish, remaining nulls are retried against **that wave's input**: always once, then while `|nulls| / |wave slugs| <= 0.9`, max 10 extra rounds. Huge NFT collections stay majority-null for several waves; a 50% shrink rule gives up too early. Each retry wave waits `min(20s, 1s * 2^extraRound)`.
-- Streamed `success` keeps `isLoading`; `{ done: true }` or `fail` clears it. `use-metadata-loading` submits all missing slugs (fetch already chunks); a `Set` skips slugs already requested. Remaining nulls after retries are not fetched again.
-- Bulk metadata loading: `concatMap` so same-account slug deltas do not cancel in-flight work; `switchMap` on `selectedAccountPublicKeyHash` so account switches drop the queue. `setSelectedAccountAction` clears `isLoading`.
-
 ## A Note to the Agent
 We are building this together. When you learn something non-obvious, add it here so future changes go faster.
