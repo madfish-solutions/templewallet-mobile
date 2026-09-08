@@ -1,4 +1,4 @@
 export enum ContactItemSelector {
-  editButton = 'Contact Item/Edit Button',
+  item = 'Contact Item',
   deleteButton = 'Contact Item/Delete Button'
 }

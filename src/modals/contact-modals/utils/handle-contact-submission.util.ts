@@ -1,6 +1,7 @@
 import { NameResolver } from '@tezos-domains/resolver';
 import { FormikProps } from 'formik/dist/types';
 import { RefObject } from 'react';
+import { getAddress, isAddress as isEvmAddress } from 'viem';
 
 import { Contact } from 'src/interfaces/contact.interface';
 import { showErrorToast } from 'src/toast/error-toast.utils';
@@ -30,6 +31,9 @@ export const handleContactSubmission = async (
   }
 
   if (formik.current && formik.current.isValid) {
-    callback(contact);
+    callback({
+      ...contact,
+      address: isEvmAddress(contact.address) ? getAddress(contact.address) : contact.address
+    });
   }
 };
