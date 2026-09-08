@@ -1,6 +1,5 @@
 import { combineEpics } from 'redux-observable';
-import { of, map } from 'rxjs';
-import { catchError, concatMap, switchMap } from 'rxjs/operators';
+import { catchError, concatMap, distinctUntilChanged, endWith, map, of, switchMap } from 'rxjs';
 import { ofType, toPayload } from 'ts-action-operators';
 
 import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
@@ -120,21 +119,38 @@ const loadTokenMetadataEpic: AnyActionEpic = (action$, state$) =>
     )
   );
 
+/**
+ * `concatMap` keeps same-account slug deltas instead of cancelling in-flight work.
+ * `switchMap` on the selected account drops that queue when the user switches.
+ */
 const loadTokensMetadataEpic: AnyActionEpic = (action$, state$) =>
-  action$.pipe(
-    ofType(loadTokensMetadataActions.submit),
-    toPayload(),
-    withUserAnalyticsCredentials(state$),
-    switchMap(([slugs, { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
-      loadTokensMetadata$(slugs).pipe(
-        map(tokensMetadata => loadTokensMetadataActions.success(tokensMetadata)),
-        catchError(err => {
-          if (isAnalyticsEnabled) {
-            sendErrorAnalyticsEvent('LoadTokensMetadataEpicError', err, [], { userId, ABTestingCategory }, { slugs });
-          }
+  state$.pipe(
+    map(state => state.wallet.selectedAccountPublicKeyHash),
+    distinctUntilChanged(),
+    switchMap(() =>
+      action$.pipe(
+        ofType(loadTokensMetadataActions.submit),
+        toPayload(),
+        withUserAnalyticsCredentials(state$),
+        concatMap(([slugs, { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
+          loadTokensMetadata$(slugs).pipe(
+            map(tokens => loadTokensMetadataActions.success({ tokens })),
+            endWith(loadTokensMetadataActions.success({ tokens: [], done: true })),
+            catchError(err => {
+              if (isAnalyticsEnabled) {
+                sendErrorAnalyticsEvent(
+                  'LoadTokensMetadataEpicError',
+                  err,
+                  [],
+                  { userId, ABTestingCategory },
+                  { slugs }
+                );
+              }
 
-          return of(loadTokensMetadataActions.fail(err.message));
-        })
+              return of(loadTokensMetadataActions.fail(err.message));
+            })
+          )
+        )
       )
     )
   );

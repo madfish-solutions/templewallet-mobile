@@ -7,7 +7,13 @@ export const useAllCollectiblesDetailsSelector = () => useSelector(state => stat
 export const useCollectibleDetailsSelector = (slug: string): CollectibleDetailsInterface | nullish =>
   useSelector(state => state.collectibles.details.data[slug]);
 
-export const useCollectibleDetailsLoadingSelector = () => useSelector(state => state.collectibles.details.isLoading);
+export const useCollectiblesDetailsLoadingSelector = () => useSelector(state => state.collectibles.details.isLoading);
+
+export const useOneCollectibleDetailsLoadingSelector = () =>
+  useSelector(state => state.collectibles.singleCollectibleLoading);
 
 export const useCollectibleIsAdultSelector = (slug: string): boolean | undefined =>
   useSelector(state => state.collectibles.adultFlags[slug]?.val);
+
+export const useCollectiblesDetailsInFlightSelector = () =>
+  useSelector(state => state.collectibles.collectiblesDetailsInFlight);

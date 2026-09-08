@@ -11,8 +11,14 @@ export const removeKnownSvg = createAction<string>('assets/REMOVE_KNOWN_SVG');
 
 export const putTokenMetadataAction = createAction<TokenMetadataInterface | nullish>('assets/ADD_TOKENS_METADATA');
 
+interface TokensMetadataLoadSuccessPayload {
+  tokens: TokenMetadataInterface[];
+  /** `true` when this submit's stream has finished. Partial successes keep `isLoading`. */
+  done?: boolean;
+}
+
 /** TODO: add `ofDcpNetwork` flag to payload */
-export const loadTokensMetadataActions = createActions<string[], (TokenMetadataInterface | nullish)[]>(
+export const loadTokensMetadataActions = createActions<string[], TokensMetadataLoadSuccessPayload>(
   'assets/LOAD_TOKENS_METADATA'
 );
 
