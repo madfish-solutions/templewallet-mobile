@@ -12,7 +12,7 @@ interface Props {
   variant?: NetworkIconVariant;
 }
 
-export type NetworkIconVariant = 'compact' | 'compactTransparent' | 'medium' | 'tokenBadge' | 'nftBadge' | 'large';
+export type NetworkIconVariant = 'compact' | 'compactTransparent' | 'medium' | 'tokenBadge' | 'badge' | 'large';
 
 export const NetworkIcon: FC<Props> = ({ name, variant = 'compact' }) => {
   const styles = useNetworkLogoStyles();
@@ -24,7 +24,7 @@ export const NetworkIcon: FC<Props> = ({ name, variant = 'compact' }) => {
         size={
           variant === 'large'
             ? formatSize(28)
-            : variant === 'medium' || variant === 'nftBadge'
+            : variant === 'medium' || variant === 'badge'
             ? formatSize(20)
             : formatSize(12)
         }
