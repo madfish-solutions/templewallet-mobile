@@ -22,6 +22,7 @@ export const useModalOptions = (title?: string, disableAndroidGestures = false):
         backgroundColor: colors.navigation,
         borderBottomWidth: DEFAULT_BORDER_WIDTH,
         borderBottomColor: colors.lines,
+        elevation: 0,
         shadowOpacity: 0
       },
       gestureEnabled: disableAndroidGestures ? isIOS : undefined,

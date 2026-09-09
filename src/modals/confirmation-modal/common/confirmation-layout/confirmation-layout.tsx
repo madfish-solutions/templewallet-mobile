@@ -33,6 +33,7 @@ interface Props {
   afterPreview?: ReactNode;
   bottomContent?: ReactNode;
   isContentLoading?: boolean;
+  showPreviewTitle?: boolean;
   loadingText?: string;
   backAction: ConfirmationAction;
   confirmAction: ConfirmationAction;
@@ -49,6 +50,7 @@ export const ConfirmationLayout: FC<Props> = ({
   afterPreview,
   bottomContent,
   isContentLoading = false,
+  showPreviewTitle = true,
   loadingText = 'Operation is loading...',
   backAction,
   confirmAction
@@ -72,12 +74,16 @@ export const ConfirmationLayout: FC<Props> = ({
                 <AccountCard account={account} chainKind={accountChainKind} isShieldedTez={isShieldedTez} />
               </>
             ) : null}
-            <Divider size={formatSize(24)} />
+            <Divider size={formatSize(showPreviewTitle ? 24 : 16)} />
 
-            <Text style={styles.sectionTitle}>Preview</Text>
-            <Divider size={formatSize(12)} />
-            <View style={styles.divider} />
-            <Divider size={formatSize(8)} />
+            {showPreviewTitle && (
+              <>
+                <Text style={styles.sectionTitle}>Preview</Text>
+                <Divider size={formatSize(12)} />
+                <View style={styles.divider} />
+                <Divider size={formatSize(8)} />
+              </>
+            )}
 
             {preview}
             {afterPreview}

@@ -7,6 +7,7 @@ export interface ValidatedWatchAssetParams {
   options: {
     address: HexString;
     symbol?: string;
+    name?: string;
     decimals?: number;
     image?: string;
   };
@@ -21,6 +22,7 @@ export const watchAssetParamsValidationSchema = () =>
     options: objectSchema({
       address: evmAddressValidationSchema().required(),
       symbol: stringSchema().min(1).max(11),
+      name: stringSchema().min(1).max(255),
       decimals: numberSchema().integer().min(0).max(255),
       image: stringSchema().min(1)
     }).required()
