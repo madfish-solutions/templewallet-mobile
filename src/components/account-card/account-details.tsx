@@ -15,7 +15,7 @@ import { truncateAccountAddress } from 'src/utils/account.utils';
 
 import { useAccountCardStyles } from './styles';
 
-export interface AccountAddressDetails {
+interface AccountAddressDetails {
   address: string;
   network: CryptoLogoNameEnum;
   onPress?: (event?: GestureResponderEvent) => void;
