@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { from } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useRequestConfirmation } from 'src/hooks/request-confirmation/use-request-confirmation.hook';
 import { AccountWithEvmAddress } from 'src/interfaces/account.interfaces';
 import { loadConnectionsActions } from 'src/store/d-apps/d-apps-actions';
@@ -110,6 +111,7 @@ export const WcSessionProposalConfirmation: FC<Props> = ({ proposal }) => {
       accounts={evmAccounts}
       initialValues={formInitialValues}
       isLoading={isLoading}
+      chainKind={TempleChainKind.EVM}
       onSubmit={onSubmit}
     />
   );

@@ -3,6 +3,7 @@ import React, { FC, useMemo } from 'react';
 import { map, switchMap } from 'rxjs/operators';
 
 import { BeaconHandler } from 'src/beacon/beacon-handler';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useDappRequestConfirmation } from 'src/hooks/request-confirmation/use-dapp-request-confirmation.hook';
 import { useParseSignPayload } from 'src/hooks/use-parse-sign-payload.hook';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -62,6 +63,7 @@ export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
       isLoading={isLoading}
       cancelTestID={SignPayloadRequestConfirmationSelectors.cancelButton}
       confirmTestID={SignPayloadRequestConfirmationSelectors.signButton}
+      chainKind={TempleChainKind.Tezos}
       onCancel={goBack}
       onConfirm={() => confirmRequest(message)}
     />

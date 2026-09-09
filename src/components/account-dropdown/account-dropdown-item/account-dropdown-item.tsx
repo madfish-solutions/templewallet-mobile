@@ -2,9 +2,8 @@ import BigNumber from 'bignumber.js';
 import React, { memo, useCallback, useMemo } from 'react';
 import { GestureResponderEvent, Text, View } from 'react-native';
 
-import { AccountAddressDetails, AccountDetails } from 'src/components/account-card/account-details';
+import { AccountDetails } from 'src/components/account-card/account-details';
 import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
-import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { DropdownListItemComponent } from 'src/components/dropdown/dropdown';
 import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { IconV2 } from 'src/components/icon-v2';
@@ -17,11 +16,11 @@ import { useContactsSelector } from 'src/store/contact-book/contact-book-selecto
 import { useSaplingAddressForAccount } from 'src/store/sapling/sapling-selectors.ts';
 import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_DECIMALS, TEZ_TOKEN_SYMBOL } from 'src/token/data/tokens-metadata';
-import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
 import { useCurrentAccountCollectiblesWithPositiveBalance } from 'src/utils/assets/hooks';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatNumber } from 'src/utils/format-price';
+import { getAddressesOptions } from 'src/utils/get-addresses-options';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 import { useTezosTokenOfKnownAccount } from 'src/utils/wallet.utils';
@@ -32,7 +31,7 @@ import {
   useAccountDropdownItemStyles
 } from './account-dropdown-item.styles';
 
-export const AccountDropdownItem = memo<AccountDropdownItemProps>(
+const AccountDropdownItem = memo<AccountDropdownItemProps>(
   ({ account, showFullData = true, actionIconName, actionIconColor, isCollectibleScreen = false }) => {
     const styles = useAccountDropdownItemStyles();
 
@@ -77,36 +76,14 @@ export const AccountDropdownTriggerItem = memo<AccountDropdownItemProps>(props =
 const AccountDropdownListItem = memo<Pick<AccountDropdownItemProps, 'account'>>(({ account }) => {
   const saplingAddress = useSaplingAddressForAccount(account);
 
-  const tezosAddress = getAccountAddressForTezos(account);
-  const evmAddress = getAccountAddressForEvm(account);
-
   const copyAddress = useCallback((address: string, event?: GestureResponderEvent) => {
     event?.stopPropagation();
     copyStringToClipboard(address);
   }, []);
-  const addresses: AccountAddressDetails[] = [
-    tezosAddress
-      ? {
-          address: tezosAddress,
-          network: CryptoLogoNameEnum.Tezos,
-          onPress: (event?: GestureResponderEvent) => copyAddress(tezosAddress, event)
-        }
-      : undefined,
-    saplingAddress
-      ? {
-          address: saplingAddress,
-          network: CryptoLogoNameEnum.ShieldedTezos,
-          onPress: (event?: GestureResponderEvent) => copyAddress(saplingAddress, event)
-        }
-      : undefined,
-    evmAddress
-      ? {
-          address: evmAddress,
-          network: CryptoLogoNameEnum.Etherlink,
-          onPress: (event?: GestureResponderEvent) => copyAddress(evmAddress, event)
-        }
-      : undefined
-  ].filter(isDefined);
+  const addresses = useMemo(
+    () => getAddressesOptions(undefined, true, saplingAddress, account, copyAddress),
+    [saplingAddress, account, copyAddress]
+  );
 
   return (
     <AccountDetails

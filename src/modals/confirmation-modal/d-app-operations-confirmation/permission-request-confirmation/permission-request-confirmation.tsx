@@ -5,6 +5,7 @@ import { from } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { BeaconHandler } from 'src/beacon/beacon-handler';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { ApprovePermissionRequestActionPayloadInterface } from 'src/hooks/request-confirmation/approve-permission-request-action-payload.interface';
 import { useDappRequestConfirmation } from 'src/hooks/request-confirmation/use-dapp-request-confirmation.hook';
 import { AccountWithTezosAddress } from 'src/interfaces/account.interfaces';
@@ -69,6 +70,7 @@ export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
       accounts={tezosAccounts}
       initialValues={formInitialValues}
       isLoading={isLoading}
+      chainKind={TempleChainKind.Tezos}
       onSubmit={onSubmit}
     />
   );

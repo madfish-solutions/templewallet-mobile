@@ -9,6 +9,7 @@ import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { Account } from 'src/interfaces/account.interfaces';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -26,6 +27,7 @@ interface Props<T extends Account> {
   accounts: T[];
   initialValues: ConnectionRequestConfirmationFormValues<T>;
   isLoading: boolean;
+  chainKind: TempleChainKind;
   onSubmit: SyncFn<ConnectionRequestConfirmationFormValues<T>>;
 }
 
@@ -36,6 +38,7 @@ export const ConnectionRequestConfirmationContent = <T extends Account>({
   accounts,
   initialValues,
   isLoading,
+  chainKind,
   onSubmit
 }: Props<T>) => {
   const { goBack } = useNavigation();
@@ -54,7 +57,7 @@ export const ConnectionRequestConfirmationContent = <T extends Account>({
             <AppMetadataConnectionView name={appName} iconUri={iconUri} iconSeed={iconSeed} />
             <Divider size={formatSize(24)} />
             <Label label="Account" description="To be connected with dApp." />
-            <AccountFormDropdown name="approver" list={accounts} />
+            <AccountFormDropdown name="approver" list={accounts} chainKind={chainKind} />
           </ScreenContainer>
           <ModalButtonsFloatingContainer variant="bordered">
             <ButtonLargeSecondary

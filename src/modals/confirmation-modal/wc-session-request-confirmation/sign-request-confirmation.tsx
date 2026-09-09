@@ -1,5 +1,6 @@
 import { FC, useMemo } from 'react';
 
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { isWcPersonalSignRequestContent, StrictWcSigningRequestContent } from 'src/types/strict-wc-session-request';
 import { isDefined } from 'src/utils/is-defined';
 import { getWcSigningPayloadPreview } from 'src/walletconnect/get-wc-signing-payload-preview';
@@ -10,7 +11,7 @@ import {
 } from '../common/sign-request-confirmation-content';
 
 interface EvmSignRequestConfirmationProps
-  extends Omit<SignRequestConfirmationContentProps, 'payloadPreview' | 'bytesPayload'> {
+  extends Omit<SignRequestConfirmationContentProps, 'payloadPreview' | 'bytesPayload' | 'chainKind'> {
   requestContent: StrictWcSigningRequestContent;
 }
 
@@ -24,5 +25,12 @@ export const EvmSignRequestConfirmation: FC<EvmSignRequestConfirmationProps> = (
     [requestContent, payloadPreview]
   );
 
-  return <SignRequestConfirmationContent {...restProps} payloadPreview={payloadPreview} bytesPayload={bytesPayload} />;
+  return (
+    <SignRequestConfirmationContent
+      {...restProps}
+      payloadPreview={payloadPreview}
+      bytesPayload={bytesPayload}
+      chainKind={TempleChainKind.EVM}
+    />
+  );
 };

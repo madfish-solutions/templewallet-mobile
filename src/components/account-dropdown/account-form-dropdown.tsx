@@ -1,36 +1,71 @@
-import React, { FC } from 'react';
+import React, { FC, useCallback } from 'react';
 
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { FormDropdown } from 'src/form/form-dropdown';
 import { Account } from 'src/interfaces/account.interfaces.ts';
 import { TestIdProps } from 'src/interfaces/test-id.props';
+import { useGetSaplingAddressForAccount } from 'src/store/sapling/sapling-selectors';
+import { getAddressesOptions } from 'src/utils/get-addresses-options';
 
-import { DropdownValueComponent } from '../dropdown/dropdown';
+import { AccountSummary } from '../account-card';
+import { AccountDetails } from '../account-card/account-details';
+import { DropdownListItemComponent, DropdownValueComponent } from '../dropdown/dropdown';
 import { DropdownItemContainer } from '../dropdown/dropdown-item-container/dropdown-item-container';
-import { IconNameV2Enum } from '../icon-v2/icon-name.enum';
+import { getSeedFromAccount } from '../robot-icon/robot-icon.utils';
 
-import { AccountDropdownItem, renderAccountListItem } from './account-dropdown-item/account-dropdown-item';
 import { accountEqualityFn } from './account-equality-fn';
 
 interface Props extends TestIdProps {
   name: string;
   list: Account[];
+  chainKind?: TempleChainKind;
 }
 
-const renderAccountValue: DropdownValueComponent<Account> = ({ value }) => (
-  <DropdownItemContainer>
-    {value && <AccountDropdownItem account={value} actionIconName={IconNameV2Enum.DropdownDown} />}
-  </DropdownItemContainer>
-);
+export const AccountFormDropdown: FC<Props> = ({ name, list, chainKind, testID, testIDProperties }) => {
+  const getSaplingAddressForAccount = useGetSaplingAddressForAccount();
 
-export const AccountFormDropdown: FC<Props> = ({ name, list, testID, testIDProperties }) => (
-  <FormDropdown
-    name={name}
-    description="Accounts"
-    list={list}
-    equalityFn={accountEqualityFn}
-    renderValue={renderAccountValue}
-    renderListItem={renderAccountListItem}
-    testID={testID}
-    testIDProperties={testIDProperties}
-  />
-);
+  const renderAccountValue = useCallback<DropdownValueComponent<Account>>(
+    ({ value }) => (
+      <DropdownItemContainer>
+        {value && (
+          <AccountSummary
+            variant="account"
+            isShieldedTez={!chainKind}
+            account={value}
+            chainKind={chainKind}
+            showDropdownDown
+          />
+        )}
+      </DropdownItemContainer>
+    ),
+    [chainKind]
+  );
+
+  const renderAccountListItem = useCallback<DropdownListItemComponent<Account>>(
+    ({ item }) => (
+      <AccountDetails
+        account={item}
+        avatarSeed={getSeedFromAccount(item)}
+        name={item.name}
+        addresses={getAddressesOptions(chainKind, !chainKind, getSaplingAddressForAccount(item), item)}
+        addressIconVariant="compactTransparent"
+        compactAddresses
+        fixedBalanceWidth={false}
+      />
+    ),
+    [chainKind, getSaplingAddressForAccount]
+  );
+
+  return (
+    <FormDropdown
+      name={name}
+      description="Accounts"
+      list={list}
+      equalityFn={accountEqualityFn}
+      renderValue={renderAccountValue}
+      renderListItem={renderAccountListItem}
+      testID={testID}
+      testIDProperties={testIDProperties}
+    />
+  );
+};

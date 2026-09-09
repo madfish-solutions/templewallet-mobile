@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 import { Text, View } from 'react-native';
 
-import { AccountDropdownItem } from 'src/components/account-dropdown/account-dropdown-item/account-dropdown-item';
+import { AccountCard } from 'src/components/account-card';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { Divider } from 'src/components/divider/divider';
@@ -10,6 +10,7 @@ import { useNavigationSetOptions } from 'src/components/header/use-navigation-se
 import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { Account } from 'src/interfaces/account.interfaces';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { formatSize } from 'src/styles/format-size';
@@ -35,6 +36,7 @@ export interface SignRequestConfirmationContentProps {
   isLoading: boolean;
   cancelTestID: string;
   confirmTestID: string;
+  chainKind: TempleChainKind;
   onCancel: EmptyFn;
   onConfirm: EmptyFn;
 }
@@ -51,6 +53,7 @@ export const SignRequestConfirmationContent: FC<SignRequestConfirmationContentPr
   isLoading,
   cancelTestID,
   confirmTestID,
+  chainKind,
   onCancel,
   onConfirm
 }) => {
@@ -74,7 +77,7 @@ export const SignRequestConfirmationContent: FC<SignRequestConfirmationContentPr
         <Divider />
         <Label label="Account" />
         <Divider />
-        <AccountDropdownItem account={account} />
+        <AccountCard chainKind={chainKind} account={account} isShieldedTez={false} />
         <Divider />
         <View style={styles.descriptionContainer}>
           <Text style={styles.descriptionText}>Payload to sign</Text>
