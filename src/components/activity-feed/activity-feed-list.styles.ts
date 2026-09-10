@@ -15,7 +15,8 @@ export const useActivityFeedListStyles = createUseStyles(({ colors, typography }
     paddingLeft: formatSize(16)
   },
   promotionItemWrapper: {
-    margin: formatSize(16)
+    marginHorizontal: formatSize(16),
+    marginVertical: formatSize(8)
   },
   emptyListWrapper: {
     alignItems: 'center',
