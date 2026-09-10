@@ -21,7 +21,7 @@ interface CommonProps {
   detailsContainerStyle?: StyleProp<ViewStyle>;
 }
 
-interface AccountProps extends CommonProps {
+export interface AccountProps extends CommonProps {
   variant?: 'account';
   account: Account;
   chainKind?: TempleChainKind;

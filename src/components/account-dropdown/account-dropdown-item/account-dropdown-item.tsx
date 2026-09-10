@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import React, { memo, useCallback, useMemo } from 'react';
 import { GestureResponderEvent, Text, View } from 'react-native';
 
-import { AccountSummary } from 'src/components/account-card';
+import { AccountProps, AccountSummary } from 'src/components/account-card';
 import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
 import { DropdownListItemComponent } from 'src/components/dropdown/dropdown';
 import { HideBalance } from 'src/components/hide-balance/hide-balance';
@@ -29,7 +29,7 @@ import {
   useAccountDropdownItemStyles
 } from './account-dropdown-item.styles';
 
-export const AccountDropdownItem = memo<AccountDropdownItemProps>(
+const AccountDropdownItem = memo<AccountDropdownItemProps>(
   ({ account, showFullData = true, actionIconName, actionIconColor, isCollectibleScreen = false }) => {
     const styles = useAccountDropdownItemStyles();
 
@@ -71,13 +71,23 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
 
 export const AccountDropdownTriggerItem = memo<AccountDropdownItemProps>(props => <AccountDropdownItem {...props} />);
 
-const AccountDropdownListItem = memo<Pick<AccountDropdownItemProps, 'account'>>(({ account }) => {
+export const AccountDropdownListItem = memo<
+  Pick<AccountDropdownItemProps, 'account'> & Partial<Pick<AccountProps, 'showAllAddresses' | 'chainKind'>>
+>(({ account, showAllAddresses = true, chainKind }) => {
   const copyAddress = useCallback((address: string, event?: GestureResponderEvent) => {
     event?.stopPropagation();
     copyStringToClipboard(address);
   }, []);
 
-  return <AccountSummary account={account} showAllAddresses fixedBalanceWidth={false} onAddressPress={copyAddress} />;
+  return (
+    <AccountSummary
+      account={account}
+      showAllAddresses={showAllAddresses}
+      fixedBalanceWidth={false}
+      onAddressPress={copyAddress}
+      chainKind={chainKind}
+    />
+  );
 });
 
 export const renderAccountListItem: DropdownListItemComponent<Account> = ({ item }) => (
