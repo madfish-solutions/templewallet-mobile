@@ -1,5 +1,5 @@
 import { BottomSheetSectionList, TouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import { FlatListProps, ListRenderItemInfo, StyleProp, Text, View, ViewStyle } from 'react-native';
 
 import { emptyComponent, emptyFn } from 'src/config/general';
@@ -83,6 +83,7 @@ const SectionDropdownComponent = <T extends unknown>({
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
   const contentHeight = useDropdownHeight();
+  const [searchInputKey, setSearchInputKey] = useState(0);
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<T>) => {
@@ -131,6 +132,18 @@ const SectionDropdownComponent = <T extends unknown>({
     [styles.sectionHeaderText]
   );
 
+  const handleOpen = useCallback(() => {
+    scroll();
+    dropdownBottomSheetController.open();
+  }, [dropdownBottomSheetController, scroll]);
+
+  const handleClose = useCallback(() => {
+    if (isSearchable) {
+      setSearchValue('');
+      setSearchInputKey(value => value + 1);
+    }
+  }, [isSearchable, setSearchValue]);
+
   return (
     <>
       <TouchableWithAnalytics
@@ -138,11 +151,7 @@ const SectionDropdownComponent = <T extends unknown>({
         disabled={disabled}
         testID={testID}
         testIDProperties={testIDProperties}
-        onPress={() => {
-          scroll();
-
-          return dropdownBottomSheetController.open();
-        }}
+        onPress={handleOpen}
         onLongPress={onLongPress}
       >
         {renderValue({ value, disabled })}
@@ -154,11 +163,13 @@ const SectionDropdownComponent = <T extends unknown>({
         controller={dropdownBottomSheetController}
         showCloseButton={showCloseButton}
         showCancelButton={!showCloseButton}
+        onClose={handleClose}
       >
         <View style={styles.contentContainer}>
           {isSearchable && (
             <View style={styles.searchContainer}>
               <SearchInput
+                key={searchInputKey}
                 containerStyle={styles.searchInputContainer}
                 placeholder="Search"
                 onChangeText={setSearchValue}

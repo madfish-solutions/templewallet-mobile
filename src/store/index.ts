@@ -4,7 +4,6 @@ import { bakingEpics } from './baking/baking-epics';
 import { buyWithCreditCardEpics } from './buy-with-credit-card/epics';
 import { collectiblesEpics } from './collectibles/collectibles-epics';
 import { collectionsEpics } from './collectons/collections-epics';
-import { contactsEpics } from './contact-book/contact-book-epics';
 import { createStore } from './create-store';
 import { currencyEpics } from './currency/currency-epics';
 import { dAppsEpics } from './d-apps/d-apps-epics';
@@ -37,7 +36,6 @@ export const { store, persistor } = createStore(
   marketEpics,
   notificationsEpics,
   swapEpics,
-  contactsEpics,
   collectionsEpics,
   buyWithCreditCardEpics,
   abTestingEpics,

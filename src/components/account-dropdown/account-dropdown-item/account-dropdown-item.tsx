@@ -2,9 +2,8 @@ import BigNumber from 'bignumber.js';
 import React, { memo, useCallback, useMemo } from 'react';
 import { GestureResponderEvent, Text, View } from 'react-native';
 
-import { AccountAddressDetails, AccountDetails } from 'src/components/account-card/account-details';
+import { AccountSummary } from 'src/components/account-card';
 import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
-import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { DropdownListItemComponent } from 'src/components/dropdown/dropdown';
 import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { IconV2 } from 'src/components/icon-v2';
@@ -14,10 +13,8 @@ import { TruncatedText } from 'src/components/truncated-text';
 import { Account } from 'src/interfaces/account.interfaces.ts';
 import { useAllCollectiblesDetailsSelector } from 'src/store/collectibles/collectibles-selectors';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
-import { useSaplingAddressForAccount } from 'src/store/sapling/sapling-selectors.ts';
 import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_DECIMALS, TEZ_TOKEN_SYMBOL } from 'src/token/data/tokens-metadata';
-import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
 import { useCurrentAccountCollectiblesWithPositiveBalance } from 'src/utils/assets/hooks';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
@@ -75,50 +72,12 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
 export const AccountDropdownTriggerItem = memo<AccountDropdownItemProps>(props => <AccountDropdownItem {...props} />);
 
 const AccountDropdownListItem = memo<Pick<AccountDropdownItemProps, 'account'>>(({ account }) => {
-  const saplingAddress = useSaplingAddressForAccount(account);
-
-  const tezosAddress = getAccountAddressForTezos(account);
-  const evmAddress = getAccountAddressForEvm(account);
-
   const copyAddress = useCallback((address: string, event?: GestureResponderEvent) => {
     event?.stopPropagation();
     copyStringToClipboard(address);
   }, []);
-  const addresses: AccountAddressDetails[] = [
-    tezosAddress
-      ? {
-          address: tezosAddress,
-          network: CryptoLogoNameEnum.Tezos,
-          onPress: (event?: GestureResponderEvent) => copyAddress(tezosAddress, event)
-        }
-      : undefined,
-    saplingAddress
-      ? {
-          address: saplingAddress,
-          network: CryptoLogoNameEnum.ShieldedTezos,
-          onPress: (event?: GestureResponderEvent) => copyAddress(saplingAddress, event)
-        }
-      : undefined,
-    evmAddress
-      ? {
-          address: evmAddress,
-          network: CryptoLogoNameEnum.Etherlink,
-          onPress: (event?: GestureResponderEvent) => copyAddress(evmAddress, event)
-        }
-      : undefined
-  ].filter(isDefined);
 
-  return (
-    <AccountDetails
-      account={account}
-      avatarSeed={getSeedFromAccount(account)}
-      name={account.name}
-      addresses={addresses}
-      addressIconVariant="compactTransparent"
-      compactAddresses
-      fixedBalanceWidth={false}
-    />
-  );
+  return <AccountSummary account={account} showAllAddresses fixedBalanceWidth={false} onAddressPress={copyAddress} />;
 });
 
 export const renderAccountListItem: DropdownListItemComponent<Account> = ({ item }) => (

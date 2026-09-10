@@ -2,6 +2,9 @@ import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { Account } from 'src/interfaces/account.interfaces';
 
+import { isDefined } from './is-defined';
+import { includesIgnoreCase } from './string.utils';
+
 export interface AccountForChain<C extends TempleChainKind = TempleChainKind> {
   id: string;
   chain: C;
@@ -24,6 +27,15 @@ export const getAccountAddressForEvm = (account: Account) =>
 
 export const truncateAccountAddress = (address: string) =>
   address.length > 10 ? `${address.slice(0, 2)}...${address.slice(-4)}` : address;
+
+export const accountMatchesSearch = (account: Account, searchValue: string, saplingAddress?: string | null) => {
+  const tezosAddress = getAccountAddressForTezos(account);
+  const evmAddress = getAccountAddressForEvm(account);
+
+  return [account.name, tezosAddress, saplingAddress, evmAddress].some(
+    value => isDefined(value) && includesIgnoreCase(value, searchValue)
+  );
+};
 
 export const getAccountAddressForChain = (account: Account, chain: TempleChainKind): string | undefined => {
   switch (account.type) {

@@ -9,7 +9,12 @@ import { isDefined } from 'src/utils/is-defined';
 import { WalletState } from './wallet-state';
 
 export const retrieveAccountState = (state: Draft<WalletState>, accountId?: string) => {
-  const targetAccountId = accountId ?? getSelectedAccountFromWallet(state).id;
+  const targetAccountId = accountId ?? getSelectedAccountFromWallet(state)?.id;
+
+  // A reset can clear the selected account before a pending reducer action runs.
+  if (!targetAccountId) {
+    return undefined;
+  }
 
   if (!state.accountsStateRecord[targetAccountId]) {
     state.accountsStateRecord[targetAccountId] = initialAccountState;

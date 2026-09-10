@@ -9,6 +9,7 @@ import { createActions } from '../create-actions';
 
 export const setSelectedAccountIdAction = createAction<string | undefined>('wallet/SET_SELECTED_ACCOUNT_ID');
 export const addAccountAction = createAction<Account>('wallet/ADD_ACCOUNT');
+export const addAccountsAction = createAction<Account[]>('wallet/ADD_ACCOUNTS');
 export const completeEvmAccountsMigrationAction = createAction<Account[]>('wallet/COMPLETE_EVM_ACCOUNTS_MIGRATION');
 
 export const updateAccountAction = createAction<Account>('wallet/UPDATE_ACCOUNT');

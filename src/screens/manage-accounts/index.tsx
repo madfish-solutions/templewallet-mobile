@@ -4,7 +4,6 @@ import { View } from 'react-native';
 import { BottomSheet } from 'src/components/bottom-sheet/bottom-sheet';
 import { BottomSheetActionButton } from 'src/components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
 import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
-import { Divider } from 'src/components/divider/divider';
 import { generateScreenOptions } from 'src/components/header/generate-screen-options.util';
 import { HeaderButton } from 'src/components/header/header-button/header-button';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
@@ -20,10 +19,10 @@ import { formatSize } from 'src/styles/format-size';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
-import { ManageAccountsSelectors } from './manage-accounts.selectors';
-import { useManageAccountsStyles } from './manage-accounts.styles';
-import { ManageHdAccounts } from './manage-hd-accounts/manage-hd-accounts';
-import { ManageImportedAccounts } from './manage-imported-accounts/manage-imported-accounts';
+import { ManageHdAccounts } from './manage-hd-accounts';
+import { ManageImportedAccounts } from './manage-imported-accounts';
+import { ManageAccountsSelectors } from './selectors.ts';
+import { useManageAccountsStyles } from './styles.ts';
 
 const manageHdAccountsIndex = 0;
 
@@ -53,7 +52,6 @@ export const ManageAccounts = () => {
 
   return (
     <>
-      <Divider size={formatSize(8)} />
       <View style={styles.segmentControlContainer}>
         <TextSegmentControl
           selectedIndex={segmentedControlIndex}
@@ -62,8 +60,6 @@ export const ManageAccounts = () => {
           onChange={setSegmentedControlIndex}
         />
       </View>
-
-      <Divider size={formatSize(8)} />
 
       {showManageHdAccounts ? <ManageHdAccounts /> : <ManageImportedAccounts />}
       <BottomSheet
