@@ -1,4 +1,4 @@
-import React, { memo, ReactNode, Ref, useCallback, useMemo, useRef } from 'react';
+import React, { memo, ReactNode, Ref, useCallback, useMemo, useRef, useState } from 'react';
 import {
   FlatListProps,
   ListRenderItemInfo,
@@ -123,6 +123,7 @@ const DropdownComponent = <T extends unknown>({
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
   const afterCloseRef = useRef<EmptyFn>(undefined);
+  const [searchInputKey, setSearchInputKey] = useState(0);
 
   const itemsTitles = useMemo(() => {
     const result: Record<number, string | undefined> = {};
@@ -227,10 +228,24 @@ const DropdownComponent = <T extends unknown>({
   );
 
   const handleDropdownClose = useCallback(() => {
+    if (isSearchable) {
+      setSearchValue?.('');
+      setSearchInputKey(value => value + 1);
+    }
+
     const callback = afterCloseRef.current;
     afterCloseRef.current = undefined;
     callback?.();
-  }, []);
+  }, [isSearchable, setSearchValue]);
+
+  const handleOpen = useCallback(() => {
+    if (scrollToSelectedOnOpen) {
+      scroll();
+    }
+
+    trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
+    dropdownBottomSheetController.open();
+  }, [dropdownBottomSheetController, scroll, scrollToSelectedOnOpen, testID, testIDProperties, trackEvent]);
 
   return (
     <>
@@ -238,15 +253,7 @@ const DropdownComponent = <T extends unknown>({
         <TouchableOpacity
           style={styles.valueContainer}
           disabled={disabled}
-          onPress={() => {
-            if (scrollToSelectedOnOpen) {
-              scroll();
-            }
-
-            trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
-
-            return dropdownBottomSheetController.open();
-          }}
+          onPress={handleOpen}
           onLongPress={onLongPress}
           testID={testID}
         >
@@ -266,6 +273,7 @@ const DropdownComponent = <T extends unknown>({
           {isSearchable && (
             <View style={styles.searchContainer}>
               <SearchInput
+                key={searchInputKey}
                 containerStyle={styles.searchInputContainer}
                 placeholder={searchPlaceholder}
                 onChangeText={setSearchValue}
