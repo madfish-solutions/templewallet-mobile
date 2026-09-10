@@ -42,8 +42,6 @@ export const useUserIdSelector = () => useSelector(({ settings }) => settings.us
 
 export const useSlippageSelector = () => useSelector(({ settings }) => settings.slippage);
 
-export const useIsShownDomainNameSelector = () => useSelector(({ settings }) => settings.isShownDomainName);
-
 export const useHideZeroBalancesSelector = () => useSelector(({ settings }) => settings.hideZeroBalances);
 
 export const useIsShowLoaderSelector = () => useSelector(({ settings }) => settings.isShowLoader);

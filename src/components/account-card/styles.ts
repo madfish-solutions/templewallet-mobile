@@ -7,6 +7,9 @@ export const useAccountCardStyles = createUseStyles(({ colors, typography }) => 
     paddingVertical: formatSize(12),
     borderRadius: formatSize(10)
   },
+  cardWithFooter: {
+    gap: formatSize(24)
+  },
   container: {
     flex: 1,
     gap: formatSize(12)
