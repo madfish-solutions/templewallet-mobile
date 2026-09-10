@@ -46,7 +46,7 @@ export type ModalsParamList = {
   [ModalsEnum.RenameAccount]: { account: Account };
   [ModalsEnum.SelectBaker]: undefined;
   [ModalsEnum.Confirmation]: ConfirmationModalParams;
-  [ModalsEnum.RevealSeedPhrase]: { account?: Account };
+  [ModalsEnum.RevealSeedPhrase]: undefined;
   [ModalsEnum.RevealPrivateKey]: { account: Account };
   [ModalsEnum.EnableBiometryPassword]: undefined;
   [ModalsEnum.CollectibleModal]: CollectibleReference;

@@ -1,7 +1,7 @@
 import { ParamsWithKind } from '@taquito/taquito';
 import { useMemo } from 'react';
 import { Observable } from 'rxjs';
-import { catchError, switchMap, withLatestFrom } from 'rxjs/operators';
+import { catchError, filter, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
@@ -25,11 +25,9 @@ export const withAccount =
   <T>(state$: Observable<RootState>) =>
   (observable$: Observable<T>) =>
     observable$.pipe(
-      withLatestFrom(state$, (value, { wallet }): [T, Account] => {
-        const account = getSelectedAccountFromWallet(wallet);
-
-        return [value, account];
-      })
+      withLatestFrom(state$, (value, { wallet }) => [value, getSelectedAccountFromWallet(wallet)] as const),
+      // A reset can clear the wallet before pending actions sample the state.
+      filter((result): result is readonly [T, Account] => result[1] !== undefined)
     );
 
 export const withAllAccounts =

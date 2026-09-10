@@ -1,71 +1,61 @@
-import React, { FC, useCallback } from 'react';
+import { useField } from 'formik';
+import React, { FC } from 'react';
 
-import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import { AccountCard } from 'src/components/account-card';
+import { ErrorMessage } from 'src/form/error-message/error-message';
 import { FormDropdown } from 'src/form/form-dropdown';
 import { Account } from 'src/interfaces/account.interfaces.ts';
 import { TestIdProps } from 'src/interfaces/test-id.props';
-import { useGetSaplingAddressForAccount } from 'src/store/sapling/sapling-selectors';
-import { getAddressesOptions } from 'src/utils/get-addresses-options';
 
-import { AccountSummary } from '../account-card';
-import { AccountDetails } from '../account-card/account-details';
-import { DropdownListItemComponent, DropdownValueComponent } from '../dropdown/dropdown';
+import { DropdownValueComponent } from '../dropdown/dropdown';
 import { DropdownItemContainer } from '../dropdown/dropdown-item-container/dropdown-item-container';
-import { getSeedFromAccount } from '../robot-icon/robot-icon.utils';
+import { IconNameV2Enum } from '../icon-v2/icon-name.enum';
 
+import { AccountDropdownBase, AccountDropdownValueComponent } from './account-dropdown-base';
+import { AccountDropdownItem, renderAccountListItem } from './account-dropdown-item/account-dropdown-item';
 import { accountEqualityFn } from './account-equality-fn';
 
 interface Props extends TestIdProps {
   name: string;
   list: Account[];
-  chainKind?: TempleChainKind;
 }
 
-export const AccountFormDropdown: FC<Props> = ({ name, list, chainKind, testID, testIDProperties }) => {
-  const getSaplingAddressForAccount = useGetSaplingAddressForAccount();
+const renderAccountValue: DropdownValueComponent<Account> = ({ value }) => (
+  <DropdownItemContainer>
+    {value && <AccountDropdownItem account={value} actionIconName={IconNameV2Enum.DropdownDown} />}
+  </DropdownItemContainer>
+);
 
-  const renderAccountValue = useCallback<DropdownValueComponent<Account>>(
-    ({ value }) => (
-      <DropdownItemContainer>
-        {value && (
-          <AccountSummary
-            variant="account"
-            isShieldedTez={!chainKind}
-            account={value}
-            chainKind={chainKind}
-            showDropdownDown
-          />
-        )}
-      </DropdownItemContainer>
-    ),
-    [chainKind]
-  );
+const renderAccountCardValue: AccountDropdownValueComponent = ({ value }) => (
+  <AccountCard account={value} showAllAddresses showDropdownDown />
+);
 
-  const renderAccountListItem = useCallback<DropdownListItemComponent<Account>>(
-    ({ item }) => (
-      <AccountDetails
-        account={item}
-        avatarSeed={getSeedFromAccount(item)}
-        name={item.name}
-        addresses={getAddressesOptions(chainKind, !chainKind, getSaplingAddressForAccount(item), item)}
-        addressIconVariant="compactTransparent"
-        compactAddresses
-        fixedBalanceWidth={false}
-      />
-    ),
-    [chainKind, getSaplingAddressForAccount]
-  );
+export const AccountCardFormDropdown: FC<Props> = ({ name, list, testID, testIDProperties }) => {
+  const [field, meta, helpers] = useField<Account>(name);
+  const handleValueChange = (account: Account) => void helpers.setValue(account);
 
   return (
-    <FormDropdown
-      name={name}
-      description="Accounts"
-      list={list}
-      equalityFn={accountEqualityFn}
-      renderValue={renderAccountValue}
-      renderListItem={renderAccountListItem}
-      testID={testID}
-      testIDProperties={testIDProperties}
-    />
+    <>
+      <AccountDropdownBase
+        value={field.value}
+        list={list}
+        renderValue={renderAccountCardValue}
+        renderAccountListItem={renderAccountListItem}
+        onValueChange={handleValueChange}
+        testID={testID}
+        testIDProperties={testIDProperties}
+      />
+      <ErrorMessage meta={meta} />
+    </>
   );
 };
+
+export const AccountFormDropdown: FC<Props> = props => (
+  <FormDropdown
+    {...props}
+    description="Accounts"
+    equalityFn={accountEqualityFn}
+    renderValue={renderAccountValue}
+    renderListItem={renderAccountListItem}
+  />
+);

@@ -22,6 +22,7 @@ export type MainStackParams =
   | MainStackParamsPart<ScreensEnum.ManageAssets>
   | MainStackParamsPart<ScreensEnum.Activity>
   | MainStackParamsPart<ScreensEnum.ScanQrCode>
+  | MainStackParamsPart<ScreensEnum.SyncQrCode>
   | MainStackParamsPart<ScreensEnum.Notifications>
   | MainStackParamsPart<ScreensEnum.NotificationsItem>
   | MainStackParamsPart<ScreensEnum.Collection>
