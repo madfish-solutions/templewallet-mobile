@@ -156,11 +156,11 @@ export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
   }, [
     accountTezosTokens,
     getExchangeRate,
-    fiatToUsdRate,
-    evmExchangeRates,
     shieldedBalanceMutez,
     evmBalances,
     evmAssets,
-    evmMetadata
+    evmMetadata,
+    evmExchangeRates,
+    fiatToUsdRate
   ]);
 };
