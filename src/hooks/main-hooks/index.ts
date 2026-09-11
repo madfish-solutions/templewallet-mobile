@@ -23,6 +23,7 @@ import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors
 import { loadTezosBalanceActions, loadAssetsBalancesActions } from 'src/store/wallet/wallet-actions';
 import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { shouldMoveToSoftwareInV1 } from 'src/utils/keychain.utils';
+import { useWcHandler } from 'src/walletconnect/use-wc-handler.hook';
 
 import { useMetadataLoading } from './use-metadata-loading';
 import { useNotificationRedirection } from './use-notification-redirection';
@@ -39,6 +40,7 @@ export const useMainHooks = (isLocked: boolean, isAuthorised: boolean) => {
   useInAppUpdate();
   useAppLockTimer();
   useBeaconHandler();
+  useWcHandler();
   useNFTUniversalLinks();
   useNotificationRedirection(isLocked, isAuthorised);
 

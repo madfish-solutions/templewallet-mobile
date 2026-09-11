@@ -16,6 +16,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { DCP_RPC, MARIGOLD_RPC, OLD_TEMPLE_RPC_URLS, TEMPLE_RPC } from 'src/utils/rpc/rpc-list';
 
 import { createEntity } from './create-entity';
+import { mapBeaconPermissionToConnection } from './d-apps/connection.utils';
 import { LEGACY_IMPORTED_ACCOUNT_TYPE, MigratableAccount, TypedPersistedRootState } from './migrations.types.ts';
 import { rewardsInitialState } from './rewards/rewards-state';
 
@@ -294,6 +295,10 @@ export const MIGRATIONS: MigrationManifest = {
       accountsStateRecord: migratedAccountsStateRecord,
       selectedAccountId: selectedAccount?.id ?? migratedAccounts[0]?.id
     };
+
+    // Replaced Beacon-only permissions with Beacon + WalletConnect connections.
+    state.dApps.connections = createEntity((state.dApps.permissions?.data ?? []).map(mapBeaconPermissionToConnection));
+    delete state.dApps.permissions;
 
     return state;
   }

@@ -39,3 +39,5 @@ export const TEMPLE_ADS_API_URL = getEnv('TEMPLE_ADS_API_URL');
 
 export const KOLO_API_PUBLIC_KEY = getEnv('KOLO_API_PUBLIC_KEY');
 export const KOLO_BASE_URL = getEnv('KOLO_BASE_URL');
+
+export const WC_PROJECT_ID = getEnv('WC_PROJECT_ID');

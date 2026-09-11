@@ -4,9 +4,8 @@ import { Text, TextInput, View } from 'react-native';
 
 import { DEFAULT_EXPECTED_GAS_EXPENSE, emptyFn } from 'src/config/general';
 import { useNumericInput } from 'src/hooks/use-numeric-input.hook';
-import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
 import { AssetInterface } from 'src/interfaces/asset.interface';
-import { useFiatCurrencySelector } from 'src/store/settings/settings-selectors';
+import { useAssetExchangeRateGetter, useFiatCurrencySelector } from 'src/store/settings/settings-selectors';
 import { useCurrentAccountTezosBalance, useTokenBalanceGetter } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
@@ -161,7 +160,7 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
     const amount = value?.amount ?? new BigNumber(0);
     const isLiquidityProviderToken = isDefined(frozenBalance);
 
-    const getTokenExchangeRate = useTokenExchangeRateGetter();
+    const getTokenExchangeRate = useAssetExchangeRateGetter();
     const hasExchangeRate = isDefined(value.asset.exchangeRate);
     const exchangeRate = value.asset.exchangeRate ?? 1;
 

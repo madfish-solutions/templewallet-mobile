@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
-import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
+import { useAssetExchangeRateGetter } from 'src/store/settings/settings-selectors';
 import { useAssetMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG, TZBTC_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { getTokenSlug } from 'src/token/utils/token.utils';
@@ -27,7 +27,7 @@ const getCryptoLogoName = (assetSlug: string) => {
 export const useTezosActivityAsset = (assetSlug?: string, amountSigned?: string | null): ActivityAssetView => {
   const storeMetadata = useAssetMetadataSelector(assetSlug ?? '');
   const metadata = assetSlug === TEZ_TOKEN_SLUG ? TEZ_TOKEN_METADATA : storeMetadata;
-  const getExchangeRate = useTokenExchangeRateGetter();
+  const getExchangeRate = useAssetExchangeRateGetter();
 
   return useMemo(() => {
     if (assetSlug == null) {

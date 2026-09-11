@@ -1,38 +1,41 @@
 import { useField } from 'formik';
-import React, { FC } from 'react';
+import React, { FC, useCallback } from 'react';
 
 import { AccountCard } from 'src/components/account-card';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { ErrorMessage } from 'src/form/error-message/error-message';
-import { FormDropdown } from 'src/form/form-dropdown';
 import { Account } from 'src/interfaces/account.interfaces.ts';
 import { TestIdProps } from 'src/interfaces/test-id.props';
+import { isDefined } from 'src/utils/is-defined';
 
-import { DropdownValueComponent } from '../dropdown/dropdown';
-import { DropdownItemContainer } from '../dropdown/dropdown-item-container/dropdown-item-container';
-import { IconNameV2Enum } from '../icon-v2/icon-name.enum';
+import { DropdownListItemComponent } from '../dropdown/dropdown';
 
 import { AccountDropdownBase, AccountDropdownValueComponent } from './account-dropdown-base';
-import { AccountDropdownItem, renderAccountListItem } from './account-dropdown-item/account-dropdown-item';
-import { accountEqualityFn } from './account-equality-fn';
+import { AccountDropdownListItem } from './account-dropdown-item/account-dropdown-item';
 
 interface Props extends TestIdProps {
   name: string;
   list: Account[];
+  chainKind?: TempleChainKind;
 }
 
-const renderAccountValue: DropdownValueComponent<Account> = ({ value }) => (
-  <DropdownItemContainer>
-    {value && <AccountDropdownItem account={value} actionIconName={IconNameV2Enum.DropdownDown} />}
-  </DropdownItemContainer>
-);
-
-const renderAccountCardValue: AccountDropdownValueComponent = ({ value }) => (
-  <AccountCard account={value} showAllAddresses showDropdownDown />
-);
-
-export const AccountCardFormDropdown: FC<Props> = ({ name, list, testID, testIDProperties }) => {
+export const AccountCardFormDropdown: FC<Props> = ({ name, list, chainKind, testID, testIDProperties }) => {
   const [field, meta, helpers] = useField<Account>(name);
   const handleValueChange = (account: Account) => void helpers.setValue(account);
+
+  const renderAccountCardValue = useCallback<AccountDropdownValueComponent>(
+    ({ value }) => (
+      <AccountCard account={value} showAllAddresses={!isDefined(chainKind)} showDropdownDown chainKind={chainKind} />
+    ),
+    [chainKind]
+  );
+
+  const renderAccountListItem = useCallback<DropdownListItemComponent<Account>>(
+    ({ item }) => (
+      <AccountDropdownListItem account={item} showAllAddresses={!isDefined(chainKind)} chainKind={chainKind} />
+    ),
+    [chainKind]
+  );
 
   return (
     <>
@@ -49,13 +52,3 @@ export const AccountCardFormDropdown: FC<Props> = ({ name, list, testID, testIDP
     </>
   );
 };
-
-export const AccountFormDropdown: FC<Props> = props => (
-  <FormDropdown
-    {...props}
-    description="Accounts"
-    equalityFn={accountEqualityFn}
-    renderValue={renderAccountValue}
-    renderListItem={renderAccountListItem}
-  />
-);

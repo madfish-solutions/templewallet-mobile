@@ -12,6 +12,8 @@ import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics
 import { isBeaconPayload } from 'src/utils/beacon.utils';
 import { isValidAddress } from 'src/utils/tezos.util';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
+import { wcDeepLinkHandler } from 'src/walletconnect/use-wc-handler.hook';
+import { isWcUniversalLink, isWcUri } from 'src/walletconnect/wc-handler';
 
 import { ScanQrCodeAnalyticsEvents } from './analytics-events';
 import { QrCodeScanner } from './qr-code-scanner';
@@ -63,6 +65,34 @@ export const ScanQrCode = () => {
         if (dataWasIgnored) {
           trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_DATA_IGNORED, AnalyticsEventCategory.General, { data });
         }
+
+        return;
+      }
+
+      if (isWcUri(data) || isWcUniversalLink(data)) {
+        let dataWasIgnored = true;
+        wcDeepLinkHandler(
+          data,
+          () => {
+            dataWasIgnored = false;
+          },
+          errorMessage => {
+            dataWasIgnored = false;
+            goBack();
+            trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_HANDLE_ERROR, AnalyticsEventCategory.General, {
+              errorMessage
+            });
+            showErrorToast({ description: errorMessage });
+          }
+        )
+          .then(() => {
+            if (dataWasIgnored) {
+              trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_DATA_IGNORED, AnalyticsEventCategory.General, {
+                data
+              });
+            }
+          })
+          .catch(e => console.error(e));
 
         return;
       }

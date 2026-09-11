@@ -1,3 +1,4 @@
+import { PermissionInfo } from '@airgap/beacon-sdk';
 import { PersistedState } from 'redux-persist';
 
 import type { Account } from 'src/interfaces/account.interfaces';
@@ -21,7 +22,12 @@ type MigratableWalletState = WithLegacyProperties<
   LegacyWalletState
 >;
 
-type MigratableRootState = Omit<RootState, 'wallet'> & { wallet: MigratableWalletState };
+type MigratableDAppsState = WithLegacyProperties<RootState['dApps'], LegacyDAppsState>;
+
+type MigratableRootState = Omit<RootState, 'wallet' | 'dApps'> & {
+  wallet: MigratableWalletState;
+  dApps: MigratableDAppsState;
+};
 
 interface LegacyAccountInterface {
   /** @deprecated */
@@ -58,4 +64,9 @@ interface LegacyWalletState {
   isShownDomainName?: boolean;
   /** @deprecated */
   quipuApy?: number;
+}
+
+interface LegacyDAppsState {
+  /** @deprecated Replaced by `connections` (Beacon + WalletConnect). */
+  permissions?: LoadableEntityState<PermissionInfo[]>;
 }

@@ -5,7 +5,7 @@ import { ZERO } from './number.util';
 import { mutezToTz } from './tezos.util';
 
 export const getDollarValue = (
-  balance: string | nullish,
+  balance: BigNumber.Value | nullish,
   decimals: number | nullish,
   exchangeRate: number | nullish
 ) => {

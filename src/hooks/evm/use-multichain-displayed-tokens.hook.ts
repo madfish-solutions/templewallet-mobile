@@ -3,13 +3,12 @@ import { BigNumber } from 'bignumber.js';
 import { useMemo } from 'react';
 
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
-import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
 import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-assets-selectors';
 import { useEvmAccountChainBalancesSelector } from 'src/store/evm/balances/evm-balances-selectors';
 import { useEvmChainExchangeRatesSelector } from 'src/store/evm/exchange-rates/evm-exchange-rates-selectors';
 import { useEvmChainTokensMetadataSelector } from 'src/store/evm/tokens-metadata/evm-tokens-metadata-selectors';
 import { useShieldedBalanceSelector } from 'src/store/sapling';
-import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
+import { useAssetExchangeRateGetter, useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 import { useAccountAddressForEvm } from 'src/store/wallet/wallet-selectors';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
@@ -81,7 +80,7 @@ const compareDisplayedTokens = (a: SortableDisplayedToken, b: SortableDisplayedT
 
 export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
   const accountTezosTokens = useTezosAccountTokens();
-  const getExchangeRate = useTokenExchangeRateGetter();
+  const getExchangeRate = useAssetExchangeRateGetter();
 
   const evmAddress = useAccountAddressForEvm();
   const evmBalances = useEvmAccountChainBalancesSelector(evmAddress, ETHERLINK_MAINNET_CHAIN_ID);

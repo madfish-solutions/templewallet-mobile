@@ -1,16 +1,12 @@
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
-import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
-import { Divider } from 'src/components/divider/divider';
 import { DeadEndBoundaryError } from 'src/components/error-boundary';
-import { RobotIcon } from 'src/components/robot-icon/robot-icon';
-import { TruncatedText } from 'src/components/truncated-text';
 import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
-import { formatSize } from 'src/styles/format-size';
 import { useTezosToken } from 'src/utils/wallet.utils';
 
-import { useOperationsPreviewItemStyles } from '../operations-confirmation/operations-preview/operations-preview-item/operations-preview-item.styles';
+import { OperationPreviewAssetAmounts } from '../common/operation-preview-asset-amounts';
+import { OperationPreviewCard } from '../common/operation-preview-card';
 
 interface Props {
   amount: string;
@@ -18,7 +14,6 @@ interface Props {
 }
 
 export const SaplingSendPreview: FC<Props> = ({ amount, saplingType }) => {
-  const styles = useOperationsPreviewItemStyles();
   const tezosAddress = useAccountAddressForTezos();
 
   if (!tezosAddress) {
@@ -30,19 +25,10 @@ export const SaplingSendPreview: FC<Props> = ({ amount, saplingType }) => {
   const label = saplingType === 'shield' ? 'TEZ sent' : 'Shielded TEZ sent';
 
   return (
-    <View style={styles.container}>
-      <View style={styles.contentWrapper}>
-        <View style={styles.infoContainer}>
-          <RobotIcon seed={tezosAddress} size={formatSize(32)} />
-          <Divider size={formatSize(10)} />
-          <TruncatedText style={styles.description}>{label}</TruncatedText>
-        </View>
-      </View>
+    <OperationPreviewCard iconSeed={tezosAddress} description={label}>
       <View>
-        <AssetValueText amount={amount} asset={amountToken} style={styles.amountToken} showMinusSign />
-        <Divider size={formatSize(8)} />
-        <AssetValueText convertToDollar amount={amount} asset={amountToken} style={styles.amountDollar} showMinusSign />
+        <OperationPreviewAssetAmounts amount={amount} asset={amountToken} showMinusSign />
       </View>
-    </View>
+    </OperationPreviewCard>
   );
 };

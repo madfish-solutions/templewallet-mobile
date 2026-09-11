@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { UNKNOWN_TOKEN_SYMBOL } from 'src/config/general';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
-import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
+import { useAssetExchangeRateGetter } from 'src/store/settings/settings-selectors';
 import { useTokensMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { useCurrentAccountTezosBalance, useTokenBalanceGetter } from 'src/store/wallet/wallet-selectors';
 import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
@@ -13,7 +13,7 @@ export const useTokenGetter = () => {
   const tokensMetadata = useTokensMetadataSelector();
   const tezBalance = useCurrentAccountTezosBalance();
   const getTokenBalance = useTokenBalanceGetter();
-  const getTokenExchangeRate = useTokenExchangeRateGetter();
+  const getTokenExchangeRate = useAssetExchangeRateGetter();
 
   return useCallback(
     (slug: string): TokenInterface => {

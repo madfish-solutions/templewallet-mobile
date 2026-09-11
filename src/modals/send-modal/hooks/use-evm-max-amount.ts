@@ -7,6 +7,7 @@ import { useViemPublicClient } from 'src/hooks/evm/use-viem-public-client.hook';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
 import { SendAsset } from 'src/types/send-asset';
 import { estimateEvmTransaction } from 'src/utils/evm/estimate-evm-transaction';
+import { cancellablePromiseFlow } from 'src/utils/promise.util';
 
 const RECIPIENT_DEBOUNCE_MS = 300;
 const ESTIMATION_RECIPIENT: HexString = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045';
@@ -38,19 +39,16 @@ export const useEvmMaxAmount = ({ asset, recipient, sourceAddress }: UseEvmMaxAm
       return;
     }
 
-    const estimate = async () => {
-      try {
-        const estimation = await estimateEvmTransaction(publicClient, sourceAddress, {
+    const estimate = () =>
+      cancellablePromiseFlow({
+        promise: estimateEvmTransaction(publicClient, sourceAddress, {
           to,
           value: 1n
-        });
-
-        if (!cancelled) setFee(estimation.estimatedFee);
-      } catch {
-        if (!cancelled) setFee(0n);
-      }
-    };
-
+        }),
+        isCancelled: () => cancelled,
+        then: estimation => setFee(estimation.estimatedFee),
+        catch: () => setFee(0n)
+      });
     const timeoutId = setTimeout(() => {
       void estimate();
     }, RECIPIENT_DEBOUNCE_MS);

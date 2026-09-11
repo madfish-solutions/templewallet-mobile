@@ -37,3 +37,9 @@ export interface WatchOnlyDebugAccount extends ChainAccount {
 }
 
 export type Account = HDAccount | ImportedMultichainAccount | ImportedChainAccount | WatchOnlyDebugAccount;
+
+type EvmChainAccount = (ImportedChainAccount | WatchOnlyDebugAccount) & { chain: TempleChainKind.EVM };
+export type AccountWithEvmAddress = HDAccount | ImportedMultichainAccount | EvmChainAccount;
+
+type TezosChainAccount = (ImportedChainAccount | WatchOnlyDebugAccount) & { chain: TempleChainKind.Tezos };
+export type AccountWithTezosAddress = HDAccount | ImportedMultichainAccount | TezosChainAccount;

@@ -1,20 +1,15 @@
-import { AppMetadata } from '@airgap/beacon-sdk';
 import React, { FC } from 'react';
 
-import { isDefined } from 'src/utils/is-defined';
+import { isString } from 'src/utils/is-string';
 
 import { AvatarImage } from '../avatar-image/avatar-image';
 import { RobotIcon } from '../robot-icon/robot-icon';
 
 interface Props {
-  appMetadata: AppMetadata;
+  iconUri?: string;
+  iconSeed: string;
   size?: number;
 }
 
-export const AppMetadataIcon: FC<Props> = ({ appMetadata, size }) => {
-  return isDefined(appMetadata.icon) ? (
-    <AvatarImage uri={appMetadata.icon} size={size} />
-  ) : (
-    <RobotIcon seed={appMetadata.senderId} size={size} />
-  );
-};
+export const AppMetadataIcon: FC<Props> = ({ iconUri, iconSeed, size }) =>
+  isString(iconUri) ? <AvatarImage uri={iconUri} size={size} /> : <RobotIcon seed={iconSeed} size={size} />;

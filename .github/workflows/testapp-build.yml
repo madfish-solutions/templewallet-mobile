@@ -65,6 +65,7 @@ jobs:
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
           KOLO_API_PUBLIC_KEY: ${{ secrets.KOLO_API_PUBLIC_KEY }}
           KOLO_BASE_URL: ${{ vars.KOLO_BASE_URL }}
+          WC_PROJECT_ID: ${{ secrets.WC_PROJECT_ID }}
 
       # Android
 
