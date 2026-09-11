@@ -1,6 +1,7 @@
 import { validateAddress, ValidationResult } from '@taquito/utils';
 import { BigNumber } from 'bignumber.js';
 
+import { AccountTokenInterface } from '../token/interfaces/account-token.interface';
 import { TezosTokenMetadata } from '../token/interfaces/token-metadata.interface';
 import { TokenInterface } from '../token/interfaces/token.interface';
 
@@ -36,5 +37,8 @@ export const isCollectible = <T extends TezosTokenMetadata>(asset: T) => isDefin
 export const isValidAddress = (address: string) => validateAddress(address) === ValidationResult.VALID;
 
 export const isNonZeroBalance = (asset: Pick<TokenInterface, 'balance'>) => asset.balance !== '0';
+
+export const isOwnedOrManual = (asset: Pick<AccountTokenInterface, 'balance' | 'manual'>) =>
+  asset.manual === true || isNonZeroBalance(asset);
 
 export const isKTAddress = (address: string) => address.startsWith('KT');

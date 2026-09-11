@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { useTokensMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { useCurrentAccountStoredAssetsSelector } from 'src/store/wallet/wallet-selectors';
+import { isOwnedOrManual } from 'src/utils/tezos.util';
 
 import { UsableAccountAsset } from '../types';
 
@@ -21,7 +22,7 @@ export const useCurrentAccountCollectibles = (enabledOnly = false) => {
         );
 
         if (enabledOnly) {
-          return curr.visibility === VisibilityEnum.Visible && Number(curr.balance) > 0 ? acc.concat(collectible) : acc;
+          return curr.visibility === VisibilityEnum.Visible && isOwnedOrManual(curr) ? acc.concat(collectible) : acc;
         }
 
         return acc.concat(collectible);
