@@ -92,7 +92,7 @@ const CameraView = () => {
           if (Number(tezosToken.balance) > 0) {
             navigateToModal(ModalsEnum.Send, { token: TEZ_TOKEN_METADATA, receiverPublicKeyHash: data });
           } else {
-            trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_ZERO_BALANCE, AnalyticsEventCategory.General);
+            trackEvent(ScanQrCodeAnalyticsEvents.ZeroBalance, AnalyticsEventCategory.General);
             showErrorToast({ description: `You need to have ${TEZ_TOKEN_METADATA.symbol} to pay gas fee` });
           }
         } else if (isBeaconPayload(data)) {
@@ -110,14 +110,14 @@ const CameraView = () => {
             errorMessage => {
               dataWasIgnored = false;
               goBack();
-              trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_HANDLE_ERROR, AnalyticsEventCategory.General, {
+              trackEvent(ScanQrCodeAnalyticsEvents.HandleError, AnalyticsEventCategory.General, {
                 errorMessage
               });
               showErrorToast({ description: errorMessage });
             }
           );
           if (dataWasIgnored) {
-            trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_DATA_IGNORED, AnalyticsEventCategory.General, { data });
+            trackEvent(ScanQrCodeAnalyticsEvents.DataIgnored, AnalyticsEventCategory.General, { data });
           }
         } else if (isWcUri(data) || isWcUniversalLink(data)) {
           let dataWasIgnored = true;
@@ -129,7 +129,7 @@ const CameraView = () => {
             errorMessage => {
               dataWasIgnored = false;
               goBack();
-              trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_HANDLE_ERROR, AnalyticsEventCategory.General, {
+              trackEvent(ScanQrCodeAnalyticsEvents.HandleError, AnalyticsEventCategory.General, {
                 errorMessage
               });
               showErrorToast({ description: errorMessage });
@@ -137,21 +137,21 @@ const CameraView = () => {
           )
             .then(() => {
               if (dataWasIgnored) {
-                trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_DATA_IGNORED, AnalyticsEventCategory.General, {
+                trackEvent(ScanQrCodeAnalyticsEvents.DataIgnored, AnalyticsEventCategory.General, {
                   data
                 });
               }
             })
             .catch(e => console.error(e));
         } else {
-          trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_INVALID_QR_CODE, AnalyticsEventCategory.General);
+          trackEvent(ScanQrCodeAnalyticsEvents.InvalidQrCode, AnalyticsEventCategory.General);
           showErrorToast({ description: 'Invalid QR code' });
         }
       } else {
         if (isSyncPayload(data)) {
           navigateToModal(ModalsEnum.ConfirmSync, { payload: data });
         } else {
-          trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_INVALID_QR_CODE, AnalyticsEventCategory.General);
+          trackEvent(ScanQrCodeAnalyticsEvents.InvalidQrCode, AnalyticsEventCategory.General);
           showErrorToast({ description: 'Invalid QR code' });
         }
       }
