@@ -101,8 +101,7 @@ export const useHandleSubmit = (backupFlow?: BackupFlow) => {
 
         const seedPhrase = backupFlowMemo?.type === 'RESTORE' ? backupFlowMemo.mnemonic : await generateSeed();
 
-        // importWallet dispatches `hideLoaderAction` when done
-        importWallet({ seedPhrase, password, useBiometry });
+        await importWallet({ seedPhrase, password, useBiometry });
 
         if (!backupFlowMemo) {
           return void dispatch(requestSeedPhraseBackupAction());

@@ -1,4 +1,4 @@
-import { FlashList, FlashListRef, ListRenderItem } from '@shopify/flash-list';
+import { FlashList, FlashListProps, FlashListRef, ListRenderItem } from '@shopify/flash-list';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LayoutChangeEvent, View } from 'react-native';
 import { useDispatch } from 'react-redux';
@@ -30,7 +30,7 @@ import { useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
 import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
 import { useHideZeroBalancesSelector, useIsInAppUpdateAvailableSelector } from 'src/store/settings/settings-selectors';
 import { useScamTokenSlugsSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
-import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountId } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { toChainAssetSlug } from 'src/utils/chain-asset-slug';
@@ -56,10 +56,13 @@ const ITEM_HEIGHT = formatSize(16 + 44);
 
 const FILLER_SLUG_PREFIX = 'filler';
 
+const maintainVisibleContentPositionOption: FlashListProps<ListItem>['maintainVisibleContentPosition'] = {
+  disabled: true
+};
+
 const emptyListItems: ListItem[] = [];
 
-const keyExtractor = (item: ListItem) =>
-  item === AD_PLACEHOLDER ? item : toChainAssetSlug(item.chainKind, item.chainId, item.slug);
+const keyExtractor = (item: ListItem) => (item === AD_PLACEHOLDER ? item : toChainAssetSlug(item, item.slug));
 const getItemType = (item: ListItem) => (typeof item === 'string' ? 'promotion' : 'row');
 
 export const TokensList = memo(() => {
@@ -86,7 +89,7 @@ export const TokensList = memo(() => {
   const isHideZeroBalance = useHideZeroBalancesSelector();
   const displayedTokens = useMultichainDisplayedTokens();
   const isInAppUpdateAvailable = useIsInAppUpdateAvailableSelector();
-  const publicKeyHash = useAccountAddressForTezos();
+  const accountId = useCurrentAccountId();
   const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID, PromotionProviderEnum.HypeLab);
 
   const adPageName = 'Home page';
@@ -207,7 +210,7 @@ export const TokensList = memo(() => {
     ]
   );
 
-  useEffect(() => void flashListRef.current?.scrollToOffset({ animated: true, offset: 0 }), [publicKeyHash]);
+  useEffect(() => void flashListRef.current?.scrollToOffset({ animated: true, offset: 0 }), [accountId]);
 
   const refreshControl = useMemo(() => <RefreshControl {...fakeRefreshControlProps} />, [fakeRefreshControlProps]);
 
@@ -247,6 +250,7 @@ export const TokensList = memo(() => {
           keyExtractor={keyExtractor}
           getItemType={getItemType}
           refreshControl={refreshControl}
+          maintainVisibleContentPosition={maintainVisibleContentPositionOption}
           onScroll={onListScroll}
           onLayout={onListLayoutChange}
         />

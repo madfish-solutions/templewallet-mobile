@@ -1,19 +1,25 @@
 import { createAction } from '@reduxjs/toolkit';
 import { ParamsWithKind } from '@taquito/taquito';
 
-import type { SaplingTransactionHistoryItem } from 'src/interfaces/sapling-service.interface';
+import type {
+  SaplingAccountCredentials,
+  SaplingTransactionHistoryItem
+} from 'src/interfaces/sapling-service.interface';
 
 import { createActions } from '../create-actions';
 
 export const loadSaplingCredentialsActions = createActions<
   void,
-  { publicKeyHash: string; saplingAddress: string; viewingKey: string },
+  SaplingAccountCredentials,
   { publicKeyHash: string; error: string }
 >('sapling/LOAD_CREDENTIALS');
+
+export const cacheSaplingCredentialsAction = createAction<SaplingAccountCredentials[]>('sapling/CACHE_CREDENTIALS');
 
 export const loadShieldedBalanceActions = createActions<void, { publicKeyHash: string; balance: string }, string>(
   'sapling/LOAD_SHIELDED_BALANCE'
 );
+export const setShieldedBalanceLoadingAction = createAction<string>('sapling/SET_SHIELDED_BALANCE_LOADING');
 
 export interface PrepareSaplingTxPayload {
   type: 'shield' | 'unshield' | 'transfer';

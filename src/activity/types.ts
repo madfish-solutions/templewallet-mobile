@@ -59,12 +59,14 @@ interface TezosTransferOperation extends TezosOperationBase {
   type: ActivityOperTransferType;
   fromAddress: string;
   toAddress: string;
+  /** Shielding deposit to / unshielding payout from the mainnet sapling contract */
+  isShielded?: boolean;
 }
 
 interface TezosInteractionOperation extends TezosOperationBase {
   kind: ActivityOperKindEnum.interaction;
   withAddress?: string;
-  /** Interaction with the mainnet sapling contract - rendered as a shielded transfer */
+  /** Zero-amount call to the mainnet sapling contract (shielded-to-shielded transfer) */
   isShielded?: boolean;
 }
 

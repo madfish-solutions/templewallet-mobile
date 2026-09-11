@@ -1,4 +1,5 @@
 import { ObjktCollectionType } from 'src/apis/objkt/types';
+import type { TokenScreenDescriptor } from 'src/screens/token-screen/token-screen-descriptor';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { ChainId } from 'src/types/networks';
 import { EncryptedBackupObject } from 'src/utils/cloud-backup';
@@ -14,13 +15,13 @@ export enum ScreensEnum {
   /** Wallet stack **/
   Wallet = 'Wallet',
   CollectiblesHome = 'CollectiblesHome',
-  TezosTokenScreen = 'TezosTokenScreen',
   TokenScreen = 'TokenScreen',
   TokenInfo = 'TokenInfo',
   Delegation = 'Delegation',
   ManageAssets = 'ManageAssets',
   Activity = 'Activity',
   ScanQrCode = 'ScanQrCode',
+  SyncQrCode = 'SyncQrCode',
   Notifications = 'Notifications',
   NotificationsItem = 'NotificationsItem',
   Collection = 'Collection',
@@ -72,13 +73,13 @@ export type ScreensParamList = {
   /** Wallet stack **/
   [ScreensEnum.Wallet]: undefined;
   [ScreensEnum.CollectiblesHome]: undefined;
-  [ScreensEnum.TezosTokenScreen]: undefined;
-  [ScreensEnum.TokenScreen]: { token: TokenInterface };
-  [ScreensEnum.TokenInfo]: { token: TokenInterface };
+  [ScreensEnum.TokenScreen]: { descriptor: TokenScreenDescriptor };
+  [ScreensEnum.TokenInfo]: { descriptor: TokenScreenDescriptor };
   [ScreensEnum.Delegation]: undefined;
   [ScreensEnum.ManageAssets]: { collectibles: boolean };
   [ScreensEnum.Activity]: undefined;
   [ScreensEnum.ScanQrCode]: undefined;
+  [ScreensEnum.SyncQrCode]: undefined;
   [ScreensEnum.Notifications]: undefined;
   [ScreensEnum.NotificationsItem]: { id: number };
   [ScreensEnum.Buy]: undefined;
@@ -125,7 +126,6 @@ export type ScreensParamList = {
 
 export const walletStackScreens = [
   ScreensEnum.Wallet,
-  ScreensEnum.TezosTokenScreen,
   ScreensEnum.TokenScreen,
   ScreensEnum.TokenInfo,
   ScreensEnum.Delegation,

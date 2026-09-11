@@ -6,6 +6,10 @@ export interface SaplingCredentials {
   viewingKey: string;
 }
 
+export interface SaplingAccountCredentials extends SaplingCredentials {
+  publicKeyHash: string;
+}
+
 export interface SaplingTransactionHistoryItem {
   value: string;
   memo: string;

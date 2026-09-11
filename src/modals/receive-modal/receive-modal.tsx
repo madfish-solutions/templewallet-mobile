@@ -3,7 +3,9 @@ import { View } from 'react-native';
 
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { useModalParams } from 'src/navigator/hooks/use-navigation.hook';
 import { useSaplingAddressSelector } from 'src/store/sapling';
 import { useAccount } from 'src/store/wallet/wallet-selectors';
 import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
@@ -18,21 +20,21 @@ const makeTezosComponentsProps = (tezosAddress: string) => ({
   title: 'Tezos',
   address: tezosAddress,
   cryptoLogoName: CryptoLogoNameEnum.Tezos,
-  warningText: 'Send only Tezos tokens to this address'
+  warningText: 'Send only Tezos network tokens to this address'
 });
 
 const makeEtherlinkComponentsProps = (evmAddress: string) => ({
   title: 'Etherlink',
   address: evmAddress,
   cryptoLogoName: CryptoLogoNameEnum.Etherlink,
-  warningText: 'Send only Etherlink tokens to this address'
+  warningText: 'Send only Etherlink network tokens to this address'
 });
 
 const makeTezosSaplingComponentsProps = (saplingAddress: string) => ({
   title: 'Shielded Tezos',
   address: saplingAddress,
   cryptoLogoName: CryptoLogoNameEnum.ShieldedTezos,
-  warningText: 'Send only TEZ tokens to this address',
+  warningText: 'Send only TEZ to this address',
   showWarningOnCard: true
 });
 
@@ -44,24 +46,25 @@ export const ReceiveModal = () => {
   const evmAddress = getAccountAddressForEvm(selectedAccount);
   const styles = useReceiveModalStyles();
   const saplingAddress = useSaplingAddressSelector();
+  const { chainKind, withShielded = true } = useModalParams<ModalsEnum.Receive>();
 
   const cardsContentProps = useMemo(() => {
     const componentsProps: AddressCardProps[] = [];
 
-    if (isString(tezosAddress)) {
+    if (isString(tezosAddress) && chainKind !== TempleChainKind.EVM) {
       componentsProps.push(makeTezosComponentsProps(tezosAddress));
     }
 
-    if (isString(tezosAddress) && isString(saplingAddress)) {
+    if (isString(tezosAddress) && isString(saplingAddress) && chainKind !== TempleChainKind.EVM && withShielded) {
       componentsProps.push(makeTezosSaplingComponentsProps(saplingAddress));
     }
 
-    if (isString(evmAddress)) {
+    if (isString(evmAddress) && chainKind !== TempleChainKind.Tezos) {
       componentsProps.push(makeEtherlinkComponentsProps(evmAddress));
     }
 
     return componentsProps;
-  }, [evmAddress, saplingAddress, tezosAddress]);
+  }, [evmAddress, saplingAddress, tezosAddress, chainKind, withShielded]);
 
   usePageAnalytic(ModalsEnum.Receive);
 

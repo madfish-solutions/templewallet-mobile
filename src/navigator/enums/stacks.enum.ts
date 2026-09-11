@@ -15,13 +15,13 @@ export type MainStackParams =
   | MainStackParamsPart<ScreensEnum.SecurityUpdate>
   | MainStackParamsPart<ScreensEnum.Wallet>
   | MainStackParamsPart<ScreensEnum.CollectiblesHome>
-  | MainStackParamsPart<ScreensEnum.TezosTokenScreen>
   | MainStackParamsPart<ScreensEnum.TokenScreen>
   | MainStackParamsPart<ScreensEnum.TokenInfo>
   | MainStackParamsPart<ScreensEnum.Delegation>
   | MainStackParamsPart<ScreensEnum.ManageAssets>
   | MainStackParamsPart<ScreensEnum.Activity>
   | MainStackParamsPart<ScreensEnum.ScanQrCode>
+  | MainStackParamsPart<ScreensEnum.SyncQrCode>
   | MainStackParamsPart<ScreensEnum.Notifications>
   | MainStackParamsPart<ScreensEnum.NotificationsItem>
   | MainStackParamsPart<ScreensEnum.Collection>

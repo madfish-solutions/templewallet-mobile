@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import React, { memo, useCallback, useMemo } from 'react';
 import { GestureResponderEvent, Text, View } from 'react-native';
 
-import { AccountDetails } from 'src/components/account-card/account-details';
+import { AccountProps, AccountSummary } from 'src/components/account-card';
 import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
 import { DropdownListItemComponent } from 'src/components/dropdown/dropdown';
 import { HideBalance } from 'src/components/hide-balance/hide-balance';
@@ -13,14 +13,12 @@ import { TruncatedText } from 'src/components/truncated-text';
 import { Account } from 'src/interfaces/account.interfaces.ts';
 import { useAllCollectiblesDetailsSelector } from 'src/store/collectibles/collectibles-selectors';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
-import { useSaplingAddressForAccount } from 'src/store/sapling/sapling-selectors.ts';
 import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_DECIMALS, TEZ_TOKEN_SYMBOL } from 'src/token/data/tokens-metadata';
 import { useCurrentAccountCollectiblesWithPositiveBalance } from 'src/utils/assets/hooks';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatNumber } from 'src/utils/format-price';
-import { getAddressesOptions } from 'src/utils/get-addresses-options';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 import { useTezosTokenOfKnownAccount } from 'src/utils/wallet.utils';
@@ -73,27 +71,21 @@ const AccountDropdownItem = memo<AccountDropdownItemProps>(
 
 export const AccountDropdownTriggerItem = memo<AccountDropdownItemProps>(props => <AccountDropdownItem {...props} />);
 
-const AccountDropdownListItem = memo<Pick<AccountDropdownItemProps, 'account'>>(({ account }) => {
-  const saplingAddress = useSaplingAddressForAccount(account);
-
+export const AccountDropdownListItem = memo<
+  Pick<AccountDropdownItemProps, 'account'> & Partial<Pick<AccountProps, 'showAllAddresses' | 'chainKind'>>
+>(({ account, showAllAddresses = true, chainKind }) => {
   const copyAddress = useCallback((address: string, event?: GestureResponderEvent) => {
     event?.stopPropagation();
     copyStringToClipboard(address);
   }, []);
-  const addresses = useMemo(
-    () => getAddressesOptions(undefined, true, saplingAddress, account, copyAddress),
-    [saplingAddress, account, copyAddress]
-  );
 
   return (
-    <AccountDetails
+    <AccountSummary
       account={account}
-      avatarSeed={getSeedFromAccount(account)}
-      name={account.name}
-      addresses={addresses}
-      addressIconVariant="compactTransparent"
-      compactAddresses
+      showAllAddresses={showAllAddresses}
       fixedBalanceWidth={false}
+      onAddressPress={copyAddress}
+      chainKind={chainKind}
     />
   );
 });

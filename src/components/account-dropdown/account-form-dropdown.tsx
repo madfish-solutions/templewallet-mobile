@@ -1,19 +1,17 @@
+import { useField } from 'formik';
 import React, { FC, useCallback } from 'react';
 
+import { AccountCard } from 'src/components/account-card';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
-import { FormDropdown } from 'src/form/form-dropdown';
+import { ErrorMessage } from 'src/form/error-message/error-message';
 import { Account } from 'src/interfaces/account.interfaces.ts';
 import { TestIdProps } from 'src/interfaces/test-id.props';
-import { useGetSaplingAddressForAccount } from 'src/store/sapling/sapling-selectors';
-import { getAddressesOptions } from 'src/utils/get-addresses-options';
+import { isDefined } from 'src/utils/is-defined';
 
-import { AccountSummary } from '../account-card';
-import { AccountDetails } from '../account-card/account-details';
-import { DropdownListItemComponent, DropdownValueComponent } from '../dropdown/dropdown';
-import { DropdownItemContainer } from '../dropdown/dropdown-item-container/dropdown-item-container';
-import { getSeedFromAccount } from '../robot-icon/robot-icon.utils';
+import { DropdownListItemComponent } from '../dropdown/dropdown';
 
-import { accountEqualityFn } from './account-equality-fn';
+import { AccountDropdownBase, AccountDropdownValueComponent } from './account-dropdown-base';
+import { AccountDropdownListItem } from './account-dropdown-item/account-dropdown-item';
 
 interface Props extends TestIdProps {
   name: string;
@@ -21,51 +19,36 @@ interface Props extends TestIdProps {
   chainKind?: TempleChainKind;
 }
 
-export const AccountFormDropdown: FC<Props> = ({ name, list, chainKind, testID, testIDProperties }) => {
-  const getSaplingAddressForAccount = useGetSaplingAddressForAccount();
+export const AccountCardFormDropdown: FC<Props> = ({ name, list, chainKind, testID, testIDProperties }) => {
+  const [field, meta, helpers] = useField<Account>(name);
+  const handleValueChange = (account: Account) => void helpers.setValue(account);
 
-  const renderAccountValue = useCallback<DropdownValueComponent<Account>>(
+  const renderAccountCardValue = useCallback<AccountDropdownValueComponent>(
     ({ value }) => (
-      <DropdownItemContainer>
-        {value && (
-          <AccountSummary
-            variant="account"
-            isShieldedTez={!chainKind}
-            account={value}
-            chainKind={chainKind}
-            showDropdownDown
-          />
-        )}
-      </DropdownItemContainer>
+      <AccountCard account={value} showAllAddresses={!isDefined(chainKind)} showDropdownDown chainKind={chainKind} />
     ),
     [chainKind]
   );
 
   const renderAccountListItem = useCallback<DropdownListItemComponent<Account>>(
     ({ item }) => (
-      <AccountDetails
-        account={item}
-        avatarSeed={getSeedFromAccount(item)}
-        name={item.name}
-        addresses={getAddressesOptions(chainKind, !chainKind, getSaplingAddressForAccount(item), item)}
-        addressIconVariant="compactTransparent"
-        compactAddresses
-        fixedBalanceWidth={false}
-      />
+      <AccountDropdownListItem account={item} showAllAddresses={!isDefined(chainKind)} chainKind={chainKind} />
     ),
-    [chainKind, getSaplingAddressForAccount]
+    [chainKind]
   );
 
   return (
-    <FormDropdown
-      name={name}
-      description="Accounts"
-      list={list}
-      equalityFn={accountEqualityFn}
-      renderValue={renderAccountValue}
-      renderListItem={renderAccountListItem}
-      testID={testID}
-      testIDProperties={testIDProperties}
-    />
+    <>
+      <AccountDropdownBase
+        value={field.value}
+        list={list}
+        renderValue={renderAccountCardValue}
+        renderAccountListItem={renderAccountListItem}
+        onValueChange={handleValueChange}
+        testID={testID}
+        testIDProperties={testIDProperties}
+      />
+      <ErrorMessage meta={meta} />
+    </>
   );
 };

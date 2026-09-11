@@ -16,6 +16,7 @@ const IPAD_MINI_WIDTH = 768;
 
 const screensWithoutTabBar = [
   ScreensEnum.ScanQrCode,
+  ScreensEnum.SyncQrCode,
   ScreensEnum.ManualBackup,
   ScreensEnum.CloudBackup,
   ScreensEnum.NotificationsItem,

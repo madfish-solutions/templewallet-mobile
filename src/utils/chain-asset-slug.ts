@@ -1,4 +1,4 @@
-import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import type { ChainRef } from 'src/types/networks';
 
-export const toChainAssetSlug = (chainKind: TempleChainKind, chainId: string | number, assetSlug: string) =>
+export const toChainAssetSlug = ({ chainKind, chainId }: ChainRef, assetSlug: string) =>
   `${chainKind}:${chainId}:${assetSlug}`;

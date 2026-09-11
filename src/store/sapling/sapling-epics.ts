@@ -28,7 +28,8 @@ import {
   loadSaplingTransactionHistoryActions,
   loadShieldedBalanceActions,
   prepareSaplingTransactionActions,
-  PrepareSaplingTxPayload
+  PrepareSaplingTxPayload,
+  setShieldedBalanceLoadingAction
 } from './sapling-actions';
 import { saplingService, clearSaplingServiceCache } from './sapling-service';
 
@@ -137,6 +138,7 @@ const loadShieldedBalanceEpic: AnyActionEpic = (action$, state$) =>
             })
           )
         ),
+        startWith(setShieldedBalanceLoadingAction(publicKeyHash)),
         catchError(err => {
           showErrorToast({ description: err instanceof Error ? err.message : 'Failed to load shielded balance' });
 

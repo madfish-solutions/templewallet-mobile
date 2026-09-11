@@ -1,34 +1,39 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, ReactNode } from 'react';
+import { GestureResponderEvent, StyleProp, ViewStyle } from 'react-native';
 
-import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { DropdownItemContainer } from 'src/components/dropdown/dropdown-item-container/dropdown-item-container';
 import { getSeedFromAccount } from 'src/components/robot-icon/robot-icon.utils';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { Account } from 'src/interfaces/account.interfaces';
-import { useSaplingAddressForAccount } from 'src/store/sapling/sapling-selectors';
-import { getAddressesOptions } from 'src/utils/get-addresses-options';
+import { isDefined } from 'src/utils/is-defined';
 
 import { AccountDetails } from './account-details';
 import { useAccountCardStyles } from './styles';
+import { useAccountAddressDetails } from './use-account-address-details.hook';
 
 interface CommonProps {
-  chainKind?: TempleChainKind;
   isShieldedTez?: boolean;
   showDropdownDown?: boolean;
   showBalance?: boolean;
+  showAllAddresses?: boolean;
+  fixedBalanceWidth?: boolean;
+  footer?: ReactNode;
+  detailsContainerStyle?: StyleProp<ViewStyle>;
 }
 
-interface AccountProps extends CommonProps {
+export interface AccountProps extends CommonProps {
   variant?: 'account';
   account: Account;
+  chainKind?: TempleChainKind;
+  onAddressPress?: (address: string, event?: GestureResponderEvent) => void;
 }
 
 interface ContactProps extends CommonProps {
   variant: 'contact';
+  chainKind: TempleChainKind;
   name: string;
   address: string;
   avatarSeed: string;
-  chainKind: TempleChainKind;
 }
 
 type Props = AccountProps | ContactProps;
@@ -37,35 +42,32 @@ export const AccountCard: FC<Props> = props => {
   const styles = useAccountCardStyles();
 
   return (
-    <DropdownItemContainer style={styles.card}>
+    <DropdownItemContainer style={[styles.card, isDefined(props.footer) && styles.cardWithFooter]}>
       <AccountSummary {...props} />
+      {props.footer}
     </DropdownItemContainer>
   );
 };
 
 export const AccountSummary: FC<Props> = props => {
-  const { chainKind, isShieldedTez = false, showDropdownDown = false, showBalance = true } = props;
+  const {
+    chainKind = TempleChainKind.Tezos,
+    isShieldedTez = false,
+    showDropdownDown = false,
+    showBalance = true,
+    showAllAddresses = false,
+    fixedBalanceWidth = true,
+    detailsContainerStyle
+  } = props;
   const isContact = props.variant === 'contact';
-  const saplingAddress = useSaplingAddressForAccount(isContact ? undefined : props.account);
-  const contactAddress = isContact ? props.address : undefined;
-  const account = isContact ? undefined : props.account;
-
-  const addresses = useMemo(() => {
-    if (contactAddress) {
-      return [
-        {
-          address: contactAddress,
-          network: isShieldedTez
-            ? CryptoLogoNameEnum.ShieldedTezos
-            : chainKind === TempleChainKind.Tezos
-            ? CryptoLogoNameEnum.Tezos
-            : CryptoLogoNameEnum.Etherlink
-        }
-      ];
-    }
-
-    return getAddressesOptions(chainKind, isShieldedTez, saplingAddress, account!);
-  }, [saplingAddress, chainKind, contactAddress, isShieldedTez, account]);
+  const addresses = useAccountAddressDetails({
+    account: isContact ? undefined : props.account,
+    contactAddress: isContact ? props.address : undefined,
+    chainKind,
+    isShieldedTez,
+    showAllAddresses,
+    onAddressPress: isContact ? undefined : props.onAddressPress
+  });
 
   return (
     <AccountDetails
@@ -75,6 +77,10 @@ export const AccountSummary: FC<Props> = props => {
       addresses={addresses}
       showBalance={showBalance && !isContact}
       showDropdownDown={showDropdownDown}
+      addressIconVariant={showAllAddresses ? 'compactTransparent' : undefined}
+      compactAddresses={showAllAddresses}
+      fixedBalanceWidth={fixedBalanceWidth}
+      containerStyle={detailsContainerStyle}
     />
   );
 };

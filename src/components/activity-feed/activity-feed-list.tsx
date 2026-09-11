@@ -2,6 +2,7 @@ import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import React, { memo, ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LayoutChangeEvent, Text, View } from 'react-native';
 
+import type { ActivityFeedAssetFilter } from 'src/activity/feed';
 import { Activity } from 'src/activity/types';
 import { toActivityKey } from 'src/activity/utils';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
@@ -38,6 +39,7 @@ interface Props {
   isLoadingMore: boolean;
   isRefreshing?: boolean;
   withPromotion?: boolean;
+  faceAssetFilter?: ActivityFeedAssetFilter;
   headerComponent?: ReactElement;
   emptyText?: string;
   onEndReached?: EmptyFn;
@@ -55,6 +57,7 @@ export const ActivityFeedList = memo<Props>(
     isLoadingMore,
     isRefreshing = false,
     withPromotion = false,
+    faceAssetFilter,
     headerComponent,
     emptyText = 'No activity yet',
     onEndReached,
@@ -171,9 +174,9 @@ export const ActivityFeedList = memo<Props>(
         typeof item === 'string' ? (
           <Text style={styles.sectionHeaderText}>{item}</Text>
         ) : (
-          <ActivityFeedItem activity={item} />
+          <ActivityFeedItem activity={item} faceAssetFilter={faceAssetFilter} />
         ),
-      [styles]
+      [styles, faceAssetFilter]
     );
 
     const stickyHeaderIndices = useMemo(
@@ -181,7 +184,8 @@ export const ActivityFeedList = memo<Props>(
       [sections]
     );
 
-    const shouldRenderAdditionalLoader = !isAllLoaded && (isLoadingMore || (endIsReached && sections.length > 0));
+    const shouldRenderAdditionalLoader =
+      !isAllLoaded && !isInitialLoading && (isLoadingMore || (endIsReached && sections.length > 0));
 
     const ListFooterComponent = useMemo(
       () =>

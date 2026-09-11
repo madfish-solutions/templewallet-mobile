@@ -28,7 +28,7 @@ const ButtonMediumHOC = <IconName extends string, Size extends number>(
       [defaultStyleConfig, styleConfigOverrides]
     );
 
-    return <ButtonComponent {...rest} styleConfig={styleConfig} isFullWidth={true} />;
+    return <ButtonComponent {...rest} styleConfig={styleConfig} isFullWidth />;
   };
 
   return ButtonMedium;
