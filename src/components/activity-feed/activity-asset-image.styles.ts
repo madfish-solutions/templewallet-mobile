@@ -73,6 +73,9 @@ export const useActivityAssetImageStyles = createUseStyles(({ colors }) => ({
   stackMedallionNft: {
     borderRadius: ACTIVITY_ASSET_NFT_BORDER_RADIUS
   },
+  stackMedallionWithoutAsset: {
+    backgroundColor: colors.gray4
+  },
   collectibleImage: {
     position: 'absolute',
     top: 0,

@@ -35,5 +35,11 @@ export enum IconNameV2Enum {
   Income = 'Income',
   Documents = 'Documents',
   Ok = 'Ok',
-  OutLink = 'OutLink'
+  OutLink = 'OutLink',
+  Shield = 'Shield',
+  ScamInfo = 'ScamInfo',
+  SwapArrow = 'SwapArrow',
+  LockOpen = 'LockOpen',
+  Cube = 'Cube',
+  DocumentGear = 'DocumentGear'
 }

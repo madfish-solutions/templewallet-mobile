@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleProp, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
+import { StyleProp, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import { useHideBalance } from 'src/hooks/hide-balance/hide-balance.hook';
 
@@ -23,9 +23,15 @@ export const HideBalance: FCWithChildren<Props> = ({
 }) => {
   const { isBalanceHidden, toggleHideBalance } = useHideBalance();
 
+  const text = <TruncatedText style={textStyle}>{isBalanceHidden ? hideSymbol : children}</TruncatedText>;
+
+  if (!interactive) {
+    return <View style={wrapperStyle}>{text}</View>;
+  }
+
   return (
-    <TouchableOpacity onPress={interactive ? toggleHideBalance : undefined} style={wrapperStyle} testID={testID}>
-      <TruncatedText style={textStyle}>{isBalanceHidden ? hideSymbol : children}</TruncatedText>
+    <TouchableOpacity onPress={toggleHideBalance} style={wrapperStyle} testID={testID}>
+      {text}
     </TouchableOpacity>
   );
 };

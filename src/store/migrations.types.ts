@@ -2,7 +2,6 @@ import { PermissionInfo } from '@airgap/beacon-sdk';
 import { PersistedState } from 'redux-persist';
 
 import type { Account } from 'src/interfaces/account.interfaces';
-import { ActivityGroup } from 'src/interfaces/activity.interface.ts';
 import { LoadableEntityState } from 'src/store/types.ts';
 import { AccountTokenInterface } from 'src/token/interfaces/account-token.interface.ts';
 import { TezosTokenMetadata } from 'src/token/interfaces/token-metadata.interface.ts';
@@ -44,9 +43,9 @@ interface LegacyAccountInterface {
   /** @deprecated */
   removedTokensList?: string[];
   /** @deprecated */
-  activityGroups?: LoadableEntityState<ActivityGroup[]>;
+  activityGroups?: LoadableEntityState<unknown[]>;
   /** @deprecated */
-  pendingActivities?: ActivityGroup[];
+  pendingActivities?: unknown[];
 }
 
 interface LegacyImportedAccountInterface extends LegacyAccountInterface {

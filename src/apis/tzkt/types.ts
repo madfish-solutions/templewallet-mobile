@@ -18,6 +18,8 @@ interface TzktOperationBase {
 
 export interface TzktTransactionOperation extends TzktOperationBase {
   type: 'transaction';
+  /** Account that sent the outer operation of an internal transaction */
+  initiator?: TzktAlias;
   target: TzktAlias;
   amount: number;
   parameter?: unknown;

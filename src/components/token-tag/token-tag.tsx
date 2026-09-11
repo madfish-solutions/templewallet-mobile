@@ -1,4 +1,3 @@
-import { BigNumber } from 'bignumber.js';
 import React, { memo, useMemo } from 'react';
 import { Text } from 'react-native';
 
@@ -6,6 +5,7 @@ import { useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
+import { formatApyPercent } from 'src/utils/apy.util';
 import { getDelegateText } from 'src/utils/get-delegate-text.util';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -18,8 +18,6 @@ interface Props {
   apy?: number;
 }
 
-const DECIMAL_VALUE = 2;
-
 export const TokenTag = memo<Props>(({ token, scam, apy }) => {
   const styles = useTokenTagStyles();
   const currentBaker = useSelectedBakerSelector();
@@ -31,10 +29,7 @@ export const TokenTag = memo<Props>(({ token, scam, apy }) => {
 
   const label = getDelegateText(token);
 
-  const apyRateValue = useMemo(
-    () => new BigNumber(apy ?? 0).decimalPlaces(DECIMAL_VALUE).toFixed(DECIMAL_VALUE),
-    [apy]
-  );
+  const apyRateValue = useMemo(() => formatApyPercent(apy ?? 0), [apy]);
 
   const apyValue = useMemo(() => <Text style={styles.text}>{`${label}: ${apyRateValue}%`}</Text>, [apy]);
 
