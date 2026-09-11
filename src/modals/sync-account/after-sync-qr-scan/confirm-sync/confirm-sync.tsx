@@ -49,7 +49,7 @@ export const ConfirmSync = memo<Props>(({ onSubmit }) => {
     onSubmit
   });
 
-  const { submitForm, isValid, values } = formik;
+  const { submitForm, isSubmitting, isValid, values } = formik;
 
   return (
     <FormikProvider value={formik}>
@@ -84,7 +84,7 @@ export const ConfirmSync = memo<Props>(({ onSubmit }) => {
         <ButtonLargeSecondary title="Back" onPress={goBack} />
         <ButtonLargePrimary
           title={values.usePrevPassword === true ? 'Sync' : 'Next'}
-          disabled={!isValid || isDisabled}
+          disabled={!isValid || isDisabled || isSubmitting}
           onPress={useCallbackIfOnline(submitForm)}
           testID={values.usePrevPassword === true ? ConfirmSyncSelectors.syncButton : ConfirmSyncSelectors.nextButton}
         />

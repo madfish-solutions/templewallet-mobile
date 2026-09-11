@@ -1,7 +1,7 @@
 import { Formik } from 'formik';
 import React from 'react';
 
-import { AccountFormDropdown } from 'src/components/account-dropdown/account-form-dropdown';
+import { AccountCardFormDropdown } from 'src/components/account-dropdown/account-form-dropdown';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { Divider } from 'src/components/divider/divider';
@@ -57,7 +57,7 @@ export const ConnectionRequestConfirmationContent = <T extends Account>({
             <AppMetadataConnectionView name={appName} iconUri={iconUri} iconSeed={iconSeed} />
             <Divider size={formatSize(24)} />
             <Label label="Account" description="To be connected with dApp." />
-            <AccountFormDropdown name="approver" list={accounts} chainKind={chainKind} />
+            <AccountCardFormDropdown name="approver" list={accounts} chainKind={chainKind} />
           </ScreenContainer>
           <ModalButtonsFloatingContainer variant="bordered">
             <ButtonLargeSecondary

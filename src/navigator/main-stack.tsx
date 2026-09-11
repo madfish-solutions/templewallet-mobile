@@ -35,7 +35,7 @@ import { DelegationScreen } from 'src/screens/delegation-screen/delegation-scree
 import { Earn } from 'src/screens/earn';
 import { Farming } from 'src/screens/farming';
 import { FiatSettings } from 'src/screens/fiat-settings/fiat-settings';
-import { ManageAccounts } from 'src/screens/manage-accounts/manage-accounts';
+import { ManageAccounts } from 'src/screens/manage-accounts';
 import { ManageAssets } from 'src/screens/manage-assets/manage-assets';
 import { ManageAssetsHeaderRight } from 'src/screens/manage-assets/manage-assets-header-right';
 import { ManualBackup } from 'src/screens/manual-backup/manual-backup';
@@ -47,6 +47,7 @@ import { NotificationsItem } from 'src/screens/notifications-item/notifications-
 import { AdvancedFeaturesSettings } from 'src/screens/notifications-settings/advanced-features-settings';
 import { Savings } from 'src/screens/savings';
 import { ScanQrCode } from 'src/screens/scan-qr-code/scan-qr-code';
+import { SyncQrCode } from 'src/screens/scan-qr-code/sync-qr-code';
 import { SecureSettings } from 'src/screens/secure-settings/secure-settings';
 import { Settings } from 'src/screens/settings/settings';
 import { SwapSettingsScreen } from 'src/screens/swap/settings/swap-settings';
@@ -355,6 +356,11 @@ export const MainStackScreen = memo(() => {
           <MainStack.Screen
             name={ScreensEnum.ScanQrCode}
             component={ScanQrCode}
+            options={generateScreenOptions(<HeaderTitle title="Scan QR Code" />)}
+          />
+          <MainStack.Screen
+            name={ScreensEnum.SyncQrCode}
+            component={SyncQrCode}
             options={generateScreenOptions(<HeaderTitle title="Scan QR Code" />)}
           />
         </MainStack.Navigator>
