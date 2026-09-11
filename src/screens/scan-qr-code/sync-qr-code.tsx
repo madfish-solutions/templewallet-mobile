@@ -28,7 +28,7 @@ export const SyncQrCode = () => {
         return;
       }
 
-      trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_INVALID_QR_CODE, AnalyticsEventCategory.General);
+      trackEvent(ScanQrCodeAnalyticsEvents.InvalidQrCode, AnalyticsEventCategory.General);
       showErrorToast({ description: 'Invalid QR code' });
     },
     [goBack, navigateToModal, trackEvent]

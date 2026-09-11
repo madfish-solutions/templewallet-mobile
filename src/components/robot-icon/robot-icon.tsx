@@ -1,7 +1,7 @@
 import * as bottts from '@dicebear/bottts';
 import { createAvatar } from '@dicebear/core';
 import React, { FC, useMemo } from 'react';
-import { View } from 'react-native';
+import { StyleProp, View, ViewStyle } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 
 import { formatSize } from 'src/styles/format-size';
@@ -12,9 +12,10 @@ interface Props {
   seed: string;
   size?: number;
   color?: 'blue' | 'gray' | 'orange' | 'none';
+  style?: StyleProp<ViewStyle>;
 }
 
-export const RobotIcon: FC<Props> = ({ seed, size = formatSize(40), color = 'gray' }) => {
+export const RobotIcon: FC<Props> = ({ seed, size = formatSize(40), color = 'gray', style }) => {
   const styles = useRobotIconStyles();
 
   const xml = useMemo(
@@ -34,7 +35,7 @@ export const RobotIcon: FC<Props> = ({ seed, size = formatSize(40), color = 'gra
   );
 
   return (
-    <View style={[styles.root, sizeDerivedStyles.root, styles[color]]}>
+    <View style={[styles.root, sizeDerivedStyles.root, styles[color], style]}>
       <SvgXml xml={xml} style={sizeDerivedStyles.icon} />
     </View>
   );
