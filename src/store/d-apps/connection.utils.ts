@@ -1,12 +1,30 @@
-import { PermissionInfo } from '@airgap/beacon-sdk';
+import { Network, NetworkType, PermissionInfo } from '@airgap/beacon-sdk';
 import { SessionTypes } from '@walletconnect/types';
+import { capitalize } from 'lodash-es';
 import { Address } from 'viem';
 
 import { DAppConnectionProtocol } from 'src/enums/dapp-connection-protocol.enum';
-import { BeaconDAppConnection, WalletConnectDAppConnection } from 'src/interfaces/dapp-connection.interface';
+import { Account } from 'src/interfaces/account.interfaces';
+import {
+  BeaconDAppConnection,
+  DAppConnection,
+  WalletConnectDAppConnection
+} from 'src/interfaces/dapp-connection.interface';
 import { EvmChainSpecs } from 'src/types/networks';
+import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
 import { getEvmNetworkLabel, parseEvmCaipAccountId, toEvmCaipChainId } from 'src/utils/evm/caip.utils';
 import { isDefined } from 'src/utils/is-defined';
+
+const getBeaconNetworkLabel = (network: Network) => {
+  switch (network.type) {
+    case NetworkType.MAINNET:
+      return 'Tezos';
+    case NetworkType.CUSTOM:
+      return network.name || 'Custom';
+    default:
+      return capitalize(network.type);
+  }
+};
 
 export const mapBeaconPermissionToConnection = (permission: PermissionInfo): BeaconDAppConnection => ({
   id: `beacon:${permission.accountIdentifier}:${permission.senderId}`,
@@ -14,11 +32,23 @@ export const mapBeaconPermissionToConnection = (permission: PermissionInfo): Bea
   name: permission.appMetadata.name,
   iconUri: permission.appMetadata.icon,
   iconSeed: permission.appMetadata.senderId,
-  networkLabel: permission.network.type,
+  networkLabel: getBeaconNetworkLabel(permission.network),
   accountAddress: permission.address || permission.publicKey,
   accountIdentifier: permission.accountIdentifier,
   senderId: permission.senderId
 });
+
+export const isAccountConnection = (connection: DAppConnection, account: Account) => {
+  if (!isDefined(connection.accountAddress)) {
+    return false;
+  }
+
+  if (connection.protocol === DAppConnectionProtocol.Beacon) {
+    return connection.accountAddress === getAccountAddressForTezos(account);
+  }
+
+  return connection.accountAddress.toLowerCase() === getAccountAddressForEvm(account)?.toLowerCase();
+};
 
 export const mapWcSessionToConnection = (
   session: SessionTypes.Struct,

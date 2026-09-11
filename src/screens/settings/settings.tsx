@@ -211,7 +211,7 @@ export const Settings = () => {
               onPress={() => navigateToScreen({ screen: ScreensEnum.DAppsSettings })}
               testID={SettingsSelectors.authorizedDAppsButton}
             >
-              <WhiteContainerText text="Authorized DApps" />
+              <WhiteContainerText text="Connections" />
               <ActionChevron />
             </WhiteContainerAction>
 

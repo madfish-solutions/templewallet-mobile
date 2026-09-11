@@ -290,7 +290,7 @@ export const MainStackScreen = memo(() => {
               <MainStack.Screen
                 name={ScreensEnum.DAppsSettings}
                 component={DAppsSettings}
-                options={generateScreenOptions(<HeaderTitle title="Authorized DApps" />)}
+                options={generateScreenOptions(<HeaderTitle title="Connections" />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.Networks}

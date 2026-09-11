@@ -9,7 +9,12 @@ interface Props {
   iconUri?: string;
   iconSeed: string;
   size?: number;
+  style?: { borderRadius?: number; borderWidth?: number };
 }
 
-export const AppMetadataIcon: FC<Props> = ({ iconUri, iconSeed, size }) =>
-  isString(iconUri) ? <AvatarImage uri={iconUri} size={size} /> : <RobotIcon seed={iconSeed} size={size} />;
+export const AppMetadataIcon: FC<Props> = ({ iconUri, iconSeed, size, style }) =>
+  isString(iconUri) ? (
+    <AvatarImage uri={iconUri} size={size} style={style} />
+  ) : (
+    <RobotIcon seed={iconSeed} size={size} style={style} />
+  );
