@@ -8,7 +8,7 @@ import {
   isErc20TokenBalance,
   isEtherlinkCollectibleTokenType
 } from 'src/apis/etherlink';
-import { dispatch } from 'src/store';
+import { dispatch, store } from 'src/store';
 import { processLoadedEvmAssetsAction } from 'src/store/evm/assets/evm-assets-actions';
 import { EvmChainAssetsRecord } from 'src/store/evm/assets/evm-assets-state';
 import {
@@ -139,10 +139,20 @@ export const dispatchEtherlinkAccountData = ({
 }: DispatchEtherlinkAccountDataParams) => {
   const chainId = ETHERLINK_MAINNET_CHAIN_ID;
 
+  const evmAssetsRecord = store.getState().evmAssets.record;
+  const isManualSlug = (slug: string) =>
+    Object.values(evmAssetsRecord).some(accountChains => accountChains[chainId]?.[slug]?.manual === true);
+  const tokensMetadata = Object.fromEntries(
+    Object.entries(data.tokensMetadata).filter(([slug]) => !isManualSlug(slug))
+  );
+  const collectiblesMetadata = Object.fromEntries(
+    Object.entries(data.collectiblesMetadata).filter(([slug]) => !isManualSlug(slug))
+  );
+
   dispatch(processLoadedEvmAssetsAction({ account, chainId, assets: data.assets }));
   dispatch(processLoadedEvmBalancesAction({ account, chainId, balances: data.balances, timestamp, preservedSlugs }));
-  dispatch(processLoadedEvmTokensMetadataAction({ chainId, metadata: data.tokensMetadata }));
-  dispatch(processLoadedEvmCollectiblesMetadataAction({ chainId, metadata: data.collectiblesMetadata }));
+  dispatch(processLoadedEvmTokensMetadataAction({ chainId, metadata: tokensMetadata }));
+  dispatch(processLoadedEvmCollectiblesMetadataAction({ chainId, metadata: collectiblesMetadata }));
   dispatch(processLoadedEvmExchangeRatesAction({ chainId, rates: data.exchangeRates }));
 };
 

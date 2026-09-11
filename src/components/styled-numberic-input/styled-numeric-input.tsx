@@ -17,6 +17,7 @@ export const StyledNumericInput: FC<StyledNumericInputProps> = ({
   placeholder,
   isError,
   isShowCleanButton,
+  style,
   onBlur,
   onFocus,
   onChange = emptyFn,
@@ -39,6 +40,7 @@ export const StyledNumericInput: FC<StyledNumericInputProps> = ({
       value={stringValue}
       isError={isError}
       isShowCleanButton={isShowCleanButton}
+      style={style}
       autoCapitalize="words"
       keyboardType="numeric"
       onBlur={handleBlur}

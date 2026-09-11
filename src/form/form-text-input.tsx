@@ -10,7 +10,7 @@ import { hasError } from '../utils/has-error';
 import { ErrorMessage } from './error-message/error-message';
 
 interface Props
-  extends Pick<StyledTextInputProps, 'editable' | 'placeholder' | 'isShowCleanButton' | 'autoCapitalize'>,
+  extends Pick<StyledTextInputProps, 'editable' | 'placeholder' | 'isShowCleanButton' | 'autoCapitalize' | 'style'>,
     TestIdProps {
   name: string;
 }
@@ -21,6 +21,7 @@ export const FormTextInput: FC<Props> = ({
   placeholder,
   isShowCleanButton,
   autoCapitalize,
+  style,
   testID
 }) => {
   const [field, meta, helpers] = useField<string>(name);
@@ -36,6 +37,7 @@ export const FormTextInput: FC<Props> = ({
         isError={isError}
         isShowCleanButton={isShowCleanButton}
         autoCapitalize={autoCapitalize}
+        style={style}
         onBlur={() => helpers.setTouched(true)}
         onChangeText={field.onChange(name)}
         testID={testID}

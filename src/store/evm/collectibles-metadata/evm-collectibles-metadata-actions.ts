@@ -11,3 +11,7 @@ export const processLoadedEvmCollectiblesMetadataAction =
   createAction<ProcessLoadedEvmCollectiblesMetadataActionPayload>(
     'evm/collectibles-metadata/PROCESS_LOADED_EVM_COLLECTIBLES_METADATA'
   );
+
+export const putEvmCollectiblesMetadataAction = createAction<ProcessLoadedEvmCollectiblesMetadataActionPayload>(
+  'evm/collectibles-metadata/PUT_EVM_COLLECTIBLES_METADATA'
+);

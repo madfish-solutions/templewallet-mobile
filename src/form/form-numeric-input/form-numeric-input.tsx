@@ -14,19 +14,22 @@ import { ErrorMessage } from '../error-message/error-message';
 import { FormNumericInputButtons } from './form-numeric-input-buttons/form-numeric-input-buttons';
 
 interface Props
-  extends Pick<StyledNumericInputProps, 'decimals' | 'editable' | 'placeholder' | 'isShowCleanButton'>,
+  extends Pick<StyledNumericInputProps, 'decimals' | 'editable' | 'placeholder' | 'isShowCleanButton' | 'style'>,
     TestIdProps {
   name: string;
   maxValue?: BigNumber;
+  maxInputValue?: StyledNumericInputProps['maxValue'];
 }
 
 export const FormNumericInput: FC<Props> = ({
   name,
   maxValue,
+  maxInputValue,
   decimals,
   editable,
   placeholder,
   isShowCleanButton,
+  style,
   testID
 }) => {
   const [field, meta, helpers] = useField<BigNumber | undefined>(name);
@@ -39,10 +42,12 @@ export const FormNumericInput: FC<Props> = ({
       <StyledNumericInput
         value={field.value}
         decimals={decimalsWithFallback}
+        maxValue={maxInputValue}
         editable={editable}
         placeholder={placeholder}
         isError={isError}
         isShowCleanButton={isShowCleanButton}
+        style={style}
         onBlur={() => helpers.setTouched(true)}
         onChange={helpers.setValue}
         testID={testID}
