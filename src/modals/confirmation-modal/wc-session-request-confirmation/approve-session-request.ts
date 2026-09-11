@@ -109,7 +109,7 @@ const showWcRequestSuccessToast = (method: string, result: unknown, blockExplore
   } else if (isWcSigningMethod(method)) {
     showSuccessToast({ description: 'Successfully signed!' });
   } else if (isWcWatchAssetMethod(method)) {
-    showSuccessToast({ description: 'Token successfully added' });
+    showSuccessToast({ description: 'Token added succesfully' });
   } else {
     showSuccessToast({ description: 'Successfully confirmed!' });
   }

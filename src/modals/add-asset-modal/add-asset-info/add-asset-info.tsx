@@ -39,7 +39,7 @@ export const AddAssetInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }
     dispatch(addTokenAction(tokenMetadata));
     dispatch(putTokenMetadataAction(tokenMetadata));
 
-    showSuccessToast({ description: 'Token successfully added' });
+    showSuccessToast({ description: 'Token added succesfully' });
     onFormSubmitted();
   };
 
