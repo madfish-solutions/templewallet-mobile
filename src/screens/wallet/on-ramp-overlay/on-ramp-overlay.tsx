@@ -9,6 +9,7 @@ import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { useOpenUrl } from 'src/hooks/use-open-url.hook';
+import { useUpdatableRef } from 'src/hooks/use-updatable-ref.hook';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -41,6 +42,7 @@ const OverlayBody = memo<OverlayBodyProps>(({ isStart }) => {
   const dropdownBottomSheetStyles = useDropdownBottomSheetStyles();
   const dispatch = useDispatch();
   const publicKeyHash = useCurrentAccountPkhSelector();
+  const publicKeyHashRef = useUpdatableRef(publicKeyHash);
 
   const handleClose = useCallback(() => {
     setIsLinkLoading(false);
@@ -52,7 +54,19 @@ const OverlayBody = memo<OverlayBodyProps>(({ isStart }) => {
       try {
         setIsLinkLoading(true);
 
-        const url = await getWertLink(publicKeyHash, amount);
+        // A possible solution to the issue of empty address in search params
+        if (!publicKeyHashRef.current) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+
+        if (!publicKeyHashRef.current) {
+          showErrorToast({
+            title: 'Failed to generate Wert link',
+            description: 'Please try again later'
+          });
+        }
+
+        const url = getWertLink(publicKeyHashRef.current, amount);
 
         handleClose();
 
@@ -64,11 +78,11 @@ const OverlayBody = memo<OverlayBodyProps>(({ isStart }) => {
           description: errorDetails,
           onPress: () => copyStringToClipboard(errorDetails)
         });
-        trackErrorEvent('GetWertLinkError', e, [publicKeyHash], { amount });
+        trackErrorEvent('GetWertLinkError', e, [publicKeyHashRef.current], { amount });
         handleClose();
       }
     },
-    [handleClose, openUrl, publicKeyHash, trackErrorEvent]
+    [handleClose, openUrl, publicKeyHashRef, trackErrorEvent]
   );
 
   return (

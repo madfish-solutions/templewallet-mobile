@@ -1,6 +1,6 @@
 const WERT_ONRAMP_URL = 'https://onramp.templewallet.com';
 
-export const getWertLink = async (address: string, amount = 0) => {
+export const getWertLink = (address: string, amount = 0) => {
   const url = new URL(WERT_ONRAMP_URL);
 
   url.searchParams.set('commodity', 'XTZ');
