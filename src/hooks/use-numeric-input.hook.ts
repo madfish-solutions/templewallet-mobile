@@ -58,7 +58,7 @@ export const useNumericInput = (
         onChange(normalizedStringValue !== '' ? newValue : undefined);
       }
     },
-    [decimals, setStringValue, onChange]
+    [decimals, minValue, maxValue, onChange]
   );
 
   const handleFocus = useCallback(

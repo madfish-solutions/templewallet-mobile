@@ -10,3 +10,7 @@ interface ProcessLoadedEvmTokensMetadataActionPayload {
 export const processLoadedEvmTokensMetadataAction = createAction<ProcessLoadedEvmTokensMetadataActionPayload>(
   'evm/tokens-metadata/PROCESS_LOADED_EVM_TOKENS_METADATA'
 );
+
+export const putEvmTokensMetadataAction = createAction<ProcessLoadedEvmTokensMetadataActionPayload>(
+  'evm/tokens-metadata/PUT_EVM_TOKENS_METADATA'
+);

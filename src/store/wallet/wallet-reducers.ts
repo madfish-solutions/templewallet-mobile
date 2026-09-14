@@ -117,11 +117,17 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
       accountState.removedTokensList.splice(removedI, 1);
     }
 
-    if (!accountState.tokensList.some(t => t.slug === slug)) {
+    const existing = accountState.tokensList.find(t => t.slug === slug);
+
+    if (existing) {
+      existing.visibility = VisibilityEnum.Visible;
+      existing.manual = true;
+    } else {
       accountState.tokensList.push({
         slug,
         balance: '0',
-        visibility: VisibilityEnum.InitiallyHidden
+        visibility: VisibilityEnum.Visible,
+        manual: true
       });
     }
   });

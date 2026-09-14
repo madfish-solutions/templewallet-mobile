@@ -19,6 +19,7 @@ export const buildUsableAccountAsset = (
     slug: asset.slug,
     visibility,
     balance: asset.balance,
+    manual: asset.manual,
     exchangeRate
   };
 };

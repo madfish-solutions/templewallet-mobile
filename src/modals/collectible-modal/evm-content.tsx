@@ -17,6 +17,7 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { toChainAssetSlug } from 'src/utils/chain-asset-slug';
 import { toHttpMetadataUri } from 'src/utils/evm/metadata-uri';
 import { fromTokenSlug } from 'src/utils/from-token-slug.ts';
+import { isPositiveNumber } from 'src/utils/number.util';
 
 import { CollectibleAttributeGrid } from './components/collectible-attributes';
 import { EvmCollectibleDetails } from './components/collectible-details';
@@ -59,7 +60,13 @@ export const EvmCollectibleModalContent = memo<Props>(({ chainId, slug }) => {
   const segments = attributes.length ? [Segment.Details, Segment.Attributes] : [];
 
   return (
-    <CollectibleModalLayout action={{ title: 'Send', onPress: () => navigateToModal(ModalsEnum.Send, { assetKey }) }}>
+    <CollectibleModalLayout
+      action={{
+        title: 'Send',
+        disabled: !isPositiveNumber(balance),
+        onPress: () => navigateToModal(ModalsEnum.Send, { assetKey })
+      }}
+    >
       <View>
         <View style={[styles.mediaContainer, { width: imageSize, height: imageSize }]}>
           <CollectibleImage

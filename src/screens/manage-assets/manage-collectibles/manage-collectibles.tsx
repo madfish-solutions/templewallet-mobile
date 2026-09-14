@@ -17,6 +17,7 @@ import {
   useCurrentAccountCollectibles,
   useCurrentAccountEvmManageAssets
 } from 'src/utils/assets/hooks';
+import { isOwnedOrManual } from 'src/utils/tezos.util';
 
 import { ManageAssetsItem } from '../manage-assets-item/manage-assets-item';
 import { useManageAssetsStyles } from '../manage-assets.styles';
@@ -32,10 +33,10 @@ export const ManageCollectibles = memo(() => {
   const collectiblesList = useCurrentAccountCollectibles();
   const evmAssets = useCurrentAccountEvmManageAssets();
   const collectibles = useMemo<ManageAsset[]>(
-    () => [...collectiblesList, ...evmAssets.filter(isEvmCollectibleManageAsset)],
+    () => [...collectiblesList.filter(isOwnedOrManual), ...evmAssets.filter(isEvmCollectibleManageAsset)],
     [collectiblesList, evmAssets]
   );
-  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(collectibles, true);
+  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(collectibles);
   const isShowCollectibleInfo = useIsShowCollectibleInfoSelector();
 
   const handleShowDetailsChange = useCallback(() => void dispatch(switchIsShowCollectibleInfoAction()), []);

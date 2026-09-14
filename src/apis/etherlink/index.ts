@@ -67,8 +67,8 @@ export const fetchGetAccountInfo = (address: string) =>
 export const fetchGetTokensBalances = (address: string) =>
   fetchGet<EtherlinkTokenBalance[], never>({ endpoint: `/addresses/${address}/token-balances` });
 
-export const fetchGetTokenInfo = (contract: string) =>
-  fetchGet<EtherlinkTokenInfo, never>({ endpoint: `/tokens/${contract}` });
+export const fetchGetTokenInfo = (contract: string, signal?: AbortSignal) =>
+  fetchGet<EtherlinkTokenInfo, never>({ endpoint: `/tokens/${contract}`, signal });
 
 const fetchGetAccountNfts = (address: string, pageParams?: EtherlinkAccountNftsPageParams) =>
   fetchGet<EtherlinkAccountNftsResponse, EtherlinkAccountNftsPageParams>({

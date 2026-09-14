@@ -26,7 +26,7 @@ export const useCurrentAccountEvmCollectibles = (): EvmDisplayedCollectible[] =>
 
     const collectibles: EvmDisplayedCollectible[] = [];
 
-    for (const [assetSlug, { standard }] of Object.entries(assets)) {
+    for (const [assetSlug, { standard, manual }] of Object.entries(assets)) {
       if (assets[assetSlug].visibility === VisibilityEnum.Hidden) {
         continue;
       }
@@ -36,7 +36,7 @@ export const useCurrentAccountEvmCollectibles = (): EvmDisplayedCollectible[] =>
       }
 
       const balance = balances[assetSlug];
-      if (!isPositiveNumber(balance)) {
+      if (!isPositiveNumber(balance) && !manual) {
         continue;
       }
 
@@ -50,7 +50,7 @@ export const useCurrentAccountEvmCollectibles = (): EvmDisplayedCollectible[] =>
         slug: assetSlug,
         chainId: ETHERLINK_MAINNET_CHAIN_ID,
         tokenId,
-        balance,
+        balance: balance ?? '0',
         metadata: metadatas[assetSlug]
       });
     }
