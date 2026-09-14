@@ -52,9 +52,9 @@ export const WatchAssetConfirmationContent: FC<WatchAssetConfirmationContentProp
     ['evm-token-metadata', chainId, chain.activeRpc.rpcBaseURL, address],
     getEvmTokenMetadataForWatchAsset
   );
-  const name = onchainMetadata?.name ?? nameFromRequest;
-  const symbol = onchainMetadata?.symbol ?? symbolFromRequest;
-  const decimals = onchainMetadata?.decimals ?? decimalsFromRequest;
+  const name = nameFromRequest ?? onchainMetadata?.name;
+  const symbol = symbolFromRequest ?? onchainMetadata?.symbol;
+  const decimals = decimalsFromRequest ?? onchainMetadata?.decimals;
 
   return (
     <ConfirmationLayout
@@ -91,7 +91,7 @@ export const WatchAssetConfirmationContent: FC<WatchAssetConfirmationContentProp
               </View>
             </View>
             <View style={styles.tokenDetailsRow}>
-              <Text style={styles.tokenDetailsRowLabel}>Address</Text>
+              <Text style={styles.tokenDetailsRowLabel}>Contract Address</Text>
               <PublicKeyHashText publicKeyHash={address} />
             </View>
             <View style={styles.tokenDetailsRow}>

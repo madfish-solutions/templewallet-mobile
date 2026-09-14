@@ -12,7 +12,8 @@ import {
   isWcSendTransactionMethod,
   isWcSigningMethod,
   isWcWatchAssetMethod,
-  StrictWcSessionRequest
+  StrictWcSessionRequest,
+  StrictWcSessionRequestContent
 } from 'src/types/strict-wc-session-request';
 import { getAccountAddressForEvm, hasEvmAddress } from 'src/utils/account.utils';
 import { parseEvmCaipAccountId, toEvmCaipAccountId } from 'src/utils/evm/caip.utils';
@@ -33,9 +34,12 @@ const withValidatedParams = <T extends StrictWcSessionRequest>(
   request: WalletKitTypes.SessionRequest,
   method: T['params']['request']['method'],
   params: T['params']['request']['params']
-): StrictWcSessionRequest => ({ ...request, params: { ...request.params, request: { method, params } } });
+): StrictWcSessionRequest => ({
+  ...request,
+  params: { ...request.params, request: { method, params } as StrictWcSessionRequestContent }
+});
 
-const toStrictWcSessionRequest = (request: WalletKitTypes.SessionRequest): StrictWcSessionRequest => {
+const toStrictWcSessionRequest = (request: WalletKitTypes.SessionRequest) => {
   const { method, params: originalParams } = request.params.request;
 
   if (isWcAccountsMethod(method)) {

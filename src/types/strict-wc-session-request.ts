@@ -17,7 +17,7 @@ type EvmWcAccountsMethod = (typeof EVM_WC_ACCOUNTS_METHODS)[number];
 type EvmWcOldTypedDataMethod = (typeof EVM_WC_OLD_TYPED_DATA_METHODS)[number];
 type EvmWcModernTypedDataMethod = (typeof EVM_WC_MODERN_TYPED_DATA_METHODS)[number];
 type EvmWcSigningMethod = (typeof EVM_WC_SIGNING_METHODS)[number];
-type EvmWcSendTransactionMethod = (typeof EVM_WC_SEND_TRANSACTION_METHODS)[number];
+export type EvmWcSendTransactionMethod = (typeof EVM_WC_SEND_TRANSACTION_METHODS)[number];
 type EvmWcWatchAssetMethod = (typeof EVM_WC_WATCH_ASSET_METHODS)[number];
 type EvmWcEvent = (typeof EVM_WC_EVENTS)[number];
 
@@ -45,7 +45,11 @@ export const isSupportedWcMethod = (method: string): method is (typeof EVM_WC_ME
 export const isSupportedWcEvent = (event: string): event is EvmWcEvent =>
   EVM_WC_EVENTS.some(wcEvent => wcEvent === event);
 
-type StrictWcSessionRequestContentBase = WalletKitTypes.SessionRequest['params']['request'];
+interface StrictWcSessionRequestContentBase {
+  method: string;
+  params: unknown;
+  expiryTimestamp?: number;
+}
 
 interface WcAccountsRequestContent extends StrictWcSessionRequestContentBase {
   method: EvmWcAccountsMethod;
@@ -166,8 +170,10 @@ export type StrictWcSessionRequestContent =
   | WcSendTransactionRequestContent
   | WcWatchAssetRequestContent;
 
-export interface StrictWcSessionRequest<Content = StrictWcSessionRequestContent> extends WalletKitTypes.SessionRequest {
-  params: WalletKitTypes.SessionRequest['params'] & {
+export interface StrictWcSessionRequest<Content = StrictWcSessionRequestContent>
+  extends Omit<WalletKitTypes.SessionRequest, 'params'> {
+  params: {
     request: Content;
+    chainId: string;
   };
 }
