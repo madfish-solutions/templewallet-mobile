@@ -1,4 +1,4 @@
-import React, { FC, memo, useMemo } from 'react';
+import React, { FC, memo, useEffect, useMemo } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 import { SvgWithCss } from 'react-native-svg/css';
 import { WebView } from 'react-native-webview';
@@ -7,8 +7,11 @@ import {
   fixSvgXml,
   getXmlFromSvgDataUriInUtf8Encoding,
   isImgUriDataUri,
-  isSvgDataUriInBase64Encoding
+  isSvgDataUriInBase64Encoding,
+  svgRequiresWebViewRendering
 } from 'src/utils/image.utils';
+
+import { ErrorBoundary } from './error-boundary';
 
 interface Props extends Omit<AnimatedDataUriImageProps, 'xml'> {
   dataUri: string;
@@ -34,12 +37,22 @@ export const DataUriImage = memo<Props>(({ dataUri, animated, width, height, sty
     [dataUri, isBase64Encoded]
   );
 
-  return animated || xml.includes('<foreignObject') ? (
+  const SvgRenderFallback = useMemo(() => () => <NotifyingFallback onError={onError} />, [onError]);
+
+  return animated || svgRequiresWebViewRendering(xml) ? (
     <AnimatedDataUriImage xml={xml} width={width} height={height} style={style} onLoad={onLoad} onError={onError} />
   ) : (
-    <SvgWithCss xml={xml} width={width} height={height} style={style} onLoad={onLoad} onError={onError} />
+    <ErrorBoundary key={dataUri} Fallback={SvgRenderFallback}>
+      <SvgWithCss xml={xml} width={width} height={height} style={style} onLoad={onLoad} onError={onError} />
+    </ErrorBoundary>
   );
 });
+
+const NotifyingFallback: FC<{ onError?: EmptyFn }> = ({ onError }) => {
+  useEffect(() => void onError?.(), [onError]);
+
+  return null;
+};
 
 interface AnimatedDataUriImageProps {
   xml: string;
@@ -50,15 +63,19 @@ interface AnimatedDataUriImageProps {
   onError?: EmptyFn;
 }
 
-const AnimatedDataUriImage: FC<AnimatedDataUriImageProps> = ({ xml, width, height, style, onLoad, onError }) => (
+const AnimatedDataUriImage = ({ xml, width, height, style, onLoad, onError }: AnimatedDataUriImageProps) => (
   <WebView
     source={{ html: buildWebViewHTML(xml) }}
     style={[style, { width, height }]}
+    javaScriptEnabled={false}
+    scrollEnabled={false}
+    pointerEvents="none"
     onLoadEnd={onLoad}
     onError={onError}
   />
 );
 
+// an SVG inside <img> cannot run scripts or navigate, unlike inline markup
 const buildWebViewHTML = (svgContent: string) =>
   `
 <!DOCTYPE html>
@@ -76,18 +93,17 @@ const buildWebViewHTML = (svgContent: string) =>
         overflow: hidden;
         background-color: transparent;
       }
-      svg {
+      img {
         position: fixed;
         top: 0;
         left: 0;
         height: 100%;
         width: 100%;
-        overflow: hidden;
         user-select: none;
       }
     </style>
   </head>
   <body>
-    ${svgContent}
+    <img alt="" src="data:image/svg+xml;base64,${Buffer.from(svgContent, 'utf8').toString('base64')}" />
   </body>
 </html>`;

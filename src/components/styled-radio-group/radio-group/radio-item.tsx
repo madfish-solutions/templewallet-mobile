@@ -1,5 +1,5 @@
 import React from 'react';
-import { PixelRatio, Pressable, View } from 'react-native';
+import { Pressable } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
@@ -8,10 +8,9 @@ import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { setTestID } from 'src/utils/test-id.utils';
 
+import { RadioCircle } from './radio-circle';
 import { itemStyles } from './styles';
 import { RadioItemProps, ItemButtonInterface } from './types';
-
-const SIZE = 24;
 
 export const RadioItem: React.FC<RadioItemProps> = ({
   value,
@@ -24,37 +23,11 @@ export const RadioItem: React.FC<RadioItemProps> = ({
   onPress,
   testID
 }) => {
-  const borderWidth = PixelRatio.roundToNearestPixel(SIZE * 0.1);
-  const sizeHalf = PixelRatio.roundToNearestPixel(SIZE * 0.5);
-  const sizeFull = PixelRatio.roundToNearestPixel(SIZE);
-
   const handlePress = onPress ? () => void onPress(value) : undefined;
 
   return (
     <Pressable onPress={handlePress} style={[itemStyles.container, containerStyle]} {...setTestID(testID)}>
-      <View
-        style={[
-          itemStyles.border,
-          {
-            borderColor: color,
-            borderWidth,
-            width: sizeFull,
-            height: sizeFull,
-            borderRadius: sizeHalf
-          }
-        ]}
-      >
-        {selected && (
-          <View
-            style={{
-              backgroundColor: color,
-              width: sizeHalf,
-              height: sizeHalf,
-              borderRadius: sizeHalf
-            }}
-          />
-        )}
-      </View>
+      <RadioCircle selected={selected} color={color} />
 
       {buttons && buttons.length && (
         <>

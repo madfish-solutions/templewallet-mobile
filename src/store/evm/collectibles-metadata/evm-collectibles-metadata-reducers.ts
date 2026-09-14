@@ -5,7 +5,10 @@ import { persistReducer } from 'redux-persist';
 import { isDefined } from 'src/utils/is-defined';
 import { SlicedAsyncStorage } from 'src/utils/sliced-async-storage';
 
-import { processLoadedEvmCollectiblesMetadataAction } from './evm-collectibles-metadata-actions';
+import {
+  processLoadedEvmCollectiblesMetadataAction,
+  putEvmCollectiblesMetadataAction
+} from './evm-collectibles-metadata-actions';
 import { evmCollectiblesMetadataInitialState, EvmCollectiblesMetadataState } from './evm-collectibles-metadata-state';
 
 const evmCollectiblesMetadataReducers = createReducer<EvmCollectiblesMetadataState>(
@@ -31,6 +34,12 @@ const evmCollectiblesMetadataReducers = createReducer<EvmCollectiblesMetadataSta
           chainRecord[slug] = metadata[slug];
         }
       }
+    });
+
+    builder.addCase(putEvmCollectiblesMetadataAction, (state, { payload }) => {
+      const { chainId, metadata } = payload;
+
+      state.record[chainId] = { ...state.record[chainId], ...metadata };
     });
   }
 );

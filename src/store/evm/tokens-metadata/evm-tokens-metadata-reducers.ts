@@ -5,7 +5,7 @@ import { persistReducer } from 'redux-persist';
 import { isDefined } from 'src/utils/is-defined';
 import { SlicedAsyncStorage } from 'src/utils/sliced-async-storage';
 
-import { processLoadedEvmTokensMetadataAction } from './evm-tokens-metadata-actions';
+import { processLoadedEvmTokensMetadataAction, putEvmTokensMetadataAction } from './evm-tokens-metadata-actions';
 import { evmTokensMetadataInitialState, EvmTokensMetadataState } from './evm-tokens-metadata-state';
 
 const evmTokensMetadataReducers = createReducer<EvmTokensMetadataState>(evmTokensMetadataInitialState, builder => {
@@ -26,6 +26,12 @@ const evmTokensMetadataReducers = createReducer<EvmTokensMetadataState>(evmToken
         chainRecord[slug] = metadata[slug];
       }
     }
+  });
+
+  builder.addCase(putEvmTokensMetadataAction, (state, { payload }) => {
+    const { chainId, metadata } = payload;
+
+    state.record[chainId] = { ...state.record[chainId], ...metadata };
   });
 });
 
