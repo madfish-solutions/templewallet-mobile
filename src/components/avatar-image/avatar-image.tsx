@@ -9,9 +9,10 @@ interface Props {
   uri: string;
   size?: number;
   style?: FastImageProps['style'];
+  onError?: FastImageProps['onError'];
 }
 
-export const AvatarImage: FC<Props> = ({ uri, size = formatSize(16), style }) => {
+export const AvatarImage: FC<Props> = ({ uri, size = formatSize(16), style, onError }) => {
   const styles = useAvatarImageStyles();
 
   return (
@@ -19,6 +20,7 @@ export const AvatarImage: FC<Props> = ({ uri, size = formatSize(16), style }) =>
       style={[styles.icon, { width: size, height: size }, style]}
       source={{ uri }}
       resizeMode={FastImage.resizeMode.cover}
+      onError={onError}
     />
   );
 };

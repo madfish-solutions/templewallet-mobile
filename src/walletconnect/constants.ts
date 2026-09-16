@@ -22,3 +22,6 @@ export const EVM_WC_METHODS = [
 ] as const;
 
 export const EVM_WC_EVENTS = ['accountsChanged'] as const;
+
+// mirrors SESSION_EXPIRY in @walletconnect/sign-client, sessions carry no creation time, only expiry
+export const WC_SESSION_TTL_SECONDS = 7 * 24 * 60 * 60;

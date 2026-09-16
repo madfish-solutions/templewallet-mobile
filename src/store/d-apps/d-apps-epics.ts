@@ -28,7 +28,7 @@ import { cleanupDuplicateWcSessions } from 'src/walletconnect/wc-session-dedupe.
 import { emptyAction } from '../root-state.actions';
 import type { AnyActionEpic } from '../types';
 
-import { mapBeaconPermissionToConnection, mapWcSessionToConnection } from './connection.utils';
+import { mapBeaconPermissionToConnection, mapWcSessionToConnection, sortConnectionsByNewest } from './connection.utils';
 import {
   loadTokensApyActions,
   abortRequestAction,
@@ -83,7 +83,9 @@ const loadConnectionsEpic: AnyActionEpic = (action$, state$) =>
           const actions = [];
 
           if (beacon.success || wc.success) {
-            actions.push(loadConnectionsActions.success(beaconConnections.concat(wcConnections)));
+            actions.push(
+              loadConnectionsActions.success(sortConnectionsByNewest(beaconConnections.concat(wcConnections)))
+            );
           }
 
           if (errors.length > 0) {
@@ -96,9 +98,22 @@ const loadConnectionsEpic: AnyActionEpic = (action$, state$) =>
     })
   );
 
-const removeConnection$ = (connection: DAppConnection) =>
+// SDK's removePeer drops permissions by accountIdentifier alone, wiping other dapps on the same account
+// clearing this dapp's own permissions first leaves it nothing to match
+const removeBeaconDappPermissions$ = (senderId: string) =>
+  from(BeaconHandler.getPermissions()).pipe(
+    switchMap(permissions =>
+      from(permissions.filter(permission => permission.senderId === senderId)).pipe(
+        concatMap(permission => BeaconHandler.removePermission(permission.accountIdentifier, permission.senderId)),
+        toArray()
+      )
+    )
+  );
+
+const removeConnection$ = (connection: DAppConnection): Observable<unknown> =>
   connection.protocol === DAppConnectionProtocol.Beacon
-    ? from(BeaconHandler.getPeers()).pipe(
+    ? removeBeaconDappPermissions$(connection.senderId).pipe(
+        switchMap(() => BeaconHandler.getPeers()),
         switchMap(peers =>
           forkJoin(
             peers.map(peer =>
@@ -121,8 +136,7 @@ const removeConnection$ = (connection: DAppConnection) =>
               )
             )
           ).pipe(defaultIfEmpty(null))
-        ),
-        switchMap(() => BeaconHandler.removePermission(connection.accountIdentifier, connection.senderId))
+        )
       )
     : from(WcHandler.disconnectSession(connection.topic));
 
