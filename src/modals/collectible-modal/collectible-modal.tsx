@@ -24,10 +24,10 @@ import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmatio
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useModalParams, useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
-import { loadCollectiblesDetailsActions } from 'src/store/collectibles/collectibles-actions';
+import { loadOneCollectibleDetailsActions } from 'src/store/collectibles/collectibles-actions';
 import {
-  useCollectibleDetailsLoadingSelector,
-  useCollectibleDetailsSelector
+  useCollectibleDetailsSelector,
+  useOneCollectibleDetailsLoadingSelector
 } from 'src/store/collectibles/collectibles-selectors';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { useAssetMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
@@ -84,7 +84,7 @@ export const CollectibleModal = memo(() => {
   const details = useCollectibleDetailsSelector(slug);
   const balance = useAssetBalanceSelector(slug);
   const isAccountHolder = isString(balance) && balance !== '0';
-  const areDetailsLoading = useCollectibleDetailsLoadingSelector();
+  const areDetailsLoading = useOneCollectibleDetailsLoadingSelector();
 
   const attributes = useAttributesWithRarity(details);
 
@@ -92,7 +92,7 @@ export const CollectibleModal = memo(() => {
 
   const creators = details?.creators;
 
-  useInterval(() => void dispatch(loadCollectiblesDetailsActions.submit([slug])), APIS_SYNC_INTERVAL, [slug], true);
+  useInterval(() => void dispatch(loadOneCollectibleDetailsActions.submit(slug)), APIS_SYNC_INTERVAL, [slug], true);
 
   const handleCollectionNamePress = () => openUrl(objktCollectionUrl(address));
 

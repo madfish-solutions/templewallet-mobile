@@ -31,7 +31,7 @@ export const CollectibleProperties = memo<Props>(({ contract, tokenId, details, 
     }).format(date);
 
     const hash = isDefined(metadata) && metadata.trim() !== '' ? metadata.split('/')[2] : null;
-    const formattedMetadataLink = `https://ipfs.io/ipfs/${hash}`;
+    const formattedMetadataLink = `https://ipfs.filebase.io/ipfs/${hash}`;
 
     return [
       {
