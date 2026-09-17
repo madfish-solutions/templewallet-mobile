@@ -4,23 +4,29 @@ import { defer, from, Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { Hash, isHash, SendTransactionRequest } from 'viem';
 
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { EvmChainAssetsRecord } from 'src/store/evm/assets/evm-assets-state';
-import { navigateBackAction } from 'src/store/root-state.actions';
+import { navigateAction, navigateBackAction } from 'src/store/root-state.actions';
 import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
 import { EvmNetworkEssentials } from 'src/types/networks';
 import {
+  EvmWcSendTransactionMethod,
   isWcSendTransactionMethod,
   isWcSigningMethod,
   isWcWatchAssetMethod,
+  isWcWatchAssetRequestContent,
   StrictWcSessionRequest,
   StrictWcSessionRequestContent,
   WcSendTransactionRequestContent
 } from 'src/types/strict-wc-session-request';
+import { parseEvmCaipChainId } from 'src/utils/evm/caip.utils';
 import { loadEtherlinkBalancesOnChain } from 'src/utils/evm/etherlink-balances.utils';
 import { normalizeEvmTransactionError } from 'src/utils/evm/evm-transaction-error';
 import { evmTransactionSubmissionService } from 'src/utils/evm/evm-transaction-submission';
 import { getEvmTransactionExplorerUrl } from 'src/utils/evm/get-evm-transaction-explorer-url';
 import { WcEvmRequestError } from 'src/utils/evm/wc-evm-request-error';
+import { toEvmAssetSlug } from 'src/utils/from-token-slug';
 import { isDefined } from 'src/utils/is-defined';
 import { wcEvmRequestService } from 'src/walletconnect/evm-request-service';
 import { WcHandler } from 'src/walletconnect/wc-handler';
@@ -88,7 +94,13 @@ const toWcJsonRpcError = (error: unknown) => {
   };
 };
 
-const showWcRequestSuccessToast = (method: string, result: unknown, blockExplorerUrl?: string) => {
+function showWcRequestSuccessToast(
+  method: EvmWcSendTransactionMethod,
+  result: HexString,
+  blockExplorerUrl?: string
+): void;
+function showWcRequestSuccessToast(method: string): void;
+function showWcRequestSuccessToast(method: string, result?: HexString, blockExplorerUrl?: string) {
   if (
     isWcSendTransactionMethod(method) &&
     typeof result === 'string' &&
@@ -109,11 +121,11 @@ const showWcRequestSuccessToast = (method: string, result: unknown, blockExplore
   } else if (isWcSigningMethod(method)) {
     showSuccessToast({ description: 'Successfully signed!' });
   } else if (isWcWatchAssetMethod(method)) {
-    showSuccessToast({ description: 'Token successfully added' });
+    showSuccessToast({ description: 'Token added succesfully' });
   } else {
     showSuccessToast({ description: 'Successfully confirmed!' });
   }
-};
+}
 
 const waitForWcTransactionConfirmation = async ({
   address,
@@ -246,10 +258,25 @@ export const approveWcSessionRequest = (payload: ApproveWcSessionRequestPayload)
   }
 
   const { request, markResponded } = payload;
+  const requestContent = request.params.request;
 
   return handleWcSessionRequest(payload).pipe(
     switchMap(result => onSuccess(request, result, markResponded)),
-    map(() => navigateBackAction()),
+    map(() =>
+      isWcWatchAssetRequestContent(requestContent)
+        ? navigateAction({
+            screen: ScreensEnum.TokenScreen,
+            params: {
+              descriptor: {
+                slug: toEvmAssetSlug(requestContent.params.options.address),
+                chainId: Number(parseEvmCaipChainId(request.params.chainId)),
+                chainKind: TempleChainKind.EVM
+              }
+            }
+          })
+        : navigateBackAction()
+    ),
+    tap(() => showWcRequestSuccessToast(requestContent.method)),
     catchError(error => onError(request, error, markResponded))
   );
 };

@@ -164,7 +164,7 @@ class WcEvmRequestService {
     const metadata: EvmTokenMetadata = {
       address: tokenAddress,
       standard: EvmAssetStandardEnum.ERC20,
-      name: onChainMetadata?.name,
+      name: options.name ?? onChainMetadata?.name,
       symbol: options.symbol ?? onChainMetadata?.symbol,
       decimals,
       iconURL: options.image

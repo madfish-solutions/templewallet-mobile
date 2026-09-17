@@ -122,7 +122,7 @@ export const WcSessionRequestConfirmation: FC<Props> = ({ request }) => {
   } else if (isSendTransactionRequest) {
     title = 'Confirm Operation';
   } else if (isWatchAssetRequest) {
-    title = 'Confirm Adding Token';
+    title = 'Add Token';
   } else {
     title = 'Confirm Action';
   }
