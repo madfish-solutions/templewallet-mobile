@@ -1,24 +1,24 @@
 import React, { memo, useCallback } from 'react';
-import { Alert, Text, View } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { Alert, View } from 'react-native';
 
 import { AppMetadataIcon } from 'src/components/app-metadata-icon/app-metadata-icon';
-import { Divider } from 'src/components/divider/divider';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
-import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
+import { getChainLogoName } from 'src/components/crypto-logo/utils';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
+import { NetworkIcon } from 'src/components/network-icon';
+import { TouchableIconV2 } from 'src/components/touchable-icon-v2';
+import { TruncatedText } from 'src/components/truncated-text';
 import { DAppConnectionProtocol } from 'src/enums/dapp-connection-protocol.enum';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { DAppConnection } from 'src/interfaces/dapp-connection.interface';
+import { dispatch } from 'src/store';
 import { removeConnectionAction } from 'src/store/d-apps/d-apps-actions';
 import { formatSize } from 'src/styles/format-size';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
-import { isString } from 'src/utils/is-string';
 
 import { DAppsSettingsSelectors } from '../d-apps.settings.selectors';
 
 import { ConnectionItemAnalyticsEvents } from './analytics-events';
-import { ConnectionItemSelectors } from './selectors';
 import { useConnectionItemStyles } from './styles';
 
 interface Props {
@@ -27,64 +27,60 @@ interface Props {
 
 export const ConnectionItem = memo<Props>(({ connection }) => {
   const styles = useConnectionItemStyles();
-  const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
 
-  const removeConnectionHandler = useCallback(
+  const isBeaconConnection = connection.protocol === DAppConnectionProtocol.Beacon;
+
+  const handleDisconnectPress = useCallback(
     () =>
-      Alert.alert('Delete connection? ', 'You can reconnect to this DApp later.', [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-          onPress: () =>
-            trackEvent(ConnectionItemAnalyticsEvents.DELETE_CONNECTION_CANCEL, AnalyticsEventCategory.General)
-        },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: () => {
-            dispatch(removeConnectionAction(connection));
-            trackEvent(ConnectionItemAnalyticsEvents.DELETE_CONNECTION_SUCCESS, AnalyticsEventCategory.General);
+      Alert.alert(
+        'Disconnect?',
+        isBeaconConnection
+          ? 'All accounts connected to this Dapp will be disconnected. You can reconnect to it later.'
+          : 'You can reconnect to this Dapp later.',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+            onPress: () =>
+              trackEvent(ConnectionItemAnalyticsEvents.DeleteConnectionCancel, AnalyticsEventCategory.General)
+          },
+          {
+            text: 'Disconnect',
+            style: 'destructive',
+            onPress: () => {
+              dispatch(removeConnectionAction(connection));
+              trackEvent(ConnectionItemAnalyticsEvents.DeleteConnectionSuccess, AnalyticsEventCategory.General);
+            }
           }
-        }
-      ]),
-    [connection, dispatch, trackEvent]
+        ]
+      ),
+    [connection, isBeaconConnection, trackEvent]
   );
 
-  const protocolLabel = connection.protocol === DAppConnectionProtocol.WalletConnect ? 'WalletConnect' : 'Beacon';
+  const chainKind = isBeaconConnection ? TempleChainKind.Tezos : TempleChainKind.EVM;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.infoContainer}>
-        <AppMetadataIcon iconUri={connection.iconUri} iconSeed={connection.iconSeed} size={formatSize(44)} />
-        <Divider size={formatSize(8)} />
-        <View>
-          <Text style={styles.nameText}>{connection.name}</Text>
-          <Divider size={formatSize(4)} />
-          <Text style={styles.networkText}>
-            Network: <Text style={styles.networkValue}>{connection.networkLabel}</Text>
-          </Text>
-          <Divider size={formatSize(4)} />
-          <Text style={styles.networkText}>
-            Protocol: <Text style={styles.networkValue}>{protocolLabel}</Text>
-          </Text>
-          {isString(connection.accountAddress) && (
-            <>
-              <Divider size={formatSize(4)} />
-              <PublicKeyHashText
-                publicKeyHash={connection.accountAddress}
-                testID={ConnectionItemSelectors.accountAddress}
-              />
-            </>
-          )}
+    <View style={styles.root}>
+      <AppMetadataIcon
+        iconUri={connection.iconUri}
+        iconSeed={connection.iconSeed}
+        size={formatSize(36)}
+        style={styles.logo}
+      />
+      <View style={styles.info}>
+        <TruncatedText style={styles.name}>{connection.name}</TruncatedText>
+        <View style={styles.networkRow}>
+          <TruncatedText style={styles.networkLabel}>{connection.networkLabel}</TruncatedText>
+          <NetworkIcon name={getChainLogoName(chainKind)} variant="compactTransparent" />
         </View>
       </View>
-      <TouchableIcon
-        name={IconNameEnum.Trash}
-        size={formatSize(16)}
-        style={styles.trashIcon}
-        onPress={removeConnectionHandler}
-        testID={DAppsSettingsSelectors.trashButton}
+      <TouchableIconV2
+        name={IconNameV2Enum.LinkNo}
+        size={formatSize(24)}
+        iconSize={16}
+        onPress={handleDisconnectPress}
+        testID={DAppsSettingsSelectors.disconnectButton}
       />
     </View>
   );

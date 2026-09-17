@@ -30,10 +30,10 @@ export interface AccountProps extends CommonProps {
 
 interface ContactProps extends CommonProps {
   variant: 'contact';
-  chainKind: TempleChainKind;
   name: string;
   address: string;
   avatarSeed: string;
+  chainKind: TempleChainKind;
 }
 
 type Props = AccountProps | ContactProps;

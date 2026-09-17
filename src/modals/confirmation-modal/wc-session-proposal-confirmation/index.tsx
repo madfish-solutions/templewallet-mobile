@@ -8,6 +8,7 @@ import { switchMap } from 'rxjs/operators';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useRequestConfirmation } from 'src/hooks/request-confirmation/use-request-confirmation.hook';
 import { AccountWithEvmAddress } from 'src/interfaces/account.interfaces';
+import { getWcPeerIconUri } from 'src/store/d-apps/connection.utils';
 import { loadConnectionsActions } from 'src/store/d-apps/d-apps-actions';
 import { navigateBackAction } from 'src/store/root-state.actions';
 import { setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
@@ -106,7 +107,7 @@ export const WcSessionProposalConfirmation: FC<Props> = ({ proposal }) => {
   return (
     <ConnectionRequestConfirmationContent
       appName={metadata.name}
-      iconUri={metadata.icons?.[0]}
+      iconUri={getWcPeerIconUri(metadata)}
       iconSeed={metadata.url || metadata.name}
       accounts={evmAccounts}
       initialValues={formInitialValues}

@@ -1,34 +1,42 @@
-import { DEFAULT_BORDER_WIDTH } from 'src/config/styles';
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
+import { iosCardShadow } from 'src/styles/shadows';
 
 export const useConnectionItemStyles = createUseStylesMemoized(({ colors, typography }) => ({
-  container: {
+  root: {
+    minHeight: formatSize(66),
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingTop: formatSize(8),
-    paddingBottom: formatSize(24),
-    paddingRight: formatSize(16),
-    borderBottomColor: colors.lines,
-    borderBottomWidth: DEFAULT_BORDER_WIDTH
+    alignItems: 'center',
+    gap: formatSize(8),
+    paddingLeft: formatSize(12),
+    paddingRight: formatSize(12),
+    paddingVertical: formatSize(12),
+    borderRadius: formatSize(10),
+    backgroundColor: colors.cardBG,
+    boxShadow: iosCardShadow
   },
-  infoContainer: {
-    flexDirection: 'row'
+  logo: {
+    borderRadius: formatSize(18),
+    borderWidth: 0
   },
-  nameText: {
-    ...typography.numbersRegular15,
+  info: {
+    flex: 1,
+    minWidth: 0,
+    gap: formatSize(2)
+  },
+  name: {
+    ...typography.body15Semibold,
+    lineHeight: formatSize(20),
     color: colors.black
   },
-  networkText: {
-    ...typography.numbersRegular11,
-    color: colors.gray2
+  networkRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: formatSize(2)
   },
-  networkValue: {
-    ...typography.numbersRegular11,
-    color: colors.gray1,
-    textTransform: 'capitalize'
-  },
-  trashIcon: {
-    marginTop: formatSize(8)
+  networkLabel: {
+    ...typography.caption13Regular,
+    lineHeight: formatSize(18),
+    color: colors.gray1
   }
 }));

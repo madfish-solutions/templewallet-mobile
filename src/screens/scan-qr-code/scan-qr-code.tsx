@@ -34,7 +34,7 @@ export const ScanQrCode = () => {
         if (Number(tezosToken.balance) > 0) {
           navigateToModal(ModalsEnum.Send, { token: TEZ_TOKEN_METADATA, receiverPublicKeyHash: data });
         } else {
-          trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_ZERO_BALANCE, AnalyticsEventCategory.General);
+          trackEvent(ScanQrCodeAnalyticsEvents.ZeroBalance, AnalyticsEventCategory.General);
           showErrorToast({ description: `You need to have ${TEZ_TOKEN_METADATA.symbol} to pay gas fee` });
         }
 
@@ -56,14 +56,14 @@ export const ScanQrCode = () => {
           errorMessage => {
             dataWasIgnored = false;
             goBack();
-            trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_HANDLE_ERROR, AnalyticsEventCategory.General, {
+            trackEvent(ScanQrCodeAnalyticsEvents.HandleError, AnalyticsEventCategory.General, {
               errorMessage
             });
             showErrorToast({ description: errorMessage });
           }
         );
         if (dataWasIgnored) {
-          trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_DATA_IGNORED, AnalyticsEventCategory.General, { data });
+          trackEvent(ScanQrCodeAnalyticsEvents.DataIgnored, AnalyticsEventCategory.General, { data });
         }
 
         return;
@@ -79,7 +79,7 @@ export const ScanQrCode = () => {
           errorMessage => {
             dataWasIgnored = false;
             goBack();
-            trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_HANDLE_ERROR, AnalyticsEventCategory.General, {
+            trackEvent(ScanQrCodeAnalyticsEvents.HandleError, AnalyticsEventCategory.General, {
               errorMessage
             });
             showErrorToast({ description: errorMessage });
@@ -87,7 +87,7 @@ export const ScanQrCode = () => {
         )
           .then(() => {
             if (dataWasIgnored) {
-              trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_DATA_IGNORED, AnalyticsEventCategory.General, {
+              trackEvent(ScanQrCodeAnalyticsEvents.DataIgnored, AnalyticsEventCategory.General, {
                 data
               });
             }
@@ -97,7 +97,7 @@ export const ScanQrCode = () => {
         return;
       }
 
-      trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_INVALID_QR_CODE, AnalyticsEventCategory.General);
+      trackEvent(ScanQrCodeAnalyticsEvents.InvalidQrCode, AnalyticsEventCategory.General);
       showErrorToast({ description: 'Invalid QR code' });
     },
     [goBack, navigateToModal, tezosToken.balance, trackEvent]

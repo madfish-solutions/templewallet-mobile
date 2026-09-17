@@ -7,6 +7,7 @@ import { createActions } from '../create-actions';
 
 export const loadConnectionsActions = createActions<void, DAppConnection[], string>('d-apps/LOAD_CONNECTIONS');
 export const removeConnectionAction = createAction<DAppConnection>('d-apps/REMOVE_CONNECTION');
+export const removeConnectionsAction = createAction<DAppConnection[]>('d-apps/REMOVE_CONNECTIONS');
 
 export const abortRequestAction = createAction<string>('d-apps/ABORT_REQUEST');
 

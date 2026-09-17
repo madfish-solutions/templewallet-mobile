@@ -8,6 +8,7 @@ interface DAppConnectionBase {
   iconSeed: string;
   networkLabel: string;
   accountAddress?: string;
+  connectedAt: number;
 }
 
 export interface BeaconDAppConnection extends DAppConnectionBase {

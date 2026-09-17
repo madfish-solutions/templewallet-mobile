@@ -1,7 +1,16 @@
 import { BeaconErrorType, BeaconMessageType, getSenderId } from '@airgap/beacon-sdk';
 import { Epic, combineEpics } from 'redux-observable';
 import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
-import { catchError, concatMap, map, switchMap, withLatestFrom } from 'rxjs/operators';
+import {
+  catchError,
+  concatMap,
+  defaultIfEmpty,
+  map,
+  switchMap,
+  timeout,
+  toArray,
+  withLatestFrom
+} from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
@@ -19,15 +28,18 @@ import { cleanupDuplicateWcSessions } from 'src/walletconnect/wc-session-dedupe.
 import { emptyAction } from '../root-state.actions';
 import type { AnyActionEpic } from '../types';
 
-import { mapBeaconPermissionToConnection, mapWcSessionToConnection } from './connection.utils';
+import { mapBeaconPermissionToConnection, mapWcSessionToConnection, sortConnectionsByNewest } from './connection.utils';
 import {
   loadTokensApyActions,
   abortRequestAction,
   loadDAppsListActions,
   loadConnectionsActions,
-  removeConnectionAction
+  removeConnectionAction,
+  removeConnectionsAction
 } from './d-apps-actions';
 import { fetchUBTCApr$, fetchUUSDCApr$ } from './utils';
+
+const REMOVE_PEER_TIMEOUT_MS = 5000;
 
 const loadConnectionsEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
@@ -71,7 +83,9 @@ const loadConnectionsEpic: AnyActionEpic = (action$, state$) =>
           const actions = [];
 
           if (beacon.success || wc.success) {
-            actions.push(loadConnectionsActions.success(beaconConnections.concat(wcConnections)));
+            actions.push(
+              loadConnectionsActions.success(sortConnectionsByNewest(beaconConnections.concat(wcConnections)))
+            );
           }
 
           if (errors.length > 0) {
@@ -84,36 +98,54 @@ const loadConnectionsEpic: AnyActionEpic = (action$, state$) =>
     })
   );
 
+// SDK's removePeer drops permissions by accountIdentifier alone, wiping other dapps on the same account
+// clearing this dapp's own permissions first leaves it nothing to match
+const removeBeaconDappPermissions$ = (senderId: string) =>
+  from(BeaconHandler.getPermissions()).pipe(
+    switchMap(permissions =>
+      from(permissions.filter(permission => permission.senderId === senderId)).pipe(
+        concatMap(permission => BeaconHandler.removePermission(permission.accountIdentifier, permission.senderId)),
+        toArray()
+      )
+    )
+  );
+
+const removeConnection$ = (connection: DAppConnection): Observable<unknown> =>
+  connection.protocol === DAppConnectionProtocol.Beacon
+    ? removeBeaconDappPermissions$(connection.senderId).pipe(
+        switchMap(() => BeaconHandler.getPeers()),
+        switchMap(peers =>
+          forkJoin(
+            peers.map(peer =>
+              from(getSenderId(peer.publicKey)).pipe(
+                switchMap(peerSenderId =>
+                  connection.senderId === peerSenderId
+                    ? from(
+                        BeaconHandler.removePeer({
+                          ...peer,
+                          type: 'p2p-pairing-response',
+                          senderId: peerSenderId
+                        })
+                        // the relay notice inside removePeer may hang offline; permissions are already removed before it is sent
+                      ).pipe(
+                        timeout(REMOVE_PEER_TIMEOUT_MS),
+                        catchError(() => of(null))
+                      )
+                    : of(null)
+                )
+              )
+            )
+          ).pipe(defaultIfEmpty(null))
+        )
+      )
+    : from(WcHandler.disconnectSession(connection.topic));
+
 const removeConnectionEpic: Epic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(removeConnectionAction),
     toPayload(),
-    switchMap(connection => {
-      const remove$ =
-        connection.protocol === DAppConnectionProtocol.Beacon
-          ? from(BeaconHandler.getPeers()).pipe(
-              switchMap(peers =>
-                forkJoin(
-                  peers.map(peer =>
-                    from(getSenderId(peer.publicKey)).pipe(
-                      map(peerSenderId =>
-                        connection.senderId === peerSenderId
-                          ? BeaconHandler.removePeer({
-                              ...peer,
-                              type: 'p2p-pairing-response',
-                              senderId: peerSenderId
-                            })
-                          : EMPTY
-                      )
-                    )
-                  )
-                )
-              ),
-              switchMap(() => BeaconHandler.removePermission(connection.accountIdentifier, connection.senderId))
-            )
-          : from(WcHandler.disconnectSession(connection.topic));
-
-      return remove$.pipe(
+    switchMap(connection =>
+      removeConnection$(connection).pipe(
         map(() => {
           showSuccessToast({ description: 'Connection successfully removed!' });
 
@@ -124,8 +156,34 @@ const removeConnectionEpic: Epic = (action$: Observable<Action>) =>
 
           return EMPTY;
         })
-      );
-    })
+      )
+    )
+  );
+
+const removeConnectionsEpic: Epic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(removeConnectionsAction),
+    toPayload(),
+    concatMap(connections =>
+      from(connections).pipe(
+        concatMap(connection =>
+          removeConnection$(connection).pipe(
+            map(() => true),
+            catchError(() => of(false))
+          )
+        ),
+        toArray(),
+        map(results => {
+          if (results.every(Boolean)) {
+            showSuccessToast({ description: 'All connections successfully removed!' });
+          } else {
+            showErrorToast({ description: 'Some connections could not be removed' });
+          }
+
+          return loadConnectionsActions.submit();
+        })
+      )
+    )
   );
 
 const abortRequestEpic: Epic = (action$: Observable<Action>) =>
@@ -193,6 +251,7 @@ const loadTokensApyEpic: AnyActionEpic = (action$, state$) =>
 export const dAppsEpics = combineEpics(
   loadConnectionsEpic,
   removeConnectionEpic,
+  removeConnectionsEpic,
   abortRequestEpic,
   loadDAppsListEpic,
   loadTokensApyEpic
