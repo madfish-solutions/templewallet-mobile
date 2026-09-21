@@ -8,12 +8,16 @@ import { Divider } from 'src/components/divider/divider';
 import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
+import { useOpenUrl } from 'src/hooks/use-open-url.hook';
+import { useUpdatableRef } from 'src/hooks/use-updatable-ref.hook';
 import { dispatch } from 'src/store';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { showErrorToast } from 'src/toast/error-toast.utils';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
-import { openUrl } from 'src/utils/linking';
+import { copyStringToClipboard } from 'src/utils/clipboard.utils';
+import { getErrorDerivedEventProps } from 'src/utils/error-analytics-data.utils';
 
 import { OnRampOverlaySelectors } from './on-ramp-overlay.selectors';
 import { useOnRampOverlayStyles } from './on-ramp-overlay.styles';
@@ -39,9 +43,11 @@ const OverlayBody = memo<OverlayBodyProps>(({ isStart }) => {
 
   const [isLinkLoading, setIsLinkLoading] = useState(false);
   const { trackErrorEvent } = useAnalytics();
+  const openUrl = useOpenUrl({ rethrowError: true });
 
   const styles = useOnRampOverlayStyles();
   const dropdownBottomSheetStyles = useDropdownBottomSheetStyles();
+  const publicKeyHashRef = useUpdatableRef(tezosAddress);
 
   const handleClose = useCallback(() => {
     setIsLinkLoading(false);
@@ -53,17 +59,37 @@ const OverlayBody = memo<OverlayBodyProps>(({ isStart }) => {
       try {
         setIsLinkLoading(true);
 
-        const url = await getWertLink(tezosAddress, amount);
+        // A possible solution to the issue of empty address in search params
+        if (!publicKeyHashRef.current) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+
+        if (!publicKeyHashRef.current) {
+          showErrorToast({
+            title: 'Failed to generate Wert link',
+            description: 'Please try again later'
+          });
+
+          return;
+        }
+
+        const url = getWertLink(publicKeyHashRef.current, amount);
 
         handleClose();
 
         openUrl(url);
       } catch (e) {
-        trackErrorEvent('GetWertLinkError', e, tezosAddress ? [tezosAddress] : [], { amount });
+        const errorDetails = JSON.stringify(getErrorDerivedEventProps(e, []));
+        showErrorToast({
+          title: 'Failed to open Wert link',
+          description: errorDetails,
+          onPress: () => copyStringToClipboard(errorDetails)
+        });
+        trackErrorEvent('GetWertLinkError', e, [publicKeyHashRef.current], { amount });
         handleClose();
       }
     },
-    [handleClose, tezosAddress, trackErrorEvent]
+    [handleClose, openUrl, publicKeyHashRef, trackErrorEvent]
   );
 
   return (

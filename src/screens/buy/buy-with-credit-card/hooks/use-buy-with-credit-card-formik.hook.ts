@@ -2,16 +2,18 @@ import { useFormik } from 'formik';
 import { useCallback } from 'react';
 
 import { getSignedMoonPayUrl } from 'src/apis/moonpay';
-import { createOrder as createUtorgOrder } from 'src/apis/utorg';
-import { DeadEndBoundaryError } from 'src/components/error-boundary';
+import { buildMtPelerinBuyUrl, createMtPelerinAddressProof, getMtPelerinOutputAmount } from 'src/apis/mt-pelerin';
+import { MT_PELERIN_NETWORK } from 'src/apis/mt-pelerin/consts';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
+import { useOpenUrl } from 'src/hooks/use-open-url.hook.ts';
+import { useCryptoCurrenciesSelector, useFiatCurrenciesSelector } from 'src/store/buy-with-credit-card/selectors';
 import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { PAIR_NOT_FOUND_MESSAGE } from 'src/utils/constants/buy-with-credit-card';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { isDefined } from 'src/utils/is-defined';
-import { openUrl } from 'src/utils/linking';
 
 import { BuyWithCreditCardFormValues, BuyWithCreditCardValidationSchema } from '../form';
 
@@ -49,10 +51,9 @@ const initialValues: BuyWithCreditCardFormValues = {
 export const useBuyWithCreditCardFormik = () => {
   const { trackEvent, trackErrorEvent } = useAnalytics();
   const tezosAddress = useAccountAddressForTezos();
-
-  if (!tezosAddress) {
-    throw new DeadEndBoundaryError();
-  }
+  const openUrl = useOpenUrl({ rethrowError: true });
+  const mtPelerinFiatCurrencies = useFiatCurrenciesSelector(TopUpProviderEnum.MtPelerin);
+  const mtPelerinCryptoCurrencies = useCryptoCurrenciesSelector(TopUpProviderEnum.MtPelerin);
 
   const handleSubmit = useCallback(
     async (values: BuyWithCreditCardFormValues) => {
@@ -70,7 +71,7 @@ export const useBuyWithCreditCardFormik = () => {
           provider: values.paymentProvider?.name
         });
 
-        if (!isDefined(inputAmount) || !isDefined(outputAmount)) {
+        if (!isDefined(inputAmount) || !isDefined(outputAmount) || !isDefined(values.paymentProvider?.outputAmount)) {
           return;
         }
 
@@ -85,17 +86,41 @@ export const useBuyWithCreditCardFormik = () => {
               inputSymbol
             );
             break;
-          default:
-            urlToOpen = await createUtorgOrder(outputAmount.toNumber(), inputSymbol, tezosAddress, outputSymbol);
+          case TopUpProviderEnum.MtPelerin: {
+            const providerFiat = mtPelerinFiatCurrencies.find(({ code }) => code === inputSymbol);
+            const providerCrypto = mtPelerinCryptoCurrencies.find(({ slug }) => slug === getOutput.asset.slug);
+
+            if (!isDefined(providerFiat) || !isDefined(providerCrypto)) {
+              throw new Error(PAIR_NOT_FOUND_MESSAGE);
+            }
+
+            await getMtPelerinOutputAmount(
+              providerFiat.code,
+              providerCrypto.code,
+              inputAmount.toNumber(),
+              MT_PELERIN_NETWORK
+            );
+            const proof = await createMtPelerinAddressProof(tezosAddress!);
+            urlToOpen = buildMtPelerinBuyUrl({
+              fiatCode: providerFiat.code,
+              cryptoCode: providerCrypto.code,
+              sourceAmount: inputAmount.toNumber(),
+              network: MT_PELERIN_NETWORK,
+              ...proof
+            });
             break;
+          }
+          default:
+            throw new Error('Payment provider is not selected');
         }
-        openUrl(urlToOpen);
+
+        await openUrl(urlToOpen);
       } catch (error) {
         trackErrorEvent('BuyWithCreditCardFormSubmitError', error, tezosAddress ? [tezosAddress] : [], { values });
         showErrorToast({ description: getAxiosQueryErrorMessage(error) });
       }
     },
-    [tezosAddress, trackEvent, trackErrorEvent]
+    [mtPelerinCryptoCurrencies, mtPelerinFiatCurrencies, openUrl, tezosAddress, trackEvent, trackErrorEvent]
   );
 
   return useFormik<BuyWithCreditCardFormValues>({

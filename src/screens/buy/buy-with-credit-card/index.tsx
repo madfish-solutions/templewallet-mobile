@@ -38,8 +38,10 @@ import { usePaymentProviders } from './hooks/use-payment-providers.hook';
 import { useUpdateCurrentProvider } from './hooks/use-update-current-provider.hook';
 import { BuyWithCreditCardSelectors } from './selectors';
 import { useBuyWithCreditCardStyles } from './styles';
+import { getTopUpOutputAsset } from './utils';
 
 const FORM_REFRESH_INTERVAL = 20000;
+const outputSelection = { start: 0, end: 0 };
 
 const newTopUpAssetAmountFn = (
   _: TopUpAssetAmountInterface,
@@ -50,6 +52,14 @@ const newTopUpAssetAmountFn = (
   amount: isDefined(newAsset.precision) ? amount?.decimalPlaces(newAsset.precision) : amount,
   min: newAsset.minAmount,
   max: newAsset.maxAmount
+});
+const newTopUpOutputAssetAmountFn = (
+  _: TopUpAssetAmountInterface,
+  newAsset: TopUpInputInterface,
+  amount: BigNumber | undefined
+) => ({
+  asset: getTopUpOutputAsset(newAsset),
+  amount
 });
 const paymentProviderKeyFn = (value: PaymentProviderInterface) => value.id;
 const paymentProvidersAreSame = (a: PaymentProviderInterface, b?: PaymentProviderInterface) => a.id === b?.id;
@@ -65,7 +75,7 @@ export const BuyWithCreditCard: FC = () => {
   useEffect(() => void dispatch(loadAllCurrenciesActions.submit()), []);
 
   const formik = useBuyWithCreditCardFormik();
-  const { errors, touched, values, submitForm, setFieldValue, isValid, submitCount } = formik;
+  const { errors, touched, values, submitForm, setFieldValue, isValid, submitCount, isSubmitting } = formik;
   const { asset: inputAsset, amount: inputAmount } = values.sendInput;
   const { asset: outputAsset, amount: outputAmount } = values.getOutput;
 
@@ -76,7 +86,7 @@ export const BuyWithCreditCard: FC = () => {
     currenciesWithPairLimits,
     filteredCurrencies: filteredFiatCurrencies,
     setSearchValue: setInputSearchValue
-  } = useFiatCurrenciesList(inputAsset.code, outputAsset.code);
+  } = useFiatCurrenciesList(inputAsset.code, outputAsset.slug);
 
   const {
     allCryptoCurrencies,
@@ -97,7 +107,7 @@ export const BuyWithCreditCard: FC = () => {
     manuallySelectedProviderIdRef
   } = useFormInputsCallbacks(formik, updateOutputAmounts, formIsLoading, setFormIsLoading);
 
-  const pairLimitsLoading = usePairLimitsAreLoading(inputAsset.code, outputAsset.code);
+  const pairLimitsLoading = usePairLimitsAreLoading(inputAsset.code, outputAsset.slug);
 
   const isPaymentProviderError =
     isDefined(errors.paymentProvider) &&
@@ -124,8 +134,8 @@ export const BuyWithCreditCard: FC = () => {
   const isLoading = formIsLoading || currenciesLoading || pairLimitsLoading;
 
   useEffect(() => {
-    dispatch(updatePairLimitsActions.submit({ fiatSymbol: inputAsset.code, cryptoSymbol: outputAsset.code }));
-  }, [dispatch, inputAsset.code, outputAsset.code, noPairLimitsFiatCurrencies.length, allCryptoCurrencies.length]);
+    dispatch(updatePairLimitsActions.submit({ fiatSymbol: inputAsset.code, cryptoSlug: outputAsset.slug }));
+  }, [dispatch, inputAsset.code, outputAsset.slug, noPairLimitsFiatCurrencies.length, allCryptoCurrencies.length]);
 
   useUpdateCurrentProvider(
     paymentProvidersToDisplay,
@@ -138,7 +148,7 @@ export const BuyWithCreditCard: FC = () => {
   useInterval(refreshForm, FORM_REFRESH_INTERVAL, [refreshForm], false);
 
   const someErrorOccured = Object.keys(errors).length > 0;
-  const submitDisabled = (submitCount !== 0 && !isValid) || isLoading || someErrorOccured;
+  const submitDisabled = (submitCount !== 0 && !isValid) || isLoading || isSubmitting || someErrorOccured;
 
   return (
     <>
@@ -178,6 +188,8 @@ export const BuyWithCreditCard: FC = () => {
               emptyListText="Not found crypto currency"
               editable={false}
               isSearchable
+              selectionOptions={outputSelection}
+              newValueFn={newTopUpOutputAssetAmountFn}
               onValueChange={handleOutputValueChange}
               assetsList={filteredCryptoCurrencies}
               testID={BuyWithCreditCardSelectors.getOutput}
@@ -230,7 +242,7 @@ export const BuyWithCreditCard: FC = () => {
 
       <ButtonsFloatingContainer>
         <ButtonLargePrimary
-          title={formIsLoading ? 'Loading...' : 'Top Up'}
+          title={formIsLoading || isSubmitting ? 'Loading...' : 'Top Up'}
           disabled={submitDisabled}
           testID={BuyWithCreditCardSelectors.submitButton}
           onPress={submitForm}

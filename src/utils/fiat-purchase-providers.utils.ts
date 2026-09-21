@@ -20,7 +20,7 @@ const fiatPurchaseProvidersSortPredicate = (
   const { outputAmount: providerAOutputAmount = 0 } = providerA;
   const { outputAmount: providerBOutputAmount = 0 } = providerB;
 
-  return providerBOutputAmount - providerAOutputAmount;
+  return new BigNumber(providerBOutputAmount).comparedTo(providerAOutputAmount) ?? 0;
 };
 
 export const getPaymentProvidersToDisplay = (

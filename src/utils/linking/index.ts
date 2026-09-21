@@ -5,11 +5,26 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { useIsInAppBrowserEnabledSelector } from 'src/store/settings/settings-selectors';
 
-export const openUrl = (url: string) => {
+interface OpenUrlOptions {
+  rethrowError?: boolean;
+}
+
+export const openUrl = (url: string, { rethrowError = false }: OpenUrlOptions = {}) =>
   Linking.canOpenURL(url)
-    .then(() => Linking.openURL(url))
-    .catch(e => console.error(e));
-};
+    .then(canOpen => {
+      if (!canOpen) {
+        throw new Error(`Cannot open URL: ${url}`);
+      }
+
+      return Linking.openURL(url);
+    })
+    .catch(error => {
+      if (rethrowError) {
+        throw error;
+      }
+
+      console.error(error);
+    });
 
 export const useOpenUrlInAppBrowser = () => {
   const navigateToModal = useNavigateToModal();

@@ -8,15 +8,15 @@ import { PairLimits } from 'src/utils/pair-limits';
 export const useInputLimits = (
   topUpProvider: TopUpProviderEnum,
   fiatCurrencyCode: string,
-  cryptoCurrencyCode: string
+  cryptoCurrencySlug: string
 ): Partial<PairLimits> => {
-  const pairLimits = usePairLimitsSelector(fiatCurrencyCode, cryptoCurrencyCode, topUpProvider);
+  const pairLimits = usePairLimitsSelector(fiatCurrencyCode, cryptoCurrencySlug, topUpProvider);
 
   return useMemo(() => pairLimits?.data ?? {}, [pairLimits]);
 };
 
-export const usePairLimitsAreLoading = (fiatCurrencyCode: string, cryptoCurrencyCode: string) => {
-  const pairLimits = usePairLimitsByProvidersSelector(fiatCurrencyCode, cryptoCurrencyCode);
+export const usePairLimitsAreLoading = (fiatCurrencyCode: string, cryptoCurrencySlug: string) => {
+  const pairLimits = usePairLimitsByProvidersSelector(fiatCurrencyCode, cryptoCurrencySlug);
 
   return useMemo(
     () => isDefined(pairLimits) && Object.values(pairLimits).some(({ isLoading }) => isLoading),

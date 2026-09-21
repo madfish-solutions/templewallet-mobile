@@ -45,8 +45,7 @@ export const usePaymentProviderStyles = createUseStyles(({ colors, typography })
   },
   outputInfoContainer: {
     flex: 1,
-    alignItems: 'flex-end',
-    marginRight: formatSize(8)
+    alignItems: 'flex-end'
   },
   infoTitle: {
     ...typography.numbersRegular15,

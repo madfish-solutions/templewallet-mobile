@@ -17,9 +17,9 @@ const useCurrenciesByProviderLoadingSelector = (topUpProvider: TopUpProviderEnum
 
 export const useCurrenciesLoadingSelector = () => {
   const moonPayLoading = useCurrenciesByProviderLoadingSelector(TopUpProviderEnum.MoonPay);
-  const utorgLoading = useCurrenciesByProviderLoadingSelector(TopUpProviderEnum.Utorg);
+  const mtPelerinLoading = useCurrenciesByProviderLoadingSelector(TopUpProviderEnum.MtPelerin);
 
-  return moonPayLoading || utorgLoading;
+  return moonPayLoading || mtPelerinLoading;
 };
 export const useProviderCurrenciesErrorSelector = (topUpProvider: TopUpProviderEnum) =>
   useSelector(({ buyWithCreditCard }) => buyWithCreditCard.currencies[topUpProvider].error);
@@ -28,22 +28,22 @@ export const useAllPairsLimitsSelector = () => useSelector(({ buyWithCreditCard 
 
 export const usePairLimitsByProvidersSelector = (
   fiatSymbol: string,
-  cryptoSymbol: string
+  cryptoSlug: string
 ): PairLimitsRecord | undefined =>
-  useSelector(({ buyWithCreditCard }) => buyWithCreditCard.pairLimits[fiatSymbol]?.[cryptoSymbol]);
+  useSelector(({ buyWithCreditCard }) => buyWithCreditCard.pairLimits[fiatSymbol]?.[cryptoSlug]);
 
 export const usePairLimitsSelector = (
   fiatSymbol: string,
-  cryptoSymbol: string,
+  cryptoSlug: string,
   topUpProvider: TopUpProviderEnum
 ): LoadableEntityState<PairLimits | undefined> =>
-  useSelector(({ buyWithCreditCard }) => buyWithCreditCard.pairLimits[fiatSymbol]?.[cryptoSymbol]?.[topUpProvider]);
+  useSelector(({ buyWithCreditCard }) => buyWithCreditCard.pairLimits[fiatSymbol]?.[cryptoSlug]?.[topUpProvider]);
 
 export const useProviderPairLimitsErrorSelector = (
   fiatSymbol: string,
-  cryptoSymbol: string,
+  cryptoSlug: string,
   topUpProvider: TopUpProviderEnum
 ): string | undefined =>
   useSelector(
-    ({ buyWithCreditCard }) => buyWithCreditCard.pairLimits[fiatSymbol]?.[cryptoSymbol]?.[topUpProvider]?.error
+    ({ buyWithCreditCard }) => buyWithCreditCard.pairLimits[fiatSymbol]?.[cryptoSlug]?.[topUpProvider]?.error
   );

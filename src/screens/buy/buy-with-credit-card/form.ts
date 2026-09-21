@@ -4,7 +4,7 @@ import { number, object, SchemaOf, string } from 'yup';
 import { bigNumberSchema, withMinMaxBignumberValidation } from 'src/form/validation/big-number';
 import { makeRequiredErrorMessage } from 'src/form/validation/messages';
 import { PaymentProviderInterface } from 'src/interfaces/payment-provider';
-import { TopUpInputInterface } from 'src/store/buy-with-credit-card/types';
+import { TopUpInputInterface, TopUpOutputInterface } from 'src/store/buy-with-credit-card/types';
 
 export interface BuyWithCreditCardFormValues {
   sendInput: {
@@ -14,7 +14,7 @@ export interface BuyWithCreditCardFormValues {
     max?: number;
   };
   getOutput: {
-    asset: TopUpInputInterface;
+    asset: TopUpOutputInterface;
     amount?: BigNumber;
   };
   paymentProvider?: PaymentProviderInterface;

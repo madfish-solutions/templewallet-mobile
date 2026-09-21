@@ -7,11 +7,10 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { TruncatedText } from 'src/components/truncated-text';
+import { useOpenUrl } from 'src/hooks/use-open-url.hook.ts';
 import { CustomDAppInfo } from 'src/interfaces/custom-dapps-info.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
-import { useIsInAppBrowserEnabledSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { openUrl, useOpenUrlInAppBrowser } from 'src/utils/linking';
 
 import { useOthersDAppStyles } from './others.styles';
 
@@ -25,13 +24,9 @@ export const OthersDApp: FC<Props> = ({ item, itemWidth, testID }) => {
   const [imageLoadError, setImageLoadError] = useState(false);
 
   const styles = useOthersDAppStyles();
-  const openUrlInAppBrowser = useOpenUrlInAppBrowser();
-  const isInAppBrowserEnabled = useIsInAppBrowserEnabledSelector();
+  const openUrl = useOpenUrl();
 
-  const onPress = useCallback(
-    () => (isInAppBrowserEnabled ? openUrlInAppBrowser(dappUrl) : openUrl(dappUrl)),
-    [isInAppBrowserEnabled, openUrlInAppBrowser, dappUrl]
-  );
+  const onPress = useCallback(() => openUrl(dappUrl), [openUrl, dappUrl]);
 
   return (
     <TouchableWithAnalytics

@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js';
 import React, { ComponentProps, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
@@ -66,7 +67,7 @@ const PaymentProvider: DropdownListItemComponent<PaymentProviderInterface> = ({ 
         <View style={styles.outputInfoContainer}>
           <Text style={styles.infoTitle}>
             {isDefined(item.outputSymbol) && isDefined(item.outputAmount)
-              ? `≈ ${item.outputAmount} ${item.outputSymbol}`
+              ? `≈ ${new BigNumber(item.outputAmount).decimalPlaces(6).toString()} ${item.outputSymbol}`
               : '---'}
           </Text>
           <Text style={styles.infoSubtitle}>

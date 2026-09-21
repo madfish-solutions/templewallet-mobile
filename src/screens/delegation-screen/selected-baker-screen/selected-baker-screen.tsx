@@ -9,13 +9,13 @@ import { ExternalLinkButton } from 'src/components/icon/external-link-button/ext
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
-import { useIsInAppBrowserEnabledSelector } from 'src/store/settings/settings-selectors';
+import { useOpenUrl } from 'src/hooks/use-open-url.hook.ts';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { TEZ_TOKEN_SYMBOL } from 'src/token/data/tokens-metadata';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
-import { openUrl, tzktUrl, useOpenUrlInAppBrowser } from 'src/utils/linking';
+import { tzktUrl } from 'src/utils/linking';
 import { formatToPercentStr } from 'src/utils/number-format.utils';
 import { kFormatter } from 'src/utils/number.util';
 
@@ -34,17 +34,13 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => 
   const styles = useSelectedBakerScreenStyles();
   const colors = useColors();
 
-  const openUrlInAppBrowser = useOpenUrlInAppBrowser();
-  const isInAppBrowserEnabled = useIsInAppBrowserEnabledSelector();
+  const openUrl = useOpenUrl();
 
   const { fee, capacity, freeSpace, minBalance } = baker.delegation;
   const feeStr = formatToPercentStr(fee);
   const stakingBalance = capacity - freeSpace;
 
-  const handleStakingPress = useCallback(
-    () => (isInAppBrowserEnabled ? openUrlInAppBrowser(STAKING_DAPP_LINK) : openUrl(STAKING_DAPP_LINK)),
-    [isInAppBrowserEnabled, openUrlInAppBrowser]
-  );
+  const handleStakingPress = useCallback(() => openUrl(STAKING_DAPP_LINK), [openUrl]);
 
   return (
     <>
