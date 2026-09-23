@@ -11,8 +11,8 @@ import {
 } from '@taquito/tzip16';
 import memoize from 'memoizee';
 
-import { ReadOnlySignerPayload } from 'src/types/read-only-signer-payload';
-import { ReadOnlySigner } from 'src/utils/read-only.signer.util';
+import { TezosReadOnlySignerPayload } from 'src/types/tezos-read-only-signer-payload';
+import { TezosReadOnlySigner } from 'src/utils/tezos-read-only.signer.util';
 
 import { isDefined } from '../is-defined';
 
@@ -20,7 +20,7 @@ import { getFallbackRpcClient } from './fallback-rpc';
 
 const michelEncoder = new MichelCodecPacker();
 
-export const createTezosToolkit = (rpcUrl: string) => {
+export const createTezosToolkit = (preferredRpcUrl?: string) => {
   const metadataProvider = new MetadataProvider(
     new Map<string, Handler>([
       ['http', new HttpHandler()],
@@ -29,7 +29,7 @@ export const createTezosToolkit = (rpcUrl: string) => {
       ['ipfs', new IpfsHttpHandler('ipfs.filebase.io')]
     ])
   );
-  const tezosToolkit = new TezosToolkit(getFallbackRpcClient(rpcUrl));
+  const tezosToolkit = new TezosToolkit(getFallbackRpcClient(preferredRpcUrl));
   tezosToolkit.setPackerProvider(michelEncoder);
   tezosToolkit.setForgerProvider(new CompositeForger([tezosToolkit.getFactory(RpcForger)(), localForger]));
   tezosToolkit.addExtension(new Tzip16Module(metadataProvider));
@@ -39,13 +39,13 @@ export const createTezosToolkit = (rpcUrl: string) => {
 };
 
 export const createReadOnlyTezosToolkit = memoize(
-  (rpcUrl: string, sender?: ReadOnlySignerPayload) => {
-    const readOnlyTezosToolkit = createTezosToolkit(rpcUrl);
+  (sender?: TezosReadOnlySignerPayload | null, preferredRpcUrl?: string) => {
+    const readOnlyTezosToolkit = createTezosToolkit(preferredRpcUrl);
     if (isDefined(sender)) {
-      readOnlyTezosToolkit.setSignerProvider(new ReadOnlySigner(sender.publicKeyHash, sender.publicKey));
+      readOnlyTezosToolkit.setSignerProvider(new TezosReadOnlySigner(sender.address, sender.publicKey));
     }
 
     return readOnlyTezosToolkit;
   },
-  { normalizer: ([rpcUrl, sender]) => `${rpcUrl}_${sender?.publicKeyHash}`, max: 10 }
+  { normalizer: ([sender, preferredRpcUrl]) => `${sender?.address ?? ''}_${preferredRpcUrl ?? ''}`, max: 10 }
 );

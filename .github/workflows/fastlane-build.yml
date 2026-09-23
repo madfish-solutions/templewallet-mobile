@@ -16,7 +16,7 @@ on:
 jobs:
   fastlane-build:
     name: Create new iOS & Android builds and upload them via Fastlane
-    runs-on: macos-15
+    runs-on: xcode-27
     environment: fastlane
     steps:
       - name: Clone repository
@@ -56,6 +56,7 @@ jobs:
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
           KOLO_API_PUBLIC_KEY: ${{ secrets.KOLO_API_PUBLIC_KEY }}
           KOLO_BASE_URL: ${{ vars.KOLO_BASE_URL }}
+          WC_PROJECT_ID: ${{ secrets.WC_PROJECT_ID }}
 
       - name: Prepare changelog
         id: changelog
@@ -110,7 +111,7 @@ jobs:
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: "26.2"
+          xcode-version: "27.0"
 
       - name: Install iOS Gemfile dependencies
         run: cd ios && bundle install

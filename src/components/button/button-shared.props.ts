@@ -6,9 +6,10 @@ import { TestIdProps } from 'src/interfaces/test-id.props';
 
 import { IconNameEnum } from '../icon/icon-name.enum';
 
-export interface ButtonSharedProps extends MarginProps, TestIdProps {
+// TODO: Remove generic parameter after complete migration to new icon system
+export interface ButtonSharedProps<IconName extends string = IconNameEnum> extends MarginProps, TestIdProps {
   title?: ReactNode;
-  iconName?: IconNameEnum;
+  iconName?: IconName;
   disabled?: boolean;
   onPress: EmptyFn;
   isLoading?: boolean;

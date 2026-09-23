@@ -30,8 +30,7 @@ export const createStakeOperationParams = async (
         asset,
         tezos,
         accountPkh,
-        slippageTolerancePercentage,
-        tezos.rpc.getRpcUrl()
+        slippageTolerancePercentage
       );
       break;
     case EarnOpportunityTypeEnum.STABLESWAP:

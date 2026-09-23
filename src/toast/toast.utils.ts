@@ -12,10 +12,11 @@ interface ToastProps {
   title?: string;
   onPress?: EmptyFn;
   operationHash?: string;
+  operationUrl?: string;
   isCopyButtonVisible?: boolean;
 }
 
-export const showSuccessToast = ({ description, title, onPress, iconName, operationHash }: ToastProps) =>
+export const showSuccessToast = ({ description, title, onPress, iconName, operationHash, operationUrl }: ToastProps) =>
   Toast.show({
     type: ToastTypeEnum.Success,
     text1: title,
@@ -23,6 +24,7 @@ export const showSuccessToast = ({ description, title, onPress, iconName, operat
     onPress,
     props: {
       operationHash,
+      operationUrl,
       iconName
     }
   });

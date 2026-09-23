@@ -1,5 +1,8 @@
 export enum ConfirmationTypeEnum {
   InternalOperations = 'InternalOperations',
   DAppOperations = 'DAppOperations',
-  RebalanceOperation = 'RebalanceOperation'
+  RebalanceOperation = 'RebalanceOperation',
+  EvmInternalOperations = 'EvmInternalOperations',
+  WcSessionProposal = 'WcSessionProposal',
+  WcSessionRequest = 'WcSessionRequest'
 }

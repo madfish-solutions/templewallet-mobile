@@ -3,8 +3,7 @@ import { Linking } from 'react-native';
 
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
-
-import { isDcpNode } from '../network.utils';
+import { useIsInAppBrowserEnabledSelector } from 'src/store/settings/settings-selectors';
 
 interface OpenUrlOptions {
   rethrowError?: boolean;
@@ -33,5 +32,14 @@ export const useOpenUrlInAppBrowser = () => {
   return useCallback((uri: string) => void navigateToModal(ModalsEnum.InAppBrowser, { uri }), [navigateToModal]);
 };
 
-export const tzktUrl = (rpcUrl: string, address: string) =>
-  isDcpNode(rpcUrl) ? `https://explorer.tlnt.net/${address}` : `https://tzkt.io/${address}`;
+export const useOpenUrl = () => {
+  const isInAppBrowserEnabled = useIsInAppBrowserEnabledSelector();
+  const openUrlInAppBrowser = useOpenUrlInAppBrowser();
+
+  return useCallback(
+    (url: string) => (isInAppBrowserEnabled ? openUrlInAppBrowser(url) : openUrl(url)),
+    [isInAppBrowserEnabled, openUrlInAppBrowser]
+  );
+};
+
+export const tzktUrl = (addressOrTxHash: string) => `https://tzkt.io/${addressOrTxHash}`;

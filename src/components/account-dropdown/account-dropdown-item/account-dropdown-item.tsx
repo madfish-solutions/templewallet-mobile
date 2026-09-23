@@ -1,21 +1,22 @@
 import BigNumber from 'bignumber.js';
-import React, { memo, useMemo } from 'react';
-import { Text, View } from 'react-native';
+import React, { memo, useCallback, useMemo } from 'react';
+import { GestureResponderEvent, Text, View } from 'react-native';
 
+import { AccountProps, AccountSummary } from 'src/components/account-card';
 import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
 import { DropdownListItemComponent } from 'src/components/dropdown/dropdown';
 import { HideBalance } from 'src/components/hide-balance/hide-balance';
-import { Icon } from 'src/components/icon/icon';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { IconV2 } from 'src/components/icon-v2';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
+import { getSeedFromAccount } from 'src/components/robot-icon/robot-icon.utils.ts';
 import { TruncatedText } from 'src/components/truncated-text';
-import { WalletAddress } from 'src/components/wallet-address/wallet-address';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { AccountBaseInterface, emptyAccountBase } from 'src/interfaces/account.interface';
+import { Account } from 'src/interfaces/account.interfaces.ts';
 import { useAllCollectiblesDetailsSelector } from 'src/store/collectibles/collectibles-selectors';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { TEZ_TOKEN_DECIMALS, TEZ_TOKEN_SYMBOL } from 'src/token/data/tokens-metadata';
 import { useCurrentAccountCollectiblesWithPositiveBalance } from 'src/utils/assets/hooks';
+import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatNumber } from 'src/utils/format-price';
 import { isDefined } from 'src/utils/is-defined';
@@ -24,27 +25,24 @@ import { useTezosTokenOfKnownAccount } from 'src/utils/wallet.utils';
 
 import { AccountDropdownItemProps } from './account-dropdown-item.interface';
 import {
-  useAccountDropdownItemStyles,
-  useAccountDropdownItemCollectiblesInfoStyles
+  useAccountDropdownItemCollectiblesInfoStyles,
+  useAccountDropdownItemStyles
 } from './account-dropdown-item.styles';
 
-const COLLECTIBLES_ROBOT_ICON_SIZE = 76;
-
-export const AccountDropdownItem = memo<AccountDropdownItemProps>(
-  ({
-    account = emptyAccountBase,
-    showFullData = true,
-    actionIconName,
-    isPublicKeyHashTextDisabled,
-    isCollectibleScreen = false
-  }) => {
+const AccountDropdownItem = memo<AccountDropdownItemProps>(
+  ({ account, showFullData = true, actionIconName, actionIconColor, isCollectibleScreen = false }) => {
     const styles = useAccountDropdownItemStyles();
-    const tezos = useTezosTokenOfKnownAccount(account.publicKeyHash);
+
+    const tezos = useTezosTokenOfKnownAccount(account.id);
 
     return (
       <View style={styles.root}>
-        <RobotIcon seed={account.publicKeyHash} size={isCollectibleScreen ? COLLECTIBLES_ROBOT_ICON_SIZE : undefined} />
-        <View style={styles.infoContainer}>
+        <RobotIcon
+          seed={getSeedFromAccount(account)}
+          size={isCollectibleScreen ? formatSize(76) : undefined}
+          color="blue"
+        />
+        <View style={[styles.infoContainer, isCollectibleScreen && styles.infoContainerCollectibles]}>
           <View
             style={[
               styles.upperContainer,
@@ -52,21 +50,15 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
               conditionalStyle(isCollectibleScreen, styles.accountNameMargin)
             ]}
           >
-            <TruncatedText style={styles.name}>{account.name}</TruncatedText>
-            {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
+            <TruncatedText style={[styles.name, conditionalStyle(isCollectibleScreen, styles.nameCollectibles)]}>
+              {account.name}
+            </TruncatedText>
+            {isDefined(actionIconName) && <IconV2 name={actionIconName} size={24} color={actionIconColor} />}
           </View>
           <View style={styles.lowerContainer}>
-            {isCollectibleScreen ? (
-              <CollectiblesInfo />
-            ) : (
-              <WalletAddress
-                isLocalDomainNameShowing
-                publicKeyHash={account.publicKeyHash}
-                isPublicKeyHashTextDisabled={isPublicKeyHashTextDisabled}
-              />
-            )}
+            {isCollectibleScreen && <CollectiblesInfo />}
             {showFullData && !isCollectibleScreen && (
-              <HideBalance style={styles.balanceText}>
+              <HideBalance textStyle={styles.balanceText}>
                 <AssetValueText asset={tezos} amount={tezos.balance} />
               </HideBalance>
             )}
@@ -77,8 +69,29 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
   }
 );
 
-export const renderAccountListItem: DropdownListItemComponent<AccountBaseInterface> = ({ item, isSelected }) => (
-  <AccountDropdownItem account={item} {...(isSelected && { actionIconName: IconNameEnum.Check })} />
+export const AccountDropdownTriggerItem = memo<AccountDropdownItemProps>(props => <AccountDropdownItem {...props} />);
+
+export const AccountDropdownListItem = memo<
+  Pick<AccountDropdownItemProps, 'account'> & Partial<Pick<AccountProps, 'showAllAddresses' | 'chainKind'>>
+>(({ account, showAllAddresses = true, chainKind }) => {
+  const copyAddress = useCallback((address: string, event?: GestureResponderEvent) => {
+    event?.stopPropagation();
+    copyStringToClipboard(address);
+  }, []);
+
+  return (
+    <AccountSummary
+      account={account}
+      showAllAddresses={showAllAddresses}
+      fixedBalanceWidth={false}
+      onAddressPress={copyAddress}
+      chainKind={chainKind}
+    />
+  );
+});
+
+export const renderAccountListItem: DropdownListItemComponent<Account> = ({ item }) => (
+  <AccountDropdownListItem account={item} />
 );
 
 const CollectiblesInfo = memo(() => {
@@ -89,7 +102,6 @@ const CollectiblesInfo = memo(() => {
   const collectibles = useCurrentAccountCollectiblesWithPositiveBalance();
 
   const allDetails = useAllCollectiblesDetailsSelector();
-  const { metadata: gasMetadata } = useNetworkInfo();
 
   const totalFloorPriceStr = useMemo(() => {
     let totalFloorPrice = 0;
@@ -105,11 +117,11 @@ const CollectiblesInfo = memo(() => {
       return '-';
     }
 
-    const floorPrice = mutezToTz(new BigNumber(totalFloorPrice), gasMetadata.decimals).toNumber();
+    const floorPrice = mutezToTz(new BigNumber(totalFloorPrice), TEZ_TOKEN_DECIMALS).toNumber();
     const floorPriceDisplayed = formatNumber(floorPrice);
 
-    return `${floorPriceDisplayed} ${gasMetadata.symbol}`;
-  }, [collectibles, allDetails, gasMetadata]);
+    return `${floorPriceDisplayed} ${TEZ_TOKEN_SYMBOL}`;
+  }, [collectibles, allDetails]);
 
   return (
     <>

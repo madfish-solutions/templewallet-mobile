@@ -1,8 +1,8 @@
 import { Formik } from 'formik';
 import React from 'react';
 
-import { AccountFormDropdown } from 'src/components/account-dropdown/account-form-dropdown';
-import { Disclaimer } from 'src/components/disclaimer/disclaimer';
+import { AccountCardFormDropdown } from 'src/components/account-dropdown/account-form-dropdown';
+import { DisclaimerV2 } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
 import { Label } from 'src/components/label/label';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
@@ -10,9 +10,11 @@ import { ScreenContainer } from 'src/components/screen-container/screen-containe
 import { emptyFn } from 'src/config/general';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useModalParams } from 'src/navigator/hooks/use-navigation.hook';
-import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
+import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { isDefined } from 'src/utils/is-defined.ts';
 
 import {
   RevealPrivateKeyModalFormValues,
@@ -24,7 +26,7 @@ import { RevealPrivateKeySelectors } from './reveal-private-key.selectors';
 export const RevealPrivateKeyModal = () => {
   const { account } = useModalParams<ModalsEnum.RevealPrivateKey>();
 
-  const accounts = useAccountsListSelector();
+  const accounts = useAllAccounts();
 
   const RevealPrivateKeyModalInitialValues: RevealPrivateKeyModalFormValues = { account };
 
@@ -37,23 +39,43 @@ export const RevealPrivateKeyModal = () => {
       validationSchema={revealPrivateKeyModalValidationSchema}
       onSubmit={emptyFn}
     >
-      {({ values }) => (
-        <ScreenContainer>
-          <ModalStatusBar />
-          <Label
-            label="Account"
-            description="If you want to reveal a private key from another account - you should select it in the top-right dropdown."
-          />
-          <AccountFormDropdown name="account" list={accounts} testID={RevealPrivateKeySelectors.accountDropdown} />
-          <Label label="Private Key" description="Current account key. Keep it in secret." />
-          <RevealPrivateKeyView publicKeyHash={values.account.publicKeyHash} />
-          <Divider size={formatSize(16)} />
-          <Disclaimer
-            title="Attention!"
-            texts={['DO NOT share this set of chars with anyone!', 'It can be used to steal your current account.']}
-          />
-        </ScreenContainer>
-      )}
+      {({ values }) => {
+        const tezosAddress = getAccountAddressForTezos(values.account);
+        const evmAddress = getAccountAddressForEvm(values.account);
+
+        return (
+          <ScreenContainer>
+            <ModalStatusBar />
+            <Divider size={formatSize(8)} />
+            <Label label="Account" description="Reveal a private key from your accounts in the wallet." />
+            <AccountCardFormDropdown
+              name="account"
+              list={accounts}
+              testID={RevealPrivateKeySelectors.accountDropdown}
+            />
+            <DisclaimerV2
+              title="Attention!"
+              texts={['DO NOT share this set of chars with anyone!', 'It can be used to steal your current account.']}
+            />
+            <Divider size={formatSize(16)} />
+            {isDefined(tezosAddress) && (
+              <>
+                <Label label="Tezos Private Key" description="Access to your Tezos account. Keep it in secret." />
+                <RevealPrivateKeyView address={tezosAddress} />
+                <Divider size={formatSize(16)} />
+              </>
+            )}
+            {isDefined(evmAddress) && (
+              <>
+                <Label label="EVM Private Key" description="Access to your Etherlink account. Keep it in secret." />
+                <RevealPrivateKeyView address={evmAddress} />
+                <Divider size={formatSize(16)} />
+              </>
+            )}
+            <Divider size={formatSize(24)} />
+          </ScreenContainer>
+        );
+      }}
     </Formik>
   );
 };

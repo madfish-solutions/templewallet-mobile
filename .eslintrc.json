@@ -15,6 +15,7 @@
   ],
   "plugins": ["@typescript-eslint", "import", "no-type-assertion", "jest", "jsx-expressions"],
   "settings": {
+    "import/ignore": ["node_modules/react-native/"],
     "import/resolver": {
       "typescript": {}
     }

@@ -1,8 +1,7 @@
 import React, { FC } from 'react';
 import { StyleProp, TextStyle, Text } from 'react-native';
 
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { AssetInterface } from 'src/interfaces/asset.interface';
 import { getDollarValue } from 'src/utils/balance.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { BURN_ADDRESS } from 'src/utils/known-addresses';
@@ -13,15 +12,16 @@ interface Props {
   amount: string;
   /**
    * @deprecated
-   * Rework to accept TokenMetadataInterface
+   * Rework to accept TezosTokenMetadata
    * with `exchangeRate` as a separate property
    */
-  asset: TokenInterface;
+  asset: AssetInterface;
   style?: StyleProp<TextStyle>;
   showMinusSign?: boolean;
   showSymbol?: boolean;
   receiver?: string;
   convertToDollar?: boolean;
+  hideApproximateSign?: boolean;
 }
 
 export const AssetValueText: FC<Props> = ({
@@ -31,11 +31,10 @@ export const AssetValueText: FC<Props> = ({
   showMinusSign = false,
   showSymbol = true,
   receiver,
-  convertToDollar = false
+  convertToDollar = false,
+  hideApproximateSign = false
 }) => {
-  const { isDcpNode } = useNetworkInfo();
-
-  const hideText = convertToDollar && (!isDefined(asset.decimals) || isDcpNode);
+  const hideText = convertToDollar && !isDefined(asset.decimals);
 
   const visibleAmount = getDollarValue(amount, asset.decimals, convertToDollar ? asset.exchangeRate : 1);
   const isBurnReceiverAddress = receiver === BURN_ADDRESS;
@@ -53,6 +52,7 @@ export const AssetValueText: FC<Props> = ({
           showPlusSign={false}
           symbol={visibleSymbol}
           style={style}
+          hideApproximateSign={hideApproximateSign}
         />
       )}
     </>

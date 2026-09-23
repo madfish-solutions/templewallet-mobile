@@ -1,4 +1,4 @@
-import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
+import { TezosTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 
 import { useSelector } from '../selector';
 
@@ -6,7 +6,7 @@ export const useAreMetadatasLoadingSelector = () => useSelector(state => state.t
 
 export const useTokensMetadataSelector = () => useSelector(({ tokensMetadata }) => tokensMetadata.metadataRecord);
 
-export const useAssetMetadataSelector = (slug: string): TokenMetadataInterface | undefined =>
+export const useAssetMetadataSelector = (slug: string): TezosTokenMetadata | undefined =>
   useSelector(({ tokensMetadata }) => tokensMetadata.metadataRecord[slug]);
 
 export const useAddTokenSuggestionSelector = () =>

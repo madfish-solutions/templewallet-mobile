@@ -1,9 +1,10 @@
 import { useMemo } from 'react';
 
-import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
+import { useAllAccounts } from 'src/store/wallet/wallet-selectors.ts';
+import { getAccountAddressForTezos } from 'src/utils/account.utils.ts';
 
 export const useRewardsAddress = (): string | undefined => {
-  const accounts = useAccountsListSelector();
+  const accounts = useAllAccounts();
 
-  return useMemo(() => accounts.at(0)?.publicKeyHash, [accounts]);
+  return useMemo(() => getAccountAddressForTezos(accounts[0]), [accounts]);
 };

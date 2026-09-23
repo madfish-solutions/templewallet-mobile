@@ -6,20 +6,21 @@ import { from, Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
-import { AccountInterface } from 'src/interfaces/account.interface';
 import { EstimationInterface } from 'src/interfaces/estimation.interface';
 import { LoadableEntityState } from 'src/store/types';
 import { showErrorToast } from 'src/toast/toast.utils';
+import { TezosReadOnlySignerPayload } from 'src/types/tezos-read-only-signer-payload';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { MINIMAL_FEE_PER_GAS_MUTEZ } from 'src/utils/tezos.util';
 
-export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKind[]) => {
+export const useEstimations = (sender: TezosReadOnlySignerPayload, opParams: ParamsWithKind[]) => {
   const [estimationState, setEstimationState] = useState<LoadableEntityState<EstimationInterface[], unknown>>({
     isLoading: true,
     data: []
   });
   const tezos = useReadOnlyTezosToolkit(sender);
+  const senderTezosAddress = sender.address;
 
   const estimate$ = useCallback(
     (
@@ -27,7 +28,7 @@ export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKin
       attemptCounter = 0,
       prevFailedOperationIndex = -1
     ): Observable<EstimationInterface[]> =>
-      from(tezos.estimate.batch(currentOpParams.map(param => ({ ...param, source: sender.publicKeyHash })))).pipe(
+      from(tezos.estimate.batch(currentOpParams.map(param => ({ ...param, source: senderTezosAddress })))).pipe(
         map(estimates =>
           estimates.map((estimate, i) => ({
             ...pick(estimate, 'gasLimit', 'storageLimit'),
@@ -80,7 +81,7 @@ export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKin
           return from(Promise.reject(error));
         })
       ),
-    [sender.publicKeyHash, tezos]
+    [senderTezosAddress, tezos]
   );
 
   useEffect(() => {

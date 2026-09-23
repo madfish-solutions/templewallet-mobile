@@ -1,3 +1,4 @@
 export enum RevealSeedPharaseSelectors {
-  accountDropdown = 'RevealSeedPhraseModal/Accounts Dropdown'
+  tezosDerivationPath = 'RevealSeedPhraseModal/Tezos Derivation Path',
+  evmDerivationPath = 'RevealSeedPhraseModal/EVM Derivation Path'
 }

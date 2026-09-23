@@ -1,4 +1,5 @@
 export enum SettingsSelectors {
+  scanQRButton = 'Settings/Scan QR Button',
   accountsButton = 'Settings/Accounts Button',
   contactsButton = 'Settings/Contacts Button',
   defaultCurrencyButton = 'Settings/Default Currency Button',
@@ -6,7 +7,7 @@ export enum SettingsSelectors {
   secureButton = 'Settings/Secure Button',
   advancedFeaturesButton = 'Settings/Advanced Features Button',
   authorizedDAppsButton = 'Settings/Authorized DApps Button',
-  defaultNodeRPCButton = 'Settings/Default node (RPC) Button',
+  networksButton = 'Settings/Networks Button',
   aboutButton = 'Settings/About Button',
   shareTempleWalletButton = 'Settings/Share Temple Wallet Button',
   shareSuccess = 'Settings/Success sharing Temple Wallet',

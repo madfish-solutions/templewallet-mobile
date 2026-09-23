@@ -1,9 +1,9 @@
-import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
+import { TezosTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { isDefined } from 'src/utils/is-defined';
 
 import { DropdownEqualityFn } from '../dropdown/dropdown';
 
-export const tokenEqualityFn: DropdownEqualityFn<TokenMetadataInterface> = (item, value) => {
+export const tokenEqualityFn: DropdownEqualityFn<TezosTokenMetadata> = (item, value) => {
   if (!isDefined(value)) {
     return false;
   }

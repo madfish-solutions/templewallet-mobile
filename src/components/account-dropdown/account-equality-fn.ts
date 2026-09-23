@@ -1,7 +1,5 @@
-import { AccountBaseInterface } from 'src/interfaces/account.interface';
-import { isDefined } from 'src/utils/is-defined';
+import { Account } from 'src/interfaces/account.interfaces';
 
 import { DropdownEqualityFn } from '../dropdown/dropdown';
 
-export const accountEqualityFn: DropdownEqualityFn<AccountBaseInterface> = (item, value) =>
-  isDefined(value) && item.publicKeyHash === value.publicKeyHash;
+export const accountEqualityFn: DropdownEqualityFn<Account> = (item, value) => item.id === value?.id;

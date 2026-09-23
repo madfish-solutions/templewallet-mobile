@@ -1,23 +1,26 @@
 import { Draft } from '@reduxjs/toolkit';
 
-import { EMPTY_PUBLIC_KEY_HASH } from 'src/config/system';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { initialAccountState } from 'src/interfaces/account-state.interface';
 import { AccountTokenInterface } from 'src/token/interfaces/account-token.interface';
+import { getSelectedAccountFromWallet } from 'src/utils/get-selected-account-from-wallet.util.ts';
 import { isDefined } from 'src/utils/is-defined';
 
 import { WalletState } from './wallet-state';
 
-export const retrieveAccountState = (state: Draft<WalletState>, pkh = state.selectedAccountPublicKeyHash) => {
-  if (!pkh || pkh === EMPTY_PUBLIC_KEY_HASH) {
-    return null;
+export const retrieveAccountState = (state: Draft<WalletState>, accountId?: string) => {
+  const targetAccountId = accountId ?? getSelectedAccountFromWallet(state)?.id;
+
+  // A reset can clear the selected account before a pending reducer action runs.
+  if (!targetAccountId) {
+    return undefined;
   }
 
-  if (!state.accountsStateRecord[pkh]) {
-    state.accountsStateRecord[pkh] = initialAccountState;
+  if (!state.accountsStateRecord[targetAccountId]) {
+    state.accountsStateRecord[targetAccountId] = initialAccountState;
   }
 
-  return state.accountsStateRecord[pkh];
+  return state.accountsStateRecord[targetAccountId];
 };
 
 export const pushOrUpdateTokensBalances = (

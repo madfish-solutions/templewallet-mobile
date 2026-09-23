@@ -1,13 +1,11 @@
 import React, { FC, PropsWithChildren, useCallback, useEffect, useRef } from 'react';
-import { Animated, StyleProp, View, ViewStyle } from 'react-native';
+import { Animated, StyleProp, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import { useLayoutSizes } from 'src/hooks/use-layout-sizes.hook';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
-
-import { SafeTouchableOpacity } from '../safe-touchable-opacity';
 
 import { tileMargin, useSegmentedControlStyles } from './segmented-control.styles';
 
@@ -48,7 +46,8 @@ export const SegmentedControl = <T extends unknown>({
   const { trackEvent } = useAnalytics();
   const styles = useSegmentedControlStyles();
   const { layoutWidth, handleLayout } = useLayoutSizes();
-  const tileWidth = ((width ?? layoutWidth) - 2 * tileMargin) / (values.length || 1);
+  // Without an explicit `width`, layoutWidth is 0 until onLayout fires - clamp so the first frame is not negative
+  const tileWidth = Math.max((width ?? layoutWidth) - 2 * tileMargin, 0) / (values.length || 1);
   const translateX = useRef(new Animated.Value(selectedIndex * tileWidth)).current;
 
   useEffect(() => {
@@ -68,7 +67,7 @@ export const SegmentedControl = <T extends unknown>({
       const isDisabled = disabledIndexes?.includes(index) ?? false;
 
       return (
-        <SafeTouchableOpacity
+        <TouchableOpacity
           disabled={isDisabled}
           key={index}
           style={[styles.itemContainer, { width: tileWidth }]}
@@ -87,7 +86,7 @@ export const SegmentedControl = <T extends unknown>({
           }}
         >
           <ValueComponent item={item} isDisabled={isDisabled} isSelected={index === selectedIndex} />
-        </SafeTouchableOpacity>
+        </TouchableOpacity>
       );
     },
     [

@@ -1,26 +1,16 @@
 import { AccountStateInterface } from 'src/interfaces/account-state.interface';
-import { AccountInterface } from 'src/interfaces/account.interface';
-import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
+import { Account } from 'src/interfaces/account.interfaces';
 
-import { LoadableEntityState } from '../types';
+type AccountId = string;
 
 export interface WalletState {
-  accounts: AccountInterface[];
-  accountsStateRecord: Record<string, AccountStateInterface>;
-  selectedAccountPublicKeyHash: string;
-
-  /** @deprecated */
-  tokensMetadata?: Record<string, TokenMetadataInterface>;
-  /** @deprecated */
-  addTokenSuggestion?: LoadableEntityState<TokenMetadataInterface>;
-  /** @deprecated */
-  isShownDomainName?: boolean;
-  /** @deprecated */
-  quipuApy?: number;
+  accounts: Account[];
+  accountsStateRecord: Record<AccountId, AccountStateInterface>;
+  selectedAccountId: string;
 }
 
 export const walletInitialState: WalletState = {
   accounts: [],
   accountsStateRecord: {},
-  selectedAccountPublicKeyHash: ''
+  selectedAccountId: ''
 };

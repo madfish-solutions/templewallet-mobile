@@ -14,6 +14,7 @@ import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import { formatSize } from 'src/styles/format-size';
+import { showErrorToast } from 'src/toast/toast.utils';
 
 import {
   CreateNewPasswordFormValues,
@@ -32,8 +33,13 @@ interface Props {
 export const CreateNewPassword = memo<Props>(({ seedPhrase, useBiometry, hdAccountsLength, onGoBackPress }) => {
   const { importWallet } = useShelter();
 
-  const handleSubmit = ({ password }: CreateNewPasswordFormValues) =>
-    importWallet({ seedPhrase, password, useBiometry, hdAccountsLength });
+  const handleSubmit = async ({ password }: CreateNewPasswordFormValues) => {
+    try {
+      await importWallet({ seedPhrase, password, useBiometry, hdAccountsLength });
+    } catch (error) {
+      showErrorToast({ description: error instanceof Error ? error.message : 'Failed to import wallet' });
+    }
+  };
 
   useNavigationSetOptions(
     {
@@ -72,7 +78,7 @@ export const CreateNewPassword = memo<Props>(({ seedPhrase, useBiometry, hdAccou
         <ButtonLargeSecondary title="Back" onPress={onGoBackPress} />
         <ButtonLargePrimary
           title="Sync"
-          disabled={!formik.isValid}
+          disabled={!formik.isValid || formik.isSubmitting}
           onPress={useCallbackIfOnline(formik.submitForm)}
           testID={CreateNewPasswordSyncAccountSelectors.syncButton}
         />

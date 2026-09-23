@@ -71,7 +71,7 @@ export const createMtPelerinAddressProof = async (accountPkh: string): Promise<M
   const code = String(1000 + Math.floor(Math.random() * 9000));
   const message = `Tezos Signed Message: MtPelerin-${code}`;
   const bytes = `05${valueEncoder({ string: message })}`;
-  const signer = await firstValueFrom(Shelter.getSigner$(accountPkh));
+  const signer = await firstValueFrom(Shelter.getTezosSigner$(accountPkh));
   const [publicKey, { prefixSig }] = await Promise.all([signer.publicKey(), signer.sign(bytes)]);
 
   return { accountPkh, publicKey, code, signature: prefixSig };

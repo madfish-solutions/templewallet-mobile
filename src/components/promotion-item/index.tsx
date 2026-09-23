@@ -13,7 +13,7 @@ import { PromotionVariantEnum } from 'src/enums/promotion-variant.enum';
 import { useAdTemporaryHiding } from 'src/hooks/use-ad-temporary-hiding.hook';
 import { useAuthorisedInterval } from 'src/hooks/use-authed-interval';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { MS_IN_SECOND, SECONDS_IN_MINUTE } from 'src/utils/date.utils';
 
 import { usePromotionItemStyles } from './styles';
@@ -46,7 +46,7 @@ export const PromotionItem: FCWithRef<View, Props> = ({
   onImpression,
   onLayout
 }) => {
-  const accountPkh = useCurrentAccountPkhSelector();
+  const accountPkh = useAccountAddressForTezos();
 
   const isImageAd = variant === PromotionVariantEnum.Image;
   const styles = usePromotionItemStyles();

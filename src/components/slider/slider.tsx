@@ -23,7 +23,7 @@ export const Slider: FC<Props> = ({ value, minimumValue = 0, maximumValue = 100,
   return (
     <>
       <RNSlider
-        value={minimumValue}
+        value={value}
         style={styles.slider}
         step={step}
         minimumValue={minimumValue}

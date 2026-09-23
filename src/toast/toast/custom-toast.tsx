@@ -8,7 +8,6 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { white } from 'src/config/styles';
 import { ToastTypeEnum } from 'src/enums/toast-type.enum';
-import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { isDefined } from 'src/utils/is-defined';
@@ -25,6 +24,7 @@ interface Props {
   hide: EmptyFn;
   toastType: ToastTypeEnum;
   operationHash?: string;
+  operationUrl?: string;
   isCopyButtonVisible?: boolean;
   onPress: EmptyFn;
 }
@@ -42,13 +42,12 @@ export const CustomToast: FC<Props> = ({
   hide,
   toastType,
   operationHash,
+  operationUrl,
   isCopyButtonVisible,
   onPress
 }) => {
   const styles = useToastStyles();
   const colors = useColors();
-
-  const selectedRpcUrl = useSelectedRpcUrlSelector();
 
   const backgroundColorMap: Record<string, string> = {
     [ToastTypeEnum.Success]: colors.adding,
@@ -101,7 +100,7 @@ export const CustomToast: FC<Props> = ({
                 <Divider size={formatSize(8)} />
                 <PublicKeyHashText publicKeyHash={operationHash} />
                 <Divider size={formatSize(4)} />
-                <ExternalLinkButton url={tzktUrl(selectedRpcUrl, operationHash)} />
+                <ExternalLinkButton url={operationUrl ?? tzktUrl(operationHash)} />
               </View>
             )}
           </View>

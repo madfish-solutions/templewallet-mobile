@@ -7,15 +7,22 @@ import { useHeaderCardStyles } from './header-card.styles';
 
 interface Props {
   hasInsetTop?: boolean;
+  hasShadow?: boolean;
   style?: StyleProp<ViewStyle>;
   onLayout?: (event: LayoutChangeEvent) => void;
 }
 
-export const HeaderCard: FCWithChildren<Props> = ({ hasInsetTop = false, style, children, onLayout }) => {
+export const HeaderCard: FCWithChildren<Props> = ({
+  hasInsetTop = false,
+  hasShadow = false,
+  style,
+  children,
+  onLayout
+}) => {
   const styles = useHeaderCardStyles();
 
   return (
-    <View style={[styles.container, style]} onLayout={onLayout}>
+    <View style={[styles.container, hasShadow && styles.containerWithShadow, style]} onLayout={onLayout}>
       {hasInsetTop && <InsetSubstitute />}
       {children}
     </View>

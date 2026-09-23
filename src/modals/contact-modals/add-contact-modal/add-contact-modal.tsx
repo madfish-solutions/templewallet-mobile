@@ -1,8 +1,7 @@
 import { Formik } from 'formik';
 import { FormikProps } from 'formik/dist/types';
 import React, { FC, useMemo, useRef, useState } from 'react';
-import { View } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { StyleSheet, View } from 'react-native';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
@@ -10,12 +9,13 @@ import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { FormAddressInput } from 'src/form/form-address-input';
 import { FormTextInput } from 'src/form/form-text-input';
-import { AccountBaseInterface } from 'src/interfaces/account.interface';
+import { Contact } from 'src/interfaces/contact.interface';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useModalParams, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
-import { addContactAction, loadContactTezosBalance } from 'src/store/contact-book/contact-book-actions';
-import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { dispatch } from 'src/store';
+import { addContactAction } from 'src/store/contact-book/contact-book-actions';
+import { formatSize } from 'src/styles/format-size.ts';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { tezosDomainsResolver } from 'src/utils/dns.utils';
 
@@ -26,57 +26,54 @@ import { AddContactModalSelectors } from './add-contact-modal.selectors';
 
 export const AddContactModal: FC = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const dispatch = useDispatch();
   const { goBack } = useNavigation();
   const params = useModalParams<ModalsEnum.AddContact>();
   const validationSchema = useAddContactFormValidationSchema();
-  const selectedRpcUrl = useSelectedRpcUrlSelector();
-  const resolver = useMemo(() => tezosDomainsResolver(selectedRpcUrl), [selectedRpcUrl]);
+  // TODO: Add preferredRpcUrl when choosing RPC node becomes available
+  const resolver = useMemo(() => tezosDomainsResolver(), []);
 
-  const formik = useRef<FormikProps<AccountBaseInterface>>(null);
+  const formik = useRef<FormikProps<Contact>>(null);
 
-  const addContact = (contact: AccountBaseInterface) => {
+  const addContact = (contact: Contact) => {
     dispatch(addContactAction(contact));
-    dispatch(loadContactTezosBalance.submit(contact.publicKeyHash));
     goBack();
   };
 
   const initialValues = {
     name: params?.name ?? '',
-    publicKeyHash: params?.publicKeyHash ?? ''
+    address: params?.address ?? ''
   };
 
   usePageAnalytic(ModalsEnum.AddContact);
 
   return (
     <Formik
-      innerRef={formik}
-      validateOnBlur
       validateOnChange
+      innerRef={formik}
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={values => handleContactSubmission(values, formik, resolver, setIsLoading, addContact)}
     >
-      {({ submitForm, isValid }) => (
+      {({ submitForm, isValid, submitCount }) => (
         <>
           <ScreenContainer isFullScreenMode>
-            <View>
+            <View style={styles.container}>
               <Label label="Name" />
-              <FormTextInput name="name" testID={AddContactModalSelectors.nameInput} />
+              <FormTextInput name="name" placeholder="e.g Degen" testID={AddContactModalSelectors.nameInput} />
               <Label label="Address" />
-              <FormAddressInput name="publicKeyHash" testID={AddContactModalSelectors.addressInput} />
+              <FormAddressInput
+                name="address"
+                placeholder="Etherlink or Tezos"
+                testID={AddContactModalSelectors.addressInput}
+              />
             </View>
           </ScreenContainer>
-          <ModalButtonsFloatingContainer>
-            <ButtonLargeSecondary
-              title="Close"
-              disabled={isLoading}
-              onPress={goBack}
-              testID={AddContactModalSelectors.closeButton}
-            />
+          <ModalButtonsFloatingContainer variant="bordered">
+            <ButtonLargeSecondary title="Close" onPress={goBack} testID={AddContactModalSelectors.closeButton} />
             <ButtonLargePrimary
               title="Save"
-              disabled={!isValid || isLoading}
+              isLoading={isLoading}
+              disabled={submitCount !== 0 && (!isValid || isLoading)}
               onPress={submitForm}
               testID={AddContactModalSelectors.saveButton}
             />
@@ -86,3 +83,9 @@ export const AddContactModal: FC = () => {
     </Formik>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    marginTop: formatSize(16)
+  }
+});

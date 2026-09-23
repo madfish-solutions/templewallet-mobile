@@ -3,15 +3,16 @@ import { formatSize } from 'src/styles/format-size';
 
 export const useSettingsHeaderStyles = createUseStyles(({ colors, typography }) => ({
   headerContainer: {
-    alignItems: 'center'
+    alignItems: 'center',
+    gap: formatSize(8)
   },
   versionText: {
     ...typography.numbersStatus8,
-    color: colors.gray1,
-    marginVertical: formatSize(8)
+    color: colors.gray1
   },
   socialsContainer: {
     flexDirection: 'row',
-    marginBottom: formatSize(8)
+    marginBottom: formatSize(8),
+    gap: formatSize(12)
   }
 }));

@@ -1,9 +1,8 @@
 import { useIsFocused } from '@react-navigation/native';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, Text, useWindowDimensions, View } from 'react-native';
+import { Animated, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { Defs, LinearGradient, Rect, Stop, Svg } from 'react-native-svg';
 
-import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
 
@@ -91,7 +90,7 @@ export const KoloCryptoCardPreview: FC<KoloCryptoCardPreviewProps> = ({
 
   return (
     <Animated.View style={animatedStyle}>
-      <SafeTouchableOpacity
+      <TouchableOpacity
         onPress={onPress}
         activeOpacity={0.9}
         testID={KoloCardSelectors.cryptoCardButton}
@@ -114,7 +113,7 @@ export const KoloCryptoCardPreview: FC<KoloCryptoCardPreviewProps> = ({
         <View>
           <KoloLogo width={formatSize(44)} height={formatSize(16)} />
         </View>
-      </SafeTouchableOpacity>
+      </TouchableOpacity>
     </Animated.View>
   );
 };

@@ -6,7 +6,6 @@ import { ofType, toPayload } from 'ts-action-operators';
 import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
 import { withUserAnalyticsCredentials } from 'src/utils/error-analytics-data.utils';
 import { loadScamlist$, loadTokenMetadata$, loadTokensMetadata$, loadWhitelist$ } from 'src/utils/token-metadata.utils';
-import { withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
 import type { AnyActionEpic } from '../types';
 
@@ -22,20 +21,13 @@ import {
 const loadWhitelistEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadWhitelistAction.submit),
-    withSelectedRpcUrl(state$),
     withUserAnalyticsCredentials(state$),
-    switchMap(([[, selectedRpcUrl], { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
-      loadWhitelist$(selectedRpcUrl).pipe(
+    switchMap(([, { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
+      loadWhitelist$().pipe(
         concatMap(updatedTokensMetadata => [loadWhitelistAction.success(updatedTokensMetadata)]),
         catchError(err => {
           if (isAnalyticsEnabled) {
-            sendErrorAnalyticsEvent(
-              'LoadWhitelistEpicError',
-              err,
-              [],
-              { userId, ABTestingCategory },
-              { selectedRpcUrl }
-            );
+            sendErrorAnalyticsEvent('LoadWhitelistEpicError', err, [], { userId, ABTestingCategory });
           }
 
           return of(loadWhitelistAction.fail(err.message));

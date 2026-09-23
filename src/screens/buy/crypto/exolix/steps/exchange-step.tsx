@@ -1,11 +1,10 @@
 import React, { FC, useCallback, useEffect } from 'react';
-import { View, Text } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
 import { Divider } from 'src/components/divider/divider';
-import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { restartExolixTopupAction, setExolixStepAction } from 'src/store/exolix/exolix-actions';
 import { useExolixExchangeData, useExolixStep } from 'src/store/exolix/exolix-selectors';
@@ -139,7 +138,7 @@ export const ExchangeStep: FC<ExchangeStepProps> = ({ isError, setIsError }) => 
               )}
               <Divider size={formatSize(8)} />
               <ButtonsFloatingContainer />
-              <SafeTouchableOpacity
+              <TouchableOpacity
                 style={styles.textContainer}
                 onPress={() => {
                   handleTrackSupportSubmit();
@@ -147,7 +146,7 @@ export const ExchangeStep: FC<ExchangeStepProps> = ({ isError, setIsError }) => 
                 }}
               >
                 <Text style={styles.actionsContainer}>SUPPORT</Text>
-              </SafeTouchableOpacity>
+              </TouchableOpacity>
               <Divider size={formatSize(16)} />
               <ButtonsFloatingContainer />
             </View>

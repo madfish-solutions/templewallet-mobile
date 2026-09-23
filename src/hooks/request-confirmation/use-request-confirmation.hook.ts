@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { EMPTY, ObservableInput, of, Subject } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 
 import { Action } from 'src/interfaces/action.interface';
+import { dispatch } from 'src/store';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { AnalyticsError } from 'src/utils/error-analytics-data.utils';
@@ -12,7 +12,6 @@ export const useRequestConfirmation = <T, O extends ObservableInput<Action>>(
   project: (value: T, index: number) => O
 ) => {
   const { trackErrorEvent } = useAnalytics();
-  const dispatch = useDispatch();
 
   const isConfirmed = useRef(false);
   const [isLoading, setIsLoading] = useState(false);

@@ -2,18 +2,17 @@ import React, { memo, useCallback } from 'react';
 import { ScrollView, View } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { InternetConnectionStatus } from 'src/components/internet-connection-status';
 import { OctopusWithLove } from 'src/components/octopus-with-love/octopus-with-love';
 import { LIMIT_DAPPS_FEATURES, LIMIT_FIN_FEATURES, LIMIT_NFT_FEATURES } from 'src/config/system';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { ScreensOrModalsEnum } from 'src/interfaces/stacks.interface';
 import {
   dAppsStackScreens,
   marketStackScreens,
   nftStackScreens,
   ScreensEnum,
+  settingsStackScreens,
   swapStackScreens,
   walletStackScreens
 } from 'src/navigator/enums/screens.enum';
@@ -21,7 +20,8 @@ import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { isStackFocused } from 'src/utils/is-stack-focused.util';
 
-import { NOT_AVAILABLE_MESSAGE, useSwapScreenParams } from '../utils';
+import { NavigationBarIconNameEnum } from '../navigation-bar-icon/icon-name.enum';
+import { NOT_AVAILABLE_MESSAGE, useIsManageCollectiblesTab, useSwapScreenParams } from '../utils';
 
 import { SideBarButton } from './side-bar-button/side-bar-button';
 import { useSideBarStyles } from './side-bar.styles';
@@ -33,9 +33,8 @@ interface Props {
 export const SideBar = memo<Props>(({ currentRouteName }) => {
   const styles = useSideBarStyles();
 
-  const { isDcpNode } = useNetworkInfo();
-
   const swapScreenParams = useSwapScreenParams(currentRouteName);
+  const isManageCollectiblesTab = useIsManageCollectiblesTab(currentRouteName);
 
   const isStackFocusedMemo = useCallback(
     (screensStack: ScreensOrModalsEnum[]) => isStackFocused(currentRouteName, screensStack),
@@ -52,39 +51,40 @@ export const SideBar = memo<Props>(({ currentRouteName }) => {
           <Divider size={formatSize(8)} />
           <SideBarButton
             label="Wallet"
-            iconName={IconNameEnum.TezWallet}
+            iconName={NavigationBarIconNameEnum.Wallet}
             routeName={ScreensEnum.Wallet}
-            focused={isStackFocusedMemo(walletStackScreens)}
+            focused={
+              (isStackFocusedMemo(walletStackScreens) && !isManageCollectiblesTab) ||
+              isStackFocusedMemo(settingsStackScreens)
+            }
           />
           <SideBarButton
             label={LIMIT_NFT_FEATURES ? 'Collectibles' : 'NFT'}
-            iconName={IconNameEnum.NFT}
+            iconName={NavigationBarIconNameEnum.Nft}
             routeName={ScreensEnum.CollectiblesHome}
-            focused={isStackFocusedMemo(nftStackScreens)}
+            focused={isStackFocusedMemo(nftStackScreens) || isManageCollectiblesTab}
             disabledOnPress={handleDisabledPress}
           />
           {!LIMIT_FIN_FEATURES && (
             <SideBarButton
               label="Swap"
-              iconName={IconNameEnum.Swap}
+              iconName={NavigationBarIconNameEnum.Swap}
               routeName={ScreensEnum.SwapScreen}
               swapScreenParams={swapScreenParams}
               focused={isStackFocusedMemo(swapStackScreens)}
-              disabled={isDcpNode}
               disabledOnPress={handleDisabledPress}
             />
           )}
           <SideBarButton
             label={LIMIT_DAPPS_FEATURES ? 'Explore' : 'DApps'}
-            iconName={IconNameEnum.DApps}
+            iconName={NavigationBarIconNameEnum.DApps}
             routeName={ScreensEnum.DApps}
             focused={isStackFocusedMemo(dAppsStackScreens)}
-            disabled={isDcpNode}
             disabledOnPress={handleDisabledPress}
           />
           <SideBarButton
             label="Market"
-            iconName={IconNameEnum.Market}
+            iconName={NavigationBarIconNameEnum.Market}
             routeName={ScreensEnum.Market}
             focused={isStackFocusedMemo(marketStackScreens)}
           />

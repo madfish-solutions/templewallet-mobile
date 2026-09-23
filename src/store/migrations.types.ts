@@ -1,0 +1,72 @@
+import { PermissionInfo } from '@airgap/beacon-sdk';
+import { PersistedState } from 'redux-persist';
+
+import type { Account } from 'src/interfaces/account.interfaces';
+import { LoadableEntityState } from 'src/store/types.ts';
+import { AccountTokenInterface } from 'src/token/interfaces/account-token.interface.ts';
+import { TezosTokenMetadata } from 'src/token/interfaces/token-metadata.interface.ts';
+
+import type { RootState } from './types';
+
+export const LEGACY_IMPORTED_ACCOUNT_TYPE = 'IMPORTED' as const;
+
+export type MigratableAccount = WithLegacyProperties<Account, LegacyAccountInterface> | LegacyImportedAccountInterface;
+export type TypedPersistedRootState = Exclude<PersistedState, undefined> & MigratableRootState;
+
+type WithLegacyProperties<Current extends object, Legacy extends object> = Current extends object
+  ? Omit<Current, keyof Legacy> & Legacy
+  : never;
+
+type MigratableWalletState = WithLegacyProperties<
+  Omit<RootState['wallet'], 'accounts'> & { accounts: MigratableAccount[] },
+  LegacyWalletState
+>;
+
+type MigratableDAppsState = WithLegacyProperties<RootState['dApps'], LegacyDAppsState>;
+
+type MigratableRootState = Omit<RootState, 'wallet' | 'dApps'> & {
+  wallet: MigratableWalletState;
+  dApps: MigratableDAppsState;
+};
+
+interface LegacyAccountInterface {
+  /** @deprecated */
+  publicKeyHash?: string;
+  /** @deprecated */
+  publicKey?: string;
+  /** @deprecated */
+  isVisible?: boolean;
+  /** @deprecated */
+  tezosBalance?: string;
+  /** @deprecated */
+  tokensList?: AccountTokenInterface[];
+  /** @deprecated */
+  removedTokensList?: string[];
+  /** @deprecated */
+  activityGroups?: LoadableEntityState<unknown[]>;
+  /** @deprecated */
+  pendingActivities?: unknown[];
+}
+
+interface LegacyImportedAccountInterface extends LegacyAccountInterface {
+  name: string;
+  type: typeof LEGACY_IMPORTED_ACCOUNT_TYPE;
+}
+
+interface LegacyWalletState {
+  /** @deprecated */
+  selectedAccountPublicKeyHash?: string;
+  /** @deprecated */
+  tokensMetadata?: Record<string, TezosTokenMetadata>;
+  /** @deprecated */
+  addTokenSuggestion?: LoadableEntityState<TezosTokenMetadata>;
+  /** @deprecated */
+  isShownDomainName?: boolean;
+  /** @deprecated */
+  quipuApy?: number;
+}
+
+interface LegacyDAppsState {
+  /** @deprecated Replaced by `connections` (Beacon + WalletConnect). */
+  permissions?: LoadableEntityState<PermissionInfo[]>;
+}

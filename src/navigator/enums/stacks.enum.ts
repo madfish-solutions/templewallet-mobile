@@ -15,13 +15,13 @@ export type MainStackParams =
   | MainStackParamsPart<ScreensEnum.SecurityUpdate>
   | MainStackParamsPart<ScreensEnum.Wallet>
   | MainStackParamsPart<ScreensEnum.CollectiblesHome>
-  | MainStackParamsPart<ScreensEnum.TezosTokenScreen>
   | MainStackParamsPart<ScreensEnum.TokenScreen>
   | MainStackParamsPart<ScreensEnum.TokenInfo>
   | MainStackParamsPart<ScreensEnum.Delegation>
   | MainStackParamsPart<ScreensEnum.ManageAssets>
   | MainStackParamsPart<ScreensEnum.Activity>
   | MainStackParamsPart<ScreensEnum.ScanQrCode>
+  | MainStackParamsPart<ScreensEnum.SyncQrCode>
   | MainStackParamsPart<ScreensEnum.Notifications>
   | MainStackParamsPart<ScreensEnum.NotificationsItem>
   | MainStackParamsPart<ScreensEnum.Collection>
@@ -42,7 +42,8 @@ export type MainStackParams =
   | MainStackParamsPart<ScreensEnum.DAppsSettings>
   | MainStackParamsPart<ScreensEnum.FiatSettings>
   | MainStackParamsPart<ScreensEnum.SecureSettings>
-  | MainStackParamsPart<ScreensEnum.NodeSettings>
+  | MainStackParamsPart<ScreensEnum.Networks>
+  | MainStackParamsPart<ScreensEnum.NetworkSettings>
   | MainStackParamsPart<ScreensEnum.Backup>
   | MainStackParamsPart<ScreensEnum.ManualBackup>
   | MainStackParamsPart<ScreensEnum.CloudBackup>
@@ -50,8 +51,10 @@ export type MainStackParams =
   | MainStackParamsPart<ScreensEnum.Debug>
   | MainStackParamsPart<ScreensEnum.Blank>;
 
+export type MainStackNavigationParams = MainStackParams & { pop?: boolean };
+
 export type NestedNavigationStacksParamList = {
-  [StacksEnum.MainStack]: MainStackParams | undefined;
+  [StacksEnum.MainStack]: MainStackNavigationParams | undefined;
 };
 
 export type StacksParamList = {

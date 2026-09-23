@@ -1,6 +1,6 @@
 import Clipboard from '@react-native-clipboard/clipboard';
 import React, { FC, useRef } from 'react';
-import { TextInput, View } from 'react-native';
+import { StyleProp, TextInput, TextStyle, View, ViewStyle } from 'react-native';
 
 import { emptyFn } from 'src/config/general';
 import { TestIdProps } from 'src/interfaces/test-id.props';
@@ -19,6 +19,8 @@ interface Props
   extends Pick<StyledTextInputProps, 'value' | 'placeholder' | 'isError' | 'onBlur' | 'onChangeText'>,
     TestIdProps {
   pasteButtonTestID?: string;
+  pasteButtonStyle?: StyleProp<ViewStyle>;
+  inputStyle?: StyleProp<TextStyle>;
 }
 
 export const AddressInput: FC<Props> = ({
@@ -29,7 +31,9 @@ export const AddressInput: FC<Props> = ({
   onChangeText = emptyFn,
   testID,
   testIDProperties,
-  pasteButtonTestID
+  pasteButtonTestID,
+  pasteButtonStyle,
+  inputStyle
 }) => {
   const inputRef = useRef<TextInput>(null);
   const { trackEvent } = useAnalytics();
@@ -48,7 +52,7 @@ export const AddressInput: FC<Props> = ({
         placeholder={placeholder}
         multiline={true}
         autoCapitalize="none"
-        style={StyledTextInputStyles.addressInput}
+        style={[StyledTextInputStyles.addressInput, inputStyle]}
         isError={isError}
         isShowCleanButton={true}
         onBlur={onBlur}
@@ -58,7 +62,7 @@ export const AddressInput: FC<Props> = ({
       />
       {!isString(value) && (
         <View style={AddressInputStyles.buttonsContainer}>
-          <ButtonSmallSecondary title="Paste" onPress={handlePasteButtonPress} />
+          <ButtonSmallSecondary title="Paste" buttonStyle={pasteButtonStyle} onPress={handlePasteButtonPress} />
         </View>
       )}
     </View>

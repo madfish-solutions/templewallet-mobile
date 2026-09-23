@@ -1,7 +1,6 @@
-import { black } from 'src/config/styles';
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
-import { generateShadow } from 'src/styles/generate-shadow';
+import { iosCardShadow } from 'src/styles/shadows';
 
 export const usePromotionItemStyles = createUseStylesMemoized(({ colors }) => ({
   androidContainer: {
@@ -11,7 +10,7 @@ export const usePromotionItemStyles = createUseStylesMemoized(({ colors }) => ({
     position: 'relative',
     backgroundColor: colors.cardBG,
     borderRadius: formatSize(10),
-    ...generateShadow(1, black)
+    boxShadow: iosCardShadow
   },
   textAdLoadingContainer: {
     minHeight: formatSize(80)

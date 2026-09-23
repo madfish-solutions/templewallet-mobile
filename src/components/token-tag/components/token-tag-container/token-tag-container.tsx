@@ -1,9 +1,10 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import { useApyStyles } from 'src/components/token-screen-content-container/apy.styles';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
+
+import { useApyStyles } from '../../apy.styles';
 
 import { useTokenTagContainerStyles } from './token-tag-container.styles';
 

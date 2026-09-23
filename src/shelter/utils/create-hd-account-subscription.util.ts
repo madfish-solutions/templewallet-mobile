@@ -1,34 +1,27 @@
-import { Dispatch } from '@reduxjs/toolkit';
 import { EMPTY, expand, first, of, Subject, switchMap, tap } from 'rxjs';
 
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
-import { AccountInterface } from 'src/interfaces/account.interface';
+import { Account } from 'src/interfaces/account.interfaces';
+import { dispatch } from 'src/store';
 import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
-import { addHdAccountAction, setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
+import { addAccountAction, setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
 
 import { Shelter } from '../shelter';
 
 const MAX_HD_SKIP_ATTEMPTS = 10;
 
-export const createHdAccountSubscription = (
-  createHdAccount$: Subject<unknown>,
-  accounts: AccountInterface[],
-  dispatch: Dispatch
-) => {
-  const existingPublicKeyHashes = new Set(accounts.map(a => a.publicKeyHash));
-  const hdAccountsCount = accounts.filter(({ type }) => type === AccountTypeEnum.HD_ACCOUNT).length;
-
-  return createHdAccount$
+export const createHdAccountSubscription = (createHdAccount$: Subject<unknown>, accounts: Account[]) =>
+  createHdAccount$
     .pipe(
       tap(() => dispatch(showLoaderAction())),
       switchMap(() => {
-        let nextIndex = hdAccountsCount;
+        let nextIndex = getNextHdIndex(accounts);
         let attempts = 0;
 
-        return Shelter.createHdAccount$(`Account ${accounts.length + 1}`, nextIndex).pipe(
+        return Shelter.createHdAccount$(`Account ${accounts.length + 1}`, nextIndex, accounts).pipe(
           expand(publicData => {
-            if (publicData === undefined || !existingPublicKeyHashes.has(publicData.publicKeyHash)) {
+            if (publicData !== undefined) {
               return EMPTY;
             }
 
@@ -40,18 +33,23 @@ export const createHdAccountSubscription = (
 
             nextIndex++;
 
-            return Shelter.createHdAccount$(`Account ${accounts.length + 1}`, nextIndex);
+            return Shelter.createHdAccount$(`Account ${accounts.length + 1}`, nextIndex, accounts);
           }),
-          first(publicData => publicData === undefined || !existingPublicKeyHashes.has(publicData.publicKeyHash))
+          first(publicData => publicData !== undefined || attempts >= MAX_HD_SKIP_ATTEMPTS)
         );
       }),
       tap(() => dispatch(hideLoaderAction()))
     )
     .subscribe(publicData => {
       if (publicData !== undefined) {
-        dispatch(setSelectedAccountAction(publicData.publicKeyHash));
-        dispatch(addHdAccountAction(publicData));
+        dispatch(setSelectedAccountIdAction(publicData.id));
+        dispatch(addAccountAction(publicData));
         dispatch(loadWhitelistAction.submit());
       }
     });
-};
+
+const getNextHdIndex = (accounts: Account[]) =>
+  accounts.reduce(
+    (maxHdIndex, account) => (account.type === AccountTypeEnum.HD ? Math.max(maxHdIndex, account.hdIndex) : maxHdIndex),
+    -1
+  ) + 1;

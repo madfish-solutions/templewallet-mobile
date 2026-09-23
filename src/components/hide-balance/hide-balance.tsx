@@ -1,18 +1,37 @@
 import React from 'react';
-import { StyleProp, TextStyle } from 'react-native';
+import { StyleProp, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import { useHideBalance } from 'src/hooks/hide-balance/hide-balance.hook';
 
 import { TruncatedText } from '../truncated-text';
 
 interface Props {
-  style: StyleProp<TextStyle>;
+  wrapperStyle?: StyleProp<ViewStyle>;
+  textStyle: StyleProp<TextStyle>;
+  interactive?: boolean;
+  testID?: string;
 }
 
 const hideSymbol = '•••••••';
 
-export const HideBalance: FCWithChildren<Props> = ({ style, children }) => {
-  const { isBalanceHidden } = useHideBalance();
+export const HideBalance: FCWithChildren<Props> = ({
+  wrapperStyle,
+  textStyle,
+  children,
+  interactive = false,
+  testID
+}) => {
+  const { isBalanceHidden, toggleHideBalance } = useHideBalance();
 
-  return <TruncatedText style={style}>{isBalanceHidden ? hideSymbol : children}</TruncatedText>;
+  const text = <TruncatedText style={textStyle}>{isBalanceHidden ? hideSymbol : children}</TruncatedText>;
+
+  if (!interactive) {
+    return <View style={wrapperStyle}>{text}</View>;
+  }
+
+  return (
+    <TouchableOpacity onPress={toggleHideBalance} style={wrapperStyle} testID={testID}>
+      {text}
+    </TouchableOpacity>
+  );
 };

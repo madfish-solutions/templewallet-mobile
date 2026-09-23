@@ -16,4 +16,12 @@ describe('assert', () => {
   it('should not throw an error if variable is an object', () => {
     expect(() => assert({})).not.toThrow();
   });
+
+  it('should throw an error with a custom message', () => {
+    expect(() => assert(undefined, 'Custom message')).toThrow(new AssertionError('Custom message', undefined));
+  });
+
+  it('should throw an error with a custom error', () => {
+    expect(() => assert(undefined, new Error('Custom error'))).toThrow(new Error('Custom error'));
+  });
 });

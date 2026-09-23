@@ -31,7 +31,12 @@ export const useFeeForm = (opParams: ParamsWithKind[], estimationsList: Estimati
 
   const { formValidationSchema, formInitialValues } = useMemo(
     () => ({
-      formInitialValues: estimationsApplied ? basicFees : {},
+      formInitialValues: estimationsApplied
+        ? {
+            ...basicFees,
+            gasFeeSum: basicFees.gasFeeSum.plus(1e-4)
+          }
+        : {},
       formValidationSchema: object().shape({
         gasFeeSum: bigNumberSchema().test('min-gas-fee', 'Gas fee must be positive', value => {
           if (estimationsApplied) {

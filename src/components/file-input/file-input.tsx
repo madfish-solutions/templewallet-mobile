@@ -46,7 +46,11 @@ export const FileInput: FC<FileInputProps> = ({ value, onChange }) => {
         destination: 'cachesDirectory'
       });
 
-      onChange({ fileName: file.name ?? '', uri: normalizeFileUri(localCopy.sourceUri) });
+      if (localCopy.status === 'error') {
+        throw new Error(localCopy.copyError);
+      }
+
+      onChange({ fileName: file.name ?? '', uri: normalizeFileUri(localCopy.localUri) });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       if (e.message !== 'User canceled document picker') {

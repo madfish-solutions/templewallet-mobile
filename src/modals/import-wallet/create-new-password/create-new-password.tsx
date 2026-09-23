@@ -13,7 +13,7 @@ import { WalletInitNewPasswordInputs } from 'src/layouts/wallet-init-new-passwor
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import { togglePartnersPromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
 import { setIsAnalyticsEnabled } from 'src/store/settings/settings-actions';
-import { showWarningToast } from 'src/toast/toast.utils';
+import { showErrorToast, showWarningToast } from 'src/toast/toast.utils';
 import { scrollToField } from 'src/utils/form.utils';
 import { isString } from 'src/utils/is-string';
 
@@ -40,13 +40,17 @@ export const CreateNewPassword = memo<Props>(({ onGoBackPress, seedPhrase, initi
   });
 
   const handleSubmit = useCallback(
-    ({ password, useBiometry, analytics, viewAds }: CreateNewPasswordFormValues) => {
+    async ({ password, useBiometry, analytics, viewAds }: CreateNewPasswordFormValues) => {
       dispatch(togglePartnersPromotionAction(viewAds));
       dispatch(setIsAnalyticsEnabled(analytics));
 
-      importWallet({ seedPhrase, password, useBiometry });
+      try {
+        await importWallet({ seedPhrase, password, useBiometry });
+      } catch (error) {
+        showErrorToast({ description: error instanceof Error ? error.message : 'Failed to import wallet' });
+      }
     },
-    [seedPhrase]
+    [dispatch, importWallet, seedPhrase]
   );
 
   const createNewPasswordInitialValues = useMemo(
@@ -66,7 +70,7 @@ export const CreateNewPassword = memo<Props>(({ onGoBackPress, seedPhrase, initi
     onSubmit: handleSubmit
   });
 
-  const { submitForm, errors, setFieldTouched, isValid, touched } = formik;
+  const { submitForm, errors, isSubmitting, setFieldTouched, isValid, touched } = formik;
   const disableImport = useMemo(
     () => Object.keys(errors).filter(key => touched[key as keyof CreateNewPasswordFormValues]).length > 0,
     [errors, touched]
@@ -112,7 +116,7 @@ export const CreateNewPassword = memo<Props>(({ onGoBackPress, seedPhrase, initi
         <ButtonLargeSecondary title="Back" onPress={onGoBackPress} />
         <ButtonLargePrimary
           title="Import"
-          disabled={disableImport}
+          disabled={disableImport || isSubmitting}
           onPress={useCallbackIfOnline(() => {
             setFieldTouched('password', true, true);
             setFieldTouched('passwordConfirmation', true, true);

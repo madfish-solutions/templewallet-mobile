@@ -1,4 +1,4 @@
-if [ "$(expr substr $(uname -s) 1 5)" != "Linux" ]; then
+if [ "$(uname -s)" != "Linux" ]; then
   sed_mac_arg=true
 fi
 
@@ -14,6 +14,14 @@ find "${TMPDIR:-/tmp}" -maxdepth 1 \( -name 'haste-map-*' -o -name 'metro-*' -o 
 
 find node_modules -type f -name 'build.gradle' -exec sed -i ${sed_mac_arg:+""} 's/jcenter()/mavenCentral()/g' {} +
 
+# https://github.com/facebook/react-native/issues/56287
+# Gradle 9 removed JvmVendorSpec.IBM_SEMERU. React Native 0.85.3 ships Foojay
+# resolver 0.5.0, which still references it and crashes during Android builds.
+rn_gradle_plugin_settings="node_modules/@react-native/gradle-plugin/settings.gradle.kts"
+if [ -f "$rn_gradle_plugin_settings" ]; then
+  sed -i ${sed_mac_arg:+""} 's/org.gradle.toolchains.foojay-resolver-convention").version("0.5.0")/org.gradle.toolchains.foojay-resolver-convention").version("1.0.0")/' "$rn_gradle_plugin_settings"
+fi
+
 search_string="compile 'com.facebook.react:react-native:+'"
 replace_string="implementation 'com.facebook.react:react-native:+'"
 sed -i ${sed_mac_arg:+""} "s/$search_string/$replace_string/" node_modules/react-native-scrypt/android/build.gradle
@@ -25,4 +33,29 @@ if [ -f "$rnexitapp_h" ]; then
   sed -i ${sed_mac_arg:+""} 's|#import <React-Codegen/RNExitAppSpec/RNExitAppSpec.h>|#import "RNExitAppSpec/RNExitAppSpec.h"|' "$rnexitapp_h"
   sed -i ${sed_mac_arg:+""} 's|#import <RNExitAppSpec/RNExitAppSpec.h>|#import "RNExitAppSpec/RNExitAppSpec.h"|' "$rnexitapp_h"
   sed -i ${sed_mac_arg:+""} 's|#import <React_Codegen/RNExitAppSpec/RNExitAppSpec.h>|#import "RNExitAppSpec/RNExitAppSpec.h"|' "$rnexitapp_h"
+fi
+
+# Fix react-native-orientation-locker iOS reload redbox on RN 0.85.
+# The native module manually mutates RCTEventEmitter listener accounting during
+# init/dealloc, which can remove listeners after React Native already reset them.
+orientation_locker_m="node_modules/react-native-orientation-locker/iOS/RCTOrientation/Orientation.m"
+if [ -f "$orientation_locker_m" ]; then
+  sed -i ${sed_mac_arg:+""} '/\[self addListener:@"orientationDidChange"\];/d' "$orientation_locker_m"
+  sed -i ${sed_mac_arg:+""} '/\[self removeListeners:1\];/d' "$orientation_locker_m"
+fi
+
+# Skip WalletConnect Pay's UniFFI native module. @walletconnect/react-native-compat
+# (pulled in by @reown/walletkit) always resolves RNWalletConnectPay on import.
+# That instantiates yttrium-wcpay / JNA and crashes on Android with:
+#   Structure.getFieldOrder() on class uniffi.yttrium_wcpay.RustBuffer$ByValue
+#   does not provide enough names [0] ([]) to match declared fields [3]
+# Temple does not use Pay; both branches below would load it (TurboModuleRegistry.get
+# on new arch, NativeModules.RNWalletConnectPay on old arch). Forcing undefined keeps
+# the JS Pay helpers as no-ops without loading JNA.
+# Remove this block to integrate WalletConnect Pay, then add JNA keep rules in
+# android/app/proguard-rules.pro and verify debug + release on Android 11.
+wc_compat_pay_module="node_modules/@walletconnect/react-native-compat/module/index.ts"
+if [ -f "$wc_compat_pay_module" ] && grep -q 'require("./NativeRNWalletConnectPay.ts").default' "$wc_compat_pay_module"; then
+  sed -i ${sed_mac_arg:+""} 's|require("./NativeRNWalletConnectPay.ts").default|undefined|' "$wc_compat_pay_module"
+  sed -i ${sed_mac_arg:+""} 's|: NativeModules.RNWalletConnectPay;|: undefined;|' "$wc_compat_pay_module"
 fi

@@ -184,7 +184,7 @@ const AssetAmountInputComponent: FC<
             <View style={styles.balanceRow}>
               <Text style={[styles.balanceDescription, conditionalStyle(isMinError, styles.textError)]}>Min:</Text>
               <Divider size={formatSize(4)} />
-              <HideBalance style={styles.balanceValueText}>
+              <HideBalance textStyle={styles.balanceValueText}>
                 <TopUpAssetValueText
                   amount={new BigNumber(value.min)}
                   style={[styles.balanceValueText, conditionalStyle(isMinError, styles.textError)]}
@@ -201,7 +201,7 @@ const AssetAmountInputComponent: FC<
             <View style={styles.balanceRow}>
               <Text style={[styles.balanceDescription, conditionalStyle(isMaxError, styles.textError)]}>Max:</Text>
               <Divider size={formatSize(4)} />
-              <HideBalance style={styles.balanceValueText}>
+              <HideBalance textStyle={styles.balanceValueText}>
                 <TopUpAssetValueText
                   amount={new BigNumber(value.max)}
                   style={[styles.balanceValueText, conditionalStyle(isMaxError, styles.textError)]}

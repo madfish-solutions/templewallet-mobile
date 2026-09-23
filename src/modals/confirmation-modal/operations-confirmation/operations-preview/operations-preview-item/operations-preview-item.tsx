@@ -1,11 +1,7 @@
 import React, { FC, Fragment, useMemo } from 'react';
 import { View } from 'react-native';
 
-import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
 import { Divider } from 'src/components/divider/divider';
-import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
-import { RobotIcon } from 'src/components/robot-icon/robot-icon';
-import { TruncatedText } from 'src/components/truncated-text';
 import { ParamPreviewTypeEnum } from 'src/enums/param-preview-type.enum';
 import { Asset, ParamPreviewInterface } from 'src/interfaces/param-preview.interface';
 import { formatSize } from 'src/styles/format-size';
@@ -14,7 +10,9 @@ import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isCollectible } from 'src/utils/tezos.util';
 
-import { useOperationsPreviewItemStyles } from './operations-preview-item.styles';
+import { OperationPreviewAssetAmounts } from '../../../common/operation-preview-asset-amounts';
+import { OperationPreviewCard } from '../../../common/operation-preview-card';
+
 import { useTokenGetter } from './utils';
 
 interface Props {
@@ -37,7 +35,6 @@ interface ParamsPreviewDataInterface {
 }
 
 export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
-  const styles = useOperationsPreviewItemStyles();
   const getToken = useTokenGetter();
 
   const formattedAmount = (params: ParamsPreviewDataInterface) => {
@@ -103,41 +100,19 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
     <>
       {previewData.map(({ iconSeed, description, hash, token }, index) => (
         <Fragment key={iconSeed + index}>
-          <View style={styles.container}>
-            <View style={styles.contentWrapper}>
-              <View style={styles.infoContainer}>
-                <RobotIcon seed={iconSeed} size={formatSize(32)} />
-                <Divider size={formatSize(10)} />
-                <TruncatedText style={styles.description}>{description}</TruncatedText>
-              </View>
-              {isDefined(hash) && (
-                <View style={styles.hashContainer}>
-                  <PublicKeyHashText publicKeyHash={hash} />
-                </View>
-              )}
-            </View>
+          <OperationPreviewCard iconSeed={iconSeed} description={description} publicKeyHash={hash}>
             {isDefined(token) && Number(token.amount) > 0 && (
               <View>
-                <AssetValueText
+                <OperationPreviewAssetAmounts
                   amount={token.amount}
                   asset={token.tokenData}
                   receiver={hash}
-                  style={styles.amountToken}
                   showMinusSign
+                  showDollar={!isCollectible(token.tokenData)}
                 />
-                <Divider size={formatSize(8)} />
-                {!isCollectible(token.tokenData) && (
-                  <AssetValueText
-                    convertToDollar
-                    amount={token.amount}
-                    asset={token.tokenData}
-                    style={styles.amountDollar}
-                    showMinusSign
-                  />
-                )}
               </View>
             )}
-          </View>
+          </OperationPreviewCard>
           <Divider size={formatSize(8)} />
         </Fragment>
       ))}
