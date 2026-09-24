@@ -8,11 +8,15 @@ export const useAppMetadataConnectionViewStyles = createUseStyles(({ colors, typ
     alignItems: 'center'
   },
   appContainer: {
-    alignItems: 'center'
+    alignItems: 'center',
+    flex: 1,
+    minWidth: 0
   },
   nameText: {
     ...typography.caption13Semibold,
-    color: colors.black
+    color: colors.black,
+    maxWidth: '100%',
+    textAlign: 'center'
   },
   logoContainer: {
     justifyContent: 'center',
