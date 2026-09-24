@@ -49,9 +49,9 @@ export const getGenericPasswordOptions = (passwordService: string, shelterVersio
 // (common async solution stops reset process)
 export const resetKeychain$ = () => {
   const keychainServicesPromise = isIOS
-    ? getAllGenericPasswordServices({ skipUIAuth: true }).then(services =>
-        services.concat(`${APP_IDENTIFIER}/${PASSWORD_STORAGE_KEY}`)
-      )
+    ? getAllGenericPasswordServices({ skipUIAuth: true }).then(services => [
+        ...new Set([...services, `${APP_IDENTIFIER}/${PASSWORD_STORAGE_KEY}`])
+      ])
     : getAllGenericPasswordServices();
 
   keychainServicesPromise

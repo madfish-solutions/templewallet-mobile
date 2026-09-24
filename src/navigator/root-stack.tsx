@@ -1,8 +1,8 @@
 import { PortalProvider } from '@gorhom/portal';
 import { NavigationContainer } from '@react-navigation/native';
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack';
-import React, { useState } from 'react';
-import { Platform } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { InteractionManager, Platform } from 'react-native';
 
 import { useModalOptions } from 'src/components/header/use-modal-options.util';
 import { Loader } from 'src/components/loader/loader';
@@ -41,11 +41,13 @@ import { EnterPassword } from 'src/screens/enter-password/enter-password';
 import { ForceUpdate } from 'src/screens/force-update/force-update';
 import { PassCode } from 'src/screens/passcode/passcode';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
-import { dispatch } from 'src/store';
 import { shouldShowNewsletterModalAction } from 'src/store/newsletter/newsletter-actions';
 import { useIsAppCheckFailed, useIsForceUpdateNeeded } from 'src/store/security/security-selectors';
+import { hideLoaderAction } from 'src/store/settings/settings-actions';
 import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
 import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
+
+import { dispatch } from '../store';
 
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
@@ -76,6 +78,7 @@ export const RootStackScreen = () => {
   const { isLocked } = useAppLock();
   const isShowLoader = useIsShowLoaderSelector();
   const isAuthorised = useIsAuthorisedSelector();
+  const wasAuthorised = useRef(isAuthorised);
 
   const isSplash = useAppSplash();
   const isPasscode = useDevicePasscode();
@@ -89,6 +92,28 @@ export const RootStackScreen = () => {
 
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum | ModalsEnum);
+
+  useEffect(() => {
+    const didResetWallet = wasAuthorised.current && !isAuthorised && isShowLoader;
+    wasAuthorised.current = isAuthorised;
+
+    if (!didResetWallet) {
+      return;
+    }
+
+    let frame: number | undefined;
+    // Wait for navigation animations, then hide the loader.
+    const task = InteractionManager.runAfterInteractions(() => {
+      frame = requestAnimationFrame(() => dispatch(hideLoaderAction()));
+    });
+
+    return () => {
+      task.cancel();
+      if (frame !== undefined) {
+        cancelAnimationFrame(frame);
+      }
+    };
+  }, [isAuthorised, isShowLoader]);
 
   return (
     <NavigationContainer
