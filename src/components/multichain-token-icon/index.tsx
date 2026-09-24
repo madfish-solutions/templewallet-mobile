@@ -10,13 +10,14 @@ import { useMultichainTokenIconStyles } from './styles';
 
 interface MultichainProps {
   showNetworkBadge?: boolean;
+  flushBadge?: boolean;
 }
 
 export type MultichainTokenIconProps = TokenIconProps & MultichainProps;
 
 export const MultichainTokenIcon: FC<MultichainTokenIconProps> = props => {
   const styles = useMultichainTokenIconStyles();
-  const { showNetworkBadge, ...tokenIconProps } = props;
+  const { showNetworkBadge, flushBadge = false, ...tokenIconProps } = props;
   const networkIconName =
     props.chainKind === TempleChainKind.Tezos
       ? CryptoLogoNameEnum.Tezos
@@ -30,9 +31,9 @@ export const MultichainTokenIcon: FC<MultichainTokenIconProps> = props => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, flushBadge && styles.flushContainer]}>
       {icon}
-      <View style={styles.networkBadge}>
+      <View style={[styles.networkBadge, flushBadge && styles.flushNetworkBadge]}>
         <NetworkIcon name={networkIconName} variant="tokenBadge" />
       </View>
     </View>

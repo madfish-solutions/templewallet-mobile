@@ -214,6 +214,7 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
             actionIconName={isSingleAsset ? undefined : IconNameV2Enum.DropdownDown}
             isShowBalance={false}
             isShowName={isShowNameForValue}
+            compactSelected={variant === 'v2'}
           />
         ),
       [isShowNameForValue, isSingleAsset]
@@ -369,6 +370,7 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
           <View
             style={[
               styles.dropdownContainer,
+              conditionalStyle(variant === 'v2', styles.compactDropdownContainer),
               conditionalStyle(isLiquidityProviderToken, styles.lpDropdownContainer),
               conditionalStyle(!editable, styles.disabledDropdownContainer),
               { paddingVertical: dropdownVerticalPadding, width: selectedTokenDropdownWidth }
