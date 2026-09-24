@@ -367,6 +367,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           params: {
             type: ConfirmationTypeEnum.InternalOperations,
             opParams,
+            modalTitle: 'Confirm Swap',
             testID: 'SWAP_TRANSACTION_SENT'
           }
         })

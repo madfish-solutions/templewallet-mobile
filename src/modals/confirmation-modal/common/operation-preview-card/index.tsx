@@ -5,6 +5,7 @@ import { Divider } from 'src/components/divider/divider';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { formatSize } from 'src/styles/format-size';
+import { truncateAccountAddress } from 'src/utils/account.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { OperationPreviewDescription } from '../operation-preview-description';
@@ -49,7 +50,11 @@ export const OperationPreviewCard: FC<Props> = ({
         </View>
         {isDefined(publicKeyHash) && (
           <View style={styles.hashContainer}>
-            <PublicKeyHashText publicKeyHash={publicKeyHash} />
+            <PublicKeyHashText
+              publicKeyHash={publicKeyHash}
+              displayText={truncateAccountAddress(publicKeyHash)}
+              style={styles.address}
+            />
           </View>
         )}
       </View>
