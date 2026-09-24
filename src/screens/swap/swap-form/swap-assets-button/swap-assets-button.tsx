@@ -37,7 +37,7 @@ export const SwapAssetsButton: FC = () => {
     <View style={SwapAssetsButtonStyles.container}>
       <TouchableIconV2
         onPress={() => swapAction(inputAssets, outputAssets)}
-        name={IconNameV2Enum.Swap}
+        name={IconNameV2Enum.ArrowUpDown}
         size={formatSize(24)}
         iconSize={24}
         color={colors.orange}

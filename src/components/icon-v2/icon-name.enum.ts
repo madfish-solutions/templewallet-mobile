@@ -38,8 +38,7 @@ export enum IconNameV2Enum {
   OutLink = 'OutLink',
   Shield = 'Shield',
   ScamInfo = 'ScamInfo',
-  Swap = 'Swap',
-  SwapArrow = 'SwapArrow',
+  ArrowUpDown = 'ArrowUpDown',
   LockOpen = 'LockOpen',
   Cube = 'Cube',
   DocumentGear = 'DocumentGear'

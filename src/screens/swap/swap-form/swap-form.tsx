@@ -26,6 +26,7 @@ import {
 } from 'src/config/swap';
 import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
 import { TokensInputsEnum, useFilteredSwapTokensList } from 'src/hooks/use-filtered-swap-tokens.hook';
@@ -77,6 +78,7 @@ import { SwapDisclaimer } from './swap-disclaimer/swap-disclaimer';
 import { SwapExchangeRate } from './swap-exchange-rate/swap-exchange-rate';
 import { swapFormValidationSchema } from './swap-form.form';
 import { SwapFormSelectors } from './swap-form.selectors';
+import { useSwapFormStyles } from './swap-form.styles';
 
 interface SwapFormProps {
   inputToken?: TokenInterface;
@@ -84,6 +86,7 @@ interface SwapFormProps {
 }
 
 export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
+  const styles = useSwapFormStyles();
   const tezosAddress = useAccountAddressForTezos();
 
   if (!tezosAddress) {
@@ -374,11 +377,11 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const formik = useFormik<SwapFormValues>({
     initialValues: {
       inputAssets: {
-        asset: inputToken ?? tezosToken,
+        asset: { ...(inputToken ?? tezosToken), chainKind: TempleChainKind.Tezos },
         amount: undefined
       },
       outputAssets: {
-        asset: outputToken ?? emptyTezosLikeToken,
+        asset: outputToken ? { ...outputToken, chainKind: TempleChainKind.Tezos } : emptyTezosLikeToken,
         amount: undefined
       }
     },
@@ -506,10 +509,16 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         <Divider size={formatSize(8)} />
 
         <FormAssetAmountInput
+          variant="v2"
           name="inputAssets"
           label="From"
           isSearchable
           maxButton
+          dropdownDescription="Select Token"
+          searchPlaceholder="Search"
+          listBalanceTextStyle={styles.tokenListBalance}
+          listDollarEquivalentTextStyle={styles.tokenListDollarEquivalent}
+          scrollToSelectedOnOpen={false}
           assetsList={fromTokensList}
           isLoading={isLoading}
           setSearchValue={setSearchValueFromTokens}
@@ -520,11 +529,18 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         <SwapAssetsButton />
 
         <FormAssetAmountInput
+          variant="v2"
           name="outputAssets"
           label="To"
           toUsdToggle={false}
           editable={false}
           isSearchable
+          dropdownDescription="Select Token"
+          searchPlaceholder="Search"
+          listBalanceTextStyle={styles.tokenListBalance}
+          listDollarEquivalentTextStyle={styles.tokenListDollarEquivalent}
+          scrollToSelectedOnOpen={false}
+          stylesConfig={{ amountInput: styles.outputAmountInput, inputContainer: styles.outputInputContainer }}
           assetsList={toTokensList}
           isLoading={isLoading}
           setSearchValue={setSearchValueToTokens}
@@ -543,10 +559,12 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           />
         </View>
 
-        <SwapDisclaimer />
+        <View style={styles.disclaimerContainer}>
+          <SwapDisclaimer />
+        </View>
       </ScreenContainer>
 
-      <ButtonsFloatingContainer>
+      <ButtonsFloatingContainer style={styles.buttonContainer}>
         <ButtonLargePrimary
           disabled={
             (submitCount !== 0 && !isValid) ||

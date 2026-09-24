@@ -90,6 +90,8 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
     dropdownListHeader,
     isSearchable = false,
     searchPlaceholder,
+    listBalanceTextStyle,
+    listDollarEquivalentTextStyle,
     dropdownDescription = 'Assets',
     scrollToSelectedOnOpen = true,
     selectionOptions = undefined,
@@ -149,8 +151,17 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
 
     const amountInputRef = useRef<TextInput>(null);
     const renderTokenListItem = useCallback<DropdownListItemComponent<AssetInterface>>(
-      ({ item }) => (variant === 'v1' ? <TokenDropdownItem token={item} /> : <TokenDropdownItemV2 token={item} />),
-      []
+      ({ item }) =>
+        variant === 'v1' ? (
+          <TokenDropdownItem token={item} />
+        ) : (
+          <TokenDropdownItemV2
+            token={item}
+            balanceTextStyle={listBalanceTextStyle}
+            dollarEquivalentTextStyle={listDollarEquivalentTextStyle}
+          />
+        ),
+      [listBalanceTextStyle, listDollarEquivalentTextStyle]
     );
 
     const [inputTypeIndex, setInputTypeIndex] = useState(0);

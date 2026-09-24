@@ -91,7 +91,7 @@ export const TokenPageSummary = memo<Props>(
                 shieldedAtomicBalance={token.shieldedAtomicBalance}
               >
                 <TouchableOpacity onPress={onRebalancePress} style={styles.rebalanceButton}>
-                  <IconV2 name={IconNameV2Enum.SwapArrow} size={16} color={colors.blue} />
+                  <IconV2 name={IconNameV2Enum.ArrowUpDown} size={16} color={colors.blue} />
                 </TouchableOpacity>
               </PublicShieldedBalancePills>
             </View>

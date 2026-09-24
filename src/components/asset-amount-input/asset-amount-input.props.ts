@@ -34,6 +34,8 @@ export interface AssetAmountInputProps<TAsset extends AssetInterface = TokenInte
   isLoading?: boolean;
   isSearchable?: boolean;
   searchPlaceholder?: string;
+  listBalanceTextStyle?: TextStyle;
+  listDollarEquivalentTextStyle?: TextStyle;
   dropdownListHeader?: ReactNode;
   dropdownDescription?: string;
   scrollToSelectedOnOpen?: boolean;

@@ -30,7 +30,6 @@ export enum IconNameEnum {
   XCircle = 'XCircle',
   MoreHorizontal = 'MoreHorizontal',
   SwapArrow = 'SwapArrow',
-  SwapSettings = 'SwapSettings',
   EyeClosedBold = 'EyeClosedBold',
   EyeOpenBold = 'EyeOpenBold',
   Spicy = 'Spicy',

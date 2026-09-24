@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from 'react';
-import { Text, View } from 'react-native';
+import { StyleProp, Text, TextStyle, View } from 'react-native';
 
 import { MultichainTokenIcon, MultichainTokenIconProps } from 'src/components/multichain-token-icon';
 import { TokenIcon } from 'src/components/token-icon/token-icon';
@@ -30,6 +30,8 @@ interface TokenDropdownItemProps<IconName extends string> {
   isShowBalance?: boolean;
   isShowBalanceLoading?: boolean;
   isShowName?: boolean;
+  balanceTextStyle?: StyleProp<TextStyle>;
+  dollarEquivalentTextStyle?: StyleProp<TextStyle>;
 }
 
 interface EssentialIconProps<IconName extends string, Size extends number> {
@@ -82,7 +84,9 @@ const TokenDropdownItemHOC = <IconName extends string, Size extends number>(
     actionIconName,
     isShowBalance = true,
     isShowBalanceLoading = false,
-    isShowName = true
+    isShowName = true,
+    balanceTextStyle,
+    dollarEquivalentTextStyle
   }) => {
     const styles = useTokenDropdownItemStyles();
     const { isCompact, listIconConfig, selectedIconConfig, showNetworkBadge } =
@@ -144,7 +148,7 @@ const TokenDropdownItemHOC = <IconName extends string, Size extends number>(
             <View style={styles.rightContainer}>
               <Divider size={formatSize(4)} />
               {isShowBalance && (
-                <HideBalance wrapperStyle={styles.balanceWrapper} textStyle={styles.balance}>
+                <HideBalance wrapperStyle={styles.balanceWrapper} textStyle={[styles.balance, balanceTextStyle]}>
                   {isShowBalanceLoading ? (
                     '---'
                   ) : (
@@ -167,7 +171,7 @@ const TokenDropdownItemHOC = <IconName extends string, Size extends number>(
                     styles.dollarEquivalentWrapper,
                     conditionalStyle(isDefined(actionIconName), styles.actionIconSubstitute)
                   ]}
-                  textStyle={styles.dollarEquivalent}
+                  textStyle={[styles.dollarEquivalent, dollarEquivalentTextStyle]}
                 >
                   {isShowBalanceLoading ? (
                     '---'

@@ -4,6 +4,7 @@ import { SvgProps } from 'react-native-svg';
 import AlarmTriangleIcon from './assets/alarm-triangle.svg';
 import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowLeftIcon from './assets/arrow-left.svg';
+import ArrowUpDownIcon from './assets/arrow-up-down.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
 import CartIcon from './assets/cart.svg';
 import CheckboxCheckedFillIcon from './assets/checkbox-checked-fill.svg';
@@ -39,8 +40,6 @@ import SettingsIcon from './assets/settings.svg';
 import ShareIcon from './assets/share.svg';
 import ShieldIcon from './assets/shield.svg';
 import SliderIcon from './assets/slider.svg';
-import SwapArrowIcon from './assets/swap-arrow.svg';
-import SwapIcon from './assets/swap.svg';
 import TrashIcon from './assets/trash.svg';
 import UserAddIcon from './assets/user-add.svg';
 import XBigIcon from './assets/x-big.svg';
@@ -87,8 +86,7 @@ export const IconNameV2Map: Record<IconNameV2Enum, FC<SvgProps>> = {
   [IconNameV2Enum.OutLink]: OutLinkIcon,
   [IconNameV2Enum.Shield]: ShieldIcon,
   [IconNameV2Enum.ScamInfo]: ScamInfoIcon,
-  [IconNameV2Enum.Swap]: SwapIcon,
-  [IconNameV2Enum.SwapArrow]: SwapArrowIcon,
+  [IconNameV2Enum.ArrowUpDown]: ArrowUpDownIcon,
   [IconNameV2Enum.LockOpen]: LockOpenIcon,
   [IconNameV2Enum.Cube]: CubeIcon,
   [IconNameV2Enum.DocumentGear]: DocumentGearIcon
