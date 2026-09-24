@@ -51,6 +51,7 @@ export const FormAssetAmountInput = memo<Props<AssetInterface>>(
     dropdownListHeader,
     dropdownDescription,
     scrollToSelectedOnOpen,
+    showTokenNameForValue,
     isSingleAsset,
     selectionOptions = DEFAULT_SELECTION_OPTIONS,
     maxButton = false,
@@ -135,6 +136,7 @@ export const FormAssetAmountInput = memo<Props<AssetInterface>>(
           dropdownListHeader={dropdownListHeader}
           dropdownDescription={dropdownDescription}
           scrollToSelectedOnOpen={scrollToSelectedOnOpen}
+          showTokenNameForValue={showTokenNameForValue}
           isSingleAsset={isSingleAsset}
           editable={editable}
           toUsdToggle={toUsdToggle}

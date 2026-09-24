@@ -31,6 +31,7 @@ interface TokenDropdownItemProps<IconName extends string> {
   isShowBalanceLoading?: boolean;
   isShowName?: boolean;
   compactSelected?: boolean;
+  showTokenNameForValue?: boolean;
   balanceTextStyle?: StyleProp<TextStyle>;
   dollarEquivalentTextStyle?: StyleProp<TextStyle>;
 }
@@ -87,6 +88,7 @@ const TokenDropdownItemHOC = <IconName extends string, Size extends number>(
     isShowBalanceLoading = false,
     isShowName = true,
     compactSelected = false,
+    showTokenNameForValue = false,
     balanceTextStyle,
     dollarEquivalentTextStyle
   }) => {
@@ -108,25 +110,35 @@ const TokenDropdownItemHOC = <IconName extends string, Size extends number>(
       [iconSize, styles]
     );
     const tokenIconProps = getTokenIconProps(token);
+    const selectedActionIcon = compactSelected && isDefined(actionIconName) && (
+      <View style={styles.selectedActionSlot}>
+        <View style={styles.selectedActionIconContainer}>
+          <IconComponent name={actionIconName} size={actionIconSize} />
+        </View>
+      </View>
+    );
 
     if (assetsEqualityFn(token, emptyToken)) {
       return (
-        <View style={styles.container}>
+        <View style={[styles.container, compactSelected && styles.selectedContainer]}>
           <TokenIcon iconName={token.iconName} size={iconVisualSize} thumbnailUri={token.thumbnailUri} />
           <Divider size={iconGap} />
 
           <View style={styles.infoContainer}>
             <View style={styles.infoRow}>
               <Text style={styles.name}>Select</Text>
-              <View style={styles.rightContainer}>
-                <Divider size={formatSize(4)} />
-                {isDefined(actionIconName) && <IconComponent name={actionIconName} size={actionIconSize} />}
-              </View>
+              {!compactSelected && (
+                <View style={styles.rightContainer}>
+                  <Divider size={formatSize(4)} />
+                  {isDefined(actionIconName) && <IconComponent name={actionIconName} size={actionIconSize} />}
+                </View>
+              )}
             </View>
             <View style={styles.infoRow}>
               <Text style={styles.name}>Token</Text>
             </View>
           </View>
+          {selectedActionIcon}
         </View>
       );
     }
@@ -176,7 +188,7 @@ const TokenDropdownItemHOC = <IconName extends string, Size extends number>(
           <View style={styles.infoRow}>
             {isShowName && (
               <TruncatedText style={compactSelected ? styles.selectedName : tokenNameTextStyle}>
-                {compactSelected
+                {compactSelected && !showTokenNameForValue
                   ? token.networkName ?? (token.chainKind === TempleChainKind.Tezos ? 'Tezos' : token.name)
                   : token.name}
               </TruncatedText>
@@ -202,13 +214,7 @@ const TokenDropdownItemHOC = <IconName extends string, Size extends number>(
             </View>
           </View>
         </View>
-        {compactSelected && isDefined(actionIconName) && (
-          <View style={styles.selectedActionSlot}>
-            <View style={styles.selectedActionIconContainer}>
-              <IconComponent name={actionIconName} size={actionIconSize} />
-            </View>
-          </View>
-        )}
+        {selectedActionIcon}
       </View>
     );
   };

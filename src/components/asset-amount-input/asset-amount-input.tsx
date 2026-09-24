@@ -101,6 +101,7 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
     maxButtonDisabled = false,
     stylesConfig = defaultAssetAmountInputStylesConfig,
     isShowNameForValue = true,
+    showTokenNameForValue = false,
     isSingleAsset = false,
     setSearchValue = emptyFn,
     onBlur,
@@ -215,9 +216,10 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
             isShowBalance={false}
             isShowName={isShowNameForValue}
             compactSelected={variant === 'v2'}
+            showTokenNameForValue={showTokenNameForValue}
           />
         ),
-      [isShowNameForValue, isSingleAsset]
+      [isShowNameForValue, isSingleAsset, showTokenNameForValue]
     );
 
     const onChange = useCallback(

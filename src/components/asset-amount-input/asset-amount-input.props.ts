@@ -40,6 +40,7 @@ export interface AssetAmountInputProps<TAsset extends AssetInterface = TokenInte
   dropdownDescription?: string;
   scrollToSelectedOnOpen?: boolean;
   isShowNameForValue?: boolean;
+  showTokenNameForValue?: boolean;
   isSingleAsset?: boolean;
   selectionOptions?: TextInputProps['selection'];
   setSearchValue?: SyncFn<string>;

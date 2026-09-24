@@ -514,6 +514,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           label="From"
           isSearchable
           maxButton
+          showTokenNameForValue
           dropdownDescription="Select Token"
           searchPlaceholder="Search"
           listBalanceTextStyle={styles.tokenListBalance}
@@ -535,6 +536,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           toUsdToggle={false}
           editable={false}
           isSearchable
+          showTokenNameForValue
           dropdownDescription="Select Token"
           searchPlaceholder="Search"
           listBalanceTextStyle={styles.tokenListBalance}
