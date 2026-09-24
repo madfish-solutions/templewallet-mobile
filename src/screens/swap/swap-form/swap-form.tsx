@@ -78,8 +78,6 @@ import { SwapExchangeRate } from './swap-exchange-rate/swap-exchange-rate';
 import { swapFormValidationSchema } from './swap-form.form';
 import { SwapFormSelectors } from './swap-form.selectors';
 
-const selectionOptions = { start: 0, end: 0 };
-
 interface SwapFormProps {
   inputToken?: TokenInterface;
   outputToken?: TokenInterface;
@@ -524,7 +522,6 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         <FormAssetAmountInput
           name="outputAssets"
           label="To"
-          selectionOptions={selectionOptions}
           toUsdToggle={false}
           editable={false}
           isSearchable

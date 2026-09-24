@@ -18,6 +18,8 @@ import { useDidUpdate } from 'src/utils/hooks';
 
 import { ErrorMessage } from '../error-message/error-message';
 
+const DEFAULT_SELECTION_OPTIONS = { start: 0, end: 0 };
+
 interface Props<TAsset extends AssetInterface = TokenInterface>
   extends Omit<AssetAmountInputProps<TAsset>, 'value' | 'onValueChange'> {
   name: string;
@@ -48,7 +50,7 @@ export const FormAssetAmountInput = memo<Props<AssetInterface>>(
     dropdownDescription,
     scrollToSelectedOnOpen,
     isSingleAsset,
-    selectionOptions = undefined,
+    selectionOptions = DEFAULT_SELECTION_OPTIONS,
     maxButton = false,
     showErrorInFooter = false,
     expectedGasExpense,

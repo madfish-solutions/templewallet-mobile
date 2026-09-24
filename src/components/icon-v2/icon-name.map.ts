@@ -40,6 +40,7 @@ import ShareIcon from './assets/share.svg';
 import ShieldIcon from './assets/shield.svg';
 import SliderIcon from './assets/slider.svg';
 import SwapArrowIcon from './assets/swap-arrow.svg';
+import SwapIcon from './assets/swap.svg';
 import TrashIcon from './assets/trash.svg';
 import UserAddIcon from './assets/user-add.svg';
 import XBigIcon from './assets/x-big.svg';
@@ -86,6 +87,7 @@ export const IconNameV2Map: Record<IconNameV2Enum, FC<SvgProps>> = {
   [IconNameV2Enum.OutLink]: OutLinkIcon,
   [IconNameV2Enum.Shield]: ShieldIcon,
   [IconNameV2Enum.ScamInfo]: ScamInfoIcon,
+  [IconNameV2Enum.Swap]: SwapIcon,
   [IconNameV2Enum.SwapArrow]: SwapArrowIcon,
   [IconNameV2Enum.LockOpen]: LockOpenIcon,
   [IconNameV2Enum.Cube]: CubeIcon,
