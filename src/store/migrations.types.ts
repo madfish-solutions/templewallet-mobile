@@ -24,10 +24,20 @@ type MigratableWalletState = WithLegacyProperties<
 
 type MigratableDAppsState = WithLegacyProperties<RootState['dApps'], LegacyDAppsState>;
 
-type MigratableRootState = Omit<RootState, 'wallet' | 'dApps'> & {
+type MigratableRootState = Omit<RootState, 'wallet' | 'dApps' | 'contactBook'> & {
   wallet: MigratableWalletState;
   dApps: MigratableDAppsState;
+  contactBook: Omit<RootState['contactBook'], 'contacts'> & {
+    contacts: Array<RootState['contactBook']['contacts'][number] | LegacyContact>;
+    /** @deprecated */
+    contactsStateRecord?: Record<string, { tezosBalance: string }>;
+  };
 };
+
+interface LegacyContact {
+  name: string;
+  publicKeyHash: string;
+}
 
 interface LegacyAccountInterface {
   /** @deprecated */

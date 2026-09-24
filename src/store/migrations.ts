@@ -215,6 +215,7 @@ export const MIGRATIONS: MigrationManifest = {
 
     return state;
   },
+  // v1 => v2 migrations
   '10': (untypedState: PersistedState): undefined | TypedPersistedRootState => {
     if (!untypedState) {
       return untypedState;
@@ -299,6 +300,13 @@ export const MIGRATIONS: MigrationManifest = {
     // Replaced Beacon-only permissions with Beacon + WalletConnect connections.
     state.dApps.connections = createEntity((state.dApps.permissions?.data ?? []).map(mapBeaconPermissionToConnection));
     delete state.dApps.permissions;
+
+    state.contactBook.contacts = state.contactBook.contacts.map(contact =>
+      'address' in contact
+        ? { name: contact.name, address: contact.address }
+        : { name: contact.name, address: contact.publicKeyHash }
+    );
+    delete state.contactBook.contactsStateRecord;
 
     return state;
   }
