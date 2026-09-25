@@ -107,8 +107,6 @@ export const BottomSheet: FCWithChildren<Props> = ({
 
     hasOpenedRef.current = false;
     setIsOpened(false);
-    // Reset native sheet views before closed content updates reach the portal.
-    setSheetNonce(value => value + 1);
     onClose();
   };
   const handleClosePress = () => {

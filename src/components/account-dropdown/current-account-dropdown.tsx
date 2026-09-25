@@ -67,28 +67,24 @@ const SearchActionButtons: DropdownActionButtonsComponent = ({ closeDropdown }) 
   const { createHdAccount } = useShelter();
 
   const goToManageAccounts = useCallback(() => {
-    closeDropdown();
-    setTimeout(() => navigateToScreen({ screen: ScreensEnum.ManageAccounts }), 100);
+    closeDropdown(() => navigateToScreen({ screen: ScreensEnum.ManageAccounts }));
   }, [closeDropdown, navigateToScreen]);
 
   const handleOptionPress = useCallback(({ handler }: AddAccountOption) => handler(), []);
   const openCreateAccountPopup = useCallback(() => popupControlRef.current?.open(), []);
-  const closeCreateAccountPopup = useCallback(() => popupControlRef.current?.close(), []);
 
   const createNewAccount = useCallbackIfOnline(
     useCallback(() => {
       trackEvent(WalletSelectors.createNewAccountButton, AnalyticsEventCategory.ButtonPress);
-      closeCreateAccountPopup();
-      closeDropdown(createHdAccount);
-    }, [closeCreateAccountPopup, closeDropdown, createHdAccount, trackEvent])
+      // Wait for the native popup modal to close before the sheet starts its animation.
+      popupControlRef.current?.close(() => closeDropdown(createHdAccount));
+    }, [closeDropdown, createHdAccount, trackEvent])
   );
 
   const goToImportAccount = useCallbackIfOnline(
     useCallback(() => {
-      navigateToModal(ModalsEnum.ChooseAccountImportType);
-      closeCreateAccountPopup();
-      closeDropdown();
-    }, [closeCreateAccountPopup, closeDropdown, navigateToModal])
+      popupControlRef.current?.close(() => closeDropdown(() => navigateToModal(ModalsEnum.ChooseAccountImportType)));
+    }, [closeDropdown, navigateToModal])
   );
 
   const addAccountOptions = useMemo(
