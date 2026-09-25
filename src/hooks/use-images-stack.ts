@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   buildTezosCollectibleImagesStack,
@@ -24,10 +24,13 @@ type ImagesStackStatus = 'failed' | 'loaded' | 'loading';
 interface ImagesStackState {
   cacheKey?: string;
   index: number;
+  retryCount: number;
   sourcesStack: string[];
   status: ImagesStackStatus;
 }
 
+const IMAGE_RETRY_DELAY_MS = 1500;
+const MAX_IMAGE_RETRIES = 2;
 const SUCCESSFUL_SOURCES_CACHE_SIZE = 500;
 const successfulSourcesCache = new Map<string, string>();
 
@@ -46,15 +49,15 @@ const cacheSuccessfulSource = (cacheKey: string, source: string) => {
 
 const buildImagesStackState = (sourcesStack: string[], cacheKey?: string): ImagesStackState => {
   if (sourcesStack.length < 1) {
-    return { cacheKey, index: -1, sourcesStack, status: 'failed' };
+    return { cacheKey, index: -1, retryCount: 0, sourcesStack, status: 'failed' };
   }
 
   const successfulSource = cacheKey == null ? undefined : successfulSourcesCache.get(cacheKey);
   const successfulSourceIndex = successfulSource == null ? -1 : sourcesStack.indexOf(successfulSource);
 
   return successfulSourceIndex < 0
-    ? { cacheKey, index: 0, sourcesStack, status: 'loading' }
-    : { cacheKey, index: successfulSourceIndex, sourcesStack, status: 'loaded' };
+    ? { cacheKey, index: 0, retryCount: 0, sourcesStack, status: 'loading' }
+    : { cacheKey, index: successfulSourceIndex, retryCount: 0, sourcesStack, status: 'loaded' };
 };
 
 export const useTezosCollectibleImagesStack = (
@@ -69,25 +72,25 @@ export const useTezosCollectibleImagesStack = (
     [assetSlug, artifactUri, displayUri, thumbnailUri, isFullView]
   );
 
-  return useImagesStack(sourcesStack, `tezos-collectible:${assetSlug}`);
+  return useImagesStack(sourcesStack, `tezos-collectible:${assetSlug}`, true);
 };
 
 export const useEvmCollectibleImagesStack = (chainId: number, assetSlug: string, uri?: string) => {
   const sourcesStack = useMemo(() => buildEvmCollectibleImagesStack(uri), [uri]);
 
-  return useImagesStack(sourcesStack, `evm-collectible:${chainId}:${assetSlug}`);
+  return useImagesStack(sourcesStack, `evm-collectible:${chainId}:${assetSlug}`, true);
 };
 
-export const useTezosTokenImagesStack = ({
-  thumbnailUri = '',
-  preferDirectSource = false
-}: TezosTokenImagesStackParams) => {
+export const useTezosTokenImagesStack = (
+  { thumbnailUri = '', preferDirectSource = false }: TezosTokenImagesStackParams,
+  retryOnFailure = false
+) => {
   const sourcesStack = useMemo(
     () => buildTokenImagesStack(thumbnailUri, preferDirectSource),
     [thumbnailUri, preferDirectSource]
   );
 
-  return useImagesStack(sourcesStack, `tezos:${thumbnailUri}`);
+  return useImagesStack(sourcesStack, `tezos:${thumbnailUri}`, retryOnFailure);
 };
 
 export const useEvmTokenImagesStack = ({
@@ -104,10 +107,10 @@ export const useEvmTokenImagesStack = ({
 
   const cacheKey = `evm:${chainId}:${address}:${iconURL ?? ''}:${isCollectible}`;
 
-  return useImagesStack(sourcesStack, cacheKey);
+  return useImagesStack(sourcesStack, cacheKey, isCollectible);
 };
 
-export const useImagesStack = (sourcesStack: string[], cacheKey?: string) => {
+export const useImagesStack = (sourcesStack: string[], cacheKey?: string, retryOnFailure = false) => {
   const [state, setState] = useState<ImagesStackState>(() => buildImagesStackState(sourcesStack, cacheKey));
   let currentState = state;
 
@@ -116,6 +119,27 @@ export const useImagesStack = (sourcesStack: string[], cacheKey?: string) => {
     currentState = buildImagesStackState(sourcesStack, cacheKey);
     setState(currentState);
   }
+
+  useEffect(() => {
+    if (
+      !retryOnFailure ||
+      sourcesStack.length === 0 ||
+      currentState.status !== 'failed' ||
+      currentState.retryCount >= MAX_IMAGE_RETRIES
+    ) {
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      setState(current =>
+        current.sourcesStack === sourcesStack && current.cacheKey === cacheKey && current.status === 'failed'
+          ? { ...current, index: 0, retryCount: current.retryCount + 1, status: 'loading' }
+          : current
+      );
+    }, IMAGE_RETRY_DELAY_MS * (currentState.retryCount + 1));
+
+    return () => clearTimeout(timeout);
+  }, [cacheKey, currentState.retryCount, currentState.status, retryOnFailure, sourcesStack]);
 
   const src: string | undefined = sourcesStack[currentState.index];
 
@@ -151,8 +175,8 @@ export const useImagesStack = (sourcesStack: string[], cacheKey?: string) => {
       const nextIndex = current.index + 1;
 
       return nextIndex === sourcesStack.length
-        ? { cacheKey, index: -1, sourcesStack, status: 'failed' }
-        : { cacheKey, index: nextIndex, sourcesStack, status: 'loading' };
+        ? { ...current, index: -1, status: 'failed' }
+        : { ...current, index: nextIndex, status: 'loading' };
     });
   }, [cacheKey, sourcesStack, src]);
 
