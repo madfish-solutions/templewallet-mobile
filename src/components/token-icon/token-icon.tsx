@@ -45,7 +45,7 @@ export type TokenIconProps = TezosIconProps | EvmIconProps | UnspecifiedIconProp
 type ImagesStackState = ReturnType<typeof useImagesStack>;
 
 const TezosTokenIcon: FC<TezosIconProps | UnspecifiedIconProps> = props => {
-  const sourceStack = useTezosTokenImagesStack(props, props.isCollectible);
+  const sourceStack = useTezosTokenImagesStack(props);
 
   return <TokenIconView {...props} sourceStack={sourceStack} supportsRectangularImages />;
 };
