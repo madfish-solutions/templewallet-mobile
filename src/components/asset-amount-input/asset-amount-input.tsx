@@ -90,6 +90,8 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
     dropdownListHeader,
     isSearchable = false,
     searchPlaceholder,
+    listBalanceTextStyle,
+    listDollarEquivalentTextStyle,
     dropdownDescription = 'Assets',
     scrollToSelectedOnOpen = true,
     selectionOptions = undefined,
@@ -99,6 +101,7 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
     maxButtonDisabled = false,
     stylesConfig = defaultAssetAmountInputStylesConfig,
     isShowNameForValue = true,
+    showTokenNameForValue = false,
     isSingleAsset = false,
     setSearchValue = emptyFn,
     onBlur,
@@ -149,8 +152,17 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
 
     const amountInputRef = useRef<TextInput>(null);
     const renderTokenListItem = useCallback<DropdownListItemComponent<AssetInterface>>(
-      ({ item }) => (variant === 'v1' ? <TokenDropdownItem token={item} /> : <TokenDropdownItemV2 token={item} />),
-      []
+      ({ item }) =>
+        variant === 'v1' ? (
+          <TokenDropdownItem token={item} />
+        ) : (
+          <TokenDropdownItemV2
+            token={item}
+            balanceTextStyle={listBalanceTextStyle}
+            dollarEquivalentTextStyle={listDollarEquivalentTextStyle}
+          />
+        ),
+      [listBalanceTextStyle, listDollarEquivalentTextStyle]
     );
 
     const [inputTypeIndex, setInputTypeIndex] = useState(0);
@@ -203,9 +215,11 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
             actionIconName={isSingleAsset ? undefined : IconNameV2Enum.DropdownDown}
             isShowBalance={false}
             isShowName={isShowNameForValue}
+            compactSelected={variant === 'v2'}
+            showTokenNameForValue={showTokenNameForValue}
           />
         ),
-      [isShowNameForValue, isSingleAsset]
+      [isShowNameForValue, isSingleAsset, showTokenNameForValue]
     );
 
     const onChange = useCallback(
@@ -358,6 +372,7 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
           <View
             style={[
               styles.dropdownContainer,
+              conditionalStyle(variant === 'v2', styles.compactDropdownContainer),
               conditionalStyle(isLiquidityProviderToken, styles.lpDropdownContainer),
               conditionalStyle(!editable, styles.disabledDropdownContainer),
               { paddingVertical: dropdownVerticalPadding, width: selectedTokenDropdownWidth }

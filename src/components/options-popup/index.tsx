@@ -1,4 +1,4 @@
-import { memo, RefObject, useCallback, useImperativeHandle, useMemo, useState } from 'react';
+import { memo, RefObject, useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { NativeMethods, Text, TouchableOpacity } from 'react-native';
 import Popover, { Rect, PopoverPlacement } from 'react-native-popover-view';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -9,7 +9,7 @@ import { popoverWidth, useOptionsPopupStyles } from './styles';
 
 export interface OptionsPopupController {
   open: EmptyFn;
-  close: EmptyFn;
+  close: (onClosed?: EmptyFn) => void;
 }
 
 type YPlacement = 'top' | 'center' | 'bottom';
@@ -43,10 +43,19 @@ export const OptionsPopupHOC = <T extends unknown>(OptionContent: OptionContent<
       const yInsetOffset = isAndroid ? insets.top : 0;
       const [popoverFromRect, setPopoverFromRect] = useState(() => new Rect(insets.left, insets.top, popoverWidth, 0));
       const [isVisible, setIsVisible] = useState(false);
+      const afterCloseRef = useRef<EmptyFn>(undefined);
 
       const styles = useOptionsPopupStyles();
 
-      const onClose = useCallback(() => setIsVisible(false), []);
+      const close = useCallback((onClosed?: EmptyFn) => {
+        if (onClosed) afterCloseRef.current = onClosed;
+        setIsVisible(false);
+      }, []);
+      const handleCloseComplete = useCallback(() => {
+        const callback = afterCloseRef.current;
+        afterCloseRef.current = undefined;
+        callback?.();
+      }, []);
       const open = useCallback(() => {
         triggerRef.current?.measureInWindow((x, y, width, height) => {
           switch (placement) {
@@ -91,14 +100,15 @@ export const OptionsPopupHOC = <T extends unknown>(OptionContent: OptionContent<
         }
       }, [yPlacement, xPlacement]);
 
-      useImperativeHandle(controlRef, () => ({ open, close: onClose }), [onClose, open]);
+      useImperativeHandle(controlRef, () => ({ open, close }), [close, open]);
 
       return (
         <Popover
           from={popoverFromRect}
           isVisible={isVisible}
           debug={__DEV__}
-          onRequestClose={onClose}
+          onRequestClose={close}
+          onCloseComplete={handleCloseComplete}
           placement={popoverPlacement}
           arrowSize={noArrowSize}
           displayAreaInsets={insets}

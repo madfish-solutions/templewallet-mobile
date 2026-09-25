@@ -18,6 +18,7 @@ interface Props {
   onError: EmptyFn;
   onLoad: EmptyFn;
   overlay?: ReactNode;
+  resizeMode?: 'contain' | 'cover';
   size: number;
   sourceUri?: string;
 }
@@ -36,6 +37,7 @@ export const CollectibleImageRenderer = memo<Props>(
     onError,
     onLoad,
     overlay,
+    resizeMode = 'contain',
     size,
     sourceUri
   }) => {
@@ -47,7 +49,7 @@ export const CollectibleImageRenderer = memo<Props>(
       <FastImage
         style={styles.image}
         source={{ uri: sourceUri }}
-        resizeMode="contain"
+        resizeMode={resizeMode}
         onError={onError}
         onLoad={onLoad}
       />

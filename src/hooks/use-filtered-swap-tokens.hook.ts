@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useAssetExchangeRateGetter } from 'src/store/settings/settings-selectors';
 import { useSwapTokensMetadataSelector } from 'src/store/swap/swap-selectors';
 import { toTokenSlug } from 'src/token/utils/token.utils';
@@ -32,6 +33,7 @@ export const useFilteredSwapTokensList = (
 
       return {
         ...token,
+        chainKind: TempleChainKind.Tezos,
         exchangeRate: getTokenExchangeRate(slug),
         balance: balances[slug] ?? '0'
       };
@@ -39,7 +41,7 @@ export const useFilteredSwapTokensList = (
 
     applySortByDollarValueDecrease(result);
 
-    result.unshift(tezosToken);
+    result.unshift({ ...tezosToken, chainKind: TempleChainKind.Tezos });
 
     return result;
   }, [swapTokensMetadata, tezosToken, balances]);

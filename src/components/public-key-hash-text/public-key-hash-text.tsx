@@ -12,6 +12,7 @@ import { usePublicKeyHashTextStyles } from './public-key-hash-text.styles';
 
 interface Props extends MarginProps, TestIdProps {
   publicKeyHash: string;
+  displayText?: string;
   disabled?: boolean;
   longPress?: boolean;
   style?: ViewStyle;
@@ -19,6 +20,7 @@ interface Props extends MarginProps, TestIdProps {
 
 export const PublicKeyHashText: FC<Props> = ({
   publicKeyHash,
+  displayText,
   marginTop,
   marginRight,
   marginBottom,
@@ -47,7 +49,7 @@ export const PublicKeyHashText: FC<Props> = ({
       testIDProperties={testIDProperties}
     >
       <TruncatedText ellipsizeMode="middle" style={styles.publicKeyHashText}>
-        {publicKeyHash}
+        {displayText ?? publicKeyHash}
       </TruncatedText>
     </TouchableWithAnalytics>
   );

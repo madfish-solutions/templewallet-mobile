@@ -9,6 +9,7 @@ import {
 
 export interface TezosTokenImagesStackParams {
   thumbnailUri?: string;
+  preferDirectSource?: boolean;
 }
 
 export interface EvmTokenImagesStackParams {
@@ -77,8 +78,14 @@ export const useEvmCollectibleImagesStack = (chainId: number, assetSlug: string,
   return useImagesStack(sourcesStack, `evm-collectible:${chainId}:${assetSlug}`);
 };
 
-export const useTezosTokenImagesStack = ({ thumbnailUri = '' }: TezosTokenImagesStackParams) => {
-  const sourcesStack = useMemo(() => buildTokenImagesStack(thumbnailUri), [thumbnailUri]);
+export const useTezosTokenImagesStack = ({
+  thumbnailUri = '',
+  preferDirectSource = false
+}: TezosTokenImagesStackParams) => {
+  const sourcesStack = useMemo(
+    () => buildTokenImagesStack(thumbnailUri, preferDirectSource),
+    [thumbnailUri, preferDirectSource]
+  );
 
   return useImagesStack(sourcesStack, `tezos:${thumbnailUri}`);
 };

@@ -26,21 +26,23 @@ export const TokenContainer: FCWithChildren<TokenContainerProps> = ({
   const tokenWithMetadata = isTokenWithMetadata(token) ? token : undefined;
 
   return (
-    <View style={[styles.container, style]}>
-      <View style={styles.leftContainer}>
-        {leadingIcon ?? <TokenIcon iconName={token.iconName} thumbnailUri={token.thumbnailUri} />}
-        <Divider size={formatSize(8)} />
-        <View style={styles.infoContainer}>
-          <View style={styles.symbolContainer}>
-            <TruncatedText style={styles.symbolText}>{token.symbol}</TruncatedText>
-            {showTokenTag && tokenWithMetadata ? <TokenTag token={tokenWithMetadata} scam={scam} apy={apy} /> : null}
+    <View>
+      <View style={[styles.container, style]}>
+        <View style={styles.leftContainer}>
+          {leadingIcon ?? <TokenIcon iconName={token.iconName} thumbnailUri={token.thumbnailUri} />}
+          <Divider size={formatSize(4)} />
+          <View style={styles.infoContainer}>
+            <View style={styles.symbolContainer}>
+              <TruncatedText style={styles.symbolText}>{token.symbol}</TruncatedText>
+              {showTokenTag && tokenWithMetadata ? <TokenTag token={tokenWithMetadata} scam={scam} apy={apy} /> : null}
+            </View>
+            <TruncatedText style={styles.nameText}>{token.name}</TruncatedText>
           </View>
-          <TruncatedText style={styles.nameText}>{token.name}</TruncatedText>
         </View>
-        <Divider size={formatSize(8)} />
-      </View>
 
-      <View style={styles.rightContainer}>{children}</View>
+        <View style={styles.rightContainer}>{children}</View>
+      </View>
+      <View pointerEvents="none" style={styles.separator} />
     </View>
   );
 };

@@ -17,6 +17,9 @@ export const useOperationPreviewCardStyles = createUseStyles(({ colors }) => ({
   hashContainer: {
     flexShrink: 0
   },
+  address: {
+    width: 'auto'
+  },
   contentWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',

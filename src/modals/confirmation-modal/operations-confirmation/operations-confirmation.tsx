@@ -1,7 +1,7 @@
 import { OpKind } from '@taquito/rpc';
 import { ParamsWithKind } from '@taquito/taquito';
 import { FormikProvider, useFormik } from 'formik';
-import React, { ReactNode, useEffect, useMemo } from 'react';
+import React, { ReactNode, useEffect, useMemo, useRef } from 'react';
 
 import { DelegateDisclaimer } from 'src/components/delegate-disclaimer/delegate-disclaimer';
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
@@ -29,6 +29,7 @@ import { ConfirmationModalSelectors } from '../confirmation-modal.selectors';
 
 import { FeeFormInput } from './fee-form-input/fee-form-input';
 import { FeeFormInputValues } from './fee-form-input/fee-form-input.form';
+import { getEstimatedTezExpenseMutez } from './get-estimated-tez-expense';
 import { useEstimations } from './hooks/use-estimations.hook';
 import { useFeeForm } from './hooks/use-fee-form.hook';
 import { OperationsPreview } from './operations-preview/operations-preview';
@@ -48,6 +49,7 @@ interface Props extends TestIdProps {
   isShieldedTez?: boolean;
   onEstimationError?: SyncFn<unknown>;
   onEstimationComplete?: EmptyFn;
+  onEstimatedTezExpense?: (amountMutez: BigNumber) => void;
   onSubmit: SyncFn<ParamsWithKind[]>;
   confirmEventProperties?: AnalyticsEventProperties;
 }
@@ -58,6 +60,7 @@ export const OperationsConfirmation: FCWithChildren<Props> = ({
   isLoading,
   onEstimationError = emptyFn,
   onEstimationComplete,
+  onEstimatedTezExpense,
   onSubmit,
   children,
   disclaimer,
@@ -77,6 +80,7 @@ export const OperationsConfirmation: FCWithChildren<Props> = ({
   }
 
   const estimations = useEstimations(tezosAccount, opParams);
+  const lastReportedEstimationsRef = useRef(estimations.data);
 
   const {
     opParamsWithEstimations,
@@ -140,6 +144,29 @@ export const OperationsConfirmation: FCWithChildren<Props> = ({
       onEstimationComplete();
     }
   }, [estimations.isLoading, onEstimationComplete]);
+
+  useEffect(() => {
+    if (!estimationsApplied || !onEstimatedTezExpense || lastReportedEstimationsRef.current === estimations.data) {
+      return;
+    }
+
+    lastReportedEstimationsRef.current = estimations.data;
+    onEstimatedTezExpense(
+      getEstimatedTezExpenseMutez(
+        opParamsWithEstimations,
+        basicFees.gasFeeSum.plus(1e-4),
+        basicFees.storageLimitSum,
+        minimalFeePerStorageByteMutez
+      )
+    );
+  }, [
+    basicFees,
+    estimations.data,
+    estimationsApplied,
+    minimalFeePerStorageByteMutez,
+    onEstimatedTezExpense,
+    opParamsWithEstimations
+  ]);
 
   const shouldShowDelegationDisabledDisclaimer = useMemo(() => {
     const targetBakerAddress =

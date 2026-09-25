@@ -1,14 +1,14 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { resetApplicationAction } from 'src/store/root-state.actions';
-import { useIsAnyBackupMadeSelector } from 'src/store/settings/settings-selectors';
+import { useIsAnyBackupMadeSelector, useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
 
 export const useResetDataHandler = () => {
   const dispatch = useDispatch();
   const isAnyBackupMade = useIsAnyBackupMadeSelector();
-  const [resetInProgress, setResetInProgress] = useState(false);
+  const resetInProgress = useIsShowLoaderSelector();
 
   const resetData = useCallback(
     () =>
@@ -25,10 +25,7 @@ export const useResetDataHandler = () => {
           {
             text: 'Reset',
             style: 'destructive',
-            onPress: () => {
-              setResetInProgress(true);
-              dispatch(resetApplicationAction.submit());
-            }
+            onPress: () => dispatch(resetApplicationAction.submit())
           }
         ]
       ),

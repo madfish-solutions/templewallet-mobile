@@ -5,6 +5,7 @@ import { AppMetadataIcon } from 'src/components/app-metadata-icon/app-metadata-i
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { TruncatedText } from 'src/components/truncated-text';
 import { formatSize } from 'src/styles/format-size';
 
 import { useAppMetadataConnectionViewStyles } from './styles';
@@ -27,7 +28,7 @@ export const AppMetadataConnectionView: FC<Props> = ({ name, iconUri, iconSeed }
             <AppMetadataIcon iconUri={iconUri} iconSeed={iconSeed} size={formatSize(24)} />
           </View>
           <Divider size={formatSize(8)} />
-          <Text style={styles.nameText}>{name}</Text>
+          <TruncatedText style={styles.nameText}>{name}</TruncatedText>
         </View>
         <Divider size={formatSize(48)} />
         <Icon name={IconNameEnum.Link} size={formatSize(24)} />

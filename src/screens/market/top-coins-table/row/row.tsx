@@ -26,7 +26,7 @@ export const Row: FC<MarketToken> = ({ priceChange24h, price, imageUrl, symbol, 
   return (
     <View style={styles.container}>
       <View style={[styles.coinContainer, styles.basis25]}>
-        <TokenIcon thumbnailUri={imageUrl} />
+        <TokenIcon thumbnailUri={imageUrl} preferDirectSource />
         <TruncatedText style={styles.regularText}>{symbol}</TruncatedText>
       </View>
       <View style={[styles.digits, styles.basis25]}>

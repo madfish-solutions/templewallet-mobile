@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from 'react';
-import { Text, View } from 'react-native';
+import { StyleProp, Text, TextStyle, View } from 'react-native';
 
 import { MultichainTokenIcon, MultichainTokenIconProps } from 'src/components/multichain-token-icon';
 import { TokenIcon } from 'src/components/token-icon/token-icon';
@@ -30,6 +30,10 @@ interface TokenDropdownItemProps<IconName extends string> {
   isShowBalance?: boolean;
   isShowBalanceLoading?: boolean;
   isShowName?: boolean;
+  compactSelected?: boolean;
+  showTokenNameForValue?: boolean;
+  balanceTextStyle?: StyleProp<TextStyle>;
+  dollarEquivalentTextStyle?: StyleProp<TextStyle>;
 }
 
 interface EssentialIconProps<IconName extends string, Size extends number> {
@@ -82,7 +86,11 @@ const TokenDropdownItemHOC = <IconName extends string, Size extends number>(
     actionIconName,
     isShowBalance = true,
     isShowBalanceLoading = false,
-    isShowName = true
+    isShowName = true,
+    compactSelected = false,
+    showTokenNameForValue = false,
+    balanceTextStyle,
+    dollarEquivalentTextStyle
   }) => {
     const styles = useTokenDropdownItemStyles();
     const { isCompact, listIconConfig, selectedIconConfig, showNetworkBadge } =
@@ -102,33 +110,50 @@ const TokenDropdownItemHOC = <IconName extends string, Size extends number>(
       [iconSize, styles]
     );
     const tokenIconProps = getTokenIconProps(token);
+    const selectedActionIcon = compactSelected && isDefined(actionIconName) && (
+      <View style={styles.selectedActionSlot}>
+        <View style={styles.selectedActionIconContainer}>
+          <IconComponent name={actionIconName} size={actionIconSize} />
+        </View>
+      </View>
+    );
 
     if (assetsEqualityFn(token, emptyToken)) {
       return (
-        <View style={styles.container}>
+        <View style={[styles.container, compactSelected && styles.selectedContainer]}>
           <TokenIcon iconName={token.iconName} size={iconVisualSize} thumbnailUri={token.thumbnailUri} />
           <Divider size={iconGap} />
 
           <View style={styles.infoContainer}>
             <View style={styles.infoRow}>
               <Text style={styles.name}>Select</Text>
-              <View style={styles.rightContainer}>
-                <Divider size={formatSize(4)} />
-                {isDefined(actionIconName) && <IconComponent name={actionIconName} size={actionIconSize} />}
-              </View>
+              {!compactSelected && (
+                <View style={styles.rightContainer}>
+                  <Divider size={formatSize(4)} />
+                  {isDefined(actionIconName) && <IconComponent name={actionIconName} size={actionIconSize} />}
+                </View>
+              )}
             </View>
             <View style={styles.infoRow}>
               <Text style={styles.name}>Token</Text>
             </View>
           </View>
+          {selectedActionIcon}
         </View>
       );
     }
 
     return (
-      <View style={[styles.container, isCompact && styles.compactContainer]}>
+      <View
+        style={[styles.container, isCompact && styles.compactContainer, compactSelected && styles.selectedContainer]}
+      >
         {showNetworkBadge ? (
-          <MultichainTokenIcon {...tokenIconProps} size={iconVisualSize} showNetworkBadge />
+          <MultichainTokenIcon
+            {...tokenIconProps}
+            size={iconVisualSize}
+            showNetworkBadge
+            flushBadge={compactSelected}
+          />
         ) : (
           <View style={iconContainerStyle}>
             <View style={styles.iconVisualContainer}>
@@ -140,11 +165,13 @@ const TokenDropdownItemHOC = <IconName extends string, Size extends number>(
 
         <View style={styles.infoContainer}>
           <View style={styles.infoRow}>
-            <TruncatedText style={[styles.symbol, isCompact && styles.compactSymbol]}>{token.symbol}</TruncatedText>
+            <TruncatedText style={[styles.symbol, isCompact && !compactSelected && styles.compactSymbol]}>
+              {token.symbol}
+            </TruncatedText>
             <View style={styles.rightContainer}>
-              <Divider size={formatSize(4)} />
+              {!compactSelected && <Divider size={formatSize(4)} />}
               {isShowBalance && (
-                <HideBalance wrapperStyle={styles.balanceWrapper} textStyle={styles.balance}>
+                <HideBalance wrapperStyle={styles.balanceWrapper} textStyle={[styles.balance, balanceTextStyle]}>
                   {isShowBalanceLoading ? (
                     '---'
                   ) : (
@@ -152,22 +179,30 @@ const TokenDropdownItemHOC = <IconName extends string, Size extends number>(
                   )}
                 </HideBalance>
               )}
-              {isDefined(actionIconName) && <IconComponent name={actionIconName} size={actionIconSize} />}
+              {isDefined(actionIconName) && !compactSelected && (
+                <IconComponent name={actionIconName} size={actionIconSize} />
+              )}
             </View>
           </View>
 
           <View style={styles.infoRow}>
-            {isShowName && <TruncatedText style={tokenNameTextStyle}>{token.name}</TruncatedText>}
+            {isShowName && (
+              <TruncatedText style={compactSelected ? styles.selectedName : tokenNameTextStyle}>
+                {compactSelected && !showTokenNameForValue
+                  ? token.networkName ?? (token.chainKind === TempleChainKind.Tezos ? 'Tezos' : token.name)
+                  : token.name}
+              </TruncatedText>
+            )}
 
             <View style={styles.rightContainer}>
-              {isShowName && <Divider size={formatSize(4)} />}
+              {isShowName && !compactSelected && <Divider size={formatSize(4)} />}
               {isShowBalance && (
                 <HideBalance
                   wrapperStyle={[
                     styles.dollarEquivalentWrapper,
                     conditionalStyle(isDefined(actionIconName), styles.actionIconSubstitute)
                   ]}
-                  textStyle={styles.dollarEquivalent}
+                  textStyle={[styles.dollarEquivalent, dollarEquivalentTextStyle]}
                 >
                   {isShowBalanceLoading ? (
                     '---'
@@ -179,6 +214,7 @@ const TokenDropdownItemHOC = <IconName extends string, Size extends number>(
             </View>
           </View>
         </View>
+        {selectedActionIcon}
       </View>
     );
   };
