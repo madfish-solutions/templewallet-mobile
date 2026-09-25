@@ -28,7 +28,7 @@ export const AppMetadataConnectionView: FC<Props> = ({ name, iconUri, iconSeed }
             <AppMetadataIcon iconUri={iconUri} iconSeed={iconSeed} size={formatSize(24)} />
           </View>
           <Divider size={formatSize(8)} />
-          <TruncatedText style={styles.nameText}>{name + ' asdf oeirgnero aosfibdjf eorignerob asdjf'}</TruncatedText>
+          <TruncatedText style={styles.nameText}>{name}</TruncatedText>
         </View>
         <Divider size={formatSize(48)} />
         <Icon name={IconNameEnum.Link} size={formatSize(24)} />
