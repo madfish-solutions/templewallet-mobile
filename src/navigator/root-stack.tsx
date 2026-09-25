@@ -41,13 +41,12 @@ import { EnterPassword } from 'src/screens/enter-password/enter-password';
 import { ForceUpdate } from 'src/screens/force-update/force-update';
 import { PassCode } from 'src/screens/passcode/passcode';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
+import { dispatch } from 'src/store';
 import { shouldShowNewsletterModalAction } from 'src/store/newsletter/newsletter-actions';
 import { useIsAppCheckFailed, useIsForceUpdateNeeded } from 'src/store/security/security-selectors';
 import { hideLoaderAction } from 'src/store/settings/settings-actions';
 import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
 import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
-
-import { dispatch } from '../store';
 
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
