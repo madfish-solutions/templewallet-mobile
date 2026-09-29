@@ -151,6 +151,7 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
     }, [getTokenBalance, slug, tezosBalance, value.asset, balanceFromProps]);
 
     const amountInputRef = useRef<TextInput>(null);
+    const resetSelectionRef = useRef(false);
     const renderTokenListItem = useCallback<DropdownListItemComponent<AssetInterface>>(
       ({ item }) =>
         variant === 'v1' ? (
@@ -224,6 +225,7 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
 
     const onChange = useCallback(
       (newInputValue: BigNumber | undefined) => {
+        resetSelectionRef.current = false;
         inputValueRef.current = newInputValue;
         isFiatMinimumDisplayRef.current = false;
 
@@ -245,6 +247,14 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
       onFocus,
       inputTypeIndex
     );
+
+    useEffect(() => {
+      // Reset cursor position after Max amount will be set
+      if (resetSelectionRef.current && stringValue === numericInputValue?.toFixed()) {
+        resetSelectionRef.current = false;
+        amountInputRef.current?.setSelection(0, 0);
+      }
+    }, [numericInputValue, stringValue]);
 
     const handleTokenInputTypeChange = (tokenTypeIndex: number) => {
       if (isDefined(amountInputRef.current)) {
@@ -313,6 +323,8 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
           : BigNumber.maximum(new BigNumber(balance).minus(isGasTokenMaxAmountGuard), 0);
 
         amountInputRef.current?.blur();
+        resetSelectionRef.current = true;
+
         trackEvent(maxButtonTestID, AnalyticsEventCategory.ButtonPress);
 
         onValueChange({
