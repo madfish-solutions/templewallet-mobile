@@ -127,6 +127,11 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+    sourceSets {
+        debugOptimized {
+            res.srcDir 'src/debug/res'
+        }
+    }
 }
 
 dependencies {

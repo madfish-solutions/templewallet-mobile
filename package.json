@@ -6,6 +6,7 @@
   "scripts": {
     "postinstall": "bash postinstall.sh",
     "android": "react-native run-android",
+    "android:optimized": "react-native run-android --mode debugOptimized",
     "android:release:aab": "cd android && ./gradlew bundleRelease",
     "android:release:apk": "cd android && ./gradlew app:assembleRelease",
     "android:release:apk:local": "SENTRY_DISABLE_AUTO_UPLOAD=true yarn android:release:apk",
