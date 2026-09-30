@@ -60,15 +60,6 @@ To start the Android application run
 yarn android
 ```
 
-For faster device development, use the optimized debug variant:
-
-```sh
-yarn android:optimized
-```
-
-This variant optimizes native C++ code and retains Metro, Fast Refresh, and React Native DevTools.
-If you need native C++ breakpoints to inspect native internals through Android Studio - use `yarn android`.
-
 ### iOS
 
 For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
