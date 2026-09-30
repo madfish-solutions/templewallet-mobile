@@ -11,7 +11,7 @@ import { AnyActionEpic } from '../types';
 import { loadMarketTokensSlugsActions, loadMarketTokensActions } from './market-actions';
 
 const loadMarketTokensSlugs$ = () => from(fetchMarketTokensSlugs());
-const loadMarketTokens$ = (tokensIdsToSlugs: Record<string, string>) => from(fetchMarketTokens(tokensIdsToSlugs));
+const loadMarketTokens$ = (tokensIdsToSlugs: StringRecord) => from(fetchMarketTokens(tokensIdsToSlugs));
 
 const loadMarketCoinsSlugs: AnyActionEpic = (action$, state$) =>
   action$.pipe(

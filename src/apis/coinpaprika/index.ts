@@ -21,7 +21,7 @@ const fetchCoinpaprikaTicker = (coinId: string) =>
 export const toCoinpaprikaId = (marketId: string) => COINGECKO_ID_TO_COINPAPRIKA_ID[marketId] ?? marketId;
 
 export const fetchCoinpaprikaTickersById = async (requestedIds: string[]) => {
-  const tickersById: Record<string, CoinpaprikaTicker> = {};
+  const tickersById: StringRecord<CoinpaprikaTicker> = {};
   let fetchedBulkList = false;
 
   try {

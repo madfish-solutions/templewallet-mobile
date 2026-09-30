@@ -107,7 +107,7 @@ const coinpaprikaTickerHasPrice = (ticker: CoinpaprikaTicker | undefined): ticke
 
 const fetchTempleMarketFallbacks = async () => {
   const { data } = await templeWalletApi.get<TempleMarketExchangeRate[]>('/exchange-rates');
-  const fallbacksBySlug: Record<string, TempleMarketFallback> = {};
+  const fallbacksBySlug: StringRecord<TempleMarketFallback> = {};
 
   for (const item of data) {
     fallbacksBySlug[getTokenSlug({ address: item.tokenAddress, id: item.tokenId })] = {
@@ -162,14 +162,14 @@ const buildMarketToken = (
   };
 };
 
-export const fetchMarketTokens = async (tokensIdsToSlugs: Record<string, string>): Promise<MarketToken[]> => {
+export const fetchMarketTokens = async (tokensIdsToSlugs: StringRecord): Promise<MarketToken[]> => {
   const topCoinIds = [...Object.keys(tokensIdsToSlugs), TEZOS_MARKET_TOKEN_ID];
   const paprikaIds = [...new Set(topCoinIds.map(id => toCoinpaprikaId(id)))];
 
   const [tickersById, tezosMarkets, fallbacksBySlug] = await Promise.all([
     fetchCoinpaprikaTickersById(paprikaIds),
     fetchTezosMarkets().catch((): TezosMarket[] => []),
-    fetchTempleMarketFallbacks().catch((): Record<string, TempleMarketFallback> => ({}))
+    fetchTempleMarketFallbacks().catch((): StringRecord<TempleMarketFallback> => ({}))
   ]);
 
   const tezosMarketsById = Object.fromEntries(tezosMarkets.map(market => [market.id, market]));
@@ -192,11 +192,10 @@ export const withTokensIdsToSlugs =
   <T>(state$: Observable<RootState>) =>
   (observable$: Observable<T>) =>
     observable$.pipe(
-      withLatestFrom(state$, (value, { market }): [T, Record<string, string>] => [value, market.tokensIdsToSlugs.data])
+      withLatestFrom(state$, (value, { market }): [T, StringRecord] => [value, market.tokensIdsToSlugs.data])
     );
 
-export const fetchMarketTokensSlugs = () =>
-  templeWalletApi.get<Record<string, string>>('/top-coins').then(value => value.data);
+export const fetchMarketTokensSlugs = () => templeWalletApi.get<StringRecord>('/top-coins').then(value => value.data);
 
 export const formatRegularValue = (value: number | null | undefined, tezosExchangeRate?: number) => {
   const res: { value?: string; valueEstimatedInTezos?: string } = {};
