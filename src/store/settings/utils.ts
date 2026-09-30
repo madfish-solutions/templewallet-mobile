@@ -15,7 +15,7 @@ export const getFiatToUsdRate = (state: RootState) => {
   const fiatCurrency = state.settings.fiatCurrency;
   const tezUsdExchangeRates = state.currency.usdToTokenRates.data[TEZ_TOKEN_SLUG];
 
-  // Coingecko and Temple Wallet APIs return slightly different TEZ/USD exchange rates
+  // USD is the base currency for token rates, so the fiat/USD rate is always 1
   if (fiatCurrency === FiatCurrenciesEnum.USD) {
     return 1;
   }

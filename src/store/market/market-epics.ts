@@ -4,19 +4,14 @@ import { ofType } from 'ts-action-operators';
 
 import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
 import { withUserAnalyticsCredentials } from 'src/utils/error-analytics-data.utils';
-import {
-  fetchMarketTokensSlugs,
-  fetchMarketTokens,
-  withTokensIdsToSlugs,
-  getMarketTokensIds
-} from 'src/utils/market.utils';
+import { fetchMarketTokensSlugs, fetchMarketTokens, withTokensIdsToSlugs } from 'src/utils/market.utils';
 
 import { AnyActionEpic } from '../types';
 
 import { loadMarketTokensSlugsActions, loadMarketTokensActions } from './market-actions';
 
 const loadMarketTokensSlugs$ = () => from(fetchMarketTokensSlugs());
-const loadMarketTokens$ = (ids: string) => from(fetchMarketTokens(ids));
+const loadMarketTokens$ = (tokensIdsToSlugs: StringRecord) => from(fetchMarketTokens(tokensIdsToSlugs));
 
 const loadMarketCoinsSlugs: AnyActionEpic = (action$, state$) =>
   action$.pipe(
@@ -42,7 +37,7 @@ const loadMarketCoins: AnyActionEpic = (action$, state$) =>
     withTokensIdsToSlugs(state$),
     withUserAnalyticsCredentials(state$),
     switchMap(([[, tokensIdsToSlugs], { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
-      loadMarketTokens$(getMarketTokensIds(tokensIdsToSlugs)).pipe(
+      loadMarketTokens$(tokensIdsToSlugs).pipe(
         map(value => loadMarketTokensActions.success(value)),
         catchError(error => {
           if (isAnalyticsEnabled) {

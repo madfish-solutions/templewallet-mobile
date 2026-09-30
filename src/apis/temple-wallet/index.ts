@@ -43,3 +43,19 @@ interface LiquidityBakingStatsResponse {
 
 export const getLiquidityBakingStats = () =>
   templeWalletApi.get<LiquidityBakingStatsResponse>('/liquidity-baking/stats').then(response => response.data);
+
+export interface TezosMarket {
+  id: string;
+  symbol: string;
+  name: string;
+  image: string | null;
+  current_price: number | null;
+  market_cap: number | null;
+  total_volume: number | null;
+  circulating_supply: number | null;
+  price_change_percentage_24h: number | null;
+  price_change_percentage_24h_in_currency?: number | null;
+  price_change_percentage_7d_in_currency?: number | null;
+}
+
+export const fetchTezosMarkets = () => templeWalletApi.get<TezosMarket[]>('/tezos-markets').then(({ data }) => data);

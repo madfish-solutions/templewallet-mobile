@@ -1,57 +1,201 @@
 import { Observable } from 'rxjs';
 import { withLatestFrom } from 'rxjs/operators';
 
-import { coingeckoApi, templeWalletApi } from '../api.service';
+import { templeWalletApi } from '../api.service';
+import {
+  TEZOS_MARKET_TOKEN_ID,
+  fetchCoinpaprikaTickersById,
+  getCoinpaprikaLogoUrl,
+  toCoinpaprikaId
+} from '../apis/coinpaprika';
+import type { CoinpaprikaTicker } from '../apis/coinpaprika/types';
+import { TezosMarket, fetchTezosMarkets } from '../apis/temple-wallet';
 import { MarketTokensSortFieldEnum } from '../enums/market-tokens-sort-field.enum';
-import { MarketToken, MarketTokenRaw } from '../store/market/market.interfaces';
+import { MarketToken } from '../store/market/market.interfaces';
 import { RootState } from '../store/types';
 import { Colors } from '../styles/colors';
+import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
+import { getTokenSlug } from '../token/utils/token.utils';
 
+import { isDefined } from './is-defined';
 import { kFormatter } from './number.util';
 
 const MINIMUM_AMOUNT = 0.01;
 const MINIMUM_AMOUNT_DISPLAY = '<0.01';
 
-export const fetchMarketTokens = (ids: string) =>
-  coingeckoApi
-    .get<Array<MarketTokenRaw>>('coins/markets', {
-      params: {
-        ids,
-        vs_currency: 'usd',
-        order: 'market_cap_desc',
-        per_page: '100',
-        page: '1',
-        sparkline: false,
-        price_change_percentage: '24h,7d'
-      }
-    })
-    .then(({ data }) =>
-      data.map(coinInfo => ({
-        id: coinInfo.id,
-        name: coinInfo.name,
-        symbol: coinInfo.id === 'tezos' ? 'TEZ' : coinInfo.symbol.toUpperCase(),
-        imageUrl: coinInfo.image,
-        price: coinInfo.current_price,
-        priceChange7d: coinInfo?.price_change_percentage_7d_in_currency,
-        priceChange24h: coinInfo?.price_change_percentage_24h_in_currency,
-        volume24h: coinInfo.total_volume,
-        supply: coinInfo.circulating_supply,
-        marketCap: coinInfo.market_cap
-      }))
+interface TempleMarketExchangeRate {
+  tokenAddress?: string;
+  tokenId?: number;
+  exchangeRate: string;
+  metadata?: {
+    name?: string;
+    symbol?: string;
+  };
+}
+
+interface TempleMarketFallback {
+  price: number | null;
+  name?: string;
+  symbol?: string;
+}
+
+const toNullableNumber = (value: number | string | null | undefined): number | null => {
+  if (typeof value === 'number') {
+    return Number.isFinite(value) ? value : null;
+  }
+
+  if (typeof value === 'string' && value !== '') {
+    const parsed = Number(value);
+
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  return null;
+};
+
+const humanizeMarketId = (id: string) =>
+  id
+    .split('-')
+    .filter(Boolean)
+    .map(part => `${part.charAt(0).toUpperCase()}${part.slice(1)}`)
+    .join(' ');
+
+interface MarketTokenFields {
+  name: string;
+  symbol: string;
+  imageUrl: string;
+  price: number | null;
+  priceChange7d: number | null;
+  priceChange24h: number | null;
+  volume24h: number | null;
+  supply: number | null;
+  marketCap: number | null;
+}
+
+const mapTickerToMarketFields = (ticker: CoinpaprikaTicker): MarketTokenFields => {
+  const usdQuote = ticker.quotes?.USD;
+
+  return {
+    name: ticker.name,
+    symbol: ticker.symbol.toUpperCase(),
+    imageUrl: getCoinpaprikaLogoUrl(ticker.id),
+    price: toNullableNumber(usdQuote?.price),
+    priceChange7d: toNullableNumber(usdQuote?.percent_change_7d),
+    priceChange24h: toNullableNumber(usdQuote?.percent_change_24h),
+    volume24h: toNullableNumber(usdQuote?.volume_24h),
+    supply: toNullableNumber(ticker.circulating_supply) ?? toNullableNumber(ticker.total_supply),
+    marketCap: toNullableNumber(usdQuote?.market_cap)
+  };
+};
+
+const mapTezosMarketToFields = (market: TezosMarket): MarketTokenFields => ({
+  name: market.name,
+  symbol: market.symbol.toUpperCase(),
+  imageUrl: market.image ?? '',
+  price: toNullableNumber(market.current_price),
+  priceChange7d: toNullableNumber(market.price_change_percentage_7d_in_currency),
+  priceChange24h:
+    toNullableNumber(market.price_change_percentage_24h_in_currency) ??
+    toNullableNumber(market.price_change_percentage_24h),
+  volume24h: toNullableNumber(market.total_volume),
+  supply: toNullableNumber(market.circulating_supply),
+  marketCap: toNullableNumber(market.market_cap)
+});
+
+const coinpaprikaTickerHasPrice = (ticker: CoinpaprikaTicker | undefined): ticker is CoinpaprikaTicker =>
+  isDefined(ticker) && toNullableNumber(ticker.quotes?.USD?.price) !== null;
+
+const fetchTempleMarketFallbacks = async () => {
+  const { data } = await templeWalletApi.get<TempleMarketExchangeRate[]>('/exchange-rates');
+  const fallbacksBySlug: StringRecord<TempleMarketFallback> = {};
+
+  for (const item of data) {
+    fallbacksBySlug[getTokenSlug({ address: item.tokenAddress, id: item.tokenId })] = {
+      price: toNullableNumber(item.exchangeRate),
+      name: item.metadata?.name,
+      symbol: item.metadata?.symbol
+    };
+  }
+
+  return fallbacksBySlug;
+};
+
+const getMarketTokenStats = (
+  ticker: CoinpaprikaTicker | undefined,
+  tezosMarket: TezosMarket | undefined
+): MarketTokenFields | undefined => {
+  if (coinpaprikaTickerHasPrice(ticker)) {
+    return mapTickerToMarketFields(ticker);
+  }
+
+  if (isDefined(tezosMarket)) {
+    return mapTezosMarketToFields(tezosMarket);
+  }
+
+  return undefined;
+};
+
+const buildMarketToken = (
+  marketId: string,
+  ticker: CoinpaprikaTicker | undefined,
+  tezosMarket: TezosMarket | undefined,
+  fallback: TempleMarketFallback | undefined
+): MarketToken => {
+  const stats = getMarketTokenStats(ticker, tezosMarket);
+  const isTezos = marketId === TEZOS_MARKET_TOKEN_ID;
+  const name = stats?.name ?? fallback?.name ?? (isTezos ? TEZ_TOKEN_METADATA.name : humanizeMarketId(marketId));
+  const symbol = isTezos
+    ? TEZ_TOKEN_METADATA.symbol
+    : stats?.symbol ?? fallback?.symbol?.toUpperCase() ?? marketId.toUpperCase();
+
+  return {
+    id: marketId,
+    name,
+    symbol,
+    imageUrl: stats?.imageUrl ?? '',
+    price: stats?.price ?? fallback?.price ?? null,
+    priceChange7d: stats?.priceChange7d ?? null,
+    priceChange24h: stats?.priceChange24h ?? null,
+    volume24h: stats?.volume24h ?? null,
+    supply: stats?.supply ?? null,
+    marketCap: stats?.marketCap ?? null
+  };
+};
+
+export const fetchMarketTokens = async (tokensIdsToSlugs: StringRecord): Promise<MarketToken[]> => {
+  const topCoinIds = [...Object.keys(tokensIdsToSlugs), TEZOS_MARKET_TOKEN_ID];
+  const paprikaIds = [...new Set(topCoinIds.map(id => toCoinpaprikaId(id)))];
+
+  const [tickersById, tezosMarkets, fallbacksBySlug] = await Promise.all([
+    fetchCoinpaprikaTickersById(paprikaIds),
+    fetchTezosMarkets().catch((): TezosMarket[] => []),
+    fetchTempleMarketFallbacks().catch((): StringRecord<TempleMarketFallback> => ({}))
+  ]);
+
+  const tezosMarketsById = Object.fromEntries(tezosMarkets.map(market => [market.id, market]));
+  const marketIds = [...new Set([...topCoinIds, ...tezosMarkets.map(market => market.id)])];
+
+  return marketIds.map(marketId => {
+    const paprikaId = toCoinpaprikaId(marketId);
+    const slug = marketId === TEZOS_MARKET_TOKEN_ID ? TEZ_TOKEN_SLUG : tokensIdsToSlugs[marketId];
+
+    return buildMarketToken(
+      marketId,
+      tickersById[paprikaId],
+      tezosMarketsById[marketId],
+      slug === undefined ? undefined : fallbacksBySlug[slug]
     );
+  });
+};
 
 export const withTokensIdsToSlugs =
   <T>(state$: Observable<RootState>) =>
   (observable$: Observable<T>) =>
     observable$.pipe(
-      withLatestFrom(state$, (value, { market }): [T, Record<string, string>] => [value, market.tokensIdsToSlugs.data])
+      withLatestFrom(state$, (value, { market }): [T, StringRecord] => [value, market.tokensIdsToSlugs.data])
     );
 
-export const getMarketTokensIds = (tokensIdsToSlugs: Record<string, string>) =>
-  Object.keys(tokensIdsToSlugs).join(',').concat(',tezos');
-
-export const fetchMarketTokensSlugs = () =>
-  templeWalletApi.get<Record<string, string>>('/top-coins').then(value => value.data);
+export const fetchMarketTokensSlugs = () => templeWalletApi.get<StringRecord>('/top-coins').then(value => value.data);
 
 export const formatRegularValue = (value: number | null | undefined, tezosExchangeRate?: number) => {
   const res: { value?: string; valueEstimatedInTezos?: string } = {};
