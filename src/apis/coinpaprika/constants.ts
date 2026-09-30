@@ -1,14 +1,12 @@
 /** Internal market-token id used for Tezos. Kept for persisted favorites compatibility. */
 export const TEZOS_MARKET_TOKEN_ID = 'tezos';
 
-export const COINPAPRIKA_TEZOS_ID = 'xtz-tezos';
-
 /**
  * Maps legacy CoinGecko ids (still returned by Temple `/top-coins`) to Coinpaprika ids.
  * If `/top-coins` starts returning Coinpaprika ids, those keys are used as-is.
  */
 export const COINGECKO_ID_TO_COINPAPRIKA_ID: StringRecord = {
-  [TEZOS_MARKET_TOKEN_ID]: COINPAPRIKA_TEZOS_ID,
+  [TEZOS_MARKET_TOKEN_ID]: 'xtz-tezos',
   tether: 'usdt-tether',
   dogami: 'doga-dogam',
   upsorber: 'up-upsorber',
