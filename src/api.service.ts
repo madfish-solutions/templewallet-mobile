@@ -36,7 +36,7 @@ export const scamlistApi = axios.create({
   baseURL: 'https://raw.githubusercontent.com/madfish-solutions/tokens-scamlist/master/'
 });
 
-export const coingeckoApi = axios.create({ baseURL: 'https://api.coingecko.com/api/v3/' });
+export const coinpaprikaApi = axios.create({ baseURL: 'https://api.coinpaprika.com/v1/' });
 
 export const exolixApi = axios.create({
   baseURL: 'https://exolix.com/api/v2',
