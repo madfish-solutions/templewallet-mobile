@@ -32,7 +32,7 @@ interface Props {
 }
 
 const ITEMS_PER_ROW = 3;
-const INITIAL_ROWS_TO_RENDER = 8;
+const INITIAL_ROWS_TO_RENDER = 4;
 const GRID_GAPS_TOTAL_WIDTH = GRID_GAP * (ITEMS_PER_ROW - 1);
 
 const keyExtractor = (item: DisplayedCollectible) =>
