@@ -107,6 +107,7 @@ import MissedEndorsementsIcon from './assets/missed-endorsements.svg';
 import MissedOwnBlocksIcon from './assets/missed-own-blocks.svg';
 import MoonPayIcon from './assets/moonpay.svg';
 import MoreHorizontalIcon from './assets/more-horizontal.svg';
+import MtPelerinIcon from './assets/mt-pelerin.svg';
 import NewsIcon from './assets/news.svg';
 import NFTCollectionIcon from './assets/nft-collection.svg';
 import NFT from './assets/nft.svg';
@@ -176,7 +177,6 @@ import TriangleDownIcon from './assets/triangle-down.svg';
 import UkraineIcon from './assets/ukraine.svg';
 import UpdateIcon from './assets/update.svg';
 import UptrendIcon from './assets/uptrend.svg';
-import UtorgIcon from './assets/utorg.svg';
 import VortexIcon from './assets/vortex.svg';
 import WTezIcon from './assets/wtez.svg';
 import XBoldIcon from './assets/x-bold.svg';
@@ -271,7 +271,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   /** topup icons **/
   [IconNameEnum.Exolix]: ExolixIcon,
   [IconNameEnum.MoonPay]: MoonPayIcon,
-  [IconNameEnum.Utorg]: UtorgIcon,
+  [IconNameEnum.MtPelerin]: MtPelerinIcon,
   [IconNameEnum.Ramp]: RampIcon,
   [IconNameEnum.BlurEyeBlack]: BlurEyeBlack,
   [IconNameEnum.BlurEyeWhite]: BlurEyeWhite,

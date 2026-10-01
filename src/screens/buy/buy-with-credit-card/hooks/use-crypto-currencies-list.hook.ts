@@ -2,22 +2,22 @@ import { useMemo } from 'react';
 
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { useCryptoCurrenciesSelector } from 'src/store/buy-with-credit-card/selectors';
-import { TopUpInputInterface } from 'src/store/buy-with-credit-card/types';
+import { TopUpOutputInterface } from 'src/store/buy-with-credit-card/types';
 import { isDefined } from 'src/utils/is-defined';
 
 import { useFilteredCurrencies } from './use-filtered-currencies';
 
 export const useCryptoCurrencies = () => {
   const moonpayCryptoCurrencies = useCryptoCurrenciesSelector(TopUpProviderEnum.MoonPay);
-  const utorgCryptoCurrencies = useCryptoCurrenciesSelector(TopUpProviderEnum.Utorg);
+  const mtPelerinCryptoCurrencies = useCryptoCurrenciesSelector(TopUpProviderEnum.MtPelerin);
 
   const allCryptoCurrencies = useMemo(
     () =>
       Object.values(
-        [...moonpayCryptoCurrencies, ...utorgCryptoCurrencies].reduce<Record<string, TopUpInputInterface>>(
+        [...moonpayCryptoCurrencies, ...mtPelerinCryptoCurrencies].reduce<Record<string, TopUpOutputInterface>>(
           (acc, currency) => {
-            if (!isDefined(acc[currency.code])) {
-              acc[currency.code] = currency;
+            if (!isDefined(acc[currency.slug])) {
+              acc[currency.slug] = currency;
             }
 
             return acc;
@@ -25,7 +25,7 @@ export const useCryptoCurrencies = () => {
           {}
         )
       ).sort(({ code: aCode }, { code: bCode }) => aCode.localeCompare(bCode)),
-    [moonpayCryptoCurrencies, utorgCryptoCurrencies]
+    [moonpayCryptoCurrencies, mtPelerinCryptoCurrencies]
   );
 
   const filtered = useFilteredCurrencies(allCryptoCurrencies);

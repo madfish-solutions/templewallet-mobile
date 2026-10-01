@@ -13,7 +13,7 @@ export const buyWithCreditCardReducer = createReducer<BuyWithCreditCardState>(
   builder => {
     builder.addCase(loadAllCurrenciesActions.submit, state => {
       state.currencies[TopUpProviderEnum.MoonPay].isLoading = true;
-      state.currencies[TopUpProviderEnum.Utorg].isLoading = true;
+      state.currencies[TopUpProviderEnum.MtPelerin].isLoading = true;
     });
 
     builder.addCase(loadAllCurrenciesActions.success, (state, { payload: currencies }) => ({
@@ -25,46 +25,46 @@ export const buyWithCreditCardReducer = createReducer<BuyWithCreditCardState>(
       ...state,
       currencies: {
         [TopUpProviderEnum.MoonPay]: createEntity(state.currencies[TopUpProviderEnum.MoonPay].data, false, error),
-        [TopUpProviderEnum.Utorg]: createEntity(state.currencies[TopUpProviderEnum.Utorg].data, false, error)
+        [TopUpProviderEnum.MtPelerin]: createEntity(state.currencies[TopUpProviderEnum.MtPelerin].data, false, error)
       }
     }));
 
-    builder.addCase(updatePairLimitsActions.submit, (state, { payload: { fiatSymbol, cryptoSymbol } }) => {
+    builder.addCase(updatePairLimitsActions.submit, (state, { payload: { fiatSymbol, cryptoSlug } }) => {
       if (!isDefined(state.pairLimits[fiatSymbol])) {
         state.pairLimits[fiatSymbol] = {};
       }
 
       const dataPerFiat = state.pairLimits[fiatSymbol];
 
-      if (isDefined(dataPerFiat[cryptoSymbol])) {
-        const dataPerFiatPerCrypto = dataPerFiat[cryptoSymbol];
+      if (isDefined(dataPerFiat[cryptoSlug])) {
+        const dataPerFiatPerCrypto = dataPerFiat[cryptoSlug];
         const updatePerProvider = (providerId: TopUpProviderEnum) => {
           dataPerFiatPerCrypto[providerId].isLoading = true;
         };
 
         updatePerProvider(TopUpProviderEnum.MoonPay);
-        updatePerProvider(TopUpProviderEnum.Utorg);
+        updatePerProvider(TopUpProviderEnum.MtPelerin);
       } else {
-        dataPerFiat[cryptoSymbol] = {
+        dataPerFiat[cryptoSlug] = {
           [TopUpProviderEnum.MoonPay]: createEntity(undefined, true),
-          [TopUpProviderEnum.Utorg]: createEntity(undefined, true)
+          [TopUpProviderEnum.MtPelerin]: createEntity(undefined, true)
         };
       }
     });
 
-    builder.addCase(updatePairLimitsActions.success, (state, { payload: { fiatSymbol, cryptoSymbol, limits } }) => ({
+    builder.addCase(updatePairLimitsActions.success, (state, { payload: { fiatSymbol, cryptoSlug, limits } }) => ({
       ...state,
       pairLimits: {
         ...state.pairLimits,
         [fiatSymbol]: {
           ...(state.pairLimits[fiatSymbol] ?? {}),
-          [cryptoSymbol]: limits // They come with `isLoading === false`
+          [cryptoSlug]: limits // They come with `isLoading === false`
         }
       }
     }));
 
-    builder.addCase(updatePairLimitsActions.fail, (state, { payload: { fiatSymbol, cryptoSymbol, error } }) => {
-      const previousEntities = state.pairLimits[fiatSymbol]?.[cryptoSymbol];
+    builder.addCase(updatePairLimitsActions.fail, (state, { payload: { fiatSymbol, cryptoSlug, error } }) => {
+      const previousEntities = state.pairLimits[fiatSymbol]?.[cryptoSlug];
 
       return {
         ...state,
@@ -72,13 +72,17 @@ export const buyWithCreditCardReducer = createReducer<BuyWithCreditCardState>(
           ...state.pairLimits,
           [fiatSymbol]: {
             ...(state.pairLimits[fiatSymbol] ?? {}),
-            [cryptoSymbol]: {
+            [cryptoSlug]: {
               [TopUpProviderEnum.MoonPay]: createEntity(
                 previousEntities?.[TopUpProviderEnum.MoonPay]?.data,
                 false,
                 error
               ),
-              [TopUpProviderEnum.Utorg]: createEntity(previousEntities?.[TopUpProviderEnum.Utorg]?.data, false, error)
+              [TopUpProviderEnum.MtPelerin]: createEntity(
+                previousEntities?.[TopUpProviderEnum.MtPelerin]?.data,
+                false,
+                error
+              )
             }
           }
         }
@@ -87,14 +91,14 @@ export const buyWithCreditCardReducer = createReducer<BuyWithCreditCardState>(
 
     builder.addCase(
       updateTopUpProviderPairLimitsAction,
-      (state, { payload: { fiatSymbol, cryptoSymbol, topUpProvider, value } }) => ({
+      (state, { payload: { fiatSymbol, cryptoSlug, topUpProvider, value } }) => ({
         ...state,
         pairLimits: {
           ...state.pairLimits,
           [fiatSymbol]: {
             ...(state.pairLimits[fiatSymbol] ?? {}),
-            [cryptoSymbol]: {
-              ...(state.pairLimits[fiatSymbol]?.[cryptoSymbol] ?? {}),
+            [cryptoSlug]: {
+              ...(state.pairLimits[fiatSymbol]?.[cryptoSlug] ?? {}),
               [topUpProvider]: createEntity(value)
             }
           }

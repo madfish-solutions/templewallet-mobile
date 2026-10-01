@@ -4,7 +4,7 @@ import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
 import { getMoonPayCurrencies } from 'src/apis/moonpay';
-import { getCurrenciesInfo as getUtorgCurrenciesInfo } from 'src/apis/utorg';
+import { getMtPelerinAssets } from 'src/apis/mt-pelerin';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
@@ -19,7 +19,7 @@ import type { AnyActionEpic, RootState } from '../types';
 
 import { loadAllCurrenciesActions, updatePairLimitsActions } from './actions';
 import { TopUpProviderCurrencies } from './state';
-import { mapMoonPayProviderCurrencies, mapUtorgProviderCurrencies } from './utils';
+import { mapMoonPayProviderCurrencies, mapMtPelerinProviderCurrencies } from './utils';
 
 const getCurrencies$ = <T>(
   fetchFn: () => Promise<T>,
@@ -44,7 +44,7 @@ const getCurrencies$ = <T>(
     })
   );
 
-const allTopUpProviderEnums = [TopUpProviderEnum.MoonPay, TopUpProviderEnum.Utorg];
+const allTopUpProviderEnums = [TopUpProviderEnum.MoonPay, TopUpProviderEnum.MtPelerin];
 
 const loadAllCurrenciesEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
@@ -59,16 +59,17 @@ const loadAllCurrenciesEpic: AnyActionEpic = (action$, state$) =>
           userAnalyticsCredentials
         ),
         getCurrencies$(
-          getUtorgCurrenciesInfo,
-          mapUtorgProviderCurrencies,
-          TopUpProviderEnum.Utorg,
-          userAnalyticsCredentials
+          getMtPelerinAssets,
+          mapMtPelerinProviderCurrencies,
+          TopUpProviderEnum.MtPelerin,
+          userAnalyticsCredentials,
+          false
         )
       ]).pipe(
-        map(([moonpayCurrencies, utorgCurrencies]) =>
+        map(([moonpayCurrencies, mtPelerinCurrencies]) =>
           loadAllCurrenciesActions.success({
             [TopUpProviderEnum.MoonPay]: moonpayCurrencies,
-            [TopUpProviderEnum.Utorg]: utorgCurrencies
+            [TopUpProviderEnum.MtPelerin]: mtPelerinCurrencies
           })
         )
       )
@@ -81,9 +82,9 @@ const updatePairLimitsEpic: AnyActionEpic = (action$, state$) =>
     withLatestFrom(state$),
     withUserAnalyticsCredentials(state$),
     switchMap(([[{ payload }, rootState], { userId, ABTestingCategory, isAnalyticsEnabled }]) => {
-      const { fiatSymbol, cryptoSymbol } = payload;
+      const { fiatSymbol, cryptoSlug } = payload;
       const { currencies } = rootState.buyWithCreditCard;
-      const currentLimits = rootState.buyWithCreditCard.pairLimits[fiatSymbol]?.[cryptoSymbol];
+      const currentLimits = rootState.buyWithCreditCard.pairLimits[fiatSymbol]?.[cryptoSlug];
 
       return forkJoin(
         allTopUpProviderEnums.map(providerId => {
@@ -99,7 +100,7 @@ const updatePairLimitsEpic: AnyActionEpic = (action$, state$) =>
           }
 
           const fiatCurrency = fiatCurrencies.find(({ code }) => code === fiatSymbol);
-          const cryptoCurrency = cryptoCurrencies.find(({ code }) => code === cryptoSymbol);
+          const cryptoCurrency = cryptoCurrencies.find(({ slug }) => slug === cryptoSlug);
 
           if (isDefined(fiatCurrency) && isDefined(cryptoCurrency)) {
             return from(
@@ -114,7 +115,7 @@ const updatePairLimitsEpic: AnyActionEpic = (action$, state$) =>
                         err,
                         [],
                         { userId, ABTestingCategory },
-                        { fiatSymbol, cryptoSymbol, providerId }
+                        { fiatSymbol, cryptoSlug, providerId }
                       )
                   : undefined
               )
@@ -124,13 +125,13 @@ const updatePairLimitsEpic: AnyActionEpic = (action$, state$) =>
           return of(createEntity(undefined, false, PAIR_NOT_FOUND_MESSAGE));
         })
       ).pipe(
-        map(([moonPayData, utorgData]) =>
+        map(([moonPayData, mtPelerinData]) =>
           updatePairLimitsActions.success({
             fiatSymbol,
-            cryptoSymbol,
+            cryptoSlug,
             limits: {
               [TopUpProviderEnum.MoonPay]: moonPayData,
-              [TopUpProviderEnum.Utorg]: utorgData
+              [TopUpProviderEnum.MtPelerin]: mtPelerinData
             }
           })
         )

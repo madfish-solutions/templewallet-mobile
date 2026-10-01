@@ -8,13 +8,14 @@ import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { PaymentProviderInterface } from 'src/interfaces/payment-provider';
 import { loadAllCurrenciesActions, updatePairLimitsActions } from 'src/store/buy-with-credit-card/actions';
 import { useAllPairsLimitsSelector } from 'src/store/buy-with-credit-card/selectors';
-import { TopUpInputInterface } from 'src/store/buy-with-credit-card/types';
+import { TopUpOutputInterface } from 'src/store/buy-with-credit-card/types';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 import { mergeAssetsLimits } from 'src/utils/pair-limits';
 
 import { BuyWithCreditCardSelectors } from '../selectors';
+import { getTopUpOutputAsset } from '../utils';
 
 import { useBuyWithCreditCardFormik } from './use-buy-with-credit-card-formik.hook';
 import { useFiatCurrenciesList } from './use-fiat-currencies-list.hook';
@@ -36,7 +37,7 @@ export const useFormInputsCallbacks = (
   const isLoadingRef = useRef(isLoading);
   const dispatch = useDispatch();
   const allPairsLimits = useAllPairsLimitsSelector();
-  const { noPairLimitsFiatCurrencies } = useFiatCurrenciesList(inputValue.asset.code, outputToken.code);
+  const { noPairLimitsFiatCurrencies } = useFiatCurrenciesList(inputValue.asset.code, outputToken.slug);
 
   useEffect(() => {
     valuesRef.current = values;
@@ -63,7 +64,7 @@ export const useFormInputsCallbacks = (
 
   const updateOutput = useMemo(
     () =>
-      debounce(async (newInput: TopUpAssetAmountInterface, newOutputToken: TopUpInputInterface) => {
+      debounce(async (newInput: TopUpAssetAmountInterface, newOutputToken: TopUpOutputInterface) => {
         const { asset: newInputAsset, amount: newInputAmount } = newInput;
 
         await updateProvidersOutputs(newInputAmount, newInputAsset, newOutputToken);
@@ -86,8 +87,9 @@ export const useFormInputsCallbacks = (
   const handleOutputValueChange = useCallback(
     (newOutput: TopUpAssetAmountInterface) => {
       const { amount: inputAmount, asset: inputCurrency } = valuesRef.current.sendInput;
+      const newOutputAsset = getTopUpOutputAsset(newOutput.asset);
 
-      const pairLimits = allPairsLimits[inputCurrency.code]?.[newOutput.asset.code];
+      const pairLimits = allPairsLimits[inputCurrency.code]?.[newOutputAsset.slug];
       const { min: minInputAmount, max: maxInputAmount } = mergeAssetsLimits(
         Object.values(pairLimits ?? {}).map(({ data }) => data)
       );
@@ -101,11 +103,11 @@ export const useFormInputsCallbacks = (
 
       outputCalculationDataRef.current = {
         inputValue: patchedInputValue,
-        outputToken: newOutput.asset
+        outputToken: newOutputAsset
       };
 
       setFormIsLoading(true);
-      updateOutput(patchedInputValue, newOutput.asset);
+      updateOutput(patchedInputValue, newOutputAsset);
     },
     [noPairLimitsFiatCurrencies, allPairsLimits, updateOutput]
   );
@@ -127,7 +129,7 @@ export const useFormInputsCallbacks = (
     const { asset: currentOutputToken } = valuesRef.current.getOutput;
 
     dispatch(loadAllCurrenciesActions.submit());
-    dispatch(updatePairLimitsActions.submit({ fiatSymbol: inputCurrency.code, cryptoSymbol: currentOutputToken.code }));
+    dispatch(updatePairLimitsActions.submit({ fiatSymbol: inputCurrency.code, cryptoSlug: currentOutputToken.slug }));
 
     if (!isLoadingRef.current) {
       outputCalculationDataRef.current = { inputValue: currentInputValue, outputToken: currentOutputToken };

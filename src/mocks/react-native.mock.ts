@@ -9,7 +9,7 @@ export const mockDeviceEventEmitter = {
 };
 
 export const mockLinking = {
-  canOpenURL: jest.fn(() => Promise.resolve()),
+  canOpenURL: jest.fn(() => Promise.resolve(true)),
   openURL: jest.fn(() => Promise.resolve()),
   addEventListener: jest.fn(() => ({
     remove: jest.fn()

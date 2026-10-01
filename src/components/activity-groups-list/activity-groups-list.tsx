@@ -64,6 +64,10 @@ export const ActivityGroupsList: FC<Props> = ({
     let prevActivityDate = new Date(-1);
 
     for (const activityGroup of activityGroups) {
+      if (activityGroup.length === 0) {
+        continue;
+      }
+
       const firstActivity = activityGroup[0] ?? emptyActivity;
       const date = new Date(firstActivity.timestamp);
 

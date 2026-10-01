@@ -68,7 +68,7 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
           for (const { from_, txs } of fa2Parameter.value) {
             for (const { amount, to_, token_id } of txs) {
               const parsedAmount = new BigNumber(amount);
-              if (from_ === to_ || parsedAmount.isZero()) {
+              if (parsedAmount.isZero()) {
                 continue;
               }
 
