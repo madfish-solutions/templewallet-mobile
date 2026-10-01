@@ -6,7 +6,7 @@ import GorhomBottomSheet, {
 } from '@gorhom/bottom-sheet';
 import { Portal } from '@gorhom/portal';
 import { uniqueId } from 'lodash-es';
-import React, { PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react';
 import { BackHandler, Keyboard, StyleProp, Text, useWindowDimensions, View, ViewStyle } from 'react-native';
 import { useOrientationChange } from 'react-native-orientation-locker';
 import { useSharedValue } from 'react-native-reanimated';
@@ -61,7 +61,6 @@ export const BottomSheet: FCWithChildren<Props> = ({
   const insets = useSafeAreaInsets();
   const [isOpened, setIsOpened] = useState(false);
   const [activeContentHeight, setActiveContentHeight] = useState(contentHeight);
-  const hasOpenedRef = useRef(false);
 
   const sheetId = useMemo(() => uniqueId(), []);
   const [sheetNonce, setSheetNonce] = useState(0);
@@ -92,9 +91,6 @@ export const BottomSheet: FCWithChildren<Props> = ({
   );
 
   const handleChange = (index: number) => {
-    if (index !== -1) {
-      hasOpenedRef.current = true;
-    }
     setIsOpened(index !== -1);
     Keyboard.dismiss();
   };
@@ -103,11 +99,10 @@ export const BottomSheet: FCWithChildren<Props> = ({
     onCancelButtonPress();
   };
   const handleClose = () => {
-    if (!hasOpenedRef.current) return;
-
-    hasOpenedRef.current = false;
-    setIsOpened(false);
-    onClose();
+    if (isOpened) {
+      setIsOpened(false);
+      onClose();
+    }
   };
   const handleClosePress = () => {
     controller.close();
@@ -132,7 +127,7 @@ export const BottomSheet: FCWithChildren<Props> = ({
 
       return () => backHandler.remove();
     }
-  }, [controller, isOpened]);
+  }, [isOpened]);
 
   useOrientationChange(() => controller.close());
 
