@@ -192,6 +192,11 @@
     "sharp": "^0.35.3",
     "viem/ws": "8.21.0"
   },
+  "reanimated": {
+    "staticFeatureFlags": {
+      "FORCE_REACT_RENDER_FOR_SETTLED_ANIMATIONS": false
+    }
+  },
   "engines": {
     "node": ">= 22.11.0"
   }
