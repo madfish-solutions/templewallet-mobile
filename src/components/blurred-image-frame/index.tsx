@@ -1,8 +1,9 @@
 import FastImage from '@d11/react-native-fast-image';
 import React, { memo, ReactNode } from 'react';
-import { Platform, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+import { Image, Platform, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
-const BLUR_RADIUS = Platform.select({ android: 42, default: 16 });
+// FastImage disables blur cache reuse on Android 12+. Use bitmap blur for the background.
+const BackgroundImage = Platform.OS === 'android' ? Image : FastImage;
 
 interface BlurredImageBackgroundProps {
   uri?: string;
@@ -10,11 +11,11 @@ interface BlurredImageBackgroundProps {
 }
 
 export const BlurredImageBackground = memo<BlurredImageBackgroundProps>(({ uri, onError }) => (
-  <FastImage
+  <BackgroundImage
     style={styles.layer}
     source={uri ? { uri } : undefined}
     resizeMode="cover"
-    blurRadius={BLUR_RADIUS}
+    blurRadius={16}
     onError={onError}
   />
 ));
