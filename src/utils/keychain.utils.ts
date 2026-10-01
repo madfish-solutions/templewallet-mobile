@@ -7,7 +7,7 @@ import {
   getAllGenericPasswordServices,
   resetGenericPassword
 } from 'react-native-keychain';
-import { of } from 'rxjs';
+import { defer, Observable } from 'rxjs';
 
 import { isAndroid, isIOS, manufacturer } from '../config/system';
 
@@ -45,23 +45,15 @@ export const getGenericPasswordOptions = (passwordService: string, shelterVersio
   return options;
 };
 
-// pseudo async function as we don't need to wait until Keychain will remove all data
-// (common async solution stops reset process)
-export const resetKeychain$ = () => {
-  const keychainServicesPromise = isIOS
-    ? getAllGenericPasswordServices({ skipUIAuth: true }).then(services => [
-        ...new Set([...services, `${APP_IDENTIFIER}/${PASSWORD_STORAGE_KEY}`])
-      ])
-    : getAllGenericPasswordServices();
+export const resetKeychain$ = (): Observable<void> =>
+  defer(async () => {
+    const services = await getAllGenericPasswordServices(isIOS ? { skipUIAuth: true } : undefined);
+    const servicesToReset = isIOS ? [...new Set([...services, `${APP_IDENTIFIER}/${PASSWORD_STORAGE_KEY}`])] : services;
 
-  keychainServicesPromise
-    .then(async keychainServicesArray => {
-      if (keychainServicesArray.length > 0) {
-        AsyncStorage.removeItem(SHELTER_VERSION_STORAGE_KEY);
-        await Promise.all(keychainServicesArray.map(service => resetGenericPassword({ service })));
-      }
-    })
-    .catch(() => void 0);
-
-  return of(0);
-};
+    if (servicesToReset.length > 0) {
+      await Promise.all([
+        AsyncStorage.removeItem(SHELTER_VERSION_STORAGE_KEY),
+        ...servicesToReset.map(service => resetGenericPassword({ service }))
+      ]);
+    }
+  });

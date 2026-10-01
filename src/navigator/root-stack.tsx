@@ -1,8 +1,8 @@
 import { PortalProvider } from '@gorhom/portal';
 import { NavigationContainer } from '@react-navigation/native';
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack';
-import React, { useEffect, useRef, useState } from 'react';
-import { InteractionManager, Platform } from 'react-native';
+import React, { useState } from 'react';
+import { Platform } from 'react-native';
 
 import { useModalOptions } from 'src/components/header/use-modal-options.util';
 import { Loader } from 'src/components/loader/loader';
@@ -44,7 +44,6 @@ import { useAppLock } from 'src/shelter/app-lock/app-lock';
 import { dispatch } from 'src/store';
 import { shouldShowNewsletterModalAction } from 'src/store/newsletter/newsletter-actions';
 import { useIsAppCheckFailed, useIsForceUpdateNeeded } from 'src/store/security/security-selectors';
-import { hideLoaderAction } from 'src/store/settings/settings-actions';
 import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
 import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
 
@@ -54,8 +53,10 @@ import { ScreensEnum } from './enums/screens.enum';
 import { NestedNavigationStacksParamList, StacksEnum } from './enums/stacks.enum';
 import { globalNavigationRef } from './global-nav-ref';
 import { useNavigationContainerTheme } from './hooks/use-navigation-container-theme.hook';
+import { useResetWalletLoader } from './hooks/use-reset-wallet-loader.hook';
 import { useStackNavigationOptions } from './hooks/use-stack-navigation-options.hook';
 import { MainStackScreen } from './main-stack';
+import { WelcomeScreenReadyContext } from './welcome-screen-ready.context';
 
 export type RootStackParamList = NestedNavigationStacksParamList & ModalsParamList;
 
@@ -77,7 +78,7 @@ export const RootStackScreen = () => {
   const { isLocked } = useAppLock();
   const isShowLoader = useIsShowLoaderSelector();
   const isAuthorised = useIsAuthorisedSelector();
-  const wasAuthorised = useRef(isAuthorised);
+  const welcomeScreenReadyHandlers = useResetWalletLoader(isAuthorised, isShowLoader);
 
   const isSplash = useAppSplash();
   const isPasscode = useDevicePasscode();
@@ -91,28 +92,6 @@ export const RootStackScreen = () => {
 
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum | ModalsEnum);
-
-  useEffect(() => {
-    const didResetWallet = wasAuthorised.current && !isAuthorised && isShowLoader;
-    wasAuthorised.current = isAuthorised;
-
-    if (!didResetWallet) {
-      return;
-    }
-
-    let frame: number | undefined;
-    // Wait for navigation animations, then hide the loader.
-    const task = InteractionManager.runAfterInteractions(() => {
-      frame = requestAnimationFrame(() => dispatch(hideLoaderAction()));
-    });
-
-    return () => {
-      task.cancel();
-      if (frame !== undefined) {
-        cancelAnimationFrame(frame);
-      }
-    };
-  }, [isAuthorised, isShowLoader]);
 
   return (
     <NavigationContainer
@@ -129,6 +108,9 @@ export const RootStackScreen = () => {
               name={StacksEnum.MainStack}
               component={MainStackScreen}
               options={mainStackScreenOptions}
+              layout={({ children }) => (
+                <WelcomeScreenReadyContext value={welcomeScreenReadyHandlers}>{children}</WelcomeScreenReadyContext>
+              )}
             />
 
             {/* MODALS */}

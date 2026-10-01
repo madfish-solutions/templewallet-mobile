@@ -1,7 +1,7 @@
 import { PortalProvider } from '@gorhom/portal';
 import type { RouteProp } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useContext } from 'react';
 
 import { exolixScreenOptions } from 'src/components/header/exolix-screen-options';
 import { generateScreenOptions } from 'src/components/header/generate-screen-options.util';
@@ -61,6 +61,7 @@ import { cloudTitle } from 'src/utils/cloud-backup';
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
 import { NavigationBar } from './navigation-bar/navigation-bar';
+import { WelcomeScreenReadyContext } from './welcome-screen-ready.context';
 
 const MainStack = createStackNavigator<ScreensParamList>();
 
@@ -72,6 +73,7 @@ const manageAssetsScreenOptions = {
 export const MainStackScreen = memo(() => {
   const isAuthorised = useIsAuthorisedSelector();
   const { isLocked } = useAppLock();
+  const { onTransitionEnd: handleWelcomeTransitionEnd } = useContext(WelcomeScreenReadyContext);
 
   const styleScreenOptions = useStackNavigatorStyleOptions();
   const tezosChains = useTezosChains();
@@ -102,7 +104,18 @@ export const MainStackScreen = memo(() => {
         <MainStack.Navigator screenOptions={styleScreenOptions}>
           {shouldShowUnauthorizedScreens ? (
             <>
-              <MainStack.Screen name={ScreensEnum.Welcome} component={Welcome} options={{ headerShown: false }} />
+              <MainStack.Screen
+                name={ScreensEnum.Welcome}
+                component={Welcome}
+                options={{ headerShown: false }}
+                listeners={{
+                  transitionEnd: ({ data }) => {
+                    if (!data.closing) {
+                      handleWelcomeTransitionEnd();
+                    }
+                  }
+                }}
+              />
               <MainStack.Screen
                 name={ScreensEnum.CreateAccount}
                 component={CreateNewWallet}
