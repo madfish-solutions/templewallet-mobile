@@ -93,7 +93,7 @@ export const CollectiblesList = memo<Props>(({ collectibles, showInfo, onScroll 
     <Animated.FlatList
       data={sortedCollectibles}
       numColumns={ITEMS_PER_ROW}
-      initialNumToRender={ITEMS_PER_ROW * INITIAL_ROWS_TO_RENDER}
+      initialNumToRender={INITIAL_ROWS_TO_RENDER}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
       getItemLayout={getItemLayout}
