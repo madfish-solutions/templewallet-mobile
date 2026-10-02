@@ -65,6 +65,12 @@ target 'TempleWallet' do
       # :ccache_enabled => true
     )
 
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = min_ios_version_supported
+      end
+    end
+
     # Patch to fix fastlane artifact upload.
     # See: https://github.com/mapbox/mapbox-maps-ios/issues/2233#issuecomment-2345562101
 
