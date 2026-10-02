@@ -74,11 +74,14 @@ export const useCollectiblesHomeStyles = createUseStylesMemoized(({ colors, typo
 }));
 
 export const useCollectiblesGridStyles = createUseStylesMemoized(() => ({
+  emptyListLoader: {
+    marginTop: formatSize(96)
+  },
   loader: {
     width: '100%',
     alignItems: 'center',
     marginTop: formatSize(4),
-    height: formatSize(36)
+    height: formatSize(24)
   }
 }));
 

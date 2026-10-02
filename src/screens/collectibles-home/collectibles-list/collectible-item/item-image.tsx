@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 
 import { ActivityIndicator } from 'src/components/activity-indicator';
 import { CollectibleImage } from 'src/components/collectible-image';
@@ -15,13 +15,20 @@ interface Props extends AssetMediaURIs {
 
 export const CollectibleItemImage = memo<Props>(
   ({ slug, size, artifactUri, displayUri, thumbnailUri, areDetailsLoading }) => {
+    const imageIsPresent = isDefined(artifactUri ?? displayUri ?? thumbnailUri);
+    const [detailsWereLoaded, setDetailsWereLoaded] = useState(!areDetailsLoading && imageIsPresent);
     const isAdultContent = useCollectibleIsAdultSelector(slug);
+
+    useEffect(
+      () => setDetailsWereLoaded(state => imageIsPresent && (state || !areDetailsLoading)),
+      [imageIsPresent, areDetailsLoading]
+    );
 
     if (isDefined(isAdultContent)) {
       if (isAdultContent) {
         return <ImageBlurOverlay size={size} />;
       }
-    } else if (areDetailsLoading) {
+    } else if (areDetailsLoading && (!detailsWereLoaded || !imageIsPresent)) {
       return <ActivityIndicator size="small" />;
     }
 

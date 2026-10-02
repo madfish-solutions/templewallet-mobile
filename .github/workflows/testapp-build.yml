@@ -26,7 +26,7 @@ on:
 jobs:
   testapp-build:
     name: Create new iOS / Android builds and upload them via TestApp
-    runs-on: macos-15
+    runs-on: xcode-27
     environment: testapp
     steps:
       - name: Clone repository
@@ -116,7 +116,7 @@ jobs:
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: "26.2"
+          xcode-version: "27.0"
 
       - name: Install Pods
         if: ${{ github.event.inputs.ios == 'true' }}

@@ -7,8 +7,8 @@ import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import {
-  useCollectiblesDetailsLoadingSelector,
-  useCollectibleDetailsSelector
+  useCollectibleDetailsSelector,
+  useCollectibleDetailsLoadingSelector
 } from 'src/store/collectibles/collectibles-selectors';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { formatNumber } from 'src/utils/format-price';
@@ -33,7 +33,7 @@ export const CollectibleItem = memo<Props>(({ slug, collectible, size, isShowInf
 
   const styles = useCollectibleItemStyles();
 
-  const areDetailsLoading = useCollectiblesDetailsLoadingSelector();
+  const areDetailsLoading = useCollectibleDetailsLoadingSelector(slug);
   const details = useCollectibleDetailsSelector(slug);
 
   const balance = collectible.balance;

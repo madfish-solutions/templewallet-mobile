@@ -9,6 +9,9 @@ export const useCollectibleDetailsSelector = (slug: string): CollectibleDetailsI
 
 export const useCollectiblesDetailsLoadingSelector = () => useSelector(state => state.collectibles.details.isLoading);
 
+export const useCollectibleDetailsLoadingSelector = (slug: string): boolean =>
+  useSelector(state => state.collectibles.collectiblesDetailsInFlight[slug] ?? false);
+
 export const useOneCollectibleDetailsLoadingSelector = () =>
   useSelector(state => state.collectibles.singleCollectibleLoading);
 
