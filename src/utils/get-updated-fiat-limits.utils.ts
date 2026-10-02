@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { BigNumber } from 'bignumber.js';
+import memoizee from 'memoizee';
 
 import { getMoonPayBuyQuote } from 'src/apis/moonpay';
 import { getMtPelerinConvertQuote, getMtPelerinSellLimit } from 'src/apis/mt-pelerin';
 import { MT_PELERIN_NETWORK } from 'src/apis/mt-pelerin/consts';
-import { getCachedMtPelerinRequest } from 'src/apis/mt-pelerin/request-cache';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { PairLimitsRecord } from 'src/store/buy-with-credit-card/state';
 import { TopUpInputInterface, TopUpOutputInterface } from 'src/store/buy-with-credit-card/types';
@@ -33,47 +33,52 @@ const getInputAmountFunctions: Partial<
 const MT_PELERIN_MAX_BUY_CHF = 100_000;
 const MT_PELERIN_FEE_PROBE_AMOUNT = 100;
 const MT_PELERIN_LIMITS_CACHE_TTL = 300_000;
-const mtPelerinLimitsCache = new Map<string, { promise: Promise<PairLimits>; expiresAt: number }>();
 
 const roundToFiatPrecision = (value: number, precision: number, roundingMode: BigNumber.RoundingMode) =>
   new BigNumber(value).decimalPlaces(precision, roundingMode).toNumber();
+
+const getMtPelerinFiatLimits = memoizee(
+  async (fiatCode: string, cryptoCode: string, fiatPrecision: number): Promise<PairLimits> => {
+    const quotePromise = getMtPelerinConvertQuote(
+      fiatCode,
+      cryptoCode,
+      MT_PELERIN_FEE_PROBE_AMOUNT,
+      MT_PELERIN_NETWORK
+    );
+    const [{ fees }, max] = await Promise.all([
+      quotePromise,
+      fiatCode === 'CHF'
+        ? Promise.resolve(MT_PELERIN_MAX_BUY_CHF)
+        : Promise.all([getMtPelerinSellLimit(fiatCode), getMtPelerinSellLimit('CHF')]).then(
+            ([fiatSellLimit, chfSellLimit]) => (MT_PELERIN_MAX_BUY_CHF * fiatSellLimit) / chfSellLimit
+          )
+    ]);
+    const min = roundToFiatPrecision(
+      Number(fees.networkFee) + Number(fees.fixFee) + 10 ** -fiatPrecision,
+      fiatPrecision,
+      BigNumber.ROUND_CEIL
+    );
+    const flooredMax = roundToFiatPrecision(max, fiatPrecision, BigNumber.ROUND_FLOOR);
+
+    return { min, max: flooredMax };
+  },
+  {
+    promise: true,
+    normalizer: ([fiatCode, cryptoCode, fiatPrecision]) => JSON.stringify([fiatCode, cryptoCode, fiatPrecision]),
+    maxAge: MT_PELERIN_LIMITS_CACHE_TTL,
+    max: 100
+  }
+);
 
 const getMtPelerinUpdatedFiatLimits = async (
   fiatCurrency: TopUpInputInterface,
   cryptoCurrency: TopUpOutputInterface
 ): Promise<PairLimitsRecord[TopUpProviderEnum]> => {
   try {
-    const fiatCode = fiatCurrency.code.toUpperCase();
-    const fiatPrecision = fiatCurrency.precision ?? 2;
-    const cacheKey = JSON.stringify([fiatCode, cryptoCurrency.code, fiatPrecision]);
-    const limits = await getCachedMtPelerinRequest(
-      mtPelerinLimitsCache,
-      cacheKey,
-      MT_PELERIN_LIMITS_CACHE_TTL,
-      async () => {
-        const quotePromise = getMtPelerinConvertQuote(
-          fiatCode,
-          cryptoCurrency.code,
-          MT_PELERIN_FEE_PROBE_AMOUNT,
-          MT_PELERIN_NETWORK
-        );
-        const [{ fees }, max] = await Promise.all([
-          quotePromise,
-          fiatCode === 'CHF'
-            ? Promise.resolve(MT_PELERIN_MAX_BUY_CHF)
-            : Promise.all([getMtPelerinSellLimit(fiatCode), getMtPelerinSellLimit('CHF')]).then(
-                ([fiatSellLimit, chfSellLimit]) => (MT_PELERIN_MAX_BUY_CHF * fiatSellLimit) / chfSellLimit
-              )
-        ]);
-        const min = roundToFiatPrecision(
-          Number(fees.networkFee) + Number(fees.fixFee) + 10 ** -fiatPrecision,
-          fiatPrecision,
-          BigNumber.ROUND_CEIL
-        );
-        const flooredMax = roundToFiatPrecision(max, fiatPrecision, BigNumber.ROUND_FLOOR);
-
-        return { min, max: flooredMax };
-      }
+    const limits = await getMtPelerinFiatLimits(
+      fiatCurrency.code.toUpperCase(),
+      cryptoCurrency.code,
+      fiatCurrency.precision ?? 2
     );
 
     return createEntity(limits);
