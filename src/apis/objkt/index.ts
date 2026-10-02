@@ -5,19 +5,30 @@
 
 import BigNumber from 'bignumber.js';
 import { chunk } from 'lodash-es';
-import { catchError, forkJoin, map, Observable, of } from 'rxjs';
+import { bufferTime, catchError, filter, from, map, mergeMap, Observable, of, retry, throwError, timer } from 'rxjs';
 
 import { Collection } from 'src/store/collectons/collections-state';
 import { fromTokenSlug } from 'src/utils/from-token-slug';
 import { isDefined } from 'src/utils/is-defined';
 
 import {
+  aggregateObjktCollectiblesChunkResults,
+  ObjktCollectiblesBySlugsBatch,
+  ObjktCollectiblesChunkResult
+} from './collectibles-by-slugs.utils';
+import {
   apolloObjktClient,
-  MAX_OBJKT_QUERY_RESPONSE_ITEMS,
   FA_COLLECTION_PAGINATION_STEP,
   GALLERY_COLLECTION_PAGINATION_STEP,
-  HIDDEN_CONTRACTS
+  HIDDEN_CONTRACTS,
+  OBJKT_COLLECTIBLES_EMIT_BUFFER_MS,
+  OBJKT_COLLECTIBLES_QUERY_CHUNK_SIZE,
+  OBJKT_COLLECTIBLES_QUERY_CONCURRENCY,
+  OBJKT_COLLECTIBLES_QUERY_RETRY_BASE_DELAY_MS,
+  OBJKT_COLLECTIBLES_QUERY_RETRY_COUNT,
+  OBJKT_COLLECTIBLES_QUERY_TIMEOUT_MS
 } from './constants';
+import { ObjktCollectiblesBySlugsError } from './errors';
 import {
   buildGetCollectiblesByCollectionQuery,
   buildGetCollectionsQuery,
@@ -28,7 +39,6 @@ import {
   buildGetCollectibleExtraQuery
 } from './queries';
 import {
-  ObjktCollectibleDetails,
   CollectiblesByCollectionResponse,
   CollectiblesByGalleriesResponse,
   FA2AttributeCountQueryResponse,
@@ -38,6 +48,8 @@ import {
   CollectiblesBySlugsResponse
 } from './types';
 import { transformObjktCollectionItem } from './utils';
+
+export { ObjktCollectiblesBySlugsError } from './errors';
 
 export const fetchCollections$ = (accountPkh: string): Observable<Collection[]> => {
   const request = buildGetCollectionsQuery(accountPkh);
@@ -110,21 +122,106 @@ export const fetchCollectiblesOfCollection = (
     });
 };
 
-export const fetchObjktCollectiblesBySlugs$ = (slugs: string[]) =>
-  forkJoin(
-    chunk(slugs, MAX_OBJKT_QUERY_RESPONSE_ITEMS).map(slugsChunk => fetchObjktCollectiblesBySlugsChunk$(slugsChunk))
-  ).pipe(map(res => res.reduce<ObjktCollectibleDetails[]>((acc, curr) => acc.concat(curr.token), [])));
+export const fetchObjktCollectiblesBySlugs$ = (slugs: string[]): Observable<ObjktCollectiblesBySlugsBatch> => {
+  if (slugs.length === 0) {
+    return of({ tokens: [], missingSlugs: [], failedSlugs: [] });
+  }
+
+  return from(chunk(slugs, OBJKT_COLLECTIBLES_QUERY_CHUNK_SIZE)).pipe(
+    mergeMap(
+      slugsChunk =>
+        fetchObjktCollectiblesBySlugsChunk$(slugsChunk).pipe(
+          retry({
+            count: OBJKT_COLLECTIBLES_QUERY_RETRY_COUNT,
+            delay: (error, retryCount) =>
+              isRetryableObjktQueryError(error)
+                ? timer(OBJKT_COLLECTIBLES_QUERY_RETRY_BASE_DELAY_MS * 2 ** (retryCount - 1))
+                : throwError(() => error)
+          }),
+          map((result): ObjktCollectiblesChunkResult => ({ slugs: slugsChunk, tokens: result.token })),
+          catchError(
+            (error: unknown): Observable<ObjktCollectiblesChunkResult> =>
+              of({
+                slugs: slugsChunk,
+                error:
+                  error instanceof ObjktCollectiblesBySlugsError
+                    ? error
+                    : new ObjktCollectiblesBySlugsError(slugsChunk, error)
+              })
+          )
+        ),
+      OBJKT_COLLECTIBLES_QUERY_CONCURRENCY
+    ),
+    bufferTime(OBJKT_COLLECTIBLES_EMIT_BUFFER_MS),
+    filter(results => results.length > 0),
+    map(aggregateObjktCollectiblesChunkResults)
+  );
+};
 
 const fetchObjktCollectiblesBySlugsChunk$ = (slugs: string[]) =>
-  apolloObjktClient.fetch$<CollectiblesBySlugsResponse>(buildGetCollectiblesQuery(), {
-    where: {
-      _or: slugs.map(slug => {
-        const [contract, id] = fromTokenSlug(slug);
+  new Observable<CollectiblesBySlugsResponse>(subscriber => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), OBJKT_COLLECTIBLES_QUERY_TIMEOUT_MS);
 
-        return { fa_contract: { _eq: contract }, token_id: { _eq: String(id) } };
+    apolloObjktClient
+      .fetch<CollectiblesBySlugsResponse>(
+        buildGetCollectiblesQuery(),
+        { where: buildCollectiblesBySlugsWhere(slugs) },
+        { context: { fetchOptions: { signal: controller.signal } } }
+      )
+      .then(data => {
+        if (!isDefined(data)) {
+          subscriber.error(new ObjktCollectiblesBySlugsError(slugs));
+
+          return;
+        }
+
+        subscriber.next(data);
+        subscriber.complete();
       })
-    }
+      .catch(error => {
+        subscriber.error(
+          error instanceof ObjktCollectiblesBySlugsError ? error : new ObjktCollectiblesBySlugsError(slugs, error)
+        );
+      })
+      .finally(() => clearTimeout(timeoutId));
+
+    return () => {
+      clearTimeout(timeoutId);
+      controller.abort();
+    };
   });
+
+const buildCollectiblesBySlugsWhere = (slugs: string[]) => {
+  const idsByContract: Record<string, string[]> = {};
+
+  for (const slug of slugs) {
+    const [contract, id] = fromTokenSlug(slug);
+    const tokenIds = idsByContract[contract];
+
+    if (isDefined(tokenIds)) {
+      tokenIds.push(String(id));
+    } else {
+      idsByContract[contract] = [String(id)];
+    }
+  }
+
+  return {
+    _or: Object.entries(idsByContract).map(([contract, ids]) => ({
+      fa_contract: { _eq: contract },
+      token_id: { _in: ids }
+    }))
+  };
+};
+
+/** Retry timeouts and transport failures; skip GraphQL-only (query) errors. */
+const isRetryableObjktQueryError = (error: unknown) => {
+  if (error instanceof Error && 'networkError' in error) {
+    return error.networkError != null;
+  }
+
+  return true;
+};
 
 export const fetchAttributesCounts = (ids: number[], isGallery: boolean) =>
   isGallery
