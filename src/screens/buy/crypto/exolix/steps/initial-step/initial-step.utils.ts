@@ -7,6 +7,8 @@ import { AnalyticsError } from 'src/utils/error-analytics-data.utils';
 import { loadExolixRate } from 'src/utils/exolix.util';
 import { isDefined } from 'src/utils/is-defined';
 
+import { initialToAsset } from '../../config';
+
 // due to legal restrictions
 const MAX_DOLLAR_VALUE = 10000;
 
@@ -41,8 +43,8 @@ export const loadMinMaxFields = async (
   onAnalyticsError: SyncFn<AnalyticsError>,
   inputAssetCode = 'BTC',
   inputAssetNetwork = 'BTC',
-  outputAssetCode = 'XTZ',
-  outputAssetNetwork = 'XTZ'
+  outputAssetCode = initialToAsset.code,
+  outputAssetNetwork = initialToAsset.network.code
 ) => {
   try {
     const exchangeData = {

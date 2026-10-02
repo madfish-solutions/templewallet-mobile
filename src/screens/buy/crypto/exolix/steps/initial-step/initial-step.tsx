@@ -43,7 +43,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   const styles = useInitialStepStyles();
   const { trackErrorEvent } = useAnalytics();
 
-  const { inputCurrencies, outputCurrencies, filteredInputCurrenciesList, setSearchValue, currenciesLoading } =
+  const { inputCurrencies, filteredInputCurrenciesList, setSearchValue, currenciesLoading } =
     useFilteredCurrenciesList();
   const prevCurrenciesLoading = useRef(currenciesLoading);
   const publicKeyHash = useCurrentAccountPkhSelector();
@@ -157,27 +157,6 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
     });
   };
 
-  const handleOutputValueChange = (outputCurrency: TopUpAssetAmountInterface) => {
-    const outputAssetCode = outputCurrency.asset.code;
-    const outputAsset = outputCurrencies.find(item => item.code === outputAssetCode);
-    if (!outputAsset && !currenciesLoading) {
-      showErrorToast({ description: 'Selected asset not found' });
-    }
-
-    if (!outputAsset) {
-      return;
-    }
-
-    updateValuesPayload$.next({
-      coinFrom: inputCurrency.code,
-      networkFrom: inputCurrency.network.code,
-      coinTo: outputAssetCode,
-      networkTo: outputAsset.network.code,
-      amount: isDefined(coinFrom.amount) ? coinFrom.amount.toNumber() : 0,
-      errorName: 'ExolixHandleOutputValueChangeError'
-    });
-  };
-
   const disclaimerMessage = useMemo(
     () => [
       `Please, deposit only ${inputCurrency.name} transfer network ${getProperNetworkFullName(inputCurrency)}. \
@@ -216,9 +195,7 @@ Otherwise, you may lose your assets permanently.`
                   name="coinTo"
                   label="Get"
                   editable={false}
-                  singleAsset={outputCurrencies.length === 1}
-                  assetsList={outputCurrencies}
-                  onValueChange={handleOutputValueChange}
+                  singleAsset
                   tokenTestID={InitialStepSelectors.getTokenChange}
                 />
               </FormikProvider>
