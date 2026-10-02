@@ -125,9 +125,9 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
     ) {
       updateValuesPayload$.next({
         coinFrom: inputCurrency.code,
-        coinFromNetwork: inputCurrency.network.code,
+        networkFrom: inputCurrency.network.code,
         coinTo: outputCurrency.code,
-        coinToNetwork: outputCurrency.network.code,
+        networkTo: outputCurrency.network.code,
         amount: isDefined(coinFrom.amount) ? coinFrom.amount.toNumber() : 0,
         errorName: 'ExolixHandleCurrenciesLoadError'
       });
@@ -149,9 +149,9 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
 
     updateValuesPayload$.next({
       coinFrom: inputAssetCode,
-      coinFromNetwork: inputAsset.network.code,
+      networkFrom: inputAsset.network.code,
       coinTo: outputCurrency.code,
-      coinToNetwork: outputCurrency.network.code,
+      networkTo: outputCurrency.network.code,
       amount: isDefined(inputCurrency.amount) ? inputCurrency.amount.toNumber() : 0,
       errorName: 'ExolixHandleInputValueChangeError'
     });
@@ -170,9 +170,9 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
 
     updateValuesPayload$.next({
       coinFrom: inputCurrency.code,
-      coinFromNetwork: inputCurrency.network.code,
+      networkFrom: inputCurrency.network.code,
       coinTo: outputAssetCode,
-      coinToNetwork: outputAsset.network.code,
+      networkTo: outputAsset.network.code,
       amount: isDefined(coinFrom.amount) ? coinFrom.amount.toNumber() : 0,
       errorName: 'ExolixHandleOutputValueChangeError'
     });

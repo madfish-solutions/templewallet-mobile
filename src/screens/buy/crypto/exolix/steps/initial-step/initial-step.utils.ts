@@ -15,12 +15,12 @@ const AVG_COMISSION = 300;
 
 type setFieldType = (field: string, value: BigNumber | number) => void;
 
-const loadUSDTRate = async (coinTo: string, coinToNetwork: string) => {
+const loadUSDTRate = async (coinTo: string, networkTo: string) => {
   const exchangeData = {
     coinTo,
-    coinToNetwork,
+    networkTo,
     coinFrom: 'USDT',
-    coinFromNetwork: 'ETH',
+    networkFrom: 'ETH',
     amount: 500
   };
 
@@ -47,9 +47,9 @@ export const loadMinMaxFields = async (
   try {
     const exchangeData = {
       coinTo: outputAssetCode,
-      coinToNetwork: outputAssetNetwork,
+      networkTo: outputAssetNetwork,
       coinFrom: inputAssetCode,
-      coinFromNetwork: inputAssetNetwork,
+      networkFrom: inputAssetNetwork,
       amount: MIN_ASSET_AMOUNT
     };
 
@@ -86,9 +86,9 @@ export const loadMinMaxFields = async (
     const outputTokenPrice = await loadUSDTRate(outputAssetCode, outputAssetNetwork);
     const backwardExchange = await loadExolixRate({
       coinTo: inputAssetCode,
-      coinToNetwork: inputAssetNetwork,
+      networkTo: inputAssetNetwork,
       coinFrom: outputAssetCode,
-      coinFromNetwork: outputAssetNetwork,
+      networkFrom: outputAssetNetwork,
       amount: (MAX_DOLLAR_VALUE + AVG_COMISSION) / outputTokenPrice
     });
     // Ignoring the invalid output of the backward exchange
