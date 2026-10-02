@@ -43,7 +43,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   const styles = useInitialStepStyles();
   const { trackErrorEvent } = useAnalytics();
 
-  const { inputCurrencies, outputCurrencies, filteredInputCurrenciesList, setSearchValue, currenciesLoading } =
+  const { inputCurrencies, filteredInputCurrenciesList, setSearchValue, currenciesLoading } =
     useFilteredCurrenciesList();
   const prevCurrenciesLoading = useRef(currenciesLoading);
   const publicKeyHash = useCurrentAccountPkhSelector();
@@ -125,9 +125,9 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
     ) {
       updateValuesPayload$.next({
         coinFrom: inputCurrency.code,
-        coinFromNetwork: inputCurrency.network.code,
+        networkFrom: inputCurrency.network.code,
         coinTo: outputCurrency.code,
-        coinToNetwork: outputCurrency.network.code,
+        networkTo: outputCurrency.network.code,
         amount: isDefined(coinFrom.amount) ? coinFrom.amount.toNumber() : 0,
         errorName: 'ExolixHandleCurrenciesLoadError'
       });
@@ -149,32 +149,11 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
 
     updateValuesPayload$.next({
       coinFrom: inputAssetCode,
-      coinFromNetwork: inputAsset.network.code,
+      networkFrom: inputAsset.network.code,
       coinTo: outputCurrency.code,
-      coinToNetwork: outputCurrency.network.code,
+      networkTo: outputCurrency.network.code,
       amount: isDefined(inputCurrency.amount) ? inputCurrency.amount.toNumber() : 0,
       errorName: 'ExolixHandleInputValueChangeError'
-    });
-  };
-
-  const handleOutputValueChange = (outputCurrency: TopUpAssetAmountInterface) => {
-    const outputAssetCode = outputCurrency.asset.code;
-    const outputAsset = outputCurrencies.find(item => item.code === outputAssetCode);
-    if (!outputAsset && !currenciesLoading) {
-      showErrorToast({ description: 'Selected asset not found' });
-    }
-
-    if (!outputAsset) {
-      return;
-    }
-
-    updateValuesPayload$.next({
-      coinFrom: inputCurrency.code,
-      coinFromNetwork: inputCurrency.network.code,
-      coinTo: outputAssetCode,
-      coinToNetwork: outputAsset.network.code,
-      amount: isDefined(coinFrom.amount) ? coinFrom.amount.toNumber() : 0,
-      errorName: 'ExolixHandleOutputValueChangeError'
     });
   };
 
@@ -216,9 +195,7 @@ Otherwise, you may lose your assets permanently.`
                   name="coinTo"
                   label="Get"
                   editable={false}
-                  singleAsset={outputCurrencies.length === 1}
-                  assetsList={outputCurrencies}
-                  onValueChange={handleOutputValueChange}
+                  singleAsset
                   tokenTestID={InitialStepSelectors.getTokenChange}
                 />
               </FormikProvider>

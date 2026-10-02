@@ -15,10 +15,10 @@ const initialFromAsset: TopUpWithNetworkInterface = {
   }
 };
 
-const initialToAsset: TopUpWithNetworkInterface = {
-  code: 'XTZ',
-  name: 'Tezos',
-  icon: 'https://exolix.com/icons/coins/XTZ.png',
+export const initialToAsset: TopUpWithNetworkInterface = {
+  code: 'USDT',
+  name: 'Tether USD',
+  icon: 'https://exolix.com/icons/coins/USDT.png',
   network: {
     code: 'XTZ',
     fullName: 'Tezos'
