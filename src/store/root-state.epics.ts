@@ -1,6 +1,6 @@
 import { StackActions } from '@react-navigation/native';
 import { combineEpics, Epic } from 'redux-observable';
-import { EMPTY, forkJoin, Observable, of } from 'rxjs';
+import { concat, EMPTY, forkJoin, Observable, of, timer } from 'rxjs';
 import { catchError, concatMap, filter, map, mapTo, switchMap, withLatestFrom } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
@@ -20,6 +20,7 @@ import {
   navigateAction,
   navigateBackAction
 } from './root-state.actions';
+import { showLoaderAction } from './settings/settings-actions';
 import type { NavigationActionParams, RootState } from './types';
 
 const resetKeychainOnInstallEpic: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
@@ -35,9 +36,17 @@ const resetKeychainOnInstallEpic: Epic = (action$: Observable<Action>, state$: O
 const resetApplicationSubmitEpic = (action$: Observable<Action>) => {
   return action$.pipe(
     ofType(resetApplicationAction.submit),
-    switchMap(() => forkJoin([resetKeychain$(), resetBeacon$()])),
-    map(() => resetApplicationAction.success()),
-    catchError(err => of(resetApplicationAction.fail(err.message)))
+    switchMap(() =>
+      concat(
+        of(showLoaderAction()),
+        // Allow React Native to paint the loader before the reset clears the wallet state.
+        timer(100).pipe(
+          switchMap(() => forkJoin([resetKeychain$(), resetBeacon$()])),
+          map(() => resetApplicationAction.success()),
+          catchError(err => of(resetApplicationAction.fail(err.message)))
+        )
+      )
+    )
   );
 };
 

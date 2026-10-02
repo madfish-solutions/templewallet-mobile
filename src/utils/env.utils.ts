@@ -42,3 +42,5 @@ export const KOLO_API_PUBLIC_KEY = getEnv('KOLO_API_PUBLIC_KEY');
 export const KOLO_BASE_URL = getEnv('KOLO_BASE_URL');
 
 export const WC_PROJECT_ID = getEnv('WC_PROJECT_ID');
+
+export const REDUX_LOGGER_ENABLED = getEnv('REDUX_LOGGER_ENABLED') === 'true';

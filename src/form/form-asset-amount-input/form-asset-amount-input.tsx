@@ -44,11 +44,14 @@ export const FormAssetAmountInput = memo<Props<AssetInterface>>(
     isLoading = false,
     isSearchable = false,
     searchPlaceholder,
+    listBalanceTextStyle,
+    listDollarEquivalentTextStyle,
     dropdownListHeader,
     dropdownDescription,
     scrollToSelectedOnOpen,
+    showTokenNameForValue,
     isSingleAsset,
-    selectionOptions = undefined,
+    selectionOptions,
     maxButton = false,
     showErrorInFooter = false,
     expectedGasExpense,
@@ -126,9 +129,12 @@ export const FormAssetAmountInput = memo<Props<AssetInterface>>(
           isLoading={isLoading}
           isSearchable={isSearchable}
           searchPlaceholder={searchPlaceholder}
+          listBalanceTextStyle={listBalanceTextStyle}
+          listDollarEquivalentTextStyle={listDollarEquivalentTextStyle}
           dropdownListHeader={dropdownListHeader}
           dropdownDescription={dropdownDescription}
           scrollToSelectedOnOpen={scrollToSelectedOnOpen}
+          showTokenNameForValue={showTokenNameForValue}
           isSingleAsset={isSingleAsset}
           editable={editable}
           toUsdToggle={toUsdToggle}

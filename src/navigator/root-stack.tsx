@@ -53,8 +53,10 @@ import { ScreensEnum } from './enums/screens.enum';
 import { NestedNavigationStacksParamList, StacksEnum } from './enums/stacks.enum';
 import { globalNavigationRef } from './global-nav-ref';
 import { useNavigationContainerTheme } from './hooks/use-navigation-container-theme.hook';
+import { useResetWalletLoader } from './hooks/use-reset-wallet-loader.hook';
 import { useStackNavigationOptions } from './hooks/use-stack-navigation-options.hook';
 import { MainStackScreen } from './main-stack';
+import { WelcomeScreenReadyContext } from './welcome-screen-ready.context';
 
 export type RootStackParamList = NestedNavigationStacksParamList & ModalsParamList;
 
@@ -76,6 +78,7 @@ export const RootStackScreen = () => {
   const { isLocked } = useAppLock();
   const isShowLoader = useIsShowLoaderSelector();
   const isAuthorised = useIsAuthorisedSelector();
+  const welcomeScreenReadyHandlers = useResetWalletLoader(isAuthorised, isShowLoader);
 
   const isSplash = useAppSplash();
   const isPasscode = useDevicePasscode();
@@ -105,6 +108,9 @@ export const RootStackScreen = () => {
               name={StacksEnum.MainStack}
               component={MainStackScreen}
               options={mainStackScreenOptions}
+              layout={({ children }) => (
+                <WelcomeScreenReadyContext value={welcomeScreenReadyHandlers}>{children}</WelcomeScreenReadyContext>
+              )}
             />
 
             {/* MODALS */}

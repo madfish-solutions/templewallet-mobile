@@ -10,6 +10,9 @@ export const useTokenDropdownItemStyles = createUseStyles(({ colors, typography 
   compactContainer: {
     height: formatSize(44)
   },
+  selectedContainer: {
+    height: formatSize(40)
+  },
   iconContainer: {
     position: 'relative'
   },
@@ -30,6 +33,17 @@ export const useTokenDropdownItemStyles = createUseStyles(({ colors, typography 
   rightContainer: {
     flexDirection: 'row'
   },
+  selectedActionIconContainer: {
+    width: formatSize(24),
+    height: formatSize(24),
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  selectedActionSlot: {
+    width: formatSize(24),
+    height: formatSize(40),
+    alignItems: 'center'
+  },
   symbol: {
     ...typography.numbersRegular15,
     color: colors.black
@@ -45,6 +59,11 @@ export const useTokenDropdownItemStyles = createUseStyles(({ colors, typography 
   compactName: {
     ...typography.numbersRegular13,
     lineHeight: formatTextSize(18)
+  },
+  selectedName: {
+    ...typography.numbersRegular11,
+    color: colors.gray1,
+    flexShrink: 1
   },
   fullWidthName: {
     flexGrow: 1

@@ -15,7 +15,10 @@ import { resetApplicationAction } from './root-state.actions';
 import { rootStateReducersMap } from './root-state.map';
 import type { RootState } from './types';
 
-const buildRootStateReducer = <S, A extends Action = AnyAction>(
+const buildRootStateReducer = <
+  S extends { settings: { isShowLoader: boolean }; wallet: { accounts: readonly unknown[] } },
+  A extends Action = AnyAction
+>(
   reducers: ReducersMapObject<S, A>
 ): Reducer<CombinedState<S>, A> => {
   const combinedReducers = combineReducers(reducers);
@@ -28,7 +31,20 @@ const buildRootStateReducer = <S, A extends Action = AnyAction>(
 
     const state = rootReducer(appState, action);
 
-    return combinedReducers(state, action);
+    const nextState = combinedReducers(state, action);
+
+    if (resetApplicationAction.success.match(action)) {
+      // Keep the loader after state reset until the root navigator completes its transition.
+      return {
+        ...nextState,
+        settings: {
+          ...nextState.settings,
+          isShowLoader: Boolean(appState?.wallet.accounts.length && appState.settings.isShowLoader)
+        }
+      };
+    }
+
+    return nextState;
   };
 };
 

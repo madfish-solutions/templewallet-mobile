@@ -40,7 +40,7 @@ import { BuyWithCreditCardSelectors } from './selectors';
 import { useBuyWithCreditCardStyles } from './styles';
 import { getTopUpOutputAsset } from './utils';
 
-const FORM_REFRESH_INTERVAL = 20000;
+const FORM_REFRESH_INTERVAL = 60000;
 const outputSelection = { start: 0, end: 0 };
 
 const newTopUpAssetAmountFn = (
@@ -72,7 +72,7 @@ export const BuyWithCreditCard: FC = () => {
 
   usePageAnalytic(ScreensEnum.BuyWithCreditCard);
 
-  useEffect(() => void dispatch(loadAllCurrenciesActions.submit()), []);
+  useEffect(() => void dispatch(loadAllCurrenciesActions.submit()), [dispatch]);
 
   const formik = useBuyWithCreditCardFormik();
   const { errors, touched, values, submitForm, setFieldValue, isValid, submitCount, isSubmitting } = formik;

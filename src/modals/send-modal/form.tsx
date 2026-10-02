@@ -3,6 +3,7 @@ import { boolean, mixed, object, SchemaOf, string, ValidationError } from 'yup';
 
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
 import { SAPLING_MEMO_SIZE } from 'src/config/sapling';
+import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { getAddressNetwork, getWrongNetworkAddressError } from 'src/form/validation/address';
 import { bigNumberSchema } from 'src/form/validation/big-number';
@@ -37,7 +38,7 @@ const assetAmountValidation = object()
       return true;
     }
 
-    if (amount.isGreaterThan(asset.balance)) {
+    if (amount.isGreaterThan(asset.balance) && (asset.assetSlug !== TEZ_TOKEN_SLUG || LIMIT_FIN_FEATURES)) {
       return new ValidationError('Insufficient balance', value, context.path, 'max-amount');
     }
 

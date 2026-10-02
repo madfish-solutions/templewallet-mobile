@@ -1,6 +1,5 @@
 import React, { memo, useCallback, useEffect } from 'react';
 import { View } from 'react-native';
-import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-account-dropdown';
 import { Divider } from 'src/components/divider/divider.tsx';
@@ -46,18 +45,6 @@ export const CollectiblesHome = memo(() => {
   const isShowCollectibleInfo = useIsShowCollectibleInfoSelector();
 
   const styles = useCollectiblesHomeStyles();
-  const listTranslateY = useSharedValue<`${number}%`>('100%');
-
-  const listAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: listTranslateY.value }]
-  }));
-
-  useEffect(() => {
-    listTranslateY.value = withTiming('0%', {
-      duration: 300,
-      easing: Easing.out(Easing.cubic)
-    });
-  }, [listTranslateY]);
 
   useEffect(() => {
     if (tezosAddress) {
@@ -100,14 +87,14 @@ export const CollectiblesHome = memo(() => {
         </View>
       </HeaderCard>
 
-      <Animated.View style={[styles.listContainer, listAnimatedStyle]}>
+      <View style={styles.listContainer}>
         <CollectiblesList
           key={account.id}
           collectibles={collectibles}
           showInfo={isShowCollectibleInfo}
           onScroll={handleCollectiblesScroll}
         />
-      </Animated.View>
+      </View>
     </View>
   );
 });

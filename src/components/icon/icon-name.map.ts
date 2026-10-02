@@ -112,7 +112,6 @@ import SpicyIcon from './assets/spicy.svg';
 import StakeIcon from './assets/stake.svg';
 import SuccessIcon from './assets/success.svg';
 import SwapArrowIcon from './assets/swap-arrow.svg';
-import SwapSettings from './assets/swap-settings.svg';
 import SyncIcon from './assets/sync.svg';
 import TempleLogoBottomIcon from './assets/temple-logo-bottom.svg';
 import TempleLogoUpIcon from './assets/temple-logo-up.svg';
@@ -167,7 +166,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.PlusSquare]: PlusSquareIcon,
   [IconNameEnum.HelpCircle]: HelpCircleIcon,
   [IconNameEnum.SwapArrow]: SwapArrowIcon,
-  [IconNameEnum.SwapSettings]: SwapSettings,
   [IconNameEnum.InputXCircle]: InputXCircleIcon,
   [IconNameEnum.X]: XIcon,
   [IconNameEnum.XBold]: XBoldIcon,

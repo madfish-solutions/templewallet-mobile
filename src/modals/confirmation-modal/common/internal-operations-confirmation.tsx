@@ -18,20 +18,21 @@ import { dispatch } from 'src/store';
 import { navigateAction } from 'src/store/root-state.actions';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import { waitForOperationCompletionAction } from 'src/store/wallet/wallet-actions';
-import { useAccount } from 'src/store/wallet/wallet-selectors';
-import { showSuccessToast } from 'src/toast/toast.utils';
+import { useAccount, useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
+import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
 import { getAccountForTezos } from 'src/utils/account.utils.ts';
 import { AnalyticsEventProperties } from 'src/utils/analytics/analytics.util';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { TEMPLE_WALLET_EVERSTAKE_LINK_ID } from 'src/utils/env.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { isTooLowTezBalanceError } from 'src/utils/is-too-low-tez-balance-error';
 import { isTruthy } from 'src/utils/is-truthy';
 import { EVERSTAKE_BAKER_ADDRESS } from 'src/utils/known-bakers';
 import { sendTransaction$ } from 'src/utils/wallet.utils';
 
 import { InternalOperationsConfirmationModalParams } from '../confirmation-modal.params';
 import { OperationsConfirmation } from '../operations-confirmation/operations-confirmation';
+
+import { shouldShowOnRampForError } from './should-show-on-ramp-for-error';
 
 type Props = Omit<InternalOperationsConfirmationModalParams, 'type'> & {
   renderPreview?: (opParams: ParamsWithKind[]) => React.ReactNode;
@@ -78,6 +79,7 @@ export const InternalOperationsConfirmation: FC<Props> = ({
 }) => {
   const account = useAccount();
   const tezosAccount = getAccountForTezos(account);
+  const tezosBalance = useCurrentAccountTezosBalance();
 
   if (!account || !tezosAccount) {
     throw new DeadEndBoundaryError();
@@ -86,7 +88,26 @@ export const InternalOperationsConfirmation: FC<Props> = ({
   const lastSetOverlayStateRef = useRef<OnRampOverlayState | null>(null);
   const { trackErrorEvent } = useAnalytics();
 
-  const { confirmRequest, isLoading } = useRequestConfirmation(approveInternalOperationRequest);
+  const updateOverlayState = useCallback(() => {
+    if (lastSetOverlayStateRef.current !== OnRampOverlayState.Continue) {
+      lastSetOverlayStateRef.current = OnRampOverlayState.Continue;
+      dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
+    }
+  }, []);
+
+  const handleConfirmationError = useCallback(
+    (error: unknown) => {
+      if (!LIMIT_FIN_FEATURES && shouldShowOnRampForError(error, tezosBalance)) {
+        updateOverlayState();
+      }
+    },
+    [tezosBalance, updateOverlayState]
+  );
+
+  const { confirmRequest, isLoading } = useRequestConfirmation(
+    approveInternalOperationRequest,
+    handleConfirmationError
+  );
 
   useNavigationSetOptions(
     {
@@ -108,29 +129,36 @@ export const InternalOperationsConfirmation: FC<Props> = ({
     <Disclaimer title="Disclaimer" texts={[disclaimerMessage]} />
   ) : undefined;
 
-  const updateOverlayState = useCallback((newState: OnRampOverlayState) => {
-    if (lastSetOverlayStateRef.current !== newState) {
-      lastSetOverlayStateRef.current = newState;
-      dispatch(setOnRampOverlayStateAction(newState));
-    }
-  }, []);
-
   const handleEstimationError = useCallback(
     (error: unknown) => {
-      if (!LIMIT_FIN_FEATURES && isTooLowTezBalanceError(error)) {
-        updateOverlayState(OnRampOverlayState.Continue);
-      } else {
-        console.error(error);
+      if (!LIMIT_FIN_FEATURES && shouldShowOnRampForError(error, tezosBalance)) {
+        updateOverlayState();
 
-        trackErrorEvent(
-          'InternalOperationsConfirmationEstimationError',
-          error,
-          opParams.map(op => ('source' in op ? op.source : tezosAccount.address)).filter(isDefined),
-          { opParams, testID }
-        );
+        return;
       }
+
+      console.error(error);
+
+      trackErrorEvent(
+        'InternalOperationsConfirmationEstimationError',
+        error,
+        opParams.map(op => ('source' in op ? op.source : tezosAccount.address)).filter(isDefined),
+        { opParams, testID }
+      );
     },
-    [opParams, tezosAccount, testID, trackErrorEvent, updateOverlayState]
+    [opParams, tezosAccount, tezosBalance, testID, trackErrorEvent, updateOverlayState]
+  );
+
+  const handleEstimatedTezExpense = useCallback(
+    (amountMutez: BigNumber) => {
+      if (LIMIT_FIN_FEATURES || !amountMutez.isGreaterThan(tezosBalance)) {
+        return;
+      }
+
+      showErrorToast({ title: 'Warning!', description: 'The transaction is likely to fail!' });
+      updateOverlayState();
+    },
+    [tezosBalance, updateOverlayState]
   );
 
   return (
@@ -145,6 +173,7 @@ export const InternalOperationsConfirmation: FC<Props> = ({
       renderPreview={renderPreview}
       isShieldedTez={isShieldedTez}
       onEstimationComplete={onEstimationComplete}
+      onEstimatedTezExpense={handleEstimatedTezExpense}
       confirmEventProperties={confirmEventProperties}
     />
   );

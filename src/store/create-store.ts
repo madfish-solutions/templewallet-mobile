@@ -6,16 +6,24 @@ import { persistStore } from 'redux-persist';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
+import { REDUX_LOGGER_ENABLED } from 'src/utils/env.utils';
 import { isDefined } from 'src/utils/is-defined';
 
+import { resetApplicationAction } from './root-state.actions';
 import persistedReducer from './root-state.reducers';
 import { RootState } from './types';
 
 const epicMiddleware = createEpicMiddleware();
 const middlewares: Middleware<object, RootState>[] = [epicMiddleware];
 
-if (__DEV__ && !isDefined(process.env.JEST_WORKER_ID)) {
-  middlewares.push(createLogger({ diff: true, collapsed: true }));
+if (REDUX_LOGGER_ENABLED && !isDefined(process.env.JEST_WORKER_ID)) {
+  middlewares.push(
+    createLogger({
+      diff: true,
+      collapsed: true,
+      predicate: (_getState, action) => !resetApplicationAction.success.match(action)
+    })
+  );
 }
 
 export const createStore = (...epics: Epic[]) => {

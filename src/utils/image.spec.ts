@@ -46,6 +46,16 @@ describe('image utils', () => {
         mockCloudflareUri
       ]);
     });
+
+    it('tries the direct source first when requested', () => {
+      const iconUrl = 'https://coin-images.coingecko.com/coins/images/1/small/bitcoin.png';
+
+      expect(buildTokenImagesStack(iconUrl, true)).toEqual([
+        iconUrl,
+        'https://static.tcinfra.net/media/small/web/coin-images.coingecko.com/coins/images/1/small/bitcoin.png',
+        'https://static.tcinfra.net/media/medium/web/coin-images.coingecko.com/coins/images/1/small/bitcoin.png'
+      ]);
+    });
   });
 
   describe('buildEvmCollectibleImagesStack', () => {

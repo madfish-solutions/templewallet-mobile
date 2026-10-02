@@ -14,7 +14,12 @@ export const TextSegmentControlValue = memo<SegmentedControlValueComponentProps<
     const color = useSegmentedControlColor(isSelected, isDisabled);
 
     return (
-      <Animated.Text style={[styles.text, { color }, conditionalStyle(isDisabled, styles.disabled)]}>
+      <Animated.Text
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.8}
+        style={[styles.text, { color }, conditionalStyle(isDisabled, styles.disabled)]}
+      >
         {item}
       </Animated.Text>
     );
