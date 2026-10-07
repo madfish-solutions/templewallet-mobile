@@ -11,7 +11,7 @@ export const useDetailsSectionStyles = createUseStylesMemoized(({ colors, typogr
   farmTypeIconWrapper: {
     padding: formatSize(4),
     borderRadius: formatSize(4),
-    backgroundColor: colors.black,
+    backgroundColor: black,
     border: DEFAULT_BORDER_WIDTH,
     borderColor: colors.lines
   },

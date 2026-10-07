@@ -32,7 +32,7 @@ interface Props {
 }
 
 const ITEMS_PER_ROW = 3;
-const INITIAL_ROWS_TO_RENDER = 8;
+const INITIAL_ROWS_TO_RENDER = 4;
 const GRID_GAPS_TOTAL_WIDTH = GRID_GAP * (ITEMS_PER_ROW - 1);
 
 const keyExtractor = (item: DisplayedCollectible) =>
@@ -93,7 +93,7 @@ export const CollectiblesList = memo<Props>(({ collectibles, showInfo, onScroll 
     <Animated.FlatList
       data={sortedCollectibles}
       numColumns={ITEMS_PER_ROW}
-      initialNumToRender={ITEMS_PER_ROW * INITIAL_ROWS_TO_RENDER}
+      initialNumToRender={INITIAL_ROWS_TO_RENDER}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
       getItemLayout={getItemLayout}

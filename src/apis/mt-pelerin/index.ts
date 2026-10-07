@@ -1,5 +1,6 @@
 import { valueEncoder } from '@taquito/local-forging/dist/lib/michelson/codec';
 import axios from 'axios';
+import memoizee from 'memoizee';
 import { URL } from 'react-native-url-polyfill';
 import { firstValueFrom } from 'rxjs';
 
@@ -18,27 +19,38 @@ import {
 
 const mtPelerinApi = axios.create({ baseURL: MT_PELERIN_API_URL });
 const cardPaymentFiatCodes = ['CHF', 'EUR', 'USD', 'GBP'];
+const QUOTE_CACHE_TTL = 20_000;
+const SELL_LIMIT_CACHE_TTL = 300_000;
 
 export const getMtPelerinAssets = () =>
   templeWalletApi.get<MtPelerinCurrenciesResponse>('/mtpelerin-assets').then(({ data }) => data);
 
-export const getMtPelerinConvertQuote = async (
-  sourceCurrency: string,
-  destCurrency: string,
-  sourceAmount: number,
-  destNetwork: string
-) => {
-  const { data } = await mtPelerinApi.post<MtPelerinQuote>('/currency_rates/convert', {
-    sourceCurrency,
-    destCurrency,
-    sourceAmount,
-    sourceNetwork: 'fiat',
-    destNetwork,
-    isCardPayment: true
-  });
+export const getMtPelerinConvertQuote = memoizee(
+  async (
+    sourceCurrency: string,
+    destCurrency: string,
+    sourceAmount: number,
+    destNetwork: string
+  ): Promise<MtPelerinQuote> => {
+    const { data } = await mtPelerinApi.post<MtPelerinQuote>('/currency_rates/convert', {
+      sourceCurrency,
+      destCurrency,
+      sourceAmount,
+      sourceNetwork: 'fiat',
+      destNetwork,
+      isCardPayment: true
+    });
 
-  return data;
-};
+    return data;
+  },
+  {
+    promise: true,
+    normalizer: ([sourceCurrency, destCurrency, sourceAmount, destNetwork]) =>
+      JSON.stringify([sourceCurrency, destCurrency, sourceAmount, destNetwork]),
+    maxAge: QUOTE_CACHE_TTL,
+    max: 100
+  }
+);
 
 export const getMtPelerinOutputAmount = async (
   sourceCurrency: string,
@@ -56,16 +68,19 @@ export const getMtPelerinOutputAmount = async (
   return outputAmount;
 };
 
-export const getMtPelerinSellLimit = async (currency: string) => {
-  const { data } = await mtPelerinApi.get<MtPelerinSellLimitResponse>(`/currency_rates/sellLimits/${currency}`);
-  const limit = Number(data.limit);
+export const getMtPelerinSellLimit = memoizee(
+  async (currency: string): Promise<number> => {
+    const { data } = await mtPelerinApi.get<MtPelerinSellLimitResponse>(`/currency_rates/sellLimits/${currency}`);
+    const limit = Number(data.limit);
 
-  if (!Number.isFinite(limit) || limit <= 0) {
-    throw new Error('Mt Pelerin returned an invalid sell limit');
-  }
+    if (!Number.isFinite(limit) || limit <= 0) {
+      throw new Error('Mt Pelerin returned an invalid sell limit');
+    }
 
-  return limit;
-};
+    return limit;
+  },
+  { promise: true, maxAge: SELL_LIMIT_CACHE_TTL, max: 100 }
+);
 
 export const createMtPelerinAddressProof = async (accountPkh: string): Promise<MtPelerinAddressProof> => {
   const code = String(1000 + Math.floor(Math.random() * 9000));

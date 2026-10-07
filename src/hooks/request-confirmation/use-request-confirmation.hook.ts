@@ -9,7 +9,8 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { AnalyticsError } from 'src/utils/error-analytics-data.utils';
 
 export const useRequestConfirmation = <T, O extends ObservableInput<Action>>(
-  project: (value: T, index: number) => O
+  project: (value: T, index: number) => O,
+  onError?: SyncFn<unknown>
 ) => {
   const { trackErrorEvent } = useAnalytics();
 
@@ -28,6 +29,7 @@ export const useRequestConfirmation = <T, O extends ObservableInput<Action>>(
             tap(() => setIsLoading(false)),
             catchError(err => {
               setIsLoading(false);
+              onError?.(err);
               showErrorToast({ description: err.message });
 
               if (err instanceof AnalyticsError) {
@@ -49,7 +51,7 @@ export const useRequestConfirmation = <T, O extends ObservableInput<Action>>(
       });
 
     return () => subscription.unsubscribe();
-  }, [confirmRequest$, project, trackErrorEvent]);
+  }, [confirmRequest$, onError, project, trackErrorEvent]);
 
   return {
     confirmRequest: (value: T) => confirmRequest$.next(value),

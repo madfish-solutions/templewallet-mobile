@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text } from 'react-native';
 
 import { ButtonDelegatePrimary } from 'src/components/button/button-large/button-delegate-primary/button-delegate-primary';
@@ -14,6 +14,7 @@ import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToModal, useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
+import { WelcomeScreenReadyContext } from 'src/navigator/welcome-screen-ready.context';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
@@ -25,12 +26,13 @@ export const Welcome = () => {
   const navigateToModal = useNavigateToModal();
   const navigateToScreen = useNavigateToScreen();
   const styles = useWelcomeStyles();
+  const { onLayout: handleLayout } = useContext(WelcomeScreenReadyContext);
 
   usePageAnalytic(ScreensEnum.Welcome);
   useABTestingLoading();
 
   return (
-    <ScreenContainer isFullScreenMode={true}>
+    <ScreenContainer isFullScreenMode={true} onLayout={handleLayout}>
       <View style={styles.imageView}>
         <InsetSubstitute />
         <Icon name={IconNameEnum.TempleLogoWithText} width={formatSize(208)} height={formatSize(64)} />

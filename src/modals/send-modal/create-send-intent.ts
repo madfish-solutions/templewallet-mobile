@@ -74,6 +74,10 @@ export const createSendIntent = ({
   const isRecipientSapling = isSaplingAddress(receiverAddress);
   const isSourceShielded = asset.assetSlug === TEZ_SHIELDED_TOKEN_SLUG;
 
+  if (asset.assetSlug === TEZ_TOKEN_SLUG && amount.isGreaterThan(tezosBalance) && isOnRampEnabled) {
+    return { success: true, intent: { type: 'on-ramp' } };
+  }
+
   if (isSourceShielded || (asset.assetSlug === TEZ_TOKEN_SLUG && isRecipientSapling)) {
     const type = isSourceShielded ? (isRecipientSapling ? 'transfer' : 'unshield') : 'shield';
 
@@ -87,10 +91,6 @@ export const createSendIntent = ({
         ...((type === 'transfer' || type === 'shield') && { memo: memo || undefined })
       }
     };
-  }
-
-  if (asset.assetSlug === TEZ_TOKEN_SLUG && amount.isGreaterThan(tezosBalance) && isOnRampEnabled) {
-    return { success: true, intent: { type: 'on-ramp' } };
   }
 
   return {

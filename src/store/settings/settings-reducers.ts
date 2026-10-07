@@ -3,7 +3,7 @@ import { createReducer } from '@reduxjs/toolkit';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 
 import { OLD_OTHER_RPC_URLS, TEMPLE_RPC } from '../../utils/rpc/rpc-list.ts';
-import { resetKeychainOnInstallAction } from '../root-state.actions';
+import { resetApplicationAction, resetKeychainOnInstallAction } from '../root-state.actions';
 
 import {
   addCustomRpc,
@@ -42,6 +42,8 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(changeTheme, (state, { payload: theme }) => ({ ...state, theme }));
 
   builder.addCase(setIsShowLoaderAction, (state, { payload: isShowLoader }) => ({ ...state, isShowLoader }));
+
+  builder.addCase(resetApplicationAction.fail, state => ({ ...state, isShowLoader: false }));
 
   builder.addCase(resetPermanentInitialSettingsAction, state => {
     state.isShowLoader = false;

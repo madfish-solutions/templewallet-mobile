@@ -21,6 +21,8 @@ import { useCollectibleImageStyles } from './styles';
 interface CommonProps {
   size: number;
   isFullView?: boolean;
+  Fallback?: ComponentType<{ isFullView?: boolean }>;
+  resizeMode?: 'contain' | 'cover';
 }
 
 interface TezosProps extends CommonProps, AssetMediaURIs {
@@ -28,7 +30,6 @@ interface TezosProps extends CommonProps, AssetMediaURIs {
   slug: string;
   isBlurred?: boolean;
   onReveal?: EmptyFn;
-  Fallback?: ComponentType<{ isFullView?: boolean }>;
 }
 
 interface EvmProps extends CommonProps {
@@ -53,7 +54,8 @@ const TezosCollectibleImage = memo<TezosProps>(
     isFullView = false,
     isBlurred = false,
     onReveal,
-    Fallback
+    Fallback,
+    resizeMode
   }) => {
     const styles = useCollectibleImageStyles();
 
@@ -126,12 +128,13 @@ const TezosCollectibleImage = memo<TezosProps>(
         isFullView={isFullView}
         onLoad={onSuccess}
         onError={onFail}
+        resizeMode={resizeMode}
       />
     );
   }
 );
 
-const EvmCollectibleImage = memo<EvmProps>(({ slug, chainId, uri, size, isFullView = false }) => {
+const EvmCollectibleImage = memo<EvmProps>(({ slug, chainId, uri, size, isFullView = false, Fallback, resizeMode }) => {
   const { src, isLoading, isStackFailed, onSuccess, onFail } = useEvmCollectibleImagesStack(chainId, slug, uri);
 
   const isDataUri = src != null && (isImgUriDataUri(src) || isSvgDataUriInBase64Encoding(src));
@@ -151,7 +154,13 @@ const EvmCollectibleImage = memo<EvmProps>(({ slug, chainId, uri, size, isFullVi
       sourceUri={src}
       size={size}
       isFailed={isStackFailed}
-      fallback={<BrokenImage isBigIcon={isFullView} style={{ width: size, height: size }} />}
+      fallback={
+        Fallback ? (
+          <Fallback isFullView={isFullView} />
+        ) : (
+          <BrokenImage isBigIcon={isFullView} style={{ width: size, height: size }} />
+        )
+      }
       dataUriForeground={dataUriForeground}
       background={<BlurredImageBackground uri={src} />}
       frameStyle={!isFullView && evmStyles.rounded}
@@ -159,6 +168,7 @@ const EvmCollectibleImage = memo<EvmProps>(({ slug, chainId, uri, size, isFullVi
       isFullView={isFullView}
       onLoad={onSuccess}
       onError={onFail}
+      resizeMode={resizeMode}
     />
   );
 });

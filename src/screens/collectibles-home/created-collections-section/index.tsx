@@ -1,27 +1,16 @@
 import React, { memo, useRef } from 'react';
-import {
-  ActivityIndicator,
-  LayoutChangeEvent,
-  ListRenderItem,
-  Text,
-  TouchableOpacity,
-  View,
-  ViewStyle
-} from 'react-native';
+import { LayoutChangeEvent, ListRenderItem, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import Animated, { AnimatedStyle } from 'react-native-reanimated';
 
-import { Icon } from 'src/components/icon/icon';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { ImageWithIndicator } from 'src/components/image';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { Collection } from 'src/store/collectons/collections-state';
-import { formatSize } from 'src/styles/format-size';
 import { useDidUpdate } from 'src/utils/hooks';
-import { formatObjktLogoUri } from 'src/utils/image.utils';
 
 import { useCollectiblesHomeStyles, useCollectionButtonStyles } from '../styles';
+
+import { CollectionLogo } from './collection-logo';
 
 interface Props {
   accountId: string;
@@ -86,17 +75,7 @@ const CollectionButton = memo<CollectionButtonProps>(({ item }) => {
 
   return (
     <TouchableOpacity style={styles.button} onPress={handlePress}>
-      <ImageWithIndicator
-        source={{ uri: formatObjktLogoUri(item.logo) }}
-        style={styles.logo}
-        imageStyle={styles.image}
-        indicator={ActivityIndicator}
-        renderError={() => (
-          <View style={[styles.image, styles.brokenImage]}>
-            <Icon name={IconNameEnum.NFTCollection} size={formatSize(31)} />
-          </View>
-        )}
-      />
+      <CollectionLogo logo={item.logo} />
 
       <Text numberOfLines={1} style={styles.title}>
         {item.name}

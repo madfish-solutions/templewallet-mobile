@@ -1,11 +1,17 @@
 import React, { FC } from 'react';
-import { Alert } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+import { CollectibleImage } from 'src/components/collectible-image';
+import { CryptoLogo } from 'src/components/crypto-logo';
+import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { Divider } from 'src/components/divider/divider';
 import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
 import { MultichainTokenIcon, MultichainTokenIconProps } from 'src/components/multichain-token-icon';
+import { useMultichainTokenIconStyles } from 'src/components/multichain-token-icon/styles';
+import { NetworkIcon } from 'src/components/network-icon';
 import { Switch } from 'src/components/switch/switch';
+import { TezosCollectibleThumbnail } from 'src/components/tezos-collectible-thumbnail';
 import { TokenContainer } from 'src/components/token-container/token-container';
 import { TouchableIconV2 } from 'src/components/touchable-icon-v2';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
@@ -25,10 +31,34 @@ interface Props {
 }
 
 const ASSET_ICON_SIZE = formatSize(40);
-const ITEM_VERTICAL_PADDING = formatSize(8);
+const ASSET_IMAGE_SIZE = formatSize(34);
+const ManageCollectibleFallback = () => (
+  <CryptoLogo
+    name={CryptoLogoNameEnum.CollectiblePlaceholder}
+    size={ASSET_IMAGE_SIZE}
+    internalSize={ASSET_IMAGE_SIZE}
+  />
+);
+const styles = StyleSheet.create({
+  collectibleIcon: {
+    top: formatSize(2)
+  },
+  collectibleFrame: {
+    height: ASSET_ICON_SIZE,
+    padding: formatSize(2),
+    width: ASSET_ICON_SIZE
+  },
+  collectibleImage: {
+    borderRadius: formatSize(8),
+    height: ASSET_IMAGE_SIZE,
+    overflow: 'hidden',
+    width: ASSET_IMAGE_SIZE
+  }
+});
 
 export const ManageAssetsItem: FC<Props> = ({ asset }) => {
   const dispatch = useDispatch();
+  const iconStyles = useMultichainTokenIconStyles();
   const evmAddress = useAccountAddressForEvm();
   const isEvmAsset = isEvmManageAsset(asset);
   const slug = isEvmAsset ? asset.assetSlug : getTokenSlug(asset);
@@ -50,6 +80,42 @@ export const ManageAssetsItem: FC<Props> = ({ asset }) => {
         thumbnailUri: asset.thumbnailUri,
         isCollectible
       };
+
+  const leadingIcon = isCollectible ? (
+    <View style={[iconStyles.container, styles.collectibleIcon]}>
+      <View style={styles.collectibleFrame}>
+        <View style={styles.collectibleImage}>
+          {isEvmAsset ? (
+            <CollectibleImage
+              chainKind={TempleChainKind.EVM}
+              slug={asset.assetSlug}
+              chainId={asset.chainId}
+              uri={asset.thumbnailUri}
+              size={ASSET_IMAGE_SIZE}
+              Fallback={ManageCollectibleFallback}
+              resizeMode="cover"
+            />
+          ) : (
+            <TezosCollectibleThumbnail
+              slug={slug}
+              artifactUri={asset.artifactUri}
+              displayUri={asset.displayUri}
+              thumbnailUri={asset.thumbnailUri}
+              size={ASSET_IMAGE_SIZE}
+              blurAdultContent={false}
+              Fallback={ManageCollectibleFallback}
+              resizeMode="cover"
+            />
+          )}
+        </View>
+      </View>
+      <View style={iconStyles.networkBadge}>
+        <NetworkIcon name={isEvmAsset ? CryptoLogoNameEnum.Etherlink : CryptoLogoNameEnum.Tezos} variant="tokenBadge" />
+      </View>
+    </View>
+  ) : (
+    <MultichainTokenIcon {...iconProps} size={ASSET_ICON_SIZE} showNetworkBadge />
+  );
 
   const setEvmVisibility = (visibility: VisibilityEnum) => {
     if (evmAddress && isEvmAsset) {
@@ -90,12 +156,7 @@ export const ManageAssetsItem: FC<Props> = ({ asset }) => {
     );
 
   return (
-    <TokenContainer
-      token={asset}
-      style={{ paddingVertical: ITEM_VERTICAL_PADDING }}
-      showTokenTag={false}
-      leadingIcon={<MultichainTokenIcon {...iconProps} size={ASSET_ICON_SIZE} showNetworkBadge />}
-    >
+    <TokenContainer token={asset} showTokenTag={false} leadingIcon={leadingIcon}>
       <TouchableIconV2
         name={IconNameV2Enum.Trash}
         size={formatSize(16)}

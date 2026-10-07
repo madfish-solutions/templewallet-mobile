@@ -13,29 +13,56 @@ describe('tzktUrl', () => {
 });
 
 describe('openUrl', () => {
-  jest.useFakeTimers();
-  afterAll(() => void jest.useRealTimers());
-
   beforeEach(() => {
-    mockLinking.openURL.mockReset();
+    mockLinking.openURL.mockReset().mockResolvedValue(undefined);
+    mockLinking.canOpenURL.mockReset().mockResolvedValue(true);
   });
 
-  it('should open valid link', async () => {
+  it('opens an HTTP URL without a capability check', async () => {
     const mockValidUrl = 'https://tzkt.io/';
 
-    openUrl(mockValidUrl);
-
-    await jest.runAllTimersAsync();
+    await openUrl(mockValidUrl);
 
     expect(mockLinking.openURL).toHaveBeenCalledWith(mockValidUrl);
+    expect(mockLinking.canOpenURL).not.toHaveBeenCalled();
   });
 
-  it('should not open invalid link', async () => {
-    mockLinking.canOpenURL.mockReturnValue(Promise.reject());
-    openUrl('invalid_link');
+  it('opens a supported custom URL', async () => {
+    const url = 'tezos://test';
 
-    await jest.runAllTimersAsync();
+    await openUrl(url);
+
+    expect(mockLinking.canOpenURL).toHaveBeenCalledWith(url);
+    expect(mockLinking.openURL).toHaveBeenCalledWith(url);
+  });
+
+  it('rejects an unsupported URL when the caller requests errors', async () => {
+    mockLinking.canOpenURL.mockResolvedValueOnce(false);
+
+    await expect(openUrl('invalid_link', { rethrowError: true })).rejects.toThrow('Cannot open URL: invalid_link');
 
     expect(mockLinking.openURL).not.toHaveBeenCalled();
+  });
+
+  it('reports a capability check error', async () => {
+    const error = new Error('Capability check failed');
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    mockLinking.canOpenURL.mockRejectedValueOnce(error);
+
+    try {
+      await expect(openUrl('invalid_link')).resolves.toBeUndefined();
+
+      expect(mockLinking.openURL).not.toHaveBeenCalled();
+      expect(consoleErrorSpy).toHaveBeenCalledWith(error);
+    } finally {
+      consoleErrorSpy.mockRestore();
+    }
+  });
+
+  it('rejects an open error when the caller requests errors', async () => {
+    const error = new Error('Open URL failed');
+    mockLinking.openURL.mockRejectedValueOnce(error);
+
+    await expect(openUrl('https://tzkt.io/', { rethrowError: true })).rejects.toBe(error);
   });
 });

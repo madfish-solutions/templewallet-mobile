@@ -6,21 +6,17 @@ import { objktCurrencies } from 'src/apis/objkt/constants';
 import { CollectibleImage } from 'src/components/collectible-image';
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { NetworkIcon } from 'src/components/network-icon';
+import { TezosCollectibleThumbnail } from 'src/components/tezos-collectible-thumbnail';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
-import {
-  useCollectibleDetailsLoadingSelector,
-  useCollectibleDetailsSelector
-} from 'src/store/collectibles/collectibles-selectors';
+import { useCollectibleDetailsSelector } from 'src/store/collectibles/collectibles-selectors';
 import { DisplayedCollectible } from 'src/utils/assets/types';
 import { formatNumber } from 'src/utils/format-price';
-import { isSvgDataUriInBase64Encoding } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 
 import { Balance } from './balance';
-import { CollectibleItemImage } from './item-image';
 import { useCollectibleItemStyles } from './styles';
 
 interface Props {
@@ -45,7 +41,6 @@ const TezosCollectibleItem = memo<CommonAdapterProps & { collectible: TezosColle
   ({ collectible, size, showInfo = false, style }) => {
     const navigateToModal = useNavigateToModal();
     const { asset, slug } = collectible;
-    const areDetailsLoading = useCollectibleDetailsLoadingSelector();
     const details = useCollectibleDetailsSelector(slug);
 
     const listing = useMemo(() => {
@@ -74,18 +69,12 @@ const TezosCollectibleItem = memo<CommonAdapterProps & { collectible: TezosColle
         balance={asset.balance}
         displayName={asset.name}
         image={
-          <CollectibleItemImage
+          <TezosCollectibleThumbnail
             slug={slug}
             size={size}
-            artifactUri={
-              details?.artifactUri != null &&
-              (isSvgDataUriInBase64Encoding(details.artifactUri) || asset.artifactUri === 'UNSUPPORTED_EXTENSION')
-                ? details.artifactUri
-                : asset.artifactUri
-            }
-            displayUri={asset.displayUri ?? details?.displayUri}
-            thumbnailUri={asset.thumbnailUri ?? details?.thumbnailUri}
-            areDetailsLoading={areDetailsLoading && details === undefined}
+            artifactUri={asset.artifactUri}
+            displayUri={asset.displayUri}
+            thumbnailUri={asset.thumbnailUri}
           />
         }
         networkIcon={CryptoLogoNameEnum.Tezos}

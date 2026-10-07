@@ -9,22 +9,25 @@ interface OpenUrlOptions {
   rethrowError?: boolean;
 }
 
-export const openUrl = (url: string, { rethrowError = false }: OpenUrlOptions = {}) =>
-  Linking.canOpenURL(url)
-    .then(canOpen => {
-      if (!canOpen) {
-        throw new Error(`Cannot open URL: ${url}`);
-      }
+export const openUrl = (url: string, { rethrowError = false }: OpenUrlOptions = {}) => {
+  const openPromise = /^https?:\/\//i.test(url)
+    ? Linking.openURL(url)
+    : Linking.canOpenURL(url).then(canOpen => {
+        if (!canOpen) {
+          throw new Error(`Cannot open URL: ${url}`);
+        }
 
-      return Linking.openURL(url);
-    })
-    .catch(error => {
-      if (rethrowError) {
-        throw error;
-      }
+        return Linking.openURL(url);
+      });
 
-      console.error(error);
-    });
+  return openPromise.catch(error => {
+    if (rethrowError) {
+      throw error;
+    }
+
+    console.error(error);
+  });
+};
 
 export const useOpenUrlInAppBrowser = () => {
   const navigateToModal = useNavigateToModal();

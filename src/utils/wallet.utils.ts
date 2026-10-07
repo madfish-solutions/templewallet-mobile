@@ -19,6 +19,7 @@ import { TokenInterface } from 'src/token/interfaces/token.interface';
 
 import { AnalyticsError } from './error-analytics-data.utils';
 import { getSelectedAccountFromWallet } from './get-selected-account-from-wallet.util.ts';
+import { getTezosRpcErrorId } from './get-tezos-rpc-error-id';
 import { createTezosToolkit } from './rpc/tezos-toolkit.utils';
 
 export const withAccount =
@@ -59,19 +60,19 @@ export const sendTransaction$ = (senderPkh: string, opParams: ParamsWithKind[]) 
     }),
     catchError(err => {
       const makeAnalyticsError = (message?: string) => new AnalyticsError(err, [senderPkh], { opParams }, message);
+      const rpcErrorId = getTezosRpcErrorId(err);
 
-      try {
-        const errorBody = JSON.parse(err.body);
-        if (Array.isArray(errorBody) && errorBody[0]?.id?.includes('empty_implicit_contract')) {
-          throw makeAnalyticsError('The balance of TEZ is not enough to make a transaction.');
-        }
-      } catch {}
+      if (rpcErrorId) {
+        throw makeAnalyticsError(rpcErrorId);
+      }
 
       if (typeof err?.body === 'string' && /<\s*html/i.test(err.body)) {
         throw makeAnalyticsError('Http error: unknown html response. Change RPC and try again');
       }
 
-      throw makeAnalyticsError();
+      const reason = err instanceof Error && err.message ? err.message : 'Unknown error';
+
+      throw makeAnalyticsError(`Transaction submission failed: ${reason}`);
     })
   );
 

@@ -1,6 +1,6 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
-import React, { memo, useCallback, useMemo } from 'react';
-import { Text, View } from 'react-native';
+import React, { memo, useCallback, useMemo, useState } from 'react';
+import { NativeScrollEvent, NativeSyntheticEvent, Text, View } from 'react-native';
 
 import { Checkbox } from 'src/components/checkbox/checkbox';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
@@ -38,12 +38,17 @@ export const ManageCollectibles = memo(() => {
   );
   const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(collectibles);
   const isShowCollectibleInfo = useIsShowCollectibleInfoSelector();
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const handleShowDetailsChange = useCallback(() => void dispatch(switchIsShowCollectibleInfoAction()), []);
+  const handleScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    setIsScrolled(event.nativeEvent.contentOffset.y > 0);
+  }, []);
 
   return (
     <>
       <View style={styles.searchRow}>
+        {isScrolled && <View pointerEvents="none" style={styles.searchRowShadow} />}
         <SearchInput placeholder="Search" onChangeText={setSearchValue} containerStyle={styles.searchInputContainer} />
         <Checkbox value={isShowCollectibleInfo} size={16} onChange={handleShowDetailsChange}>
           <Text style={styles.checkboxText}>Show details</Text>
@@ -56,6 +61,7 @@ export const ManageCollectibles = memo(() => {
         renderItem={renderItem}
         contentContainerStyle={styles.contentContainerStyle}
         ListEmptyComponent={ListEmptyComponent}
+        onScroll={handleScroll}
       />
     </>
   );

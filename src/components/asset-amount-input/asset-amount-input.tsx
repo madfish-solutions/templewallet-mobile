@@ -90,6 +90,8 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
     dropdownListHeader,
     isSearchable = false,
     searchPlaceholder,
+    listBalanceTextStyle,
+    listDollarEquivalentTextStyle,
     dropdownDescription = 'Assets',
     scrollToSelectedOnOpen = true,
     selectionOptions = undefined,
@@ -99,6 +101,7 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
     maxButtonDisabled = false,
     stylesConfig = defaultAssetAmountInputStylesConfig,
     isShowNameForValue = true,
+    showTokenNameForValue = false,
     isSingleAsset = false,
     setSearchValue = emptyFn,
     onBlur,
@@ -148,9 +151,19 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
     }, [getTokenBalance, slug, tezosBalance, value.asset, balanceFromProps]);
 
     const amountInputRef = useRef<TextInput>(null);
+    const resetSelectionRef = useRef(false);
     const renderTokenListItem = useCallback<DropdownListItemComponent<AssetInterface>>(
-      ({ item }) => (variant === 'v1' ? <TokenDropdownItem token={item} /> : <TokenDropdownItemV2 token={item} />),
-      []
+      ({ item }) =>
+        variant === 'v1' ? (
+          <TokenDropdownItem token={item} />
+        ) : (
+          <TokenDropdownItemV2
+            token={item}
+            balanceTextStyle={listBalanceTextStyle}
+            dollarEquivalentTextStyle={listDollarEquivalentTextStyle}
+          />
+        ),
+      [listBalanceTextStyle, listDollarEquivalentTextStyle]
     );
 
     const [inputTypeIndex, setInputTypeIndex] = useState(0);
@@ -203,13 +216,16 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
             actionIconName={isSingleAsset ? undefined : IconNameV2Enum.DropdownDown}
             isShowBalance={false}
             isShowName={isShowNameForValue}
+            compactSelected={variant === 'v2'}
+            showTokenNameForValue={showTokenNameForValue}
           />
         ),
-      [isShowNameForValue, isSingleAsset]
+      [isShowNameForValue, isSingleAsset, showTokenNameForValue]
     );
 
     const onChange = useCallback(
       (newInputValue: BigNumber | undefined) => {
+        resetSelectionRef.current = false;
         inputValueRef.current = newInputValue;
         isFiatMinimumDisplayRef.current = false;
 
@@ -231,6 +247,14 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
       onFocus,
       inputTypeIndex
     );
+
+    useEffect(() => {
+      // Reset cursor position after Max amount will be set
+      if (resetSelectionRef.current && stringValue === numericInputValue?.toFixed()) {
+        resetSelectionRef.current = false;
+        amountInputRef.current?.setSelection(0, 0);
+      }
+    }, [numericInputValue, stringValue]);
 
     const handleTokenInputTypeChange = (tokenTypeIndex: number) => {
       if (isDefined(amountInputRef.current)) {
@@ -299,6 +323,8 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
           : BigNumber.maximum(new BigNumber(balance).minus(isGasTokenMaxAmountGuard), 0);
 
         amountInputRef.current?.blur();
+        resetSelectionRef.current = true;
+
         trackEvent(maxButtonTestID, AnalyticsEventCategory.ButtonPress);
 
         onValueChange({
@@ -358,6 +384,7 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
           <View
             style={[
               styles.dropdownContainer,
+              conditionalStyle(variant === 'v2', styles.compactDropdownContainer),
               conditionalStyle(isLiquidityProviderToken, styles.lpDropdownContainer),
               conditionalStyle(!editable, styles.disabledDropdownContainer),
               { paddingVertical: dropdownVerticalPadding, width: selectedTokenDropdownWidth }

@@ -11,7 +11,7 @@ import { WhiteContainer } from 'src/components/white-container/white-container';
 import { WhiteContainerAction } from 'src/components/white-container/white-container-action/white-container-action';
 import { WhiteContainerDivider } from 'src/components/white-container/white-container-divider/white-container-divider';
 import { WhiteContainerText } from 'src/components/white-container/white-container-text/white-container-text';
-import { contact, knowledgeBase, privacyPolicy, repository, termsOfUse, website } from 'src/config/socials';
+import { knowledgeBase, privacyPolicy, repository, termsOfUse, website } from 'src/config/socials';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -57,7 +57,7 @@ export const About = () => {
             <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
           </WhiteContainerAction>
           <WhiteContainerDivider />
-          <WhiteContainerAction testID={AboutPageSelectors.contact} onPress={() => openUrl(contact)}>
+          <WhiteContainerAction testID={AboutPageSelectors.contact} onPress={() => openUrl(website)}>
             <WhiteContainerText text="Contact" />
             <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
           </WhiteContainerAction>
