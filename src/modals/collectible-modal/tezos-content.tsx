@@ -1,12 +1,12 @@
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import React, { memo, useMemo, useState } from 'react';
 import { Dimensions, Text, TouchableOpacity, View } from 'react-native';
 
 import { objktCurrencies } from 'src/apis/objkt/constants';
 import { Divider } from 'src/components/divider/divider';
 import { DeadEndBoundaryError } from 'src/components/error-boundary';
-import { Icon } from 'src/components/icon/icon';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { IconV2 } from 'src/components/icon-v2';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
 import { LinkWithIcon } from 'src/components/link-with-icon/link-with-icon';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
@@ -27,6 +27,7 @@ import {
 import { useAssetMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { useAssetBalanceSelector, useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatNumber } from 'src/utils/format-price';
@@ -76,6 +77,8 @@ export const TezosCollectibleModalContent = memo<Props>(({ slug }) => {
   usePageAnalytic(ModalsEnum.CollectibleModal);
 
   const styles = useCollectibleModalStyles();
+
+  const { destructive } = useColors();
 
   const [scrollEnabled, setScrollEnabled] = useState(true);
 
@@ -151,7 +154,7 @@ export const TezosCollectibleModalContent = memo<Props>(({ slug }) => {
   const thumbnailUri = metadata?.thumbnailUri ?? details?.thumbnailUri;
   const displayUri = metadata?.displayUri ?? details?.displayUri;
 
-  const handleShare = useShareNFT(slug, thumbnailUri, name, details?.description);
+  const handleShare = useShareNFT(slug, name, details?.description);
 
   const [segmentControlIndex, setSegmentControlIndex] = useState(0);
 
@@ -211,7 +214,7 @@ export const TezosCollectibleModalContent = memo<Props>(({ slug }) => {
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
-            <Icon name={IconNameEnum.Share} />
+            <IconV2 name={IconNameV2Enum.Share} />
             <Divider size={formatSize(4)} />
             <Text style={styles.shareButtonText}>Share</Text>
           </TouchableOpacity>
@@ -259,7 +262,7 @@ export const TezosCollectibleModalContent = memo<Props>(({ slug }) => {
           <CollectibleDetails contract={address} tokenId={Number(id)} details={details} owned={balance ?? '0'} />
         ) : null}
 
-        {segments.current === 'attributes' ? <CollectibleAttributes attributes={attributes!} /> : null}
+        {segments.current === 'attributes' ? <CollectibleAttributes attributes={attributes} /> : null}
 
         {isAccountHolder ? (
           <TouchableWithAnalytics
@@ -269,7 +272,7 @@ export const TezosCollectibleModalContent = memo<Props>(({ slug }) => {
             testID={CollectibleModalSelectors.burnButton}
           >
             <Text style={styles.burnButtonText}>{LIMIT_NFT_FEATURES ? 'Burn Collectible' : 'Burn Nft'}</Text>
-            <Icon name={IconNameEnum.Burn} />
+            <IconV2 name={IconNameV2Enum.Burn} color={destructive} />
           </TouchableWithAnalytics>
         ) : null}
       </View>

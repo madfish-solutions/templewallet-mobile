@@ -16263,6 +16263,7 @@ react-native-randombytes@madfish-solutions/react-native-randombytes:
     "@gorhom/bottom-sheet": "npm:^5"
     "@gorhom/portal": "npm:^1.0.14"
     "@jitsu/sdk-js": "madfish-solutions/jitsu-js#87c49de334f5747952f7beda573b95ceb5d86903"
+    "@noble/hashes": "npm:1.8.0"
     "@notifee/react-native": "npm:^9.1.8"
     "@react-native-async-storage/async-storage": "npm:^2.2.0"
     "@react-native-clipboard/clipboard": "npm:^1.16.3"

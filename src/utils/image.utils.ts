@@ -1,29 +1,70 @@
-import { uniq } from 'lodash-es';
+import { trimEnd, uniq } from 'lodash-es';
 import { getAddress } from 'viem';
 
 import { AssetMediaURIs } from './assets/types';
+import { fromTokenSlug } from './from-token-slug';
+import {
+  DWEB_IPFS_GATE,
+  getIpfsAwareItemInfo,
+  getIpfsItemInfo,
+  IPFS_GATE,
+  IPFS_PROTOCOL,
+  IpfsUriInfo,
+  isInvalidIpfsMediaUri,
+  normalizeIpfsUri
+} from './ipfs.utils';
 import { isDefined } from './is-defined';
 import { isString } from './is-string';
 import { isTruthy } from './is-truthy';
+import {
+  buildObjktAssetUrls,
+  buildObjktTokenThumbnailUrl,
+  isObjktAssetUrl,
+  ObjktAssetRendition,
+  splitSearch
+} from './objkt-cdn';
 import { ETHERLINK_MAINNET_CHAIN_ID } from './rpc/rpc-list';
 
-export const IPFS_PROTOCOL = 'ipfs://';
-const OBJKT_MEDIA_HOST = 'https://assets.objkt.media/file/assets-003';
-export const IPFS_GATE = 'https://ipfs.filebase.io/ipfs';
 const MEDIA_HOST = 'https://static.tcinfra.net/media';
 
 type TcInfraMediaSize = 'small' | 'medium' | 'large' | 'raw';
-type ObjktMediaTail = 'display' | 'artifact' | 'thumb288';
 
 const DEFAULT_MEDIA_SIZE: TcInfraMediaSize = 'small';
 
-/** Some contracts emit the `ipfs://ipfs/<CID>` double-prefix form, which breaks gateway conversion */
-export const normalizeIpfsUri = (uri?: string | null) => uri?.replace(/^ipfs:\/\/ipfs\//, IPFS_PROTOCOL) ?? undefined;
+const IPFS_GATES = [IPFS_GATE, DWEB_IPFS_GATE];
 
-const buildIpfsMediaUrisByInfo = (info: MediaUriInfo, isFullView: boolean) => {
-  const sizes: TcInfraMediaSize[] = isFullView ? ['raw', 'large', 'medium', 'small'] : ['medium', 'small'];
+const isImageDataUri = (uri: string) => uri.startsWith('data:image/');
 
-  return sizes.map(size => buildIpfsMediaUriByInfo(info, size)).concat(buildIpfsMediaUriByInfo(info, undefined, false));
+const isDirectlyLoadableUri = (uri: string) => /^(https?|data|blob):/.test(uri);
+
+const assureGetDataUriImage = (uri?: string) => (uri && isImageDataUri(uri) ? uri : undefined);
+
+/** Public IPFS gateways for an `ipfs://` URI or a path-style gateway link; any other http(s) link is used as is. */
+const buildIpfsGatewayUrls = (uri: string | undefined): string[] => {
+  if (!uri) {
+    return [];
+  }
+
+  const ipfsInfo = getIpfsAwareItemInfo(uri);
+  if (!ipfsInfo) {
+    return uri.startsWith('http') ? [uri] : [];
+  }
+
+  return IPFS_GATES.map(gate => `${gate}/${ipfsInfo.path}${ipfsInfo.search}`);
+};
+
+const isGatewayFallbackUri = (uri: string) =>
+  !isInvalidIpfsMediaUri(uri) && !isObjktAssetUrl(uri) && (uri.startsWith(IPFS_PROTOCOL) || uri.startsWith('http'));
+
+/** objkt's CDN first, then the IPFS gateways for the first URI they can serve. Data URIs are left out. */
+const buildTezosMediaStack = (
+  uris: Array<string | undefined>,
+  renditions: ObjktAssetRendition[] = ['artifact']
+): string[] => {
+  const definedUris = uris.filter(isTruthy);
+  const objktUrls = definedUris.flatMap(uri => renditions.flatMap(rendition => buildObjktAssetUrls(uri, rendition)));
+
+  return objktUrls.concat(buildIpfsGatewayUrls(definedUris.find(isGatewayFallbackUri)));
 };
 
 export const buildTezosCollectibleImagesStack = (
@@ -31,48 +72,71 @@ export const buildTezosCollectibleImagesStack = (
   { artifactUri, displayUri, thumbnailUri }: AssetMediaURIs,
   fullView = false
 ): string[] => {
-  const [address, id] = slug.split('_');
-
-  const artifactInfo = getMediaUriInfo(artifactUri);
-  const displayInfo = getMediaUriInfo(displayUri);
-  const thumbnailInfo = getMediaUriInfo(thumbnailUri);
-
-  const stack = fullView
-    ? [
+  if (fullView) {
+    return uniq(
+      [
         assureGetDataUriImage(artifactUri),
         assureGetDataUriImage(displayUri),
-
-        buildObjktMediaURI(artifactInfo.ipfs, 'display'),
-        buildObjktMediaURI(displayInfo.ipfs, 'display'),
-        buildObjktMediaURI(thumbnailInfo.ipfs, 'display'),
-
-        ...buildIpfsMediaUrisByInfo(displayInfo, true),
-
-        ...buildIpfsMediaUrisByInfo(artifactInfo, true),
-
+        ...buildTezosMediaStack([displayUri, artifactUri, thumbnailUri]),
         assureGetDataUriImage(thumbnailUri)
-      ]
-    : [
-        /* There are performance issues with these on Collectibles screen with many <SvgXml /> components.
-      assureGetDataUriImage(thumbnailUri),
-      assureGetDataUriImage(displayUri),
-      assureGetDataUriImage(artifactUri),
-      */
+      ].filter(isTruthy)
+    );
+  }
 
-        // Some image of video asset (see: KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton_773019) only available through this option:
-        buildObjktMediaUriForItemPath(`${address}/${id}`, 'thumb288'),
+  const [address, id] = fromTokenSlug(slug);
+  // Data URIs stay out of the grid stack: many <SvgXml /> components on the Collectibles screen hurt performance
+  const previewStack = buildTezosMediaStack([thumbnailUri, displayUri]);
 
-        buildObjktMediaURI(artifactInfo.ipfs, 'thumb288'),
-        buildObjktMediaURI(displayInfo.ipfs, 'thumb288'),
-        buildObjktMediaURI(thumbnailInfo.ipfs, 'thumb288'),
-
-        ...buildIpfsMediaUrisByInfo(thumbnailInfo, false),
-        ...buildIpfsMediaUrisByInfo(displayInfo, false),
-        ...buildIpfsMediaUrisByInfo(artifactInfo, false)
-      ];
-
-  return uniq(stack.filter(isTruthy));
+  return uniq(
+    [
+      // Some image or video assets (see: KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton_773019) are only available through this option:
+      id && buildObjktTokenThumbnailUrl(address, id),
+      ...(previewStack.length > 0 ? previewStack : buildTezosMediaStack([artifactUri]))
+    ].filter(isTruthy)
+  );
 };
+
+const buildArtifactFallbackUris = (artifactUri: string) => {
+  if (isGatewayFallbackUri(artifactUri)) {
+    return buildIpfsGatewayUrls(artifactUri);
+  }
+
+  return isDirectlyLoadableUri(artifactUri) ? [artifactUri] : [];
+};
+
+const DIRECTORY_INDEX_PATH = '/index.html';
+
+/** objkt and the gateways serve a folder artifact by its `index.html`, which must come before the query string */
+const toDirectoryIndexUrl = (url: string) => {
+  if (!url.startsWith('http')) {
+    return url;
+  }
+
+  const [base, search] = splitSearch(url);
+
+  return base.endsWith(DIRECTORY_INDEX_PATH) ? url : `${trimEnd(base, '/')}${DIRECTORY_INDEX_PATH}${search}`;
+};
+
+/**
+ * objkt's copies of the artifact, then the gateways, or the original itself when a player can load it directly.
+ * Folder artifacts (`application/x-directory`) are addressed by their `index.html`.
+ */
+export const buildObjktCollectibleArtifactUris = (artifactUri: string, isDirectory = false): string[] => {
+  if (isInvalidIpfsMediaUri(artifactUri)) {
+    return [];
+  }
+
+  const candidates = uniq(buildObjktAssetUrls(artifactUri, 'artifact').concat(buildArtifactFallbackUris(artifactUri)));
+
+  return isDirectory ? uniq(candidates.map(toDirectoryIndexUrl)) : candidates;
+};
+
+export const buildCollectionLogoStack = (logoUri: string | nullish): string[] =>
+  logoUri
+    ? uniq(
+        [assureGetDataUriImage(logoUri), ...buildTezosMediaStack([logoUri], ['thumb288', 'artifact'])].filter(isTruthy)
+      )
+    : [];
 
 interface MediaUriInfo {
   uri?: string;
@@ -83,55 +147,6 @@ const getMediaUriInfo = (uri?: string): MediaUriInfo => ({
   uri,
   ipfs: uri ? getIpfsItemInfo(uri) : null
 });
-
-interface IpfsUriInfo {
-  id: string;
-  path: string;
-  /** With leading `?` if applicable */
-  search: '' | `?${string}`;
-}
-
-const getIpfsItemInfo = (uri: string): IpfsUriInfo | null => {
-  if (!uri.startsWith(IPFS_PROTOCOL)) {
-    return null;
-  }
-
-  const [path, search] = uri.slice(IPFS_PROTOCOL.length).split('?');
-  const id = path.split('/')[0];
-
-  if (id === INVALID_IPFS_ID) {
-    return null;
-  }
-
-  return {
-    id,
-    path,
-    search: search ? `?${search}` : ''
-  };
-};
-
-/** Black circle in `thumbnailUri`
- * See:
- * - KT1M2JnD1wsg7w2B4UXJXtKQPuDUpU2L7cJH_79
- * - KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton_19484
- * - KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton_3312
- */
-const INVALID_IPFS_ID = 'QmNrhZHUaEqxhyLfqoq1mtHSipkWHeT31LNHb1QEbDHgnc';
-
-const buildObjktMediaURI = (ipfsInfo: IpfsUriInfo | nullish, tail: ObjktMediaTail) => {
-  if (!ipfsInfo) {
-    return;
-  }
-
-  let result = buildObjktMediaUriForItemPath(ipfsInfo.id, tail);
-  if (ipfsInfo.search) {
-    result += `/index.html${ipfsInfo.search}`;
-  }
-
-  return result;
-};
-
-const buildObjktMediaUriForItemPath = (itemId: string, tail: ObjktMediaTail) => `${OBJKT_MEDIA_HOST}/${itemId}/${tail}`;
 
 const CLOUDFLARE_IPFS_REGEX = /^https?:\/\/cloudflare-ipfs\.com\/ipfs/;
 const buildMediaHostWebUri = (uri: string, size: TcInfraMediaSize) =>
@@ -180,7 +195,7 @@ export const buildTokenImagesStack = (url?: string, preferDirectSource = false):
     );
   }
 
-  if (url.startsWith('data:image/')) {
+  if (isImageDataUri(url)) {
     return [url];
   }
 
@@ -224,8 +239,6 @@ export const buildEvmTokenIconSources = (chainId: number, address: string, iconU
   ].filter(isTruthy);
 };
 
-const DWEB_IPFS_GATE = 'https://dweb.link/ipfs';
-
 /** Blockscout serves ipfs images through dweb.link, so it is appended as the last option gateway */
 export const buildEvmCollectibleImagesStack = (uri?: string): string[] => {
   const normalizedUri = normalizeIpfsUri(uri);
@@ -240,8 +253,6 @@ export const isImgUriSvg = (url: string) => /\.svg(?:$|[?#])/i.test(url);
 
 const SVG_DATA_URI_UTF8_PREFIX = 'data:image/svg+xml;charset=utf-8,';
 const SVG_DATA_URI_BASE64_PREFIX = 'data:image/svg+xml;base64,';
-
-const assureGetDataUriImage = (uri?: string) => (uri?.startsWith('data:image/') ? uri : undefined);
 
 export const isImgUriDataUri = (uri: string) => isSvgDataUriInUtf8Encoding(uri);
 
@@ -279,10 +290,3 @@ export const fixSvgXml = (xml: string) => xml.replace(/(\d*\.?\d+)-(\d*)/g, '$1 
 
 // react-native-svg has no foreignObject, feImage or SMIL animation support and can crash on them
 export const svgRequiresWebViewRendering = (xml: string) => /<foreignObject|<feImage|<animate|<set\b/i.test(xml);
-
-export const formatCollectibleArtifactUri = (artifactUri: string) => formatObjktMediaUri(artifactUri, 'artifact');
-
-export const formatObjktLogoUri = (logoUri: string) => formatObjktMediaUri(logoUri, 'thumb288');
-
-const formatObjktMediaUri = (mediaUri: string, tail: ObjktMediaTail) =>
-  assureGetDataUriImage(mediaUri) || buildObjktMediaURI(getIpfsItemInfo(mediaUri), tail);
