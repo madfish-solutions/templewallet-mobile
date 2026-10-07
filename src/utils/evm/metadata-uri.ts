@@ -1,6 +1,6 @@
 import { Buffer } from 'buffer';
 
-import { IPFS_GATE, IPFS_PROTOCOL, normalizeIpfsUri } from 'src/utils/image.utils';
+import { IPFS_GATE, IPFS_PROTOCOL, normalizeIpfsUri } from 'src/utils/ipfs.utils';
 
 const COVALENT_IPFS_GATE = 'https://ipfs.covalenthq.com/ipfs';
 
