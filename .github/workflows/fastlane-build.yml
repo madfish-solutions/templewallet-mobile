@@ -16,7 +16,7 @@ on:
 jobs:
   fastlane-build:
     name: Create new iOS & Android builds and upload them via Fastlane
-    runs-on: macos-15
+    runs-on: xcode-27
     environment: fastlane
     steps:
       - name: Clone repository
@@ -34,7 +34,6 @@ jobs:
           JITSU_ANALYTICS_KEY: ${{ vars.JITSU_ANALYTICS_KEY }}
           JITSU_TRACKING_HOST: ${{ vars.JITSU_TRACKING_HOST }}
           TEMPLE_WALLET_ROUTE3_AUTH_TOKEN: ${{ vars.TEMPLE_WALLET_ROUTE3_AUTH_TOKEN }}
-          TEMPLE_WALLET_EXOLIX_API_KEY: ${{ secrets.TEMPLE_WALLET_EXOLIX_API_KEY }}
           TEMPLE_WALLET_EVERSTAKE_API_KEY: ${{ secrets.TEMPLE_WALLET_EVERSTAKE_API_KEY }}
           TEMPLE_WALLET_EVERSTAKE_LINK_ID: ${{ secrets.TEMPLE_WALLET_EVERSTAKE_LINK_ID }}
           MT_PELERIN_ACTIVATION_KEY: ${{ secrets.MT_PELERIN_ACTIVATION_KEY }}
@@ -110,7 +109,7 @@ jobs:
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: "26.2"
+          xcode-version: "27.0"
 
       - name: Install iOS Gemfile dependencies
         run: cd ios && bundle install
