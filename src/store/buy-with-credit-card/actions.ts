@@ -11,17 +11,17 @@ export const loadAllCurrenciesActions = createActions<void, BuyWithCreditCardSta
   'buy-with-credit-card/LOAD_ALL_CURRENCIES'
 );
 export const updatePairLimitsActions = createActions<
-  { fiatSymbol: string; cryptoSymbol: string },
+  { fiatSymbol: string; cryptoSlug: string },
   {
     fiatSymbol: string;
-    cryptoSymbol: string;
+    cryptoSlug: string;
     limits: PairLimitsRecord;
   },
-  { fiatSymbol: string; cryptoSymbol: string; error: string }
+  { fiatSymbol: string; cryptoSlug: string; error: string }
 >('buy-with-credit-card/UPDATE_PAIR_LIMITS');
 export const updateTopUpProviderPairLimitsAction = createAction<{
   fiatSymbol: string;
-  cryptoSymbol: string;
+  cryptoSlug: string;
   topUpProvider: TopUpProviderEnum;
   value: PairLimits;
 }>('buy-with-credit-card/UPDATE_TOP_UP_PROVIDER_PAIR_LIMITS');

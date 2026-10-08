@@ -10,12 +10,13 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { useIsInAppBrowserEnabledSelector, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { useOpenUrl } from 'src/hooks/use-open-url.hook.ts';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
-import { openUrl, tzktUrl, useOpenUrlInAppBrowser } from 'src/utils/linking';
+import { tzktUrl } from 'src/utils/linking';
 import { formatToPercentStr } from 'src/utils/number-format.utils';
 import { kFormatter } from 'src/utils/number.util';
 
@@ -38,17 +39,13 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => 
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const bakerName = isDcpNode ? 'Current Producer' : baker.name;
 
-  const openUrlInAppBrowser = useOpenUrlInAppBrowser();
-  const isInAppBrowserEnabled = useIsInAppBrowserEnabledSelector();
+  const openUrl = useOpenUrl();
 
   const { fee, capacity, freeSpace, minBalance } = baker.delegation;
   const feeStr = formatToPercentStr(fee);
   const stakingBalance = capacity - freeSpace;
 
-  const handleStakingPress = useCallback(
-    () => (isInAppBrowserEnabled ? openUrlInAppBrowser(STAKING_DAPP_LINK) : openUrl(STAKING_DAPP_LINK)),
-    [isInAppBrowserEnabled, openUrlInAppBrowser]
-  );
+  const handleStakingPress = useCallback(() => openUrl(STAKING_DAPP_LINK), [openUrl]);
 
   return (
     <>

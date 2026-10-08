@@ -4,25 +4,17 @@ import { TopUpWithNetworkInterface } from 'src/interfaces/topup.interface';
 import { useExolixCurrencies, useExolixCurrenciesLoading } from 'src/store/exolix/exolix-selectors';
 import { isString } from 'src/utils/is-string';
 
+import { initialToAsset } from '../config';
+
 export const useFilteredCurrenciesList = () => {
   const allCurrencies = useExolixCurrencies();
   const currenciesLoading = useExolixCurrenciesLoading();
   const [searchValue, setSearchValue] = useState<string>();
 
-  const { inputCurrencies, outputCurrencies } = useMemo(() => {
-    const inputCurrencies: TopUpWithNetworkInterface[] = [];
-    const outputCurrencies: TopUpWithNetworkInterface[] = [];
-
-    allCurrencies.forEach(currency => {
-      if (currency.network.code === 'XTZ') {
-        outputCurrencies.push(currency);
-      } else {
-        inputCurrencies.push(currency);
-      }
-    });
-
-    return { inputCurrencies, outputCurrencies };
-  }, [allCurrencies]);
+  const inputCurrencies = useMemo(
+    () => allCurrencies.filter(currency => currency.network.code !== initialToAsset.network.code),
+    [allCurrencies]
+  );
 
   const filteredInputCurrenciesList = useMemo(() => {
     const sourceArray = inputCurrencies;
@@ -48,7 +40,6 @@ export const useFilteredCurrenciesList = () => {
   return {
     allCurrencies,
     inputCurrencies,
-    outputCurrencies,
     currenciesLoading,
     filteredInputCurrenciesList,
     searchValue,

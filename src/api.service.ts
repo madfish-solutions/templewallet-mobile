@@ -7,7 +7,6 @@ import {
   TEMPLE_ADS_API_URL,
   TEMPLE_WALLET_API_URL,
   TEMPLE_WALLET_EVERSTAKE_API_KEY,
-  TEMPLE_WALLET_EXOLIX_API_KEY,
   TEZOS_METADATA_API_URL
 } from './utils/env.utils';
 import { isDcpNode } from './utils/network.utils';
@@ -39,10 +38,7 @@ export const scamlistApi = axios.create({
 export const coingeckoApi = axios.create({ baseURL: 'https://api.coingecko.com/api/v3/' });
 
 export const exolixApi = axios.create({
-  baseURL: 'https://exolix.com/api/v2',
-  headers: {
-    Authorization: TEMPLE_WALLET_EXOLIX_API_KEY
-  }
+  baseURL: concatUrlPath(TEMPLE_WALLET_API_URL, '/api/exolix')
 });
 
 export const everstakeApi = axios.create({
