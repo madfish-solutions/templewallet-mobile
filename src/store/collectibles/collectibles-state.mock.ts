@@ -6,5 +6,7 @@ import type { CollectiblesState } from './collectibles-state';
 
 export const mockCollectiblesState = mockPersistedState<CollectiblesState>({
   details: createEntity({}),
-  adultFlags: {}
+  singleCollectibleLoading: false,
+  adultFlags: {},
+  collectiblesDetailsInFlight: {}
 });
