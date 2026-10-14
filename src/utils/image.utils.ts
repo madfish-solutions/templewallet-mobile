@@ -5,7 +5,6 @@ import { AssetMediaURIs } from './assets/types';
 import { fromTokenSlug } from './from-token-slug';
 import {
   DWEB_IPFS_GATE,
-  getIpfsAwareItemInfo,
   getIpfsItemInfo,
   IPFS_GATE,
   IPFS_PROTOCOL,
@@ -33,38 +32,51 @@ const DEFAULT_MEDIA_SIZE: TcInfraMediaSize = 'small';
 
 const IPFS_GATES = [IPFS_GATE, DWEB_IPFS_GATE];
 
+const TCINFRA_FALLBACK_SIZES: TcInfraMediaSize[] = ['medium', 'small'];
+
 const isImageDataUri = (uri: string) => uri.startsWith('data:image/');
 
 const isDirectlyLoadableUri = (uri: string) => /^(https?|data|blob):/.test(uri);
 
 const assureGetDataUriImage = (uri?: string) => (uri && isImageDataUri(uri) ? uri : undefined);
 
-/** Public IPFS gateways for an `ipfs://` URI or a path-style gateway link; any other http(s) link is used as is. */
+/**
+ * Public IPFS gateways for an `ipfs://` URI. An http(s) link, a gateway link included, is used as is:
+ * sent to our gateways instead, a link to content that is gone waits ~55 s for filebase's 504.
+ */
 const buildIpfsGatewayUrls = (uri: string | undefined): string[] => {
   if (!uri) {
     return [];
   }
 
-  const ipfsInfo = getIpfsAwareItemInfo(uri);
-  if (!ipfsInfo) {
-    return uri.startsWith('http') ? [uri] : [];
+  if (uri.startsWith('http')) {
+    return [uri];
   }
 
-  return IPFS_GATES.map(gate => `${gate}/${ipfsInfo.path}${ipfsInfo.search}`);
+  const ipfsInfo = getIpfsItemInfo(uri);
+
+  return ipfsInfo ? IPFS_GATES.map(gate => `${gate}/${ipfsInfo.path}${ipfsInfo.search}`) : [];
 };
 
 const isGatewayFallbackUri = (uri: string) =>
   !isInvalidIpfsMediaUri(uri) && !isObjktAssetUrl(uri) && (uri.startsWith(IPFS_PROTOCOL) || uri.startsWith('http'));
 
-/** objkt's CDN first, then the IPFS gateways for the first URI they can serve. Data URIs are left out. */
+/**
+ * objkt's CDN first, then tcinfra's cached renditions (a miss fails fast, its origin is gone),
+ * then the IPFS gateways for the first URI they can serve. Data URIs are left out.
+ */
 const buildTezosMediaStack = (
   uris: Array<string | undefined>,
   renditions: ObjktAssetRendition[] = ['artifact']
 ): string[] => {
   const definedUris = uris.filter(isTruthy);
   const objktUrls = definedUris.flatMap(uri => renditions.flatMap(rendition => buildObjktAssetUrls(uri, rendition)));
+  const tcinfraUrls = definedUris
+    .filter(isGatewayFallbackUri)
+    .flatMap(uri => TCINFRA_FALLBACK_SIZES.map(size => formatImgUri(uri, size)))
+    .filter(isTruthy);
 
-  return objktUrls.concat(buildIpfsGatewayUrls(definedUris.find(isGatewayFallbackUri)));
+  return objktUrls.concat(tcinfraUrls, buildIpfsGatewayUrls(definedUris.find(isGatewayFallbackUri)));
 };
 
 export const buildTezosCollectibleImagesStack = (
