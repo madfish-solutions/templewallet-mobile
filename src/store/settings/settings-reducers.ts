@@ -47,7 +47,11 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
 
   builder.addCase(resetPermanentInitialSettingsAction, state => {
     state.isShowLoader = false;
-    state.onRampOverlayState = OnRampOverlayState.Closed;
+
+    // Start stays so a restart after the newsletter modal still opens the on-ramp overlay.
+    if (state.onRampOverlayState !== OnRampOverlayState.Start) {
+      state.onRampOverlayState = OnRampOverlayState.Closed;
+    }
   });
 
   builder.addCase(setIsBiometricsEnabled, (state, { payload: isBiometricsEnabled }) => ({
