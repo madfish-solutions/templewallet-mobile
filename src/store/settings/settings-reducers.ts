@@ -47,7 +47,6 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
 
   builder.addCase(resetPermanentInitialSettingsAction, state => {
     state.isShowLoader = false;
-
     state.onRampOverlayState = OnRampOverlayState.Closed;
   });
 
