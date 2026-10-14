@@ -40,10 +40,7 @@ const isDirectlyLoadableUri = (uri: string) => /^(https?|data|blob):/.test(uri);
 
 const assureGetDataUriImage = (uri?: string) => (uri && isImageDataUri(uri) ? uri : undefined);
 
-/**
- * Public IPFS gateways for an `ipfs://` URI. An http(s) link, a gateway link included, is used as is:
- * sent to our gateways instead, a link to content that is gone waits ~55 s for filebase's 504.
- */
+/** Public IPFS gateways for an `ipfs://` URI or a path-style gateway link; any other http(s) link is used as is. */
 const buildIpfsGatewayUrls = (uri: string | undefined): string[] => {
   if (!uri) {
     return [];
