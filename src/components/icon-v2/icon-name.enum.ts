@@ -41,5 +41,7 @@ export enum IconNameV2Enum {
   ArrowUpDown = 'ArrowUpDown',
   LockOpen = 'LockOpen',
   Cube = 'Cube',
-  DocumentGear = 'DocumentGear'
+  DocumentGear = 'DocumentGear',
+  NftCollection = 'NftCollection',
+  Burn = 'Burn'
 }
