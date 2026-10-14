@@ -42,18 +42,15 @@ export enum ExchangeDataStatusEnum {
 
 export interface ExchangePayload {
   coinFrom: string;
-  coinFromNetwork: string;
+  networkFrom: string;
   coinTo: string;
-  coinToNetwork: string;
+  networkTo: string;
   amount: number;
   withdrawalAddress: string;
   withdrawalExtraId: string;
 }
 
-export interface SubmitExchangePayload extends Omit<ExchangePayload, 'coinFromNetwork' | 'coinToNetwork'> {
-  networkFrom: string;
-  networkTo: string;
-}
+export type SubmitExchangePayload = ExchangePayload;
 
 interface ExolixNetworkInterface {
   addressRegex: string;
@@ -83,9 +80,9 @@ export interface ExolixCurrenciesResponseInterface {
 
 export interface GetRateRequestData {
   coinFrom: string;
-  coinFromNetwork: string;
+  networkFrom: string;
   coinTo: string;
-  coinToNetwork: string;
+  networkTo: string;
   amount: number;
 }
 
