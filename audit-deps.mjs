@@ -1,15 +1,59 @@
 import { exec } from 'child_process';
 
-exec('yarn npm audit --recursive --severity high', (error, stdout) => {
-  if (error) {
-    console.log(stdout);
+/* Entry example:[
+  'GHSA-mh99-v99m-4gvg',
+  'Only legacy brace-expansion v1/v2 instances used by build tooling remain; v5 is pinned to the patched release.'
+] */
+const ignoredAdvisories = new Map([
+  ['GHSA-w3rx-r6r6-pgpr', 'ICNS parser allows denial of service through an infinite loop'],
+  ['GHSA-5p2g-fcmc-qvqq', 'JXL and HEIF parsers allow denial of service through infinite loops'],
+  [
+    'GHSA-86w9-cpqp-85rv',
+    'node-forge RSA PKCS#1 v1.5 signature verification accepts extra nested DigestAlgorithm elements'
+  ],
+  ['GHSA-vfj7-8cjw-p6xm', 'braces vulnerable to stack-exhaustion denial of service through deeply nested patterns'],
+  [
+    'GHSA-m9gg-hp2v-232j',
+    'In certain configurations, getAuthContext can return unauthorized certificates as though they were authorized'
+  ]
+]);
 
-    if (stdout.includes('minimatch') && !stdout.includes('critical')) {
-      return;
+const formatAdvisory = advisory => {
+  const details = Object.entries(advisory.children).map(([name, value]) => {
+    const formattedValue = Array.isArray(value) ? value.join(', ') : value;
+
+    return `  ${name}: ${formattedValue}`;
+  });
+
+  return [advisory.value, ...details].join('\n');
+};
+
+exec('yarn npm audit --recursive --severity high --json', (error, stdout, stderr) => {
+  const advisories = stdout
+    .split('\n')
+    .filter(Boolean)
+    .map(line => JSON.parse(line));
+
+  const vulnerabilities = advisories.filter(advisory => {
+    const advisoryId = advisory.children.URL.split('/').pop();
+    const ignoreReason = ignoredAdvisories.get(advisoryId);
+
+    if (!ignoreReason) {
+      return true;
     }
 
-    if (stdout.includes('high') || stdout.includes('critical')) {
-      throw new Error('Audit failed');
-    }
+    console.warn(`Ignoring ${advisoryId}: ${ignoreReason}`);
+
+    return false;
+  });
+
+  if (vulnerabilities.length > 0) {
+    console.error(vulnerabilities.map(formatAdvisory).join('\n\n'));
+    throw new Error(`Audit failed with ${vulnerabilities.length} vulnerabilities`);
+  }
+
+  if (error && !stdout.trim()) {
+    console.error(stderr);
+    throw error;
   }
 });
