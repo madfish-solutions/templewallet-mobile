@@ -18,7 +18,7 @@ import { collectiblesDetailsRecordFromObjktBatch, convertCollectibleObjktInfoToS
  */
 const loadCollectiblesDetailsEpic: AnyActionEpic = (action$, state$) =>
   state$.pipe(
-    map(state => state.wallet.selectedAccountPublicKeyHash),
+    map(state => state.wallet.selectedAccountId),
     distinctUntilChanged(),
     switchMap(() =>
       action$.pipe(

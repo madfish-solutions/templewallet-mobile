@@ -8,7 +8,7 @@ import { SlicedAsyncStorage } from 'src/utils/sliced-async-storage';
 import { transformWhitelistToTokenMetadata } from 'src/utils/token-metadata.utils';
 
 import { createEntity } from '../create-entity';
-import { setSelectedAccountAction } from '../wallet/wallet-actions';
+import { setSelectedAccountIdAction } from '../wallet/wallet-actions';
 
 import {
   addKnownSvg,
@@ -46,7 +46,7 @@ const tokensMetadataReducers = createReducer<TokensMetadataState>(tokensMetadata
     state.isLoading = false;
   });
 
-  builder.addCase(setSelectedAccountAction, state => {
+  builder.addCase(setSelectedAccountIdAction, state => {
     state.isLoading = false;
   });
 

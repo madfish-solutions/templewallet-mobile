@@ -5,7 +5,7 @@ import { persistReducer } from 'redux-persist';
 import { SlicedAsyncStorage } from 'src/utils/sliced-async-storage';
 
 import { createEntity } from '../create-entity';
-import { setSelectedAccountAction } from '../wallet/wallet-actions';
+import { setSelectedAccountIdAction } from '../wallet/wallet-actions';
 
 import { loadCollectiblesDetailsActions, loadOneCollectibleDetailsActions } from './collectibles-actions';
 import { CollectiblesState, collectiblesInitialState } from './collectibles-state';
@@ -75,7 +75,7 @@ const collectiblesReducer = createReducer<CollectiblesState>(collectiblesInitial
     state.details.isLoading = hasInFlightCollectiblesDetails(state.collectiblesDetailsInFlight);
   });
 
-  builder.addCase(setSelectedAccountAction, state => {
+  builder.addCase(setSelectedAccountIdAction, state => {
     state.details.isLoading = false;
     state.collectiblesDetailsInFlight = {};
   });

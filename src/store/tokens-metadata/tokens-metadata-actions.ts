@@ -12,7 +12,7 @@ export const removeKnownSvg = createAction<string>('assets/REMOVE_KNOWN_SVG');
 export const putTokenMetadataAction = createAction<TezosTokenMetadata | nullish>('assets/ADD_TOKENS_METADATA');
 
 interface TokensMetadataLoadSuccessPayload {
-  tokens: TokenMetadataInterface[];
+  tokens: TezosTokenMetadata[];
   /** `true` when this submit's stream has finished. Partial successes keep `isLoading`. */
   done?: boolean;
 }

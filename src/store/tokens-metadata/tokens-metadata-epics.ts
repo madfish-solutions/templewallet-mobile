@@ -117,7 +117,7 @@ const loadTokenMetadataEpic: AnyActionEpic = (action$, state$) =>
  */
 const loadTokensMetadataEpic: AnyActionEpic = (action$, state$) =>
   state$.pipe(
-    map(state => state.wallet.selectedAccountPublicKeyHash),
+    map(state => state.wallet.selectedAccountId),
     distinctUntilChanged(),
     switchMap(() =>
       action$.pipe(

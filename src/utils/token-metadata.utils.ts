@@ -168,11 +168,11 @@ const METADATA_NULL_RETRY_MAX_ROUNDS = 10;
 const METADATA_NULL_RETRY_BASE_DELAY_MS = 1000;
 
 interface MetadataChunkMapping {
-  metadata: TokenMetadataInterface[];
+  metadata: TezosTokenMetadata[];
   nullSlugs: string[];
 }
 
-type MetadataWaveTokens = { kind: 'tokens'; metadata: TokenMetadataInterface[] };
+type MetadataWaveTokens = { kind: 'tokens'; metadata: TezosTokenMetadata[] };
 
 type MetadataWaveRound = { kind: 'round'; nullSlugs: string[]; extraRound: number; inputSize: number };
 
@@ -182,7 +182,7 @@ export const mapMetadataChunkResponses = (
   slugs: string[],
   data: (TokenMetadataResponse | null)[]
 ): MetadataChunkMapping => {
-  const metadata: TokenMetadataInterface[] = [];
+  const metadata: TezosTokenMetadata[] = [];
   const nullSlugs: string[] = [];
 
   slugs.forEach((slug, index) => {
@@ -269,7 +269,7 @@ const fetchMetadataWave$ = (slugs: string[], extraRound: number): Observable<Met
   );
 };
 
-export const loadTokensMetadata$ = (slugs: string[]): Observable<TokenMetadataInterface[]> => {
+export const loadTokensMetadata$ = (slugs: string[]): Observable<TezosTokenMetadata[]> => {
   if (slugs.length === 0) {
     return EMPTY;
   }
