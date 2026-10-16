@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { Linking } from 'react-native';
 
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
@@ -25,7 +26,7 @@ export const useNFTUniversalLinks = () => {
       const slug = parseCollectibleUniversalLinkSlug(link);
 
       if (isString(slug)) {
-        navigateToModal(ModalsEnum.CollectibleModal, { slug });
+        navigateToModal(ModalsEnum.CollectibleModal, { chainKind: TempleChainKind.Tezos, slug });
       } else {
         showErrorToast({ description: 'Cannot parse NFT link' });
       }

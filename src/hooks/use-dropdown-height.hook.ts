@@ -1,3 +1,5 @@
 import { useWindowDimensions } from 'react-native';
 
-export const useDropdownHeight = () => 0.7 * useWindowDimensions().height;
+import { formatSize } from 'src/styles/format-size';
+
+export const useDropdownHeight = () => Math.min(0.8 * useWindowDimensions().height, formatSize(646));

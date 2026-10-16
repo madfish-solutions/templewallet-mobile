@@ -23,7 +23,7 @@ describe('loadTokenMetadata$', () => {
     mockTezosMetadataApi.get.mockReturnValue(Promise.resolve({ data: mockApiResponse }));
   });
 
-  it('should return correct TokenMetadataInterface structure', done =>
+  it('should return correct TezosTokenMetadata structure', done =>
     void loadTokenMetadata$(mockAddress, mockId).subscribe(
       rxJsTestingHelper(tokenMetadata => {
         expect(tokenMetadata.id).toEqual(mockId);

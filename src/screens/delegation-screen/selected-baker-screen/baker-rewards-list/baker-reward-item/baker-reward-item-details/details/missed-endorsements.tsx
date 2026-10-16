@@ -5,8 +5,8 @@ import { Text, View } from 'react-native';
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { formatSize } from 'src/styles/format-size';
+import { TEZ_TOKEN_SYMBOL } from 'src/token/data/tokens-metadata';
 
 import { BakingHistoryEntry } from '../../../interfaces/baking-history-entry';
 import { useBakerRewardItemStyles } from '../../baker-reward-item.styles';
@@ -16,7 +16,6 @@ export const MissedEndorsements: FC<Pick<BakingHistoryEntry, 'missedAttestations
   missedAttestationRewards
 }) => {
   const styles = useBakerRewardItemStyles();
-  const { metadata } = useNetworkInfo();
 
   return (
     <>
@@ -37,7 +36,7 @@ export const MissedEndorsements: FC<Pick<BakingHistoryEntry, 'missedAttestations
               <Divider size={formatSize(2)} />
               <Text style={styles.textRed}>
                 -{missedAttestationRewards.decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() + ' '}
-                {metadata.symbol}
+                {TEZ_TOKEN_SYMBOL}
                 <Text style={styles.textGray}>
                   {' '}
                   for <Text style={styles.textBlack}>{missedAttestations.toString()} slots</Text>

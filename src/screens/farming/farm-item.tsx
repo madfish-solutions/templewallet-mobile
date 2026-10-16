@@ -88,11 +88,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
       }
     } catch (e) {
       trackErrorEvent('FarmHarvestAssetsError', e, [], {
-        harvestAssetsInput: {
-          rpcUrl: tezos.rpc.getRpcUrl(),
-          contractAddress,
-          lastStakeId
-        }
+        harvestAssetsInput: { contractAddress, lastStakeId }
       });
     }
   }, [

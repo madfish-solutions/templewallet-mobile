@@ -19,7 +19,7 @@ export const AbstractField = memo<Props>(({ name, title, testID }) => {
   return (
     <>
       <View style={styles.checkboxContainer}>
-        <FormCheckbox name={name} testID={testID} inverted shouldShowError={false}>
+        <FormCheckbox name={name} testID={testID} shouldShowError={false}>
           <Divider size={formatSize(4)} />
           <Text style={styles.checkboxText}>{title}</Text>
         </FormCheckbox>

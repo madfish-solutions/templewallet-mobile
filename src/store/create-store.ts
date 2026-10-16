@@ -6,22 +6,30 @@ import { persistStore } from 'redux-persist';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
+import { REDUX_LOGGER_ENABLED } from 'src/utils/env.utils';
 import { isDefined } from 'src/utils/is-defined';
 
+import { loadCollectiblesDetailsActions } from './collectibles/collectibles-actions';
+import { resetApplicationAction } from './root-state.actions';
 import persistedReducer from './root-state.reducers';
+import { loadTokensMetadataActions } from './tokens-metadata/tokens-metadata-actions';
 import { RootState } from './types';
 
 const epicMiddleware = createEpicMiddleware();
 const middlewares: Middleware<object, RootState>[] = [epicMiddleware];
 
-if (__DEV__ && !isDefined(process.env.JEST_WORKER_ID)) {
-  const skipLoggerTypePrefixes = ['collectibles/LOAD_COLLECTIBLES_DETAILS', 'assets/LOAD_TOKENS_METADATA'];
+const NOT_LOGGABLE_ACTIONS = [
+  resetApplicationAction.success,
+  loadCollectiblesDetailsActions.submit,
+  loadTokensMetadataActions.submit
+];
 
+if (REDUX_LOGGER_ENABLED && !isDefined(process.env.JEST_WORKER_ID)) {
   middlewares.push(
     createLogger({
       diff: true,
       collapsed: true,
-      predicate: (_getState, action) => !skipLoggerTypePrefixes.some(prefix => String(action.type).startsWith(prefix))
+      predicate: (_getState, testedAction) => !NOT_LOGGABLE_ACTIONS.some(action => action.match(testedAction))
     })
   );
 }

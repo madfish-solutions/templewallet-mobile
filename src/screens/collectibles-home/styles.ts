@@ -1,15 +1,16 @@
-import { DEFAULT_BORDER_WIDTH } from 'src/config/styles';
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
 export const useCollectiblesHomeStyles = createUseStylesMemoized(({ colors, typography }) => ({
   screen: {
     flex: 1,
-    flexDirection: 'column'
+    flexDirection: 'column',
+    overflow: 'hidden'
   },
   headerCard: {
+    marginBottom: 0,
     paddingHorizontal: 0,
-    paddingBottom: formatSize(4)
+    backgroundColor: colors.pageBG
   },
   headerContainer: {
     flexDirection: 'row',
@@ -25,20 +26,19 @@ export const useCollectiblesHomeStyles = createUseStylesMemoized(({ colors, typo
     justifyContent: 'space-between',
     alignItems: 'center'
   },
-  profileContainer: {
-    paddingTop: formatSize(16),
-    paddingBottom: formatSize(12)
-  },
   collectionsHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: formatSize(4)
   },
+  collectionsSection: {
+    overflow: 'hidden'
+  },
   collectionsLabel: {
     ...typography.body15Semibold,
     color: colors.black
   },
-  collectionsContainer: {
+  collectionsList: {
     paddingTop: formatSize(8),
     paddingLeft: formatSize(4)
   },
@@ -46,30 +46,18 @@ export const useCollectiblesHomeStyles = createUseStylesMemoized(({ colors, typo
     ...typography.caption13Semibold,
     color: colors.disabled
   },
-  infoContainer: {
+  toolbarContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: formatSize(8),
-    paddingHorizontal: formatSize(16),
-    borderColor: colors.lines,
-    borderBottomWidth: DEFAULT_BORDER_WIDTH,
-    borderTopWidth: DEFAULT_BORDER_WIDTH,
-    backgroundColor: colors.pageBG,
-    height: formatSize(40)
+    alignItems: 'center',
+    paddingVertical: formatSize(12)
   },
-  icons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around'
+  searchInputContainer: {
+    flex: 1,
+    marginHorizontal: 0
   },
-  checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  handleStyle: {
-    display: 'none'
-  },
-  bottomSheet: {
-    backgroundColor: colors.pageBG
+  listContainer: {
+    flex: 1,
+    overflow: 'hidden'
   }
 }));
 

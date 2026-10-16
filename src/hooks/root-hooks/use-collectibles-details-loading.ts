@@ -10,7 +10,7 @@ import {
 } from 'src/store/collectibles/collectibles-selectors';
 import { CollectibleDetailsRecord } from 'src/store/collectibles/collectibles-state';
 import { useTokensMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
-import { useAllCurrentAccountAssetsSelector, useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAllCurrentAccountAssetsSelector, useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { WR_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { isCollectible } from 'src/utils/tezos.util';
@@ -31,7 +31,7 @@ const createEmptyCollectiblesSlugsGroups = (): CollectiblesSlugsGroups => ({
 const WR_TOKEN_SLUG = toTokenSlug(WR_TOKEN_METADATA.address, WR_TOKEN_METADATA.id);
 
 export const useCollectiblesDetailsLoading = () => {
-  const accountPkh = useCurrentAccountPkhSelector();
+  const accountPkh = useAccountAddressForTezos();
   const assets = useAllCurrentAccountAssetsSelector();
   const allMetadatas = useTokensMetadataSelector();
   const collectiblesDetails = useAllCollectiblesDetailsSelector();

@@ -3,11 +3,7 @@ import { formatSize } from 'src/styles/format-size';
 
 export const useTokenEquityValueStyles = createUseStylesMemoized(({ colors, typography }) => ({
   container: {
-    marginTop: formatSize(16)
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center'
+    marginTop: formatSize(24)
   },
   equityContainer: {
     flex: 1,
@@ -21,17 +17,16 @@ export const useTokenEquityValueStyles = createUseStylesMemoized(({ colors, typo
     textTransform: 'uppercase'
   },
   mainValueText: {
-    ...typography.numbersMedium20,
+    ...typography.numbersMedium28,
     color: colors.black
   },
   additionalValueText: {
-    ...typography.numbersRegular15,
+    ...typography.numbersRegular13,
     color: colors.gray1
-  }
-}));
-
-export const useAssetEquityTextStyles = createUseStylesMemoized(({ colors }) => ({
-  numberText: {
-    color: colors.gray1
+  },
+  totalEquityText: {
+    ...typography.caption13Regular,
+    color: colors.gray1,
+    marginBottom: formatSize(2)
   }
 }));

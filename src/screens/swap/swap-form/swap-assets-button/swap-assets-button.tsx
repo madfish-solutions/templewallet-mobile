@@ -4,8 +4,8 @@ import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum.ts';
+import { TouchableIconV2 } from 'src/components/touchable-icon-v2';
 import { SwapFormValues } from 'src/interfaces/swap-asset.interface';
 import { resetSwapParamsAction } from 'src/store/swap/swap-actions';
 import { formatSize } from 'src/styles/format-size';
@@ -35,10 +35,11 @@ export const SwapAssetsButton: FC = () => {
 
   return (
     <View style={SwapAssetsButtonStyles.container}>
-      <TouchableIcon
+      <TouchableIconV2
         onPress={() => swapAction(inputAssets, outputAssets)}
-        name={IconNameEnum.SwapArrow}
+        name={IconNameV2Enum.ArrowUpDown}
         size={formatSize(24)}
+        iconSize={24}
         color={colors.orange}
         testID={SwapFormSelectors.swapAssetsButton}
       />

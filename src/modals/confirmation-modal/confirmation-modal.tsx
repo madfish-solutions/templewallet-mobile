@@ -11,9 +11,12 @@ import { usePreparedOpParamsSelector } from 'src/store/sapling';
 import { cancelSaplingPreparationAction, clearPreparedOpParamsAction } from 'src/store/sapling/sapling-actions';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
+import { InternalOperationsConfirmation } from './common/internal-operations-confirmation';
 import { DAppOperationsConfirmation } from './d-app-operations-confirmation/d-app-operations-confirmation';
-import { InternalOperationsConfirmation } from './internal-operations-confirmation/internal-operations-confirmation';
+import { EvmInternalOperationsConfirmation } from './evm-internal-operations-confirmation';
 import { SaplingOperationsConfirmation } from './sapling-operations-confirmation/sapling-operations-confirmation';
+import { WcSessionProposalConfirmation } from './wc-session-proposal-confirmation';
+import { WcSessionRequestConfirmation } from './wc-session-request-confirmation';
 
 export const ConfirmationModal: FC = () => (
   <>
@@ -76,6 +79,19 @@ const ConfirmationModalContent: FC = () => {
           direction={params.direction}
         />
       );
+    case ConfirmationTypeEnum.EvmInternalOperations:
+      return (
+        <EvmInternalOperationsConfirmation
+          accountId={params.accountId}
+          asset={params.asset}
+          receiverAddress={params.receiverAddress}
+          atomicAmount={params.atomicAmount}
+        />
+      );
+    case ConfirmationTypeEnum.WcSessionProposal:
+      return <WcSessionProposalConfirmation proposal={params.proposal} />;
+    case ConfirmationTypeEnum.WcSessionRequest:
+      return <WcSessionRequestConfirmation request={params.request} />;
     default:
       return (
         <ScreenContainer isFullScreenMode={true}>

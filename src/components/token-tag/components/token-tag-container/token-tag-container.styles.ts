@@ -7,7 +7,7 @@ export const useTokenTagContainerStyles = createUseStylesMemoized(({ colors }) =
     borderRadius: formatSize(8),
     paddingHorizontal: formatSize(6),
     paddingVertical: formatSize(2),
-    marginLeft: formatSize(4)
+    marginLeft: formatSize(8)
   },
   scam: {
     backgroundColor: colors.destructive

@@ -36,8 +36,7 @@ export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }
     color: colors.black,
     flexGrow: 1,
     flexShrink: 1,
-    paddingTop: formatSize(12),
-    paddingBottom: formatSize(12),
+    paddingVertical: formatSize(12),
     borderColor: colors.lines,
     borderRightWidth: DEFAULT_BORDER_WIDTH
   },
@@ -55,6 +54,9 @@ export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }
     paddingLeft: formatSize(8),
     paddingRight: formatSize(12),
     paddingVertical: formatSize(12)
+  },
+  compactDropdownContainer: {
+    paddingRight: formatSize(8)
   },
   disabledDropdownContainer: {
     backgroundColor: colors.input
@@ -74,6 +76,11 @@ export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }
   equivalentValueText: {
     ...typography.numbersRegular11,
     color: colors.gray1
+  },
+  footerErrorText: {
+    ...typography.caption11Regular,
+    color: colors.destructive,
+    marginLeft: formatSize(6)
   },
   balanceContainer: {
     alignSelf: 'flex-start'

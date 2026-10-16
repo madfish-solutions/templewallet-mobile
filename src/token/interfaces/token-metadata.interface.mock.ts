@@ -1,6 +1,6 @@
-import type { TokenMetadataInterface } from './token-metadata.interface';
+import type { TezosTokenMetadata } from './token-metadata.interface';
 
-export const mockFA1_2TokenMetadata: TokenMetadataInterface = {
+export const mockFA1_2TokenMetadata: TezosTokenMetadata = {
   id: 0,
   address: 'fa12TokenAddress',
   name: 'Mock FA1.2 token',
@@ -9,7 +9,7 @@ export const mockFA1_2TokenMetadata: TokenMetadataInterface = {
   thumbnailUri: 'https://fakeurl.com/img.png'
 };
 
-export const mockFA2TokenMetadata: TokenMetadataInterface = {
+export const mockFA2TokenMetadata: TezosTokenMetadata = {
   id: 2,
   address: 'fa2TokenAddress',
   name: 'Mock FA2 token',

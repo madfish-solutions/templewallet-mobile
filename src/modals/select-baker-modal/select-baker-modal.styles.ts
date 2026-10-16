@@ -11,9 +11,6 @@ export const useSelectBakerModalStyles = createUseStyles(({ colors, typography }
     justifyContent: 'space-between',
     alignItems: 'center'
   },
-  searchContainer: {
-    paddingHorizontal: formatSize(8)
-  },
   infoText: {
     ...typography.caption11Regular,
     color: colors.black,

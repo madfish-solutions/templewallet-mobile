@@ -49,7 +49,7 @@ export const DApps = () => {
   const { maxApr: farmsMaxApr } = useUserFarmingStats();
   const { maxApr: savingsMaxApr } = useUserSavingsStats();
 
-  const { balance } = useTotalBalance();
+  const totalBalance = useTotalBalance();
 
   const maxRoundedApr = useMemo(
     () => formatOptionalPercentage(farmsMaxApr && savingsMaxApr && BigNumber.max(farmsMaxApr, savingsMaxApr)),
@@ -146,7 +146,7 @@ export const DApps = () => {
               onPress={() => navigateToScreen({ screen: ScreensEnum.Earn })}
               testID={DAppsSelectors.earnButton}
               testIDProperties={{
-                isZeroBalance: new BigNumber(balance).isLessThanOrEqualTo(0)
+                isZeroBalance: totalBalance.isLessThanOrEqualTo(0)
               }}
             />
 
