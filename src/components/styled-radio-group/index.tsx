@@ -7,7 +7,7 @@ import { useColors } from 'src/styles/use-colors';
 import { RadioItemInterface, RadioGroup } from './radio-group';
 import { useStyledRadioButtonsGroupStyles } from './styles';
 
-export interface StyledRadioGroupProps<T extends string> {
+interface StyledRadioGroupProps<T extends string> {
   items: RadioItemInterface<T>[];
 }
 

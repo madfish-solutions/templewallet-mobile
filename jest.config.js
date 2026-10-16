@@ -23,10 +23,10 @@ process.env.TZ = 'UTC';
 process.env.LANG = 'en_GB.UTF-8';
 
 module.exports = {
-  preset: 'react-native',
+  preset: '@react-native/jest-preset',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   transformIgnorePatterns: [
-    'node_modules/(?!((jest-)?@react-native|react-native|react-native-themis|react-navigation|@react-navigation/.*|rxjs|lodash-es|@sentry/.*|@dicebear/.*|@shopify/flash-list|@stablelib/.*)|(@d11/react-native-fast-image))'
+    'node_modules/(?!((jest-)?@react-native|react-native|react-native-themis|react-navigation|@react-navigation/.*|rxjs|lodash-es|@sentry/.*|@dicebear/.*|@shopify/flash-list|@stablelib/.*|p-queue|p-timeout)|(@d11/react-native-fast-image))'
   ],
   setupFiles: ['<rootDir>/jest.setup.js', 'jest-date-mock'],
   moduleNameMapper: {
@@ -43,6 +43,7 @@ module.exports = {
     '^@stablelib/x25519-session$': '<rootDir>/src/mocks/stablelib/x25519-session.mock.ts',
     '@airgap/beacon-dapp': '<rootDir>/src/mocks/airgap-beacon-dapp.mock.js',
     '@airgap/beacon-ui': '<rootDir>/src/mocks/airgap-beacon-ui.mock.js',
-    '@airgap/beacon-transport-postmessage': '<rootDir>/src/mocks/airgap-beacon-transport-postmessage.mock.js'
+    '@airgap/beacon-transport-postmessage': '<rootDir>/src/mocks/airgap-beacon-transport-postmessage.mock.js',
+    '@walletconnect/react-native-compat': '<rootDir>/src/mocks/walletconnect-react-native-compat.mock.js'
   }
 };

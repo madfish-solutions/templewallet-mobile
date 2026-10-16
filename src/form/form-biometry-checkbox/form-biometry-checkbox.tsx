@@ -31,7 +31,7 @@ export const FormBiometryCheckbox: FC<Props> = ({ name, testID }) => {
   };
 
   return isHardwareAvailable ? (
-    <Checkbox value={field.value} onChange={handleChange} inverted testID={testID}>
+    <Checkbox value={field.value} onChange={handleChange} testID={testID}>
       <Divider size={formatSize(4)} />
       <Text style={styles.checkboxText}>Use {biometryType ?? 'Biometrics'} to unlock the app</Text>
     </Checkbox>

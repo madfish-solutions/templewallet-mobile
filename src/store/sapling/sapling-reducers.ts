@@ -2,6 +2,7 @@ import { createReducer } from '@reduxjs/toolkit';
 import { REHYDRATE } from 'redux-persist';
 
 import {
+  cacheSaplingCredentialsAction,
   cancelSaplingPreparationAction,
   clearPreparedOpParamsAction,
   clearSaplingCredentialsAction,
@@ -9,6 +10,7 @@ import {
   loadSaplingTransactionHistoryActions,
   loadShieldedBalanceActions,
   prepareSaplingTransactionActions,
+  setShieldedBalanceLoadingAction,
   setHasSeenAnnouncementAction
 } from './sapling-actions';
 import { SaplingState, saplingInitialState, initialSaplingAccountState } from './sapling-state';
@@ -24,6 +26,18 @@ export const saplingReducers = createReducer<SaplingState>(saplingInitialState, 
     };
   });
 
+  builder.addCase(cacheSaplingCredentialsAction, (state, { payload: credentialsList }) => {
+    for (const { publicKeyHash, saplingAddress, viewingKey } of credentialsList) {
+      state.accountsRecord[publicKeyHash] = {
+        ...(state.accountsRecord[publicKeyHash] ?? initialSaplingAccountState),
+        saplingAddress,
+        viewingKey,
+        isCredentialsLoaded: true,
+        failedToLoadCredentials: false
+      };
+    }
+  });
+
   builder.addCase(loadSaplingCredentialsActions.fail, (state, { payload }) => {
     const { publicKeyHash } = payload;
     state.accountsRecord[publicKeyHash] = {
@@ -32,11 +46,9 @@ export const saplingReducers = createReducer<SaplingState>(saplingInitialState, 
     };
   });
 
-  builder.addCase(loadShieldedBalanceActions.submit, (state, _action) => {
-    for (const pkh of Object.keys(state.accountsRecord)) {
-      if (state.accountsRecord[pkh].isCredentialsLoaded) {
-        state.accountsRecord[pkh].isBalanceLoading = true;
-      }
+  builder.addCase(setShieldedBalanceLoadingAction, (state, { payload: publicKeyHash }) => {
+    if (state.accountsRecord[publicKeyHash]?.isCredentialsLoaded) {
+      state.accountsRecord[publicKeyHash].isBalanceLoading = true;
     }
   });
 

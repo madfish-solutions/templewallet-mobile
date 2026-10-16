@@ -18,7 +18,6 @@ import { BuyWithCreditCardSelectors } from '../selectors';
 import { getTopUpOutputAsset } from '../utils';
 
 import { useBuyWithCreditCardFormik } from './use-buy-with-credit-card-formik.hook';
-import { useFiatCurrenciesList } from './use-fiat-currencies-list.hook';
 import { usePaymentProviders } from './use-payment-providers.hook';
 
 export const useFormInputsCallbacks = (
@@ -35,9 +34,10 @@ export const useFormInputsCallbacks = (
   const manuallySelectedProviderIdRef = useRef<TopUpProviderEnum>(undefined);
   const valuesRef = useRef(values);
   const isLoadingRef = useRef(isLoading);
+  const updateProvidersOutputsRef = useRef(updateProvidersOutputs);
+  const outputRequestIdRef = useRef(0);
   const dispatch = useDispatch();
   const allPairsLimits = useAllPairsLimitsSelector();
-  const { noPairLimitsFiatCurrencies } = useFiatCurrenciesList(inputValue.asset.code, outputToken.slug);
 
   useEffect(() => {
     valuesRef.current = values;
@@ -46,6 +46,10 @@ export const useFormInputsCallbacks = (
   useEffect(() => {
     isLoadingRef.current = isLoading;
   }, [isLoading]);
+
+  useEffect(() => {
+    updateProvidersOutputsRef.current = updateProvidersOutputs;
+  }, [updateProvidersOutputs]);
 
   const setPaymentProvider = useCallback(
     async (newProvider: PaymentProviderInterface | undefined) => {
@@ -64,24 +68,28 @@ export const useFormInputsCallbacks = (
 
   const updateOutput = useMemo(
     () =>
-      debounce(async (newInput: TopUpAssetAmountInterface, newOutputToken: TopUpOutputInterface) => {
+      debounce(async (newInput: TopUpAssetAmountInterface, newOutputToken: TopUpOutputInterface, requestId: number) => {
         const { asset: newInputAsset, amount: newInputAmount } = newInput;
 
-        await updateProvidersOutputs(newInputAmount, newInputAsset, newOutputToken);
+        await updateProvidersOutputsRef.current(newInputAmount, newInputAsset, newOutputToken);
 
-        setFormIsLoading(false);
-      }, 200),
-    [updateProvidersOutputs]
+        if (requestId === outputRequestIdRef.current) {
+          setFormIsLoading(false);
+        }
+      }, 600),
+    [setFormIsLoading]
   );
+
+  useEffect(() => () => updateOutput.cancel(), [updateOutput]);
 
   const handleInputValueChange = useCallback(
     (newInput: TopUpAssetAmountInterface) => {
       const currentOutputToken = valuesRef.current.getOutput.asset;
       outputCalculationDataRef.current = { inputValue: newInput, outputToken: currentOutputToken };
       setFormIsLoading(true);
-      updateOutput(newInput, currentOutputToken);
+      updateOutput(newInput, currentOutputToken, ++outputRequestIdRef.current);
     },
-    [updateOutput]
+    [setFormIsLoading, updateOutput]
   );
 
   const handleOutputValueChange = useCallback(
@@ -107,9 +115,9 @@ export const useFormInputsCallbacks = (
       };
 
       setFormIsLoading(true);
-      updateOutput(patchedInputValue, newOutputAsset);
+      updateOutput(patchedInputValue, newOutputAsset, ++outputRequestIdRef.current);
     },
-    [noPairLimitsFiatCurrencies, allPairsLimits, updateOutput]
+    [allPairsLimits, setFormIsLoading, updateOutput]
   );
 
   const handlePaymentProviderChange = useCallback(
@@ -120,7 +128,7 @@ export const useFormInputsCallbacks = (
         trackEvent(BuyWithCreditCardSelectors.provider, AnalyticsEventCategory.ButtonPress, { newProvider });
       }
     },
-    [setPaymentProvider]
+    [setPaymentProvider, trackEvent]
   );
 
   const refreshForm = useCallback(() => {
@@ -134,9 +142,9 @@ export const useFormInputsCallbacks = (
     if (!isLoadingRef.current) {
       outputCalculationDataRef.current = { inputValue: currentInputValue, outputToken: currentOutputToken };
       setFormIsLoading(true);
-      updateOutput(currentInputValue, currentOutputToken);
+      updateOutput(currentInputValue, currentOutputToken, ++outputRequestIdRef.current);
     }
-  }, [dispatch, updateOutput]);
+  }, [dispatch, setFormIsLoading, updateOutput]);
 
   const handleSendInputBlur = useCallback(() => void setFieldTouched('sendInput'), [setFieldTouched]);
   const handleGetOutputBlur = useCallback(() => void setFieldTouched('getOutput'), [setFieldTouched]);

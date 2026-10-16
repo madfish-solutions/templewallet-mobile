@@ -1,18 +1,12 @@
-import { AccountBaseInterface } from 'src/interfaces/account.interface';
-
-interface ContactStateInterface {
-  tezosBalance: string;
-}
+import { Contact } from 'src/interfaces/contact.interface';
 
 export interface ContactBookState {
-  contacts: Array<AccountBaseInterface>;
-  contactsStateRecord: Record<string, ContactStateInterface>;
+  contacts: Contact[];
   ignoredAddresses: Array<string>;
   contactCandidateAddress: string;
 }
 export const contactBookInitialState: ContactBookState = {
   contacts: [],
-  contactsStateRecord: {},
   ignoredAddresses: [],
   contactCandidateAddress: ''
 };

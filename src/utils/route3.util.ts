@@ -22,7 +22,7 @@ import {
 } from 'src/token/data/three-route-tokens';
 import {
   SIRS_TOKEN_METADATA,
-  TEZ_TOKEN_METADATA,
+  TEZ_TOKEN_SYMBOL,
   TEZ_TOKEN_SLUG,
   TZBTC_TOKEN_METADATA
 } from 'src/token/data/tokens-metadata';
@@ -49,7 +49,7 @@ const parser = (origJSON: string): ReturnType<(typeof JSON)['parse']> => {
 function getRoute3ParametrizedUrlPart(params: Route3SwapParamsRequest): string;
 function getRoute3ParametrizedUrlPart(params: Route3LbSwapParamsRequest): string;
 function getRoute3ParametrizedUrlPart(params: Route3SwapParamsRequest | Route3LbSwapParamsRequest) {
-  const { fromSymbol, toSymbol, amount, toTokenDecimals, rpcUrl, ...queryParams } = params;
+  const { fromSymbol, toSymbol, amount, toTokenDecimals, ...queryParams } = params;
   const searchParams = new URLSearchParams(
     transform<typeof queryParams, StringRecord>(
       queryParams,
@@ -141,10 +141,10 @@ const correctOutput = <T extends Route3TreeNode>(tree: T, newOutput: BigNumber, 
 export const fetchRoute3LiquidityBakingParams = async (
   params: Route3LbSwapParamsRequest
 ): Promise<Route3LiquidityBakingParamsResponse> => {
-  const { rpcUrl, toSymbol, toTokenDecimals } = params;
+  const { toSymbol, toTokenDecimals } = params;
 
   if (params.fromSymbol === THREE_ROUTE_SIRS_TOKEN.symbol) {
-    const { tokenPool, xtzPool, lqtTotal } = await getLbStorage(params.rpcUrl);
+    const { tokenPool, xtzPool, lqtTotal } = await getLbStorage();
     const sirsAtomicAmount = tzToMutez(new BigNumber(params.amount), THREE_ROUTE_SIRS_TOKEN.decimals);
     const tzbtcAtomicAmount = sirsAtomicAmount
       .times(tokenPool)
@@ -174,7 +174,6 @@ export const fetchRoute3LiquidityBakingParams = async (
             toSymbol: toSymbol,
             amount: xtzInAmount,
             toTokenDecimals,
-            rpcUrl,
             dexesLimit: params.xtzDexesLimit,
             showTree: true
           }),
@@ -195,7 +194,6 @@ export const fetchRoute3LiquidityBakingParams = async (
             toSymbol: toSymbol,
             amount: tzbtcInAmount,
             toTokenDecimals,
-            rpcUrl,
             dexesLimit: params.tzbtcDexesLimit,
             showTree: true
           })
@@ -275,7 +273,7 @@ export const fetchRoute3Dexes$ = () =>
   from(route3Api.get<Array<Route3Dex>>('/dexes')).pipe(map(response => response.data));
 
 const route3TokenSymbols = {
-  [TEZ_TOKEN_METADATA.symbol]: THREE_ROUTE_XTZ_TOKEN.symbol,
+  [TEZ_TOKEN_SYMBOL]: THREE_ROUTE_XTZ_TOKEN.symbol,
   [TZBTC_TOKEN_METADATA.symbol]: THREE_ROUTE_TZBTC_TOKEN.symbol,
   [SIRS_TOKEN_METADATA.symbol]: THREE_ROUTE_SIRS_TOKEN.symbol
 };

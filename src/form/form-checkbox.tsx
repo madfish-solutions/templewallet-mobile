@@ -10,8 +10,10 @@ import { isDefined } from '../utils/is-defined';
 
 import { ErrorMessage } from './error-message/error-message';
 
-interface Props extends Pick<CheckboxProps, 'disabled' | 'size' | 'testID' | 'inverted'>, TestIdProps {
+interface Props extends Pick<CheckboxProps, 'disabled' | 'size' | 'testID'>, TestIdProps {
   name: string;
+  onValueChange?: SyncFn<boolean>;
+  shouldValidate?: boolean;
   descriptionNode?: ReactNode;
   error?: string;
   shouldShowError?: boolean;
@@ -19,11 +21,12 @@ interface Props extends Pick<CheckboxProps, 'disabled' | 'size' | 'testID' | 'in
 
 export const FormCheckbox: FCWithChildren<Props> = ({
   name,
+  onValueChange,
+  shouldValidate = true,
   children,
   descriptionNode,
   disabled,
   size,
-  inverted,
   testID,
   testIDProperties,
   error,
@@ -36,19 +39,13 @@ export const FormCheckbox: FCWithChildren<Props> = ({
     trackEvent(testID, AnalyticsEventCategory.FormChange, testIDProperties);
 
     helpers.setTouched(true);
-    helpers.setValue(newValue);
+    onValueChange?.(newValue);
+    helpers.setValue(newValue, shouldValidate);
   };
 
   return (
     <>
-      <Checkbox
-        disabled={disabled}
-        value={field.value}
-        size={size}
-        inverted={inverted}
-        onChange={handleChange}
-        testID={testID}
-      >
+      <Checkbox disabled={disabled} value={field.value} size={size} onChange={handleChange} testID={testID}>
         {children}
       </Checkbox>
       {descriptionNode}

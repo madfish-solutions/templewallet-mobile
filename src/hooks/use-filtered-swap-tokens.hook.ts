@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react';
 
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import { useAssetExchangeRateGetter } from 'src/store/settings/settings-selectors';
 import { useSwapTokensMetadataSelector } from 'src/store/swap/swap-selectors';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { useAccountTokensBalancesRecord } from 'src/utils/assets/hooks';
@@ -9,8 +11,6 @@ import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 import { TokenInterface } from '../token/interfaces/token.interface';
 import { isString } from '../utils/is-string';
 import { isNonZeroBalance } from '../utils/tezos.util';
-
-import { useTokenExchangeRateGetter } from './use-token-exchange-rate-getter.hook';
 
 export enum TokensInputsEnum {
   From = 'From',
@@ -23,7 +23,7 @@ export const useFilteredSwapTokensList = (
 ) => {
   const { data: swapTokensMetadata } = useSwapTokensMetadataSelector();
   const tezosToken = useTezosTokenOfCurrentAccount();
-  const getTokenExchangeRate = useTokenExchangeRateGetter();
+  const getTokenExchangeRate = useAssetExchangeRateGetter();
 
   const balances = useAccountTokensBalancesRecord();
 
@@ -33,6 +33,7 @@ export const useFilteredSwapTokensList = (
 
       return {
         ...token,
+        chainKind: TempleChainKind.Tezos,
         exchangeRate: getTokenExchangeRate(slug),
         balance: balances[slug] ?? '0'
       };
@@ -40,7 +41,7 @@ export const useFilteredSwapTokensList = (
 
     applySortByDollarValueDecrease(result);
 
-    result.unshift(tezosToken);
+    result.unshift({ ...tezosToken, chainKind: TempleChainKind.Tezos });
 
     return result;
   }, [swapTokensMetadata, tezosToken, balances]);

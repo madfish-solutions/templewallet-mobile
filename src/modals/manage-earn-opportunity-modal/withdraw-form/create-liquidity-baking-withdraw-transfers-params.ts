@@ -30,7 +30,7 @@ export const createLiquidityBakingWithdrawTransfersParams = async (
       outputAfterFeeAtomic,
       ...hops
     }
-  ] = await calculateUnstakeParams([tokenIndex], lpAmount, slippageTolerancePercentage, tezos.rpc.getRpcUrl());
+  ] = await calculateUnstakeParams([tokenIndex], lpAmount, slippageTolerancePercentage);
 
   const transferFeeFromInputParams = await getRoutingFeeTransferParams(
     THREE_ROUTE_SIRS_TOKEN,

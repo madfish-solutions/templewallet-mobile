@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { Share } from 'react-native';
 
 import { LIMIT_NFT_FEATURES } from 'src/config/system';
-import { CollectibleModalSelectors } from 'src/modals/collectible-modal/collectible-modal.selectors';
+import { CollectibleModalSelectors } from 'src/modals/collectible-modal/selectors';
 import { showErrorToast } from 'src/toast/error-toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';

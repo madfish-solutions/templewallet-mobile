@@ -19,7 +19,7 @@ import {
 import { showSuccessToast, showErrorToastByError } from 'src/toast/toast.utils';
 import { doesCloudBackupExist, saveCloudBackup } from 'src/utils/cloud-backup';
 import { useCloudAnalytics } from 'src/utils/cloud-backup/use-cloud-analytics';
-import { generateSeed } from 'src/utils/keys.util';
+import { generateSeed } from 'src/utils/keys.utils';
 
 type CreateNewPasswordFormValues = {
   password: string;
@@ -101,8 +101,7 @@ export const useHandleSubmit = (backupFlow?: BackupFlow) => {
 
         const seedPhrase = backupFlowMemo?.type === 'RESTORE' ? backupFlowMemo.mnemonic : await generateSeed();
 
-        // importWallet dispatches `hideLoaderAction` when done
-        importWallet({ seedPhrase, password, useBiometry });
+        await importWallet({ seedPhrase, password, useBiometry });
 
         if (!backupFlowMemo) {
           return void dispatch(requestSeedPhraseBackupAction());

@@ -2,7 +2,7 @@ import { BigNumber } from 'bignumber.js';
 import { object, ValidationError } from 'yup';
 
 import { DEFAULT_EXPECTED_GAS_EXPENSE } from 'src/config/general';
-import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
+import { TezosTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { formatAssetAmount } from 'src/utils/number.util';
@@ -26,7 +26,7 @@ export const assetAmountValidation = object().shape({
 });
 
 export const createAssetAmountWithMaxValidation = (
-  gasToken: TokenMetadataInterface,
+  gasToken: TezosTokenMetadata,
   expectedGasExpense: BigNumber.Value = DEFAULT_EXPECTED_GAS_EXPENSE
 ) =>
   assetAmountValidation.clone().test('max-amount', (value, context) => {

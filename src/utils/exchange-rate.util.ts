@@ -173,6 +173,8 @@ export const FIAT_CURRENCIES = [
   }
 ];
 
+export const fetchTezExchangeRate = () => templeWalletApi.get<number>('/exchange-rates/tez').then(({ data }) => data);
+
 export const loadUsdToTokenRates$ = () =>
   from(templeWalletApi.get<Array<ExchangeRateInterface>>('/exchange-rates')).pipe(
     map(payload => {

@@ -1,11 +1,10 @@
-import { black } from 'src/config/styles';
 import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
-import { generateShadow } from 'src/styles/generate-shadow';
+import { iosCardShadow } from 'src/styles/shadows';
 
 export const useWhiteContainerStyles = createUseStyles(({ colors }) => ({
   container: {
-    ...generateShadow(1, black),
+    boxShadow: iosCardShadow,
     borderRadius: formatSize(10),
     backgroundColor: colors.cardBG
   }

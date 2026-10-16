@@ -4,46 +4,35 @@ import { BigNumber } from 'bignumber.js';
 import { from, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { AccountInterface } from '../interfaces/account.interface';
-import { TokenTypeEnum } from '../interfaces/token-type.enum';
-import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
-import { getTokenType } from '../token/utils/token.utils';
+import { Account } from '../interfaces/account.interfaces';
+import { TezosTokenMetadata, TezosTokenStandardsEnum } from '../token/interfaces/token-metadata.interface';
+import { getTokenStandard } from '../token/utils/token.utils';
 
+import { getAccountAddressForTezos, getAccountForTezos } from './account.utils';
 import { isString } from './is-string';
 import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
+import { throwError$ } from './rxjs.utils';
 
 export function getTransferParams$(
-  asset: Pick<TokenMetadataInterface, 'id' | 'address'>,
-  tezos: TezosToolkit,
-  senderPkh: string,
-  receiverPublicKeyHash: string,
-  amount: BigNumber
-): Observable<TransferParams>;
-export function getTransferParams$(
-  asset: Pick<TokenMetadataInterface, 'id' | 'address'>,
-  rpcUrl: string,
-  sender: AccountInterface,
-  receiverPublicKeyHash: string,
-  amount: BigNumber
-): Observable<TransferParams>;
-export function getTransferParams$(
-  asset: Pick<TokenMetadataInterface, 'id' | 'address'>,
-  rpcUrlOrTezos: string | TezosToolkit,
-  sender: AccountInterface | string,
+  asset: Pick<TezosTokenMetadata, 'id' | 'address'>,
+  tezosFromArgs: TezosToolkit | undefined,
+  sender: Account | string,
   receiverPublicKeyHash: string,
   amount: BigNumber
 ): Observable<TransferParams> {
   const { id, address } = asset;
   const tezos =
-    typeof rpcUrlOrTezos === 'string'
-      ? createReadOnlyTezosToolkit(rpcUrlOrTezos, sender as AccountInterface)
-      : rpcUrlOrTezos;
-  const senderPkh = typeof sender === 'string' ? sender : sender.publicKeyHash;
+    tezosFromArgs ?? createReadOnlyTezosToolkit(typeof sender === 'string' ? undefined : getAccountForTezos(sender));
+  const senderPkh = typeof sender === 'string' ? sender : getAccountAddressForTezos(sender);
+
+  if (!senderPkh) {
+    return throwError$('Select a Tezos account to send this asset');
+  }
 
   return isString(address)
     ? from(tezos.contract.at(address)).pipe(
         map(contract =>
-          getTokenType(contract) === TokenTypeEnum.FA_2
+          getTokenStandard(contract) === TezosTokenStandardsEnum.Fa2
             ? {
                 to: contract.address,
                 amount: 0,
