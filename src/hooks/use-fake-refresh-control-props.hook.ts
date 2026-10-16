@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { RefreshControlProps } from 'react-native';
 
 import { CurrentRouteNameContext } from 'src/navigator/current-route-name.context';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 
 import { useActiveTimer } from './use-active-timer.hook';
 
@@ -13,7 +13,7 @@ export const useFakeRefreshControlProps = (): RefreshControlProps => {
   const [isRefreshing, setRefreshing] = useState(false);
   const { activeTimer, clearActiveTimer } = useActiveTimer();
   const currentRouteName = useContext(CurrentRouteNameContext);
-  const publicKeyHash = useCurrentAccountPkhSelector();
+  const publicKeyHash = useAccountAddressForTezos();
 
   const handleRefresh = useCallback(() => {
     clearActiveTimer();

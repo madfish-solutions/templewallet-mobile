@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { BigNumber } from 'bignumber.js';
+import memoizee from 'memoizee';
 
 import { getMoonPayBuyQuote } from 'src/apis/moonpay';
 import { getMtPelerinConvertQuote, getMtPelerinSellLimit } from 'src/apis/mt-pelerin';
@@ -10,6 +11,7 @@ import { TopUpInputInterface, TopUpOutputInterface } from 'src/store/buy-with-cr
 import { createEntity } from 'src/store/create-entity';
 import { showErrorToast } from 'src/toast/error-toast.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { PairLimits } from 'src/utils/pair-limits';
 
 import { getAxiosQueryErrorMessage } from './get-axios-query-error-message';
 
@@ -30,20 +32,16 @@ const getInputAmountFunctions: Partial<
 
 const MT_PELERIN_MAX_BUY_CHF = 100_000;
 const MT_PELERIN_FEE_PROBE_AMOUNT = 100;
+const MT_PELERIN_LIMITS_CACHE_TTL = 300_000;
 
 const roundToFiatPrecision = (value: number, precision: number, roundingMode: BigNumber.RoundingMode) =>
   new BigNumber(value).decimalPlaces(precision, roundingMode).toNumber();
 
-const getMtPelerinUpdatedFiatLimits = async (
-  fiatCurrency: TopUpInputInterface,
-  cryptoCurrency: TopUpOutputInterface
-): Promise<PairLimitsRecord[TopUpProviderEnum]> => {
-  try {
-    const fiatCode = fiatCurrency.code.toUpperCase();
-    const fiatPrecision = fiatCurrency.precision ?? 2;
+const getMtPelerinFiatLimits = memoizee(
+  async (fiatCode: string, cryptoCode: string, fiatPrecision: number): Promise<PairLimits> => {
     const quotePromise = getMtPelerinConvertQuote(
       fiatCode,
-      cryptoCurrency.code,
+      cryptoCode,
       MT_PELERIN_FEE_PROBE_AMOUNT,
       MT_PELERIN_NETWORK
     );
@@ -62,7 +60,28 @@ const getMtPelerinUpdatedFiatLimits = async (
     );
     const flooredMax = roundToFiatPrecision(max, fiatPrecision, BigNumber.ROUND_FLOOR);
 
-    return createEntity({ min, max: flooredMax });
+    return { min, max: flooredMax };
+  },
+  {
+    promise: true,
+    normalizer: ([fiatCode, cryptoCode, fiatPrecision]) => JSON.stringify([fiatCode, cryptoCode, fiatPrecision]),
+    maxAge: MT_PELERIN_LIMITS_CACHE_TTL,
+    max: 100
+  }
+);
+
+const getMtPelerinUpdatedFiatLimits = async (
+  fiatCurrency: TopUpInputInterface,
+  cryptoCurrency: TopUpOutputInterface
+): Promise<PairLimitsRecord[TopUpProviderEnum]> => {
+  try {
+    const limits = await getMtPelerinFiatLimits(
+      fiatCurrency.code.toUpperCase(),
+      cryptoCurrency.code,
+      fiatCurrency.precision ?? 2
+    );
+
+    return createEntity(limits);
   } catch (error) {
     return createEntity(undefined, false, getAxiosQueryErrorMessage(error));
   }

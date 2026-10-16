@@ -42,6 +42,7 @@ export const useAboutDelegationScreenStyles = createUseStyles(({ colors, typogra
   },
   buttonLinksContainer: {
     flexDirection: 'row',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    gap: formatSize(20)
   }
 }));

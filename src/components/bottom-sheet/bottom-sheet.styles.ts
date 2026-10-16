@@ -12,12 +12,30 @@ export const useDropdownBottomSheetStyles = createUseStyles(({ colors, typograph
     overflow: 'hidden'
   },
   headerContainer: {
-    justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: formatSize(16),
-    paddingHorizontal: formatSize(12),
+    paddingVertical: formatSize(12),
+    paddingHorizontal: formatSize(16),
     borderBottomColor: colors.lines,
-    borderBottomWidth: formatSize(1)
+    borderBottomWidth: formatSize(1),
+    flexDirection: 'row'
+  },
+  headerTextsContainer: {
+    flex: 1,
+    alignItems: 'center',
+    flexDirection: 'column'
+  },
+  headerLeftSide: {
+    flex: 1
+  },
+  headerRightSide: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end'
+  },
+  closeButton: {
+    backgroundColor: colors.peach10,
+    borderRadius: formatSize(100)
   },
   title: {
     ...typography.body17Semibold,

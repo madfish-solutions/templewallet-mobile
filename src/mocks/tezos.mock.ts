@@ -186,8 +186,8 @@ const mockTezosToolkit = {
 
 jest.mock('@taquito/taquito', () => ({
   ...jest.requireActual('@taquito/taquito'),
-  TezosToolkit: () => mockTezosToolkit,
-  MichelCodecPacker: () => ({}),
-  CompositeForger: () => ({}),
-  RpcForger: () => ({})
+  TezosToolkit: jest.fn(() => mockTezosToolkit),
+  MichelCodecPacker: jest.fn(() => ({})),
+  CompositeForger: jest.fn(() => ({})),
+  RpcForger: jest.fn(() => ({}))
 }));

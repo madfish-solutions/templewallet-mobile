@@ -5,16 +5,21 @@ import GorhomBottomSheet, {
   TouchableOpacity
 } from '@gorhom/bottom-sheet';
 import { Portal } from '@gorhom/portal';
-import React, { PropsWithChildren, useCallback, useEffect, useRef, useState } from 'react';
-import { BackHandler, Keyboard, Text, View } from 'react-native';
+import { uniqueId } from 'lodash-es';
+import React, { PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react';
+import { BackHandler, Keyboard, StyleProp, Text, useWindowDimensions, View, ViewStyle } from 'react-native';
 import { useOrientationChange } from 'react-native-orientation-locker';
+import { useSharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
-import { emptyComponent, emptyFn } from 'src/config/general';
+import { emptyFn } from 'src/config/general';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
+
+import { IconNameV2Enum } from '../icon-v2/icon-name.enum';
+import { TouchableIconV2 } from '../touchable-icon-v2';
 
 import { useDropdownBottomSheetStyles } from './bottom-sheet.styles';
 import { BottomSheetControllerProps } from './use-bottom-sheet-controller';
@@ -25,9 +30,12 @@ interface Props extends BottomSheetControllerProps {
   cancelButtonText?: string;
   onCancelButtonPress?: EmptyFn;
   cancelButtonTestID?: string;
+  showCancelButton?: boolean;
+  showCloseButton?: boolean;
   onClose?: EmptyFn;
   contentHeight: number;
   isInitiallyOpen?: boolean;
+  rootStyle?: StyleProp<ViewStyle>;
 }
 
 export const BottomSheet: FCWithChildren<Props> = ({
@@ -40,7 +48,10 @@ export const BottomSheet: FCWithChildren<Props> = ({
   onClose = emptyFn,
   contentHeight,
   controller,
-  children
+  children,
+  showCancelButton = true,
+  showCloseButton = false,
+  rootStyle
 }) => {
   // hack that prevents rendering of GorhomBottomSheet component for locked app state,
   // as it loads heavy Reanimated 2 modules and application do not respond on gestures
@@ -49,23 +60,34 @@ export const BottomSheet: FCWithChildren<Props> = ({
   const styles = useDropdownBottomSheetStyles();
   const insets = useSafeAreaInsets();
   const [isOpened, setIsOpened] = useState(false);
+  const [activeContentHeight, setActiveContentHeight] = useState(contentHeight);
 
-  const wasAnimatedRef = useRef(false);
-  const handleAnimate = useCallback(() => {
-    wasAnimatedRef.current = true;
-  }, []);
+  const sheetId = useMemo(() => uniqueId(), []);
+  const [sheetNonce, setSheetNonce] = useState(0);
+
+  const { height } = useWindowDimensions();
+  const bottomInset = insets.bottom + formatSize(8);
+  const containerLayoutState = useSharedValue({
+    height: height - bottomInset,
+    offset: {
+      top: 0,
+      right: 0,
+      bottom: bottomInset,
+      left: 0
+    }
+  });
 
   const renderBackdropComponent = useCallback(
     (props: PropsWithChildren<BottomSheetBackdropProps>) => (
       <BottomSheetBackdrop
         {...props}
         style={[props.style, styles.backdrop]}
-        opacity={wasAnimatedRef.current || isInitiallyOpen ? 0.16 : 0}
+        opacity={0.3}
         appearsOnIndex={0}
         disappearsOnIndex={-1}
       />
     ),
-    [styles.backdrop, isInitiallyOpen]
+    [styles.backdrop]
   );
 
   const handleChange = (index: number) => {
@@ -82,6 +104,18 @@ export const BottomSheet: FCWithChildren<Props> = ({
       onClose();
     }
   };
+  const handleClosePress = () => {
+    controller.close();
+  };
+
+  useEffect(() => {
+    if (isOpened) {
+      setActiveContentHeight(contentHeight);
+    } else if (contentHeight !== activeContentHeight) {
+      setActiveContentHeight(contentHeight);
+      setSheetNonce(value => value + 1);
+    }
+  }, [activeContentHeight, contentHeight, isOpened]);
 
   useEffect(() => {
     if (isOpened) {
@@ -97,41 +131,60 @@ export const BottomSheet: FCWithChildren<Props> = ({
 
   useOrientationChange(() => controller.close());
 
+  const snapPoints = useMemo(() => [activeContentHeight], [activeContentHeight]);
+
   return (
     <Portal>
       {!isLocked && (
         <GorhomBottomSheet
+          key={`${sheetId}-${sheetNonce}`}
           containerStyle={styles.bottomSheetContainer}
+          containerLayoutState={containerLayoutState}
           ref={controller.ref}
           index={isInitiallyOpen ? 0 : -1}
-          snapPoints={[contentHeight]}
+          snapPoints={snapPoints}
+          enableDynamicSizing={false}
           enablePanDownToClose={true}
-          bottomInset={insets.bottom + formatSize(8)}
-          handleComponent={emptyComponent}
-          backgroundComponent={emptyComponent}
+          bottomInset={bottomInset}
+          handleComponent={null}
+          backgroundComponent={null}
           backdropComponent={renderBackdropComponent}
-          onAnimate={handleAnimate}
           onChange={handleChange}
           onClose={handleClose}
         >
-          <BottomSheetView style={styles.root}>
+          <BottomSheetView style={rootStyle ?? styles.root}>
             {(isDefined(title) || isDefined(description)) && (
               <View style={styles.headerContainer}>
-                {isDefined(title) && <Text style={styles.title}>{title}</Text>}
-                {isDefined(description) && <Text style={styles.description}>{description}</Text>}
+                {showCloseButton && <View style={styles.headerLeftSide} />}
+                <View style={styles.headerTextsContainer}>
+                  {isDefined(title) && <Text style={styles.title}>{title}</Text>}
+                  {isDefined(description) && <Text style={styles.description}>{description}</Text>}
+                </View>
+                {showCloseButton && (
+                  <View style={styles.headerRightSide}>
+                    <TouchableIconV2
+                      name={IconNameV2Enum.XBig}
+                      onPress={handleClosePress}
+                      size={formatSize(20)}
+                      style={styles.closeButton}
+                    />
+                  </View>
+                )}
               </View>
             )}
 
             {children}
 
-            <TouchableWithAnalytics
-              Component={TouchableOpacity}
-              testID={cancelButtonTestID}
-              style={styles.cancelButton}
-              onPress={handleCancelPress}
-            >
-              <Text style={styles.cancelButtonText}>{cancelButtonText}</Text>
-            </TouchableWithAnalytics>
+            {showCancelButton && (
+              <TouchableWithAnalytics
+                Component={TouchableOpacity}
+                testID={cancelButtonTestID}
+                style={styles.cancelButton}
+                onPress={handleCancelPress}
+              >
+                <Text style={styles.cancelButtonText}>{cancelButtonText}</Text>
+              </TouchableWithAnalytics>
+            )}
           </BottomSheetView>
         </GorhomBottomSheet>
       )}

@@ -2,9 +2,9 @@ import { TokenSchema } from '@taquito/michelson-encoder';
 import { isEqual } from 'lodash-es';
 
 import { ContractType } from 'src/interfaces/contract.type';
-import { TokenTypeEnum } from 'src/interfaces/token-type.enum';
 import { assert } from 'src/utils/assert.utils';
 
+import { TezosTokenStandardsEnum } from '../interfaces/token-metadata.interface';
 import { TokenMethodsAssertionInterface } from '../interfaces/token-methods-assertion.interface';
 
 const extractArgsTypes = (schema: TokenSchema): string[] => {
@@ -62,7 +62,7 @@ const FA_2_TOKEN_METHODS_ASSERTIONS: TokenMethodsAssertionInterface[] = [
   }
 ];
 
-export const TokenMethodsAssertionsMap: Record<TokenTypeEnum, TokenMethodsAssertionInterface[]> = {
-  [TokenTypeEnum.FA_1_2]: FA_1_2_TOKEN_METHODS_ASSERTIONS,
-  [TokenTypeEnum.FA_2]: FA_2_TOKEN_METHODS_ASSERTIONS
+export const TokenMethodsAssertionsMap: Record<TezosTokenStandardsEnum, TokenMethodsAssertionInterface[]> = {
+  [TezosTokenStandardsEnum.Fa12]: FA_1_2_TOKEN_METHODS_ASSERTIONS,
+  [TezosTokenStandardsEnum.Fa2]: FA_2_TOKEN_METHODS_ASSERTIONS
 };

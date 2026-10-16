@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { getMoonPayBuyQuote } from 'src/apis/moonpay';
@@ -22,7 +22,6 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { getUpdatedFiatLimits } from 'src/utils/get-updated-fiat-limits.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { isTruthy } from 'src/utils/is-truthy';
 
 import { useInputLimits } from './use-input-limits.hook';
 
@@ -86,6 +85,7 @@ export const usePaymentProvider = (
   const [outputAmount, setOutputAmount] = useState<number>();
   const [isOutputError, setIsError] = useState(false);
   const [outputAmountLoading, setOutputAmountLoading] = useState<boolean>(false);
+  const requestIdRef = useRef(0);
   const fiatCurrencies = useFiatCurrenciesSelector(providerId);
   const cryptoCurrencies = useCryptoCurrenciesSelector(providerId);
   const currenciesError = useProviderCurrenciesErrorSelector(providerId);
@@ -102,7 +102,16 @@ export const usePaymentProvider = (
       newInputAsset: TopUpInputInterface,
       newOutputAsset: TopUpOutputInterface
     ) => {
+      const requestId = ++requestIdRef.current;
       setIsError(false);
+      if (!isDefined(newInputAmount) || newInputAmount.lte(0)) {
+        const newOutputAmount = newInputAmount?.isZero() ? 0 : undefined;
+        setOutputAmount(newOutputAmount);
+        setOutputAmountLoading(false);
+
+        return newOutputAmount;
+      }
+
       const currentProviderFiatCurrency = fiatCurrencies.find(({ code }) => code === newInputAsset.code);
       const currentProviderCryptoCurrency = cryptoCurrencies.find(({ slug }) => slug === newOutputAsset.slug);
       const updatedPairLimits =
@@ -112,13 +121,16 @@ export const usePaymentProvider = (
                 currentProviderFiatCurrency,
                 currentProviderCryptoCurrency,
                 providerId,
-                error =>
-                  trackErrorEvent('OnePaymentProviderUpdateOutputAmountError', error, [], {
-                    newInputAmount: newInputAmount?.toFixed(),
-                    newInputAsset,
-                    newOutputAsset,
-                    providerId
-                  })
+                error => {
+                  if (requestId === requestIdRef.current) {
+                    trackErrorEvent('OnePaymentProviderUpdateOutputAmountError', error, [], {
+                      newInputAmount: newInputAmount.toFixed(),
+                      newInputAsset,
+                      newOutputAsset,
+                      providerId
+                    });
+                  }
+                }
               )
             ).data
           : undefined;
@@ -135,24 +147,28 @@ export const usePaymentProvider = (
       }
 
       if (
-        !isTruthy(newInputAmount) ||
         !isDefined(updatedPairLimits) ||
         newInputAmount.lt(updatedPairLimits.min) ||
         newInputAmount.gt(updatedPairLimits.max)
       ) {
-        if (isTruthy(newInputAmount) && !isDefined(updatedPairLimits)) {
+        if (requestId === requestIdRef.current && !isDefined(updatedPairLimits)) {
           setIsError(true);
         }
 
-        const newOutputAmount = isDefined(newInputAmount) && newInputAmount?.isZero() ? 0 : undefined;
-        setOutputAmount(newOutputAmount);
+        const newOutputAmount = undefined;
+        if (requestId === requestIdRef.current) {
+          setOutputAmount(newOutputAmount);
+          setOutputAmountLoading(false);
+        }
 
         return newOutputAmount;
       }
 
       let newOutputAmount: number | undefined;
       try {
-        setOutputAmountLoading(true);
+        if (requestId === requestIdRef.current) {
+          setOutputAmountLoading(true);
+        }
         if (isDefined(currentProviderFiatCurrency) && isDefined(currentProviderCryptoCurrency)) {
           newOutputAmount = await getOutputAmount(
             newInputAmount,
@@ -161,18 +177,22 @@ export const usePaymentProvider = (
           );
         }
       } catch (error) {
-        trackErrorEvent('UpdatePaymentProviderOutputAmountError', error, [], {
-          inputAmount: newInputAmount?.toFixed(),
-          newInputAsset,
-          newOutputAsset,
-          providerId
-        });
-        showErrorToast({ description: getAxiosQueryErrorMessage(error) });
-        setIsError(true);
+        if (requestId === requestIdRef.current) {
+          trackErrorEvent('UpdatePaymentProviderOutputAmountError', error, [], {
+            inputAmount: newInputAmount.toFixed(),
+            newInputAsset,
+            newOutputAsset,
+            providerId
+          });
+          showErrorToast({ description: getAxiosQueryErrorMessage(error) });
+          setIsError(true);
+        }
         newOutputAmount = undefined;
       } finally {
-        setOutputAmount(newOutputAmount);
-        setOutputAmountLoading(false);
+        if (requestId === requestIdRef.current) {
+          setOutputAmount(newOutputAmount);
+          setOutputAmountLoading(false);
+        }
       }
 
       return newOutputAmount;

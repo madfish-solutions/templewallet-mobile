@@ -1,7 +1,7 @@
-import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
+import { TezosTokenMetadata } from '../token/interfaces/token-metadata.interface';
 
 export interface SendAssetActionPayloadInterface {
-  asset: TokenMetadataInterface;
+  asset: TezosTokenMetadata;
   receiverPublicKeyHash: string;
   amount: string;
 }

@@ -44,10 +44,12 @@ export const BackupYourWalletOverlay = () => {
           ]}
         >
           <View style={dropdownBottomSheetStyles.headerContainer}>
-            <Text style={dropdownBottomSheetStyles.title}>Backup your wallet</Text>
-            <Text style={dropdownBottomSheetStyles.description}>
-              {'Don’t lose your wallet! Save your access\n' + 'to account using backup.'}
-            </Text>
+            <View style={dropdownBottomSheetStyles.headerTextsContainer}>
+              <Text style={dropdownBottomSheetStyles.title}>Backup your wallet</Text>
+              <Text style={dropdownBottomSheetStyles.description}>
+                {'Don’t lose your wallet! Save your access\n' + 'to account using backup.'}
+              </Text>
+            </View>
           </View>
 
           <BottomSheetActionButton

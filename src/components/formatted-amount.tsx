@@ -14,6 +14,7 @@ export interface FormattedAmountProps {
   showMinusSign?: boolean;
   showPlusSign?: boolean;
   symbol?: string;
+  numberOfLines?: number;
   style?: StyleProp<TextStyle>;
 }
 
@@ -28,6 +29,7 @@ export const FormattedAmount: FC<FormattedAmountProps> = ({
   showPlusSign = false,
   showAllDecimalPlaces = false,
   symbol,
+  numberOfLines,
   style
 }) => {
   const { symbol: fiatSymbol } = useCurrentFiatCurrencyMetadataSelector();
@@ -55,17 +57,17 @@ export const FormattedAmount: FC<FormattedAmountProps> = ({
     }
 
     return undefined;
-  }, [showMinusSign, showPlusSign, isDollarValue]);
+  }, [showMinusSign, showPlusSign]);
 
   const isLessThan = formattedAmount.includes('<');
   const formattedSymbol = symbol !== undefined ? ` ${symbol}` : '';
 
   return (
-    <Text style={style}>
+    <Text numberOfLines={numberOfLines} ellipsizeMode="tail" style={style}>
       {isDollarValue && !isLessThan && !hideApproximateSign && '≈ '}
       {amountSignStr && `${amountSignStr} `}
       {formattedAmount}
-      {isDollarValue ? fiatSymbol : formattedSymbol}
+      {isDollarValue ? ` ${fiatSymbol}` : formattedSymbol}
     </Text>
   );
 };

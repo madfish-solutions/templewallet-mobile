@@ -5,6 +5,7 @@ import { LIMIT_DAPPS_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { RpcInterface } from 'src/interfaces/rpc.interface';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
+import { EvmRpc, BlockExplorer, EvmChainSpecs, DEFAULT_EVM_CHAINS_SPECS } from 'src/types/networks';
 import { FiatCurrenciesEnum } from 'src/utils/exchange-rate.util';
 import { RpcList } from 'src/utils/rpc/rpc-list';
 
@@ -13,7 +14,9 @@ export interface SettingsState {
   isBiometricsEnabled: boolean;
   isAnalyticsEnabled: boolean;
   isBalanceHiddenSetting: boolean;
+  /** @deprecated */
   rpcList: RpcInterface[];
+  /** @deprecated */
   selectedRpcUrl: string;
   isFirstAppLaunch: boolean;
   userId: string;
@@ -39,6 +42,9 @@ export interface SettingsState {
   isInAppBrowserEnabled: boolean;
   isKoloCardAnimationShown: boolean;
   koloForceLogoutOnNextOpen: boolean;
+  customEvmRpcs: Record<number, EvmRpc[]>;
+  customEvmBlockExplorers: Record<number, BlockExplorer[]>;
+  evmChainsSpecs: EvmChainSpecs[];
 }
 
 export const settingsInitialState: SettingsState = {
@@ -65,5 +71,8 @@ export const settingsInitialState: SettingsState = {
   isInAppUpdateAvailable: false,
   isInAppBrowserEnabled: !LIMIT_DAPPS_FEATURES,
   isKoloCardAnimationShown: false,
-  koloForceLogoutOnNextOpen: false
+  koloForceLogoutOnNextOpen: false,
+  customEvmRpcs: {},
+  customEvmBlockExplorers: {},
+  evmChainsSpecs: DEFAULT_EVM_CHAINS_SPECS
 };

@@ -10,7 +10,7 @@ import { PromotionVariantEnum } from 'src/enums/promotion-variant.enum';
 import { useIsSaplingPreparingSelector } from 'src/store/sapling';
 import { TEZ_SHIELDED_ANALYTICS_NAME } from 'src/token/data/tokens-metadata';
 
-import { InternalOperationsConfirmation } from '../internal-operations-confirmation/internal-operations-confirmation';
+import { InternalOperationsConfirmation } from '../common/internal-operations-confirmation';
 import { RebalanceAfterPreview } from '../rebalance-confirmation/rebalance-after-preview';
 import { SaplingSendPreview } from '../sapling-send-preview/sapling-send-preview';
 
@@ -96,6 +96,7 @@ export const SaplingOperationsConfirmation = (props: Props) => {
             testID={props.variant === 'send' ? props.testID : undefined}
             disclaimerMessage={props.variant === 'send' ? props.disclaimerMessage : undefined}
             renderPreview={renderPreview}
+            isShieldedTez
             onEstimationComplete={handleEstimationComplete}
             confirmEventProperties={confirmEventProperties}
           />

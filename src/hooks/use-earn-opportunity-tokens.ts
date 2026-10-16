@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react';
 
 import { TEZOS_CONTRACT_ADDRESS } from 'src/apis/quipuswap-staking/consts';
-import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
 import { EarnOpportunityToken } from 'src/interfaces/earn-opportunity/earn-opportunity-token.interface';
+import { useAssetExchangeRateGetter } from 'src/store/settings/settings-selectors';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
@@ -13,7 +13,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 export const useEarnOpportunityTokens = (earnOpportunity?: EarnOpportunity) => {
-  const getExchangeRate = useTokenExchangeRateGetter();
+  const getExchangeRate = useAssetExchangeRateGetter();
   const tokens = useCurrentAccountTokens();
   const collectibles = useCurrentAccountCollectibles();
   const assets = useMemo(() => tokens.concat(collectibles), [tokens, collectibles]);

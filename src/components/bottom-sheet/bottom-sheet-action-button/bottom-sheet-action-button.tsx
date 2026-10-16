@@ -16,6 +16,7 @@ interface Props extends Pick<TouchableOpacityComponentProps, 'style' | 'onPress'
   title: string;
   titleStyle?: StyleProp<TextStyle>;
   iconLeftName?: IconNameEnum;
+  showTopBorder?: boolean;
 }
 
 export const BottomSheetActionButton: FC<Props> = ({
@@ -24,6 +25,7 @@ export const BottomSheetActionButton: FC<Props> = ({
   style,
   titleStyle,
   iconLeftName,
+  showTopBorder = false,
   onPress,
   testID
 }) => {
@@ -32,7 +34,12 @@ export const BottomSheetActionButton: FC<Props> = ({
   return (
     <TouchableWithAnalytics
       disabled={disabled}
-      style={[styles.container, conditionalStyle(Boolean(disabled), styles.disabled), style]}
+      style={[
+        styles.container,
+        conditionalStyle(Boolean(disabled), styles.disabled),
+        conditionalStyle(showTopBorder, styles.topBorder),
+        style
+      ]}
       onPress={onPress}
       {...setTestID(testID)}
     >

@@ -72,7 +72,7 @@ export const CreateNewWallet = () => {
     onSubmit: handleSubmit
   });
 
-  const { submitForm, setFieldTouched, isValid, errors } = formik;
+  const { submitForm, isSubmitting, setFieldTouched, isValid, errors } = formik;
 
   const handleLayoutChange = useCallback(
     (name: string, value: number) => setFieldsPositions(prevState => ({ ...prevState, [name]: value })),
@@ -105,6 +105,7 @@ export const CreateNewWallet = () => {
       <ModalButtonsFloatingContainer variant="bordered">
         <ButtonLargePrimary
           title="Create"
+          disabled={isSubmitting}
           onPress={useCallbackIfOnline(() => {
             setFieldTouched('password', true, true);
             setFieldTouched('passwordConfirmation', true, true);

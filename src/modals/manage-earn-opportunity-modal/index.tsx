@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from 'src/components/divider/divider';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
@@ -27,7 +28,7 @@ import {
 } from 'src/store/savings/selectors';
 import { loadSwapTokensAction } from 'src/store/swap/swap-actions';
 import { useSwapTokensMetadataSelector } from 'src/store/swap/swap-selectors';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { isFarm } from 'src/utils/earn.utils';
@@ -69,7 +70,12 @@ export const ManageEarnOpportunityModal: FC = () => {
   const earnOpportunityLoading = isFarmingPool ? farmIsLoading : savingsItemIsLoading;
   const { isLoading: isSwapMetadataLoading, data: swapMetadataData } = useSwapTokensMetadataSelector();
   const swapTokensMetadataLoading = isSwapMetadataLoading && swapMetadataData.length === 0;
-  const accountPkh = useCurrentAccountPkhSelector();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
   const pageIsLoading = (earnOpportunityLoading && !isDefined(earnOpportunityItem)) || swapTokensMetadataLoading;
   const farmStake = useFarmStakeSelector(contractAddress);
   const savingsStake = useSavingsItemStakeSelector(contractAddress);
@@ -118,15 +124,15 @@ export const ManageEarnOpportunityModal: FC = () => {
 
     dispatch(
       isFarm(earnOpportunityItem)
-        ? loadSingleFarmStakeActions.submit({ farm: earnOpportunityItem, accountPkh })
-        : loadSingleSavingStakeActions.submit({ item: earnOpportunityItem, accountPkh })
+        ? loadSingleFarmStakeActions.submit({ farm: earnOpportunityItem, accountPkh: tezosAddress })
+        : loadSingleSavingStakeActions.submit({ item: earnOpportunityItem, accountPkh: tezosAddress })
     );
 
     if (!isFarm(earnOpportunityItem) && !startedLoadingTokensRef.current) {
       dispatch(loadSwapTokensAction.submit());
       startedLoadingTokensRef.current = true;
     }
-  }, [earnOpportunityItem, dispatch, accountPkh]);
+  }, [earnOpportunityItem, dispatch, tezosAddress]);
 
   const handleDepositClick = useCallback(() => {
     const nativeScrollRef = scrollViewRef.current?.getNativeScrollRef?.();

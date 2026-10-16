@@ -11,7 +11,13 @@ import { useCallback } from 'react';
 
 import { ModalsEnum, ModalsParamList } from '../enums/modals.enum';
 import { ScreensEnum, ScreensParamList } from '../enums/screens.enum';
-import { MainStackParams, NestedNavigationStacksParamList, StacksEnum, StacksParamList } from '../enums/stacks.enum';
+import {
+  MainStackNavigationParams,
+  MainStackParams,
+  NestedNavigationStacksParamList,
+  StacksEnum,
+  StacksParamList
+} from '../enums/stacks.enum';
 
 type NavigationParamList = StacksParamList & ScreensParamList & ModalsParamList;
 
@@ -37,7 +43,11 @@ export const isInModalsStack = (state: NavigationState | undefined): boolean => 
   return currentRoute?.name in ModalsEnum;
 };
 
-export const useNavigateToScreen = () => {
+interface NavigateToScreenOptions {
+  pop?: boolean;
+}
+
+export const useNavigateToScreen = ({ pop = false }: NavigateToScreenOptions = {}) => {
   const { navigate, dispatch, getState } = useNavigation();
 
   return useCallback(
@@ -49,9 +59,11 @@ export const useNavigateToScreen = () => {
         dispatch(StackActions.popToTop());
       }
 
-      navigate(StacksEnum.MainStack, screenParams);
+      const navigationParams: MainStackNavigationParams = pop ? { ...screenParams, pop } : screenParams;
+
+      navigate(StacksEnum.MainStack, navigationParams);
     },
-    [navigate, dispatch, getState]
+    [navigate, dispatch, getState, pop]
   );
 };
 

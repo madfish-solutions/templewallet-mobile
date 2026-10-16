@@ -1,40 +1,28 @@
 import { BeaconMessageType, SignPayloadRequestOutput } from '@airgap/beacon-sdk';
-import React, { FC, useMemo, useState } from 'react';
-import { Text, View } from 'react-native';
+import React, { FC, useMemo } from 'react';
 import { map, switchMap } from 'rxjs/operators';
 
 import { BeaconHandler } from 'src/beacon/beacon-handler';
-import { AccountDropdownItem } from 'src/components/account-dropdown/account-dropdown-item/account-dropdown-item';
-import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
-import { Divider } from 'src/components/divider/divider';
-import { HeaderTitle } from 'src/components/header/header-title/header-title';
-import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
-import { Label } from 'src/components/label/label';
-import { ScreenContainer } from 'src/components/screen-container/screen-container';
-import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useDappRequestConfirmation } from 'src/hooks/request-confirmation/use-dapp-request-confirmation.hook';
 import { useParseSignPayload } from 'src/hooks/use-parse-sign-payload.hook';
-import { emptyAccount } from 'src/interfaces/account.interface';
-import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { Shelter } from 'src/shelter/shelter';
 import { navigateBackAction } from 'src/store/root-state.actions';
-import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
-import { formatSize } from 'src/styles/format-size';
+import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { showSuccessToast } from 'src/toast/toast.utils';
+import { getAccountAddressForTezos } from 'src/utils/account.utils';
 
-import { AppMetadataView } from '../app-metadata-view/app-metadata-view';
+import { SignRequestConfirmationContent } from '../../common/sign-request-confirmation-content';
 
 import { SignPayloadRequestConfirmationSelectors } from './sign-payload-request-confirmation.selectors';
-import { useSignPayloadRequestConfirmationStyles } from './sign-payload-request-confirmation.styles';
 
 interface Props {
   message: SignPayloadRequestOutput;
 }
 
 const approveSignPayloadRequest = (message: SignPayloadRequestOutput) =>
-  Shelter.getSigner$(message.sourceAddress).pipe(
+  Shelter.getTezosSigner$(message.sourceAddress).pipe(
     switchMap(signer => signer.sign(message.payload)),
     switchMap(({ prefixSig }) =>
       BeaconHandler.respond({
@@ -51,66 +39,33 @@ const approveSignPayloadRequest = (message: SignPayloadRequestOutput) =>
     })
   );
 
-const PAYLOAD_PREVIEW_TYPE_INDEX = 0;
-
 export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
-  const styles = useSignPayloadRequestConfirmationStyles();
   const { goBack } = useNavigation();
-  const accounts = useAccountsListSelector();
+  const accounts = useAllAccounts();
 
   const { payloadPreview, isPayloadParsed } = useParseSignPayload(message);
-
-  const [payloadTypeIndex, setPayloadTypeIndex] = useState(0);
-  const isPayloadPreviewType = payloadTypeIndex === PAYLOAD_PREVIEW_TYPE_INDEX;
-
   const { confirmRequest, isLoading } = useDappRequestConfirmation(message, approveSignPayloadRequest);
 
   const approver = useMemo(
-    () => accounts.find(({ publicKeyHash }) => publicKeyHash === message.sourceAddress) ?? emptyAccount,
+    () => accounts.find(account => getAccountAddressForTezos(account) === message.sourceAddress)!,
     [accounts, message.sourceAddress]
   );
 
-  useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Confirm Sign" /> }, []);
-
   return (
-    <>
-      <ScreenContainer>
-        <AppMetadataView appMetadata={message.appMetadata} />
-        <Divider />
-        <Label label="Account" />
-        <Divider />
-        <AccountDropdownItem account={approver} />
-        <Divider />
-        <View style={styles.descriptionContainer}>
-          <Text style={styles.descriptionText}>Payload to sign</Text>
-          {isPayloadParsed && (
-            <TextSegmentControl
-              width={formatSize(181)}
-              selectedIndex={payloadTypeIndex}
-              values={['Preview', 'Bytes']}
-              onChange={setPayloadTypeIndex}
-            />
-          )}
-        </View>
-        <Divider size={formatSize(16)} />
-        <Text style={styles.payloadText}>
-          {isPayloadParsed ? (isPayloadPreviewType ? payloadPreview : message.payload) : message.payload}
-        </Text>
-      </ScreenContainer>
-      <ModalButtonsFloatingContainer variant="bordered">
-        <ButtonLargeSecondary
-          title="Cancel"
-          disabled={isLoading}
-          onPress={goBack}
-          testID={SignPayloadRequestConfirmationSelectors.cancelButton}
-        />
-        <ButtonLargePrimary
-          title="Sign"
-          disabled={isLoading}
-          onPress={() => confirmRequest(message)}
-          testID={SignPayloadRequestConfirmationSelectors.signButton}
-        />
-      </ModalButtonsFloatingContainer>
-    </>
+    <SignRequestConfirmationContent
+      headerTitle="Confirm Sign"
+      appName={message.appMetadata.name}
+      iconUri={message.appMetadata.icon}
+      iconSeed={message.appMetadata.senderId}
+      account={approver}
+      payloadPreview={isPayloadParsed ? payloadPreview : undefined}
+      bytesPayload={message.payload}
+      isLoading={isLoading}
+      cancelTestID={SignPayloadRequestConfirmationSelectors.cancelButton}
+      confirmTestID={SignPayloadRequestConfirmationSelectors.signButton}
+      chainKind={TempleChainKind.Tezos}
+      onCancel={goBack}
+      onConfirm={() => confirmRequest(message)}
+    />
   );
 };

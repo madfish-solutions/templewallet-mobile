@@ -5,6 +5,15 @@ require('text-encoding');
 
 XMLHttpRequest.prototype.overrideMimeType = () => null;
 
+// RN's AbortSignal polyfill predates `throwIfAborted`; `p-queue` calls it
+if (typeof AbortSignal !== 'undefined' && !isDefined(AbortSignal.prototype.throwIfAborted)) {
+  AbortSignal.prototype.throwIfAborted = function () {
+    if (this.aborted) {
+      throw isDefined(this.reason) ? this.reason : new Error('Aborted');
+    }
+  };
+}
+
 if (!isDefined(global.localStorage)) {
   global.localStorage = {
     getItem: () => null

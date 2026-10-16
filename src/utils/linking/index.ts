@@ -3,29 +3,31 @@ import { Linking } from 'react-native';
 
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
-
-import { isDcpNode } from '../network.utils';
+import { useIsInAppBrowserEnabledSelector } from 'src/store/settings/settings-selectors';
 
 interface OpenUrlOptions {
   rethrowError?: boolean;
 }
 
-export const openUrl = (url: string, { rethrowError = false }: OpenUrlOptions = {}) =>
-  Linking.canOpenURL(url)
-    .then(canOpen => {
-      if (!canOpen) {
-        throw new Error(`Cannot open URL: ${url}`);
-      }
+export const openUrl = (url: string, { rethrowError = false }: OpenUrlOptions = {}) => {
+  const openPromise = /^https?:\/\//i.test(url)
+    ? Linking.openURL(url)
+    : Linking.canOpenURL(url).then(canOpen => {
+        if (!canOpen) {
+          throw new Error(`Cannot open URL: ${url}`);
+        }
 
-      return Linking.openURL(url);
-    })
-    .catch(error => {
-      if (rethrowError) {
-        throw error;
-      }
+        return Linking.openURL(url);
+      });
 
-      console.error(error);
-    });
+  return openPromise.catch(error => {
+    if (rethrowError) {
+      throw error;
+    }
+
+    console.error(error);
+  });
+};
 
 export const useOpenUrlInAppBrowser = () => {
   const navigateToModal = useNavigateToModal();
@@ -33,5 +35,14 @@ export const useOpenUrlInAppBrowser = () => {
   return useCallback((uri: string) => void navigateToModal(ModalsEnum.InAppBrowser, { uri }), [navigateToModal]);
 };
 
-export const tzktUrl = (rpcUrl: string, address: string) =>
-  isDcpNode(rpcUrl) ? `https://explorer.tlnt.net/${address}` : `https://tzkt.io/${address}`;
+export const useOpenUrl = () => {
+  const isInAppBrowserEnabled = useIsInAppBrowserEnabledSelector();
+  const openUrlInAppBrowser = useOpenUrlInAppBrowser();
+
+  return useCallback(
+    (url: string) => (isInAppBrowserEnabled ? openUrlInAppBrowser(url) : openUrl(url)),
+    [isInAppBrowserEnabled, openUrlInAppBrowser]
+  );
+};
+
+export const tzktUrl = (addressOrTxHash: string) => `https://tzkt.io/${addressOrTxHash}`;

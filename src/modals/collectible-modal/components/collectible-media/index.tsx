@@ -4,9 +4,9 @@ import { View } from 'react-native';
 import { ActivityIndicator } from 'src/components/activity-indicator';
 import { AudioPlaceholder } from 'src/components/audio-placeholder';
 import { CollectibleImage } from 'src/components/collectible-image';
-import { ImageBlurOverlay } from 'src/components/image-blur-overlay';
 import { SimpleModelView } from 'src/components/simple-model-view';
 import { SimplePlayer } from 'src/components/simple-player';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useCollectibleIsAdultSelector } from 'src/store/collectibles/collectibles-selectors';
 import { showErrorToast } from 'src/toast/error-toast.utils';
 import { AssetMediaURIs } from 'src/utils/assets/types';
@@ -25,7 +25,19 @@ export const CollectibleMedia = memo<Props>(({ slug, size, areDetailsLoading, ..
   const [shouldShowBlur = isAdultContent, setShouldShowBlur] = useState<boolean>();
 
   if (isAdultContent && shouldShowBlur) {
-    return <ImageBlurOverlay size={size} isBigIcon={true} onPress={() => setShouldShowBlur(false)} />;
+    return (
+      <CollectibleImage
+        chainKind={TempleChainKind.Tezos}
+        isFullView
+        size={size}
+        slug={slug}
+        artifactUri={props.artifactUri}
+        displayUri={props.displayUri}
+        thumbnailUri={props.thumbnailUri}
+        isBlurred
+        onReveal={() => setShouldShowBlur(false)}
+      />
+    );
   }
 
   if (areDetailsLoading) {
@@ -92,6 +104,7 @@ const MediaContent = memo<MediaContentProps>(
         return (
           <View style={styles.audioContainer}>
             <CollectibleImage
+              chainKind={TempleChainKind.Tezos}
               isFullView
               size={size}
               slug={slug}
@@ -108,6 +121,7 @@ const MediaContent = memo<MediaContentProps>(
 
     return (
       <CollectibleImage
+        chainKind={TempleChainKind.Tezos}
         isFullView
         size={size}
         slug={slug}

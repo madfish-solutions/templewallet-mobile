@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 
-import { Disclaimer } from 'src/components/disclaimer/disclaimer';
+import { DisclaimerV2 } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
 import { formatSize } from 'src/styles/format-size';
 import { openUrl } from 'src/utils/linking';
@@ -12,7 +12,7 @@ export const SwapDisclaimer = () => {
   const styles = useSwapDisclaimerStyles();
 
   return (
-    <Disclaimer title="Disclaimer">
+    <DisclaimerV2 title="Disclaimer">
       <View>
         <Text style={styles.description}>
           Temple wallet provides an interface to interact with the
@@ -22,6 +22,6 @@ export const SwapDisclaimer = () => {
           </Text>
         </Text>
       </View>
-    </Disclaimer>
+    </DisclaimerV2>
   );
 };
