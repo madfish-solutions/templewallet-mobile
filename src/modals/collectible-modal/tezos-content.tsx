@@ -19,10 +19,10 @@ import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmatio
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { dispatch } from 'src/store';
-import { loadCollectiblesDetailsActions } from 'src/store/collectibles/collectibles-actions';
+import { loadOneCollectibleDetailsActions } from 'src/store/collectibles/collectibles-actions';
 import {
-  useCollectibleDetailsLoadingSelector,
-  useCollectibleDetailsSelector
+  useCollectibleDetailsSelector,
+  useOneCollectibleDetailsLoadingSelector
 } from 'src/store/collectibles/collectibles-selectors';
 import { useAssetMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { useAssetBalanceSelector, useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
@@ -83,7 +83,7 @@ export const TezosCollectibleModalContent = memo<Props>(({ slug }) => {
   const details = useCollectibleDetailsSelector(slug);
   const balance = useAssetBalanceSelector(slug);
   const isAccountHolder = isString(balance) && balance !== '0';
-  const areDetailsLoading = useCollectibleDetailsLoadingSelector();
+  const areDetailsLoading = useOneCollectibleDetailsLoadingSelector();
 
   const attributes = useAttributesWithRarity(details);
 
@@ -91,7 +91,7 @@ export const TezosCollectibleModalContent = memo<Props>(({ slug }) => {
 
   const creators = details?.creators;
 
-  useInterval(() => void dispatch(loadCollectiblesDetailsActions.submit([slug])), APIS_SYNC_INTERVAL, [slug], true);
+  useInterval(() => void dispatch(loadOneCollectibleDetailsActions.submit(slug)), APIS_SYNC_INTERVAL, [slug], true);
 
   const handleCollectionNamePress = () => openUrl(objktCollectionUrl(address));
 

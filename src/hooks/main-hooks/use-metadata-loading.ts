@@ -1,16 +1,14 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { loadTokensMetadataActions } from 'src/store/tokens-metadata/tokens-metadata-actions';
-import { useAreMetadatasLoadingSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
+import {
+  useAreMetadatasLoadingSelector,
+  useTokensMetadataSelector
+} from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { useAllCurrentAccountAssetsSelector, useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
-import { useDidUpdate } from 'src/utils/hooks';
-import { isTruthy } from 'src/utils/is-truthy';
-import { useTokenMetadataGetter } from 'src/utils/token-metadata.utils';
 
 import { useNetworkInfo } from '../use-network-info.hook';
-
-const LOAD_CHUNK_SIZE = 50;
 
 export const useMetadataLoading = () => {
   const dispatch = useDispatch();
@@ -19,41 +17,38 @@ export const useMetadataLoading = () => {
   const { isTezosMainnet } = useNetworkInfo();
 
   const assets = useAllCurrentAccountAssetsSelector();
-  const getMetadata = useTokenMetadataGetter();
+  const metadataRecord = useTokensMetadataSelector();
   const metadataLoading = useAreMetadatasLoadingSelector();
 
-  const slugsToCheck = useMemo(() => assets?.stored.map(t => t.slug), [assets]);
-
-  const checkedRef = useRef<string[]>([]);
-
-  useDidUpdate(() => void (checkedRef.current = []), [isAuthorised]);
+  const checkedSlugsRef = useRef(new Set<string>());
 
   useEffect(() => {
-    if (metadataLoading || !slugsToCheck?.length || !isTezosMainnet || !isAuthorised) {
+    if (!isAuthorised) {
+      checkedSlugsRef.current = new Set();
+
       return;
     }
 
-    const missingChunk: string[] = [];
+    const storedAssets = assets?.stored;
 
-    for (const slug of slugsToCheck) {
-      if (
-        // When modifying, make sure `slug` to not be of GAS
-        !isTruthy(getMetadata(slug)) &&
-        // In case fetched metadata is `null` & won't save
-        !checkedRef.current.includes(slug)
-      ) {
-        missingChunk.push(slug);
+    if (metadataLoading || !storedAssets?.length || !isTezosMainnet) {
+      return;
+    }
 
-        if (missingChunk.length >= LOAD_CHUNK_SIZE) {
-          break;
-        }
+    const missingSlugs: string[] = [];
+
+    for (const { slug } of storedAssets) {
+      // GAS (tez) is not in `stored`; do not add it here.
+      if (metadataRecord[slug] || checkedSlugsRef.current.has(slug)) {
+        continue;
       }
+
+      missingSlugs.push(slug);
+      checkedSlugsRef.current.add(slug);
     }
 
-    if (missingChunk.length > 0) {
-      checkedRef.current = [...checkedRef.current, ...missingChunk];
-
-      dispatch(loadTokensMetadataActions.submit(missingChunk));
+    if (missingSlugs.length > 0) {
+      dispatch(loadTokensMetadataActions.submit(missingSlugs));
     }
-  }, [slugsToCheck, getMetadata, metadataLoading, isAuthorised, isTezosMainnet, dispatch]);
+  }, [assets, metadataRecord, metadataLoading, isAuthorised, isTezosMainnet, dispatch]);
 };
