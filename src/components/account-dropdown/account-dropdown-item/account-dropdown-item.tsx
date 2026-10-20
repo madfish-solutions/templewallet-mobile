@@ -1,4 +1,4 @@
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import React, { memo, useCallback, useMemo } from 'react';
 import { GestureResponderEvent, Text, View } from 'react-native';
 
@@ -15,11 +15,15 @@ import { useAllCollectiblesDetailsSelector } from 'src/store/collectibles/collec
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_DECIMALS, TEZ_TOKEN_SYMBOL } from 'src/token/data/tokens-metadata';
-import { useCurrentAccountCollectiblesWithPositiveBalance } from 'src/utils/assets/hooks';
+import {
+  useCurrentAccountCollectiblesWithPositiveBalance,
+  useCurrentAccountEvmCollectibles
+} from 'src/utils/assets/hooks';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatNumber } from 'src/utils/format-price';
 import { isDefined } from 'src/utils/is-defined';
+import { isPositiveNumber } from 'src/utils/number.util';
 import { mutezToTz } from 'src/utils/tezos.util';
 import { useTezosTokenOfKnownAccount } from 'src/utils/wallet.utils';
 
@@ -100,6 +104,7 @@ const CollectiblesInfo = memo(() => {
   const contacts = useContactsSelector();
 
   const collectibles = useCurrentAccountCollectiblesWithPositiveBalance();
+  const evmCollectibles = useCurrentAccountEvmCollectibles();
 
   const allDetails = useAllCollectiblesDetailsSelector();
 
@@ -128,7 +133,9 @@ const CollectiblesInfo = memo(() => {
       <View style={styles.collectiblesData}>
         <View style={styles.headerInfoColumn}>
           <Text style={styles.headerText}>Items</Text>
-          <Text style={styles.headerBoldText}>{collectibles.length}</Text>
+          <Text style={styles.headerBoldText}>
+            {collectibles.length + evmCollectibles.filter(c => isPositiveNumber(c.balance)).length}
+          </Text>
         </View>
         <View style={styles.headerInfoColumn}>
           <Text style={styles.headerText}>Total Floor Price</Text>
