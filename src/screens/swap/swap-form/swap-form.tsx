@@ -74,6 +74,7 @@ import {
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
+import { BridgeBanner } from './bridge-banner/bridge-banner';
 import { SwapAssetsButton } from './swap-assets-button/swap-assets-button';
 import { SwapExchangeRate } from './swap-exchange-rate/swap-exchange-rate';
 import { swapFormValidationSchema } from './swap-form.form';
@@ -551,6 +552,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           testID={SwapFormSelectors.toAssetAmountInput}
           tokenTestID={SwapFormSelectors.toTokenChange}
         />
+        {inputAssetSlug === TEZ_TOKEN_SLUG && <BridgeBanner />}
         <View>
           <SwapExchangeRate
             inputAsset={inputAssets.asset}
