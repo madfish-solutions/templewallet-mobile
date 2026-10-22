@@ -51,7 +51,7 @@ export const Wallet = memo(() => {
 
   useApkBuildIdEvent();
   usePushNotificationsEvent();
-  useEtherlinkDataLoading();
+  const { refreshNow: refreshEtherlink } = useEtherlinkDataLoading();
 
   useEffect(() => {
     if (shouldShowNewsletterModal && isAnyBackupMade) {
@@ -110,7 +110,7 @@ export const Wallet = memo(() => {
         </View>
       </HeaderCard>
 
-      <TokensList />
+      <TokensList onRefreshEtherlink={refreshEtherlink} />
 
       <WalletOverlay />
 
