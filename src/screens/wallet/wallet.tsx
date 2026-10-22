@@ -1,5 +1,5 @@
 import { StackActions, useFocusEffect } from '@react-navigation/native';
-import React, { memo, useCallback, useEffect, useMemo } from 'react';
+import React, { memo, useCallback, useEffect } from 'react';
 import { View } from 'react-native';
 
 import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-account-dropdown';
@@ -8,7 +8,6 @@ import { HeaderCard } from 'src/components/header-card/header-card';
 import { HeaderCardActionButtons } from 'src/components/header-card-action-buttons/header-card-action-buttons';
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
 import { useEtherlinkDataLoading } from 'src/hooks/evm/use-etherlink-data-loading.hook';
-import { buildTezosDisplayedToken } from 'src/hooks/evm/use-multichain-displayed-tokens.hook';
 import { useApkBuildIdEvent } from 'src/hooks/use-apk-build-id-event';
 import { usePushNotificationsEvent } from 'src/hooks/use-push-notifications-event';
 import { KoloCryptoCardPreview } from 'src/modals/kolo-card';
@@ -23,7 +22,6 @@ import { setKoloCardAnimationShownAction, walletOpenedAction } from 'src/store/s
 import { useIsAnyBackupMadeSelector, useIsKoloCardAnimationShownSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
-import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 import { ContactSuggestion } from './contact-suggestion.tsx';
 import { NotificationsBell } from './notifications-bell';
@@ -38,8 +36,6 @@ export const Wallet = memo(() => {
   const navigateToModal = useNavigateToModal();
   const { dispatch: navigationDispatch, getState } = useNavigation();
   const isAnyBackupMade = useIsAnyBackupMadeSelector();
-  const tezosToken = useTezosTokenOfCurrentAccount();
-  const headerActionsToken = useMemo(() => buildTezosDisplayedToken(tezosToken, undefined), [tezosToken]);
   const shouldShowNewsletterModal = useShouldShowNewsletterModalSelector();
   const hasSeenSaplingAnnouncement = useHasSeenSaplingAnnouncementSelector();
   const hasSeenRewardsAnnouncement = useHasSeenRewardsAnnouncementSelector();
@@ -96,10 +92,10 @@ export const Wallet = memo(() => {
           </View>
         </View>
 
-        <TokenEquityValue token={tezosToken} forTotalBalance={true} />
+        <TokenEquityValue />
         <Divider size={formatSize(24)} />
 
-        <HeaderCardActionButtons token={headerActionsToken} />
+        <HeaderCardActionButtons />
 
         <View style={WalletStyles.cryptoCardContainer}>
           <KoloCryptoCardPreview
