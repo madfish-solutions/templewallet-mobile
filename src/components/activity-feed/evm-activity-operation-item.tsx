@@ -5,7 +5,7 @@ import { ActivityOperKindEnum, EvmOperation } from 'src/activity/types';
 import { ActivityOperationRow } from './activity-operation-row';
 import { useEvmChainRef } from './hooks/use-activity-chain-ref.hook';
 import { useEvmActivityAsset } from './hooks/use-evm-activity-asset.hook';
-import { getActivityOperTransferType } from './utils';
+import { getActivityOperTransferType, getOperationIsBridge } from './utils';
 
 interface Props {
   chainId: number;
@@ -23,6 +23,7 @@ export const EvmActivityOperationItem = memo<Props>(({ chainId, hash, operation,
       chainRef={chainRef}
       kind={operation?.kind ?? ActivityOperKindEnum.interaction}
       transferType={getActivityOperTransferType(operation)}
+      isBridge={getOperationIsBridge(operation)}
       hash={hash}
       asset={asset}
       fiatRate={fiatRate}
