@@ -118,7 +118,8 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
     const {
       balanceText: configBalanceTextStyles,
       amountInput: configAmountInputStyles,
-      inputContainer: configInputContainerStyles
+      inputContainer: configInputContainerStyles,
+      footerContainer: configFooterContainerStyles
     } = stylesConfig;
     const colors = useColors();
     const { trackEvent } = useAnalytics();
@@ -419,7 +420,7 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
         </View>
         <Divider size={formatSize(8)} />
 
-        <View style={styles.footerContainer}>
+        <View style={[styles.footerContainer, configFooterContainerStyles]}>
           {footerErrorMessage ? (
             <Text style={styles.footerErrorText}>{footerErrorMessage}</Text>
           ) : (
