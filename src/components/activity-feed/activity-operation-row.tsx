@@ -23,6 +23,7 @@ interface Props {
   kind: ActivityFaceKind;
   transferType?: ActivityOperTransferType;
   isShielded?: boolean;
+  isBridge?: boolean;
   hash: string;
   status?: ActivityStatus;
   asset?: ActivityRowAsset;
@@ -32,11 +33,23 @@ interface Props {
 }
 
 export const ActivityOperationRow = memo<Props>(
-  ({ chainRef, kind, transferType, isShielded, hash, status, asset, fiatRate, nftBundleCount, withoutAssetIcon }) => {
+  ({
+    chainRef,
+    kind,
+    transferType,
+    isShielded,
+    isBridge,
+    hash,
+    status,
+    asset,
+    fiatRate,
+    nftBundleCount,
+    withoutAssetIcon
+  }) => {
     const styles = useActivityOperationRowStyles();
     const colors = useColors();
 
-    const rowKind = getActivityRowKind(kind, transferType, isShielded);
+    const rowKind = getActivityRowKind(kind, transferType, isShielded, isBridge ? chainRef.chain : undefined);
     const title = getActivityRowTitle(rowKind);
     const amountView = useMemo(
       () => getActivityRowAmountView(kind, asset, fiatRate, nftBundleCount),

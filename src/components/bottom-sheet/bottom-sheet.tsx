@@ -18,6 +18,7 @@ import { useAppLock } from 'src/shelter/app-lock/app-lock';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
 
+import { Divider } from '../divider/divider';
 import { IconNameV2Enum } from '../icon-v2/icon-name.enum';
 import { TouchableIconV2 } from '../touchable-icon-v2';
 
@@ -155,7 +156,7 @@ export const BottomSheet: FCWithChildren<Props> = ({
           <BottomSheetView style={rootStyle ?? styles.root}>
             {(isDefined(title) || isDefined(description)) && (
               <View style={styles.headerContainer}>
-                {showCloseButton && <View style={styles.headerLeftSide} />}
+                {showCloseButton && <Divider size={formatSize(20)} />}
                 <View style={styles.headerTextsContainer}>
                   {isDefined(title) && <Text style={styles.title}>{title}</Text>}
                   {isDefined(description) && <Text style={styles.description}>{description}</Text>}

@@ -55,6 +55,7 @@
     "@sentry/react-native": "^7.8.0",
     "@shopify/flash-list": "^2.3.1",
     "@taquito/local-forging": "^24.3.0",
+    "@taquito/michel-codec": "^24.3.0",
     "@taquito/rpc": "^24.3.0",
     "@taquito/signer": "^24.3.0",
     "@taquito/taquito": "^24.3.0",

@@ -17,13 +17,12 @@ import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_DECIMALS, TEZ_TOKEN_SYMBOL } from 'src/token/data/tokens-metadata';
 import {
   useCurrentAccountCollectiblesWithPositiveBalance,
-  useCurrentAccountEvmCollectibles
+  useCurrentAccountEvmCollectiblesWithPositiveBalance
 } from 'src/utils/assets/hooks';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatNumber } from 'src/utils/format-price';
 import { isDefined } from 'src/utils/is-defined';
-import { isPositiveNumber } from 'src/utils/number.util';
 import { mutezToTz } from 'src/utils/tezos.util';
 import { useTezosTokenOfKnownAccount } from 'src/utils/wallet.utils';
 
@@ -103,15 +102,15 @@ const CollectiblesInfo = memo(() => {
 
   const contacts = useContactsSelector();
 
-  const collectibles = useCurrentAccountCollectiblesWithPositiveBalance();
-  const evmCollectibles = useCurrentAccountEvmCollectibles();
+  const tezosCollectibles = useCurrentAccountCollectiblesWithPositiveBalance();
+  const evmCollectibles = useCurrentAccountEvmCollectiblesWithPositiveBalance();
 
-  const allDetails = useAllCollectiblesDetailsSelector();
+  const allTezosDetails = useAllCollectiblesDetailsSelector();
 
   const totalFloorPriceStr = useMemo(() => {
     let totalFloorPrice = 0;
-    for (const { slug } of collectibles) {
-      const cheapestListing = allDetails[slug]?.listingsActive[0];
+    for (const { slug } of tezosCollectibles) {
+      const cheapestListing = allTezosDetails[slug]?.listingsActive[0];
 
       if (cheapestListing) {
         totalFloorPrice += cheapestListing.price_xtz;
@@ -126,16 +125,14 @@ const CollectiblesInfo = memo(() => {
     const floorPriceDisplayed = formatNumber(floorPrice);
 
     return `${floorPriceDisplayed} ${TEZ_TOKEN_SYMBOL}`;
-  }, [collectibles, allDetails]);
+  }, [tezosCollectibles, allTezosDetails]);
 
   return (
     <>
       <View style={styles.collectiblesData}>
         <View style={styles.headerInfoColumn}>
           <Text style={styles.headerText}>Items</Text>
-          <Text style={styles.headerBoldText}>
-            {collectibles.length + evmCollectibles.filter(c => isPositiveNumber(c.balance)).length}
-          </Text>
+          <Text style={styles.headerBoldText}>{tezosCollectibles.length + evmCollectibles.length}</Text>
         </View>
         <View style={styles.headerInfoColumn}>
           <Text style={styles.headerText}>Total Floor Price</Text>
