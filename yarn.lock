@@ -16118,6 +16118,7 @@ react-native-randombytes@madfish-solutions/react-native-randombytes:
     "@sentry/react-native": "npm:^7.8.0"
     "@shopify/flash-list": "npm:^2.3.1"
     "@taquito/local-forging": "npm:^24.3.0"
+    "@taquito/michel-codec": "npm:^24.3.0"
     "@taquito/rpc": "npm:^24.3.0"
     "@taquito/signer": "npm:^24.3.0"
     "@taquito/taquito": "npm:^24.3.0"
