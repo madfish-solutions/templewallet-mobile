@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo } from 'react';
+import React, { FC, useCallback, useMemo } from 'react';
 import { SendTransactionRequest } from 'viem';
 
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
@@ -7,15 +7,16 @@ import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useEvmTransactionFee } from 'src/hooks/evm/use-evm-transaction-fee';
 import { Account } from 'src/interfaces/account.interfaces';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
-import { showErrorToast } from 'src/toast/error-toast.utils';
 import { WcSendTransactionRequestContent } from 'src/types/strict-wc-session-request';
 import { buildPreparedEvmTransaction } from 'src/utils/evm/build-prepared-evm-transaction';
+import { EvmSubmissionFees } from 'src/utils/evm/estimate-evm-transaction';
 import { parseRpcTransactionRequest } from 'src/utils/evm/parse-rpc-transaction-request';
 import { toEvmTransactionRequest } from 'src/utils/evm/to-evm-transaction-request';
 
 import { AppMetadataView } from '../../common/app-metadata-view';
 import { ConfirmationLayout } from '../../common/confirmation-layout/confirmation-layout';
 import { EvmTransactionFeeDetails } from '../../common/evm-transaction-fee-details';
+import { useEvmConfirmAction } from '../../common/hooks/use-evm-confirm-action';
 import { WcSessionRequestConfirmationSelectors } from '../selectors';
 
 import { WcTransactionPreview } from './wc-transaction-preview';
@@ -58,39 +59,14 @@ export const WcSendTransactionConfirmation: FC<Props> = ({
     sourceAddress: accountAddress,
     request: estimationRequest
   });
-  const {
-    estimationError,
-    getSubmissionFees,
-    retry,
-    isEstimating,
-    gasLimit,
-    selectedFees,
-    hasInsufficientNativeBalance
-  } = feeState;
 
-  useEffect(() => {
-    if (estimationError?.message) {
-      showErrorToast({ title: 'Failed to estimate the transaction', description: estimationError.message });
-    }
-  }, [estimationError?.message]);
+  const submit = useCallback(
+    async (fees: EvmSubmissionFees) => onConfirm(buildPreparedEvmTransaction(parsedTxRequest, fees)),
+    [onConfirm, parsedTxRequest]
+  );
+  const confirmAction = useEvmConfirmAction({ feeState, isSubmitting, submit });
 
   useNavigationSetOptions({ headerTitle: renderHeaderTitle }, []);
-
-  const confirm = useCallback(async () => {
-    const submissionFees = await getSubmissionFees();
-
-    if (!submissionFees) {
-      showErrorToast({ description: 'Failed to resolve submission fees.' });
-
-      return;
-    }
-
-    onConfirm(buildPreparedEvmTransaction(parsedTxRequest, submissionFees));
-  }, [getSubmissionFees, onConfirm, parsedTxRequest]);
-
-  const isConfirmDisabled = estimationError
-    ? isEstimating || isSubmitting
-    : isEstimating || isSubmitting || !gasLimit || !selectedFees || hasInsufficientNativeBalance;
 
   return (
     <ConfirmationLayout
@@ -104,13 +80,7 @@ export const WcSendTransactionConfirmation: FC<Props> = ({
         onPress: goBack,
         testID: WcSessionRequestConfirmationSelectors.cancelButton
       }}
-      confirmAction={{
-        disabled: isConfirmDisabled,
-        isLoading: isEstimating || isSubmitting,
-        onPress: estimationError ? retry : confirm,
-        title: estimationError ? 'Retry' : 'Confirm',
-        testID: WcSessionRequestConfirmationSelectors.confirmButton
-      }}
+      confirmAction={{ ...confirmAction, testID: WcSessionRequestConfirmationSelectors.confirmButton }}
     />
   );
 };

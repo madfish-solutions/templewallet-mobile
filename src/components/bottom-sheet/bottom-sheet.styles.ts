@@ -24,11 +24,7 @@ export const useDropdownBottomSheetStyles = createUseStyles(({ colors, typograph
     alignItems: 'center',
     flexDirection: 'column'
   },
-  headerLeftSide: {
-    flex: 1
-  },
   headerRightSide: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end'

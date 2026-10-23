@@ -75,7 +75,7 @@ export const TezosInfo = () => {
         </View>
       </View>
 
-      <View style={styles.displayFlex}>
+      <View style={[styles.displayFlex, styles.alignStretch]}>
         <View style={[styles.commonView, styles.flex1, styles.mr8]}>
           <View style={[styles.tooltipContainer, styles.mb8]}>
             <Text style={styles.subtitle13}>Volume (24H)</Text>

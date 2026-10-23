@@ -1,6 +1,6 @@
 import { FormikProps, FormikProvider } from 'formik';
 import { uniqBy } from 'lodash-es';
-import React, { FC, Ref, useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { FC, Ref, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
@@ -12,7 +12,7 @@ import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens'
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { TokensInputsEnum, useFilteredSwapTokensList } from 'src/hooks/use-filtered-swap-tokens.hook';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
-import { useFarmsStakesLoadingSelector } from 'src/store/farms/selectors';
+import { useFarmStakeLoadingSelector } from 'src/store/farms/selectors';
 import { formatSize } from 'src/styles/format-size';
 import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
 import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
@@ -69,7 +69,17 @@ export const StakeForm: FC<StakeFormProps> = ({ earnOpportunityItem, formik, sta
   );
   const risksPoints = earnOpportunitiesRisksPoints[itemType ?? EarnOpportunityTypeEnum.DEX_TWO];
 
-  const stakesLoading = useFarmsStakesLoadingSelector();
+  const stakeLoading = useFarmStakeLoadingSelector(earnOpportunityItem.contractAddress);
+  const prevStakeLoadingRef = useRef(stakeLoading);
+  const [stakeWasLoading, setStakeWasLoading] = useState(false);
+
+  useEffect(() => {
+    const prevStakeLoading = prevStakeLoadingRef.current;
+    if (prevStakeLoading && !stakeLoading) {
+      setStakeWasLoading(true);
+    }
+    prevStakeLoadingRef.current = stakeLoading;
+  }, [stakeLoading]);
 
   const handleAssetAmountChange = useCallback(() => {
     setFieldTouched('assetAmount', true);
@@ -110,6 +120,7 @@ export const StakeForm: FC<StakeFormProps> = ({ earnOpportunityItem, formik, sta
             itemType === EarnOpportunityTypeEnum.STABLESWAP ? EXPECTED_STABLESWAP_STAKING_GAS_EXPENSE : undefined
           }
           isSearchable
+          variant="v1"
           isSingleAsset={assetsList.length === 1}
           maxButton
           assetsList={filteredAssetsList}
@@ -123,7 +134,7 @@ export const StakeForm: FC<StakeFormProps> = ({ earnOpportunityItem, formik, sta
           earnOpportunityItem={earnOpportunityItem}
           stake={stake}
           shouldShowClaimRewardsButton={itemType !== EarnOpportunityTypeEnum.LIQUIDITY_BAKING && itemIsFarm}
-          loading={stakesLoading && !isDefined(stake)}
+          loading={stakeLoading && !stakeWasLoading && !isDefined(stake)}
         />
         <Divider size={formatSize(16)} />
         <VestingPeriodDisclaimers earnOpportunityItem={earnOpportunityItem} />

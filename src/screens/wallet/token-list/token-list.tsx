@@ -19,7 +19,7 @@ import {
   MultichainDisplayedToken,
   useMultichainDisplayedTokens
 } from 'src/hooks/evm/use-multichain-displayed-tokens.hook';
-import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
+import { useBalancesRefreshControlProps } from 'src/hooks/use-balances-refresh-control-props.hook';
 import { useInternalAdsAnalyticsWithImpressionCallback } from 'src/hooks/use-internal-ads-analytics.hook';
 import { useListElementIntersection } from 'src/hooks/use-list-element-intersection.hook';
 import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
@@ -65,7 +65,11 @@ const emptyListItems: ListItem[] = [];
 const keyExtractor = (item: ListItem) => (item === AD_PLACEHOLDER ? item : toChainAssetSlug(item, item.slug));
 const getItemType = (item: ListItem) => (typeof item === 'string' ? 'promotion' : 'row');
 
-export const TokensList = memo(() => {
+interface Props {
+  onRefreshEtherlink: () => Promise<void>;
+}
+
+export const TokensList = memo<Props>(({ onRefreshEtherlink }) => {
   const dispatch = useDispatch();
   const navigateToScreen = useNavigateToScreen();
   const { addListener: addNavigationListener, removeListener: removeNavigationListener } = useNavigation();
@@ -84,7 +88,7 @@ export const TokensList = memo(() => {
   const flashListWrapperRef = useRef<View>(null);
   const refs = useMemo(() => ({ parent: flashListWrapperRef, element: adListItemRef }), []);
 
-  const fakeRefreshControlProps = useFakeRefreshControlProps();
+  const refreshControlProps = useBalancesRefreshControlProps(onRefreshEtherlink);
 
   const isHideZeroBalance = useHideZeroBalancesSelector();
   const displayedTokens = useMultichainDisplayedTokens();
@@ -212,7 +216,7 @@ export const TokensList = memo(() => {
 
   useEffect(() => void flashListRef.current?.scrollToOffset({ animated: true, offset: 0 }), [accountId]);
 
-  const refreshControl = useMemo(() => <RefreshControl {...fakeRefreshControlProps} />, [fakeRefreshControlProps]);
+  const refreshControl = useMemo(() => <RefreshControl {...refreshControlProps} />, [refreshControlProps]);
 
   const navigateToActivity = useCallback(() => navigateToScreen({ screen: ScreensEnum.Activity }), [navigateToScreen]);
   const navigateToManageAssets = useCallback(

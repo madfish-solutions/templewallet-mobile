@@ -237,7 +237,6 @@ export const SendModal: FC = () => {
         <View>
           <Divider size={formatSize(8)} />
           <FormAssetAmountInput
-            variant="v2"
             maxButton
             maxAmount={maxAmount}
             maxButtonDisabled={isEvmMaxAmountEstimating}
