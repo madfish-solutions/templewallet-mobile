@@ -404,10 +404,10 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
               renderValue={renderTokenValue}
               renderListItem={renderTokenListItem}
               listHeader={dropdownListHeader}
+              listItemSeparatorSize={formatSize(8)}
+              listItemDividerSize={0}
               {...(variant === 'v2' && {
                 listItemHeight: formatSize(44),
-                listItemSeparatorSize: formatSize(8),
-                listItemDividerSize: 0,
                 isCompactListItem: true
               })}
               keyExtractor={getAssetKey}

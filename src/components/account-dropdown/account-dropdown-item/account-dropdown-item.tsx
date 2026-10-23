@@ -15,7 +15,10 @@ import { useAllCollectiblesDetailsSelector } from 'src/store/collectibles/collec
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_DECIMALS, TEZ_TOKEN_SYMBOL } from 'src/token/data/tokens-metadata';
-import { useCurrentAccountCollectiblesWithPositiveBalance } from 'src/utils/assets/hooks';
+import {
+  useCurrentAccountCollectiblesWithPositiveBalance,
+  useCurrentAccountEvmCollectiblesWithPositiveBalance
+} from 'src/utils/assets/hooks';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatNumber } from 'src/utils/format-price';
@@ -99,14 +102,15 @@ const CollectiblesInfo = memo(() => {
 
   const contacts = useContactsSelector();
 
-  const collectibles = useCurrentAccountCollectiblesWithPositiveBalance();
+  const tezosCollectibles = useCurrentAccountCollectiblesWithPositiveBalance();
+  const evmCollectibles = useCurrentAccountEvmCollectiblesWithPositiveBalance();
 
-  const allDetails = useAllCollectiblesDetailsSelector();
+  const allTezosDetails = useAllCollectiblesDetailsSelector();
 
   const totalFloorPriceStr = useMemo(() => {
     let totalFloorPrice = 0;
-    for (const { slug } of collectibles) {
-      const cheapestListing = allDetails[slug]?.listingsActive[0];
+    for (const { slug } of tezosCollectibles) {
+      const cheapestListing = allTezosDetails[slug]?.listingsActive[0];
 
       if (cheapestListing) {
         totalFloorPrice += cheapestListing.price_xtz;
@@ -121,14 +125,14 @@ const CollectiblesInfo = memo(() => {
     const floorPriceDisplayed = formatNumber(floorPrice);
 
     return `${floorPriceDisplayed} ${TEZ_TOKEN_SYMBOL}`;
-  }, [collectibles, allDetails]);
+  }, [tezosCollectibles, allTezosDetails]);
 
   return (
     <>
       <View style={styles.collectiblesData}>
         <View style={styles.headerInfoColumn}>
           <Text style={styles.headerText}>Items</Text>
-          <Text style={styles.headerBoldText}>{collectibles.length}</Text>
+          <Text style={styles.headerBoldText}>{tezosCollectibles.length + evmCollectibles.length}</Text>
         </View>
         <View style={styles.headerInfoColumn}>
           <Text style={styles.headerText}>Total Floor Price</Text>

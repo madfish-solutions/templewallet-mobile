@@ -510,7 +510,6 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         <Divider size={formatSize(8)} />
 
         <FormAssetAmountInput
-          variant="v2"
           name="inputAssets"
           label="From"
           isSearchable
@@ -531,7 +530,6 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         <SwapAssetsButton />
 
         <FormAssetAmountInput
-          variant="v2"
           name="outputAssets"
           label="To"
           toUsdToggle={false}
