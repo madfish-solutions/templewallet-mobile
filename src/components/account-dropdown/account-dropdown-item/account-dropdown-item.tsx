@@ -1,4 +1,4 @@
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import React, { memo, useCallback, useMemo } from 'react';
 import { GestureResponderEvent, Text, View } from 'react-native';
 

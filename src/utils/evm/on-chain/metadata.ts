@@ -4,7 +4,7 @@ import { erc20Abi, erc721Abi, parseAbi } from 'viem';
 
 import { EvmNetworkEssentials } from 'src/types/networks';
 import { parseJsonDataUri, toHttpMetadataUri } from 'src/utils/evm/metadata-uri';
-import { normalizeIpfsUri } from 'src/utils/image.utils';
+import { normalizeIpfsUri } from 'src/utils/ipfs.utils';
 
 import { erc1155Abi } from './abi/erc1155.abi';
 import { detectTokenStandard, isRetryableRpcError } from './common.utils';

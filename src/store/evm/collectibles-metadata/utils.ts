@@ -1,7 +1,7 @@
 import { EtherlinkAddressNftInstance } from 'src/apis/etherlink';
 import { EvmCollectibleMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { EvmCollectibleAssetStandard, EvmCollectibleOnChainMetadata } from 'src/utils/evm/on-chain/types';
-import { normalizeIpfsUri } from 'src/utils/image.utils';
+import { normalizeIpfsUri } from 'src/utils/ipfs.utils';
 
 export const buildEvmCollectibleMetadataFromApi = (
   nft: EtherlinkAddressNftInstance,
