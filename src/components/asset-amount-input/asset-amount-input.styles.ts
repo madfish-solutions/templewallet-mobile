@@ -1,6 +1,6 @@
 import { DEFAULT_BORDER_WIDTH, transparent } from 'src/config/styles';
 import { createUseStyles } from 'src/styles/create-use-styles';
-import { formatSize } from 'src/styles/format-size';
+import { formatSize, formatTextSize } from 'src/styles/format-size';
 
 export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }) => ({
   headerContainer: {
@@ -80,7 +80,10 @@ export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }
   footerErrorText: {
     ...typography.caption11Regular,
     color: colors.destructive,
-    marginLeft: formatSize(6)
+    lineHeight: formatTextSize(13),
+    flexShrink: 1,
+    marginLeft: formatSize(6),
+    marginRight: formatSize(8)
   },
   balanceContainer: {
     alignSelf: 'flex-start'

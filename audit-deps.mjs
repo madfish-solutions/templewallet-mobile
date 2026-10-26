@@ -11,7 +11,6 @@ const ignoredAdvisories = new Map([
     'GHSA-86w9-cpqp-85rv',
     'node-forge RSA PKCS#1 v1.5 signature verification accepts extra nested DigestAlgorithm elements'
   ],
-  ['GHSA-vfj7-8cjw-p6xm', 'braces vulnerable to stack-exhaustion denial of service through deeply nested patterns'],
   [
     'GHSA-m9gg-hp2v-232j',
     'In certain configurations, getAuthContext can return unauthorized certificates as though they were authorized'

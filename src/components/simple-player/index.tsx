@@ -1,8 +1,9 @@
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleProp, StyleSheet, ViewStyle } from 'react-native';
 import { OnLoadData as NativeOnLoadData, OnVideoErrorData } from 'react-native-video';
 import VideoPlayer from 'react-native-video-controls';
 import { WebView } from 'react-native-webview';
+import { WebViewHttpErrorEvent } from 'react-native-webview/lib/WebViewTypes';
 
 import { emptyFn } from 'src/config/general';
 import { useAppStateStatus } from 'src/hooks/use-app-state-status.hook';
@@ -24,6 +25,10 @@ interface Props {
 }
 
 const BUFFER_DURATION = 8000;
+const BUFFER_CONFIG = {
+  bufferForPlaybackMs: BUFFER_DURATION,
+  bufferForPlaybackAfterRebufferMs: BUFFER_DURATION * 2
+};
 
 export const SimplePlayer = memo<Props>(
   ({ uri, width, height, style, onError = emptyFn, onLoad = emptyFn, isVideo = false, shouldShowLoader = true }) => {
@@ -40,6 +45,8 @@ export const SimplePlayer = memo<Props>(
     useAppStateStatus({ onAppActiveState, onAppInactiveState: onAppOtherState, onAppBackgroundState: onAppOtherState });
 
     useEffect(() => setShouldUseNativePlayer(true), [uri]);
+
+    const source = useMemo(() => ({ uri, bufferConfig: BUFFER_CONFIG }), [uri]);
 
     const handleNativePlayerLoad = useCallback(
       (data: NativeOnLoadData) => {
@@ -65,6 +72,15 @@ export const SimplePlayer = memo<Props>(
       onError({ error: { errorString: 'Failed to load video, it may be invalid or unsupported' } });
     }, [onError]);
 
+    const handleWebViewHttpError = useCallback(
+      (event: WebViewHttpErrorEvent) => {
+        if (event.nativeEvent.url === uri) {
+          handleWebViewError();
+        }
+      },
+      [handleWebViewError, uri]
+    );
+
     const handleNativePlayerError = useCallback(
       (error: unknown) => {
         trackErrorEvent('NativePlayerError', error, [], { uri });
@@ -78,15 +94,11 @@ export const SimplePlayer = memo<Props>(
         {shouldUseNativePlayer ? (
           <VideoPlayer
             repeat
-            source={{ uri }}
+            source={source}
             style={[{ width, height }, style]}
             paused={atBootsplash || isLocked || !appIsActive}
             resizeMode="contain"
             ignoreSilentSwitch="ignore"
-            bufferConfig={{
-              bufferForPlaybackMs: BUFFER_DURATION,
-              bufferForPlaybackAfterRebufferMs: BUFFER_DURATION * 2
-            }}
             onError={handleNativePlayerError}
             onLoadStart={nativePlayerLoadStart}
             onLoad={handleNativePlayerLoad}
@@ -100,6 +112,7 @@ export const SimplePlayer = memo<Props>(
             source={{ uri }}
             style={[{ width, height }, style]}
             onError={handleWebViewError}
+            onHttpError={handleWebViewHttpError}
             onLoadEnd={handleWebViewLoad}
           />
         )}

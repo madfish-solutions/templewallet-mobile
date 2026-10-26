@@ -1,13 +1,12 @@
-import { BottomSheetSectionList, TouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { memo, useCallback, useState } from 'react';
-import { FlatListProps, ListRenderItemInfo, StyleProp, Text, View, ViewStyle } from 'react-native';
+import React, { memo, useCallback, useMemo, useState } from 'react';
+import { FlatListProps, ListRenderItemInfo, StyleProp, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 
 import { emptyComponent, emptyFn } from 'src/config/general';
 import { useDropdownHeight } from 'src/hooks/use-dropdown-height.hook';
 import { SectionDropdownDataInterface } from 'src/interfaces/section-dropdown-data.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
-import { createGetItemLayout } from 'src/utils/flat-list.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
@@ -85,9 +84,41 @@ const SectionDropdownComponent = <T extends unknown>({
   const contentHeight = useDropdownHeight();
   const [searchInputKey, setSearchInputKey] = useState(0);
 
+  const itemsTitles = useMemo(() => {
+    const { titles } = list.reduce<{ sum: number; titles: Record<number, string | undefined> }>(
+      (acc, section) => {
+        acc.titles[acc.sum] = section.title;
+        acc.sum += section.data.length;
+
+        return acc;
+      },
+      { sum: 0, titles: {} }
+    );
+
+    return titles;
+  }, [list]);
+
+  const flatList = useMemo(() => list.flatMap(section => section.data), [list]);
+
+  const getItemLayout = useCallback(
+    (_: unknown, index: number) => {
+      const sectionTitle = itemsTitles[index];
+      const sectionsTitlesBeforeCount = Object.keys(itemsTitles).filter(key => Number(key) < index).length;
+      const sectionTitleSize = formatSize(22);
+
+      return {
+        length: itemHeight + (sectionTitle ? sectionTitleSize : 0),
+        index,
+        offset: index * itemHeight + sectionsTitlesBeforeCount * sectionTitleSize
+      };
+    },
+    [itemsTitles, itemHeight]
+  );
+
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<T>) => {
       const isSelected = equalityFn(item, value);
+      const sectionTitle = itemsTitles[index];
 
       const handlePress = () => {
         onValueChange(item);
@@ -95,47 +126,35 @@ const SectionDropdownComponent = <T extends unknown>({
       };
 
       return (
-        <TouchableOpacity key={index} onPress={handlePress}>
-          <DropdownItemContainer hasMargin isSelected={isSelected} style={itemContainerStyle}>
-            {renderListItem({ item, isSelected })}
-          </DropdownItemContainer>
-        </TouchableOpacity>
+        <>
+          {isDefined(sectionTitle) && (
+            <View>
+              <Text style={styles.sectionHeaderText}>{sectionTitle}</Text>
+            </View>
+          )}
+          <TouchableOpacity key={index} onPress={handlePress}>
+            <DropdownItemContainer hasMargin isSelected={isSelected} style={itemContainerStyle}>
+              {renderListItem({ item, isSelected })}
+            </DropdownItemContainer>
+          </TouchableOpacity>
+        </>
       );
     },
-    [equalityFn, value, onValueChange, dropdownBottomSheetController, renderListItem, itemContainerStyle]
-  );
-
-  const scroll = useCallback(() => {
-    if (!isDefined(value) || !isDefined(list) || list.length === 0) {
-      return void 0;
-    }
-    let itemIndex = 0;
-    let sectionIndex = 0;
-    for (let i = 0; i < list.length; i++) {
-      const item = list[i];
-
-      for (let j = 0; j < item.data.length; j++) {
-        if (equalityFn(item.data[j], value)) {
-          itemIndex = j;
-          sectionIndex = i;
-          break;
-        }
-      }
-      if (itemIndex !== 0 || sectionIndex !== 0) {
-        break;
-      }
-    }
-  }, [value, list]);
-
-  const renderSectionHeader = useCallback(
-    ({ section }: { section: { title: string } }) => <Text style={styles.sectionHeaderText}>{section.title}</Text>,
-    [styles.sectionHeaderText]
+    [
+      equalityFn,
+      value,
+      onValueChange,
+      dropdownBottomSheetController,
+      renderListItem,
+      itemContainerStyle,
+      itemsTitles,
+      styles.sectionHeaderText
+    ]
   );
 
   const handleOpen = useCallback(() => {
-    scroll();
     dropdownBottomSheetController.open();
-  }, [dropdownBottomSheetController, scroll]);
+  }, [dropdownBottomSheetController]);
 
   const handleClose = useCallback(() => {
     if (isSearchable) {
@@ -176,14 +195,15 @@ const SectionDropdownComponent = <T extends unknown>({
               />
             </View>
           )}
-          <BottomSheetSectionList
-            sections={list}
-            getItemLayout={createGetItemLayout(itemHeight)}
-            contentContainerStyle={styles.listContentContainer}
-            keyExtractor={keyExtractor}
+          <FlatList
+            data={flatList}
             renderItem={renderItem}
-            renderSectionHeader={renderSectionHeader}
+            keyExtractor={keyExtractor}
+            getItemLayout={getItemLayout}
+            contentContainerStyle={styles.listContentContainer}
             ListEmptyComponent={<DataPlaceholder text={emptyListText} />}
+            windowSize={10}
+            updateCellsBatchingPeriod={150}
           />
         </View>
 

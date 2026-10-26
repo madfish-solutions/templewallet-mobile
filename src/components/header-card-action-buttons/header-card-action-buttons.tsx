@@ -1,11 +1,15 @@
-import React, { memo, useCallback, useEffect, useRef } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Animated, StyleProp, ViewStyle } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
-import { MultichainDisplayedToken } from 'src/hooks/evm/use-multichain-displayed-tokens.hook';
+import {
+  buildTezosDisplayedToken,
+  MultichainDisplayedToken,
+  useMultichainDisplayedTokens
+} from 'src/hooks/evm/use-multichain-displayed-tokens.hook';
 import { useAtBootsplash } from 'src/hooks/use-hide-bootsplash';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useTotalBalance } from 'src/hooks/use-total-balance';
@@ -20,6 +24,7 @@ import { useAccount, useAccountAddressForEvm } from 'src/store/wallet/wallet-sel
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { TEZ_TOKEN_SLUG, TEZ_TOKEN_SYMBOL } from 'src/token/data/tokens-metadata';
+import { EVM_TOKEN_SLUG } from 'src/token/interfaces/token-metadata.interface';
 import { emptyToken } from 'src/token/interfaces/token.interface';
 import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { toChainAssetSlug } from 'src/utils/chain-asset-slug';
@@ -35,171 +40,200 @@ import { IconNameV2Enum } from '../icon-v2/icon-name.enum';
 import { useHeaderCardActionButtonsStyles } from './header-card-action-buttons.styles';
 
 interface Props {
-  token: MultichainDisplayedToken;
+  token?: MultichainDisplayedToken;
   onSendPress?: EmptyFn;
-  scopeReceiveToTokenChain?: boolean;
   style?: StyleProp<ViewStyle>;
 }
 
-export const HeaderCardActionButtons = memo<Props>(
-  ({ token, onSendPress, scopeReceiveToTokenChain = false, style }) => {
-    const dispatch = useDispatch();
-    const navigateToModal = useNavigateToModal();
-    const navigateToScreen = useNavigateToScreen();
-    const { isLocked } = useAppLock();
-    const atBootsplash = useAtBootsplash();
-    const selectedAccount = useAccount();
-    const { isTezosMainnet } = useNetworkInfo();
-    const tezosToken = useTezosTokenOfCurrentAccount();
-    const evmAddress = useAccountAddressForEvm();
-    const totalBalance = useTotalBalance();
-    const styles = useHeaderCardActionButtonsStyles();
-    const defaultStyleConfig = useButtonMediumStyleConfigV2();
-    const isLoaderBeingShown = useIsShowLoaderSelector();
-    const canUseTezos = Boolean(getAccountAddressForTezos(selectedAccount));
+export const HeaderCardActionButtons = memo<Props>(({ token, onSendPress, style }) => {
+  const dispatch = useDispatch();
+  const navigateToModal = useNavigateToModal();
+  const navigateToScreen = useNavigateToScreen();
+  const { isLocked } = useAppLock();
+  const atBootsplash = useAtBootsplash();
+  const selectedAccount = useAccount();
+  const { isTezosMainnet } = useNetworkInfo();
+  const tezosToken = useTezosTokenOfCurrentAccount();
+  const multichainDisplayedTokens = useMultichainDisplayedTokens();
+  const evmAddress = useAccountAddressForEvm();
+  const totalBalance = useTotalBalance();
+  const styles = useHeaderCardActionButtonsStyles();
+  const defaultStyleConfig = useButtonMediumStyleConfigV2();
+  const isLoaderBeingShown = useIsShowLoaderSelector();
+  const canUseTezos = Boolean(getAccountAddressForTezos(selectedAccount));
 
-    const isTezosKind = token.chainKind === TempleChainKind.Tezos;
-    const original = token.original;
+  const evmGasTokens = useMemo(
+    () =>
+      multichainDisplayedTokens.filter(
+        token => token.chainKind === TempleChainKind.EVM && token.slug === EVM_TOKEN_SLUG
+      ),
+    [multichainDisplayedTokens]
+  );
+  const tezosMultichainToken = useMemo(
+    () =>
+      multichainDisplayedTokens.find(
+        token => token.chainKind === TempleChainKind.Tezos && token.slug === TEZ_TOKEN_SLUG
+      ) ?? buildTezosDisplayedToken(tezosToken, undefined),
+    [multichainDisplayedTokens, tezosToken]
+  );
 
-    // The gas-fee message fires only when the page's token IS the gas token (address match)
-    const isTezBalanceTooLow =
-      isTezosKind &&
-      isDefined(original) &&
-      isDefined(original.address) &&
-      original.address === tezosToken.address &&
-      tezosToken.balance === emptyToken.balance;
-    const errorMessage = isTezBalanceTooLow ? `You need to have ${TEZ_TOKEN_SYMBOL} to pay gas fee` : 'Balance is zero';
+  const tokenWithFallback = useMemo(() => {
+    if (token) {
+      return token;
+    }
 
-    const emptyBalance = isTezosKind
-      ? (original?.balance ?? token.atomicBalance) === emptyToken.balance || tezosToken.balance === emptyToken.balance
-      : !isPositiveNumber(token.atomicBalance);
-    const disabledSendButton = isTezosKind
-      ? !canUseTezos || (emptyBalance && LIMIT_FIN_FEATURES)
-      : evmAddress == null || (emptyBalance && LIMIT_FIN_FEATURES);
+    if (tezosMultichainToken.atomicBalance !== emptyToken.balance) {
+      return tezosMultichainToken;
+    }
 
-    const actionButtonStylesOverrides = {
-      titleStyle: styles.actionButtonTitle
-    };
+    const evmGasToken = evmGasTokens.find(gasToken => gasToken.atomicBalance !== emptyToken.balance);
 
-    const animationPlayedTimesCount = useRef(0);
-    const earnIconTranslateYRef = useRef(new Animated.Value(0));
+    return evmGasToken ?? tezosMultichainToken;
+  }, [token, tezosMultichainToken, evmGasTokens]);
 
-    const playAnimation = useCallback(() => {
-      if (animationPlayedTimesCount.current < 3) {
-        earnIconTranslateYRef.current.setValue(formatSize(-8));
-        Animated.spring(earnIconTranslateYRef.current, { toValue: 0, friction: 2, useNativeDriver: true }).start();
-        animationPlayedTimesCount.current++;
+  const isTezosKind = tokenWithFallback.chainKind === TempleChainKind.Tezos;
+  const original = tokenWithFallback.original;
+  const tezosAtomicBalance = tezosMultichainToken.atomicBalance;
+  const tokenAtomicBalance = tokenWithFallback.atomicBalance;
+
+  // The gas-fee message fires only when the page's token IS the gas token (address match)
+  const isTezBalanceTooLow =
+    isTezosKind &&
+    isDefined(original?.address) &&
+    original.address === tezosMultichainToken.original?.address &&
+    tezosAtomicBalance === emptyToken.balance;
+  const errorMessage = isTezBalanceTooLow ? `You need to have ${TEZ_TOKEN_SYMBOL} to pay gas fee` : 'Balance is zero';
+
+  const emptyBalance =
+    isTezosKind && token
+      ? (original?.balance ?? tokenAtomicBalance) === emptyToken.balance || tezosAtomicBalance === emptyToken.balance
+      : !isPositiveNumber(tokenAtomicBalance);
+  const disabledSendButton = isTezosKind
+    ? !canUseTezos || (emptyBalance && LIMIT_FIN_FEATURES)
+    : evmAddress == null || (emptyBalance && LIMIT_FIN_FEATURES);
+
+  const actionButtonStylesOverrides = {
+    titleStyle: styles.actionButtonTitle
+  };
+
+  const animationPlayedTimesCount = useRef(0);
+  const earnIconTranslateYRef = useRef(new Animated.Value(0));
+
+  const playAnimation = useCallback(() => {
+    if (animationPlayedTimesCount.current < 3) {
+      earnIconTranslateYRef.current.setValue(formatSize(-8));
+      Animated.spring(earnIconTranslateYRef.current, { toValue: 0, friction: 2, useNativeDriver: true }).start();
+      animationPlayedTimesCount.current++;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isLocked || atBootsplash) {
+      animationPlayedTimesCount.current = 0;
+
+      return;
+    }
+
+    if (isLoaderBeingShown) {
+      return;
+    }
+
+    playAnimation();
+    const animationInterval = setInterval(playAnimation, 4000);
+
+    return () => void clearInterval(animationInterval);
+  }, [isLocked, atBootsplash, isLoaderBeingShown, playAnimation]);
+
+  const earnButtonStylesOverrides = {
+    ...actionButtonStylesOverrides,
+    iconStyle: { ...defaultStyleConfig.iconStyle, translateY: earnIconTranslateYRef.current }
+  };
+
+  const sendButtonStylesOverrides = {
+    titleStyle: styles.actionButtonTitle,
+    activeColorConfig: disabledSendButton
+      ? defaultStyleConfig.disabledColorConfig
+      : defaultStyleConfig.activeColorConfig
+  };
+
+  const handleSendButton = () => {
+    if (emptyBalance) {
+      showErrorToast({ description: errorMessage });
+
+      if (isTezosKind && isTezBalanceTooLow && !LIMIT_FIN_FEATURES) {
+        dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
       }
-    }, []);
 
-    useEffect(() => {
-      if (isLocked || atBootsplash) {
-        animationPlayedTimesCount.current = 0;
+      return;
+    }
 
-        return;
-      }
+    if (onSendPress) {
+      return onSendPress();
+    }
 
-      if (isLoaderBeingShown) {
-        return;
-      }
+    if (!isTezosKind) {
+      return navigateToModal(ModalsEnum.Send, {
+        assetKey: toChainAssetSlug(tokenWithFallback, tokenWithFallback.slug)
+      });
+    }
 
-      playAnimation();
-      const animationInterval = setInterval(playAnimation, 4000);
+    if (original) {
+      return navigateToModal(ModalsEnum.Send, { token: original });
+    }
+  };
 
-      return () => void clearInterval(animationInterval);
-    }, [isLocked, atBootsplash, isLoaderBeingShown, playAnimation]);
-
-    const earnButtonStylesOverrides = {
-      ...actionButtonStylesOverrides,
-      iconStyle: { ...defaultStyleConfig.iconStyle, translateY: earnIconTranslateYRef.current }
-    };
-
-    const sendButtonStylesOverrides = {
-      titleStyle: styles.actionButtonTitle,
-      activeColorConfig: disabledSendButton
-        ? defaultStyleConfig.disabledColorConfig
-        : defaultStyleConfig.activeColorConfig
-    };
-
-    const handleSendButton = () => {
-      if (emptyBalance) {
-        showErrorToast({ description: errorMessage });
-
-        if (isTezosKind && isTezBalanceTooLow && !LIMIT_FIN_FEATURES) {
-          dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
+  return (
+    <ButtonsContainer style={[styles.buttonsContainer, style]}>
+      <ButtonMediumV2
+        title="Receive"
+        iconName={IconNameV2Enum.ArrowDown}
+        onPress={() =>
+          navigateToModal(
+            ModalsEnum.Receive,
+            token ? { chainKind: token.chainKind, withShielded: isTezosKind && token.slug === TEZ_TOKEN_SLUG } : {}
+          )
         }
+        styleConfigOverrides={actionButtonStylesOverrides}
+        style={styles.buttonContainer}
+        testID={WalletSelectors.receiveButton}
+      />
 
-        return;
-      }
-
-      if (onSendPress) {
-        return onSendPress();
-      }
-
-      if (!isTezosKind) {
-        return navigateToModal(ModalsEnum.Send, { assetKey: toChainAssetSlug(token, token.slug) });
-      }
-
-      if (original) {
-        return navigateToModal(ModalsEnum.Send, { token: original });
-      }
-    };
-
-    return (
-      <ButtonsContainer style={[styles.buttonsContainer, style]}>
+      {((isTezosKind && !LIMIT_FIN_FEATURES) || !token) && (
         <ButtonMediumV2
-          title="Receive"
-          iconName={IconNameV2Enum.ArrowDown}
-          onPress={() =>
-            navigateToModal(
-              ModalsEnum.Receive,
-              scopeReceiveToTokenChain
-                ? { chainKind: token.chainKind, withShielded: isTezosKind && token.slug === TEZ_TOKEN_SLUG }
-                : {}
-            )
-          }
+          disabled={!canUseTezos}
+          title="Buy"
+          iconName={IconNameV2Enum.Cart}
+          onPress={() => navigateToScreen({ screen: ScreensEnum.Buy })}
           styleConfigOverrides={actionButtonStylesOverrides}
           style={styles.buttonContainer}
-          testID={WalletSelectors.receiveButton}
+          testID={WalletSelectors.buyButton}
         />
+      )}
 
-        {isTezosKind && !LIMIT_FIN_FEATURES && (
-          <ButtonMediumV2
-            disabled={!canUseTezos}
-            title="Buy"
-            iconName={IconNameV2Enum.Cart}
-            onPress={() => navigateToScreen({ screen: ScreensEnum.Buy })}
-            styleConfigOverrides={actionButtonStylesOverrides}
-            style={styles.buttonContainer}
-            testID={WalletSelectors.buyButton}
-          />
-        )}
-
-        {isTezosKind && (
-          <ButtonMediumV2
-            disabled={!canUseTezos || !isTezosMainnet}
-            title="Earn"
-            iconName={IconNameV2Enum.Dollar}
-            onPress={() => navigateToScreen({ screen: ScreensEnum.Earn })}
-            styleConfigOverrides={earnButtonStylesOverrides}
-            style={styles.buttonContainer}
-            testID={WalletSelectors.earnButton}
-            testIDProperties={{
-              isZeroBalance: totalBalance.isLessThanOrEqualTo(0)
-            }}
-          />
-        )}
-
+      {(isTezosKind || !token) && (
         <ButtonMediumV2
-          disabled={disabledSendButton}
-          title="Send"
-          iconName={IconNameV2Enum.ArrowUp}
-          onPress={handleSendButton}
-          styleConfigOverrides={sendButtonStylesOverrides}
+          disabled={!canUseTezos || !isTezosMainnet}
+          title="Earn"
+          iconName={IconNameV2Enum.Dollar}
+          onPress={() => navigateToScreen({ screen: ScreensEnum.Earn })}
+          styleConfigOverrides={earnButtonStylesOverrides}
           style={styles.buttonContainer}
-          testID={WalletSelectors.sendButton}
+          testID={WalletSelectors.earnButton}
+          testIDProperties={{
+            isZeroBalance: totalBalance.isLessThanOrEqualTo(0)
+          }}
         />
-      </ButtonsContainer>
-    );
-  }
-);
+      )}
+
+      <ButtonMediumV2
+        disabled={disabledSendButton}
+        title="Send"
+        iconName={IconNameV2Enum.ArrowUp}
+        onPress={handleSendButton}
+        styleConfigOverrides={sendButtonStylesOverrides}
+        style={styles.buttonContainer}
+        testID={WalletSelectors.sendButton}
+      />
+    </ButtonsContainer>
+  );
+});

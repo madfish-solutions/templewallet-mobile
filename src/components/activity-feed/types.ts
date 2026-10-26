@@ -12,7 +12,11 @@ export enum ActivityRowKind {
   transfer,
   interaction,
   approve,
-  bundle
+  bundle,
+  bridgeToEtherlink,
+  bridgeFromEtherlink,
+  bridgeToTezos,
+  bridgeFromTezos
 }
 
 export enum ActivityAssetImageKind {
