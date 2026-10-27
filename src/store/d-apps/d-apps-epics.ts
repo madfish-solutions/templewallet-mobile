@@ -217,7 +217,7 @@ const loadDAppsListEpic: AnyActionEpic = (action$, state$) =>
     ofType(loadDAppsListActions.submit),
     withUserAnalyticsCredentials(state$),
     switchMap(([, { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
-      from(templeWalletApi.get<CustomDAppsInfo>('/dapps')).pipe(
+      from(templeWalletApi.get<CustomDAppsInfo>('/dapps', { params: { platform: 'mobile' } })).pipe(
         map(({ data }) => loadDAppsListActions.success(data.dApps)),
         catchError(err => {
           if (isAnalyticsEnabled) {
