@@ -16,6 +16,7 @@ import {
   swapStackScreens,
   walletStackScreens
 } from 'src/navigator/enums/screens.enum';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { isStackFocused } from 'src/utils/is-stack-focused.util';
@@ -32,7 +33,7 @@ interface Props {
 
 export const SideBar = memo<Props>(({ currentRouteName }) => {
   const styles = useSideBarStyles();
-
+  const tezosAddress = useAccountAddressForTezos();
   const swapScreenParams = useSwapScreenParams(currentRouteName);
   const isManageCollectiblesTab = useIsManageCollectiblesTab(currentRouteName);
 
@@ -68,6 +69,7 @@ export const SideBar = memo<Props>(({ currentRouteName }) => {
           {!LIMIT_FIN_FEATURES && (
             <SideBarButton
               label="Swap"
+              disabled={!tezosAddress}
               iconName={NavigationBarIconNameEnum.Swap}
               routeName={ScreensEnum.SwapScreen}
               swapScreenParams={swapScreenParams}

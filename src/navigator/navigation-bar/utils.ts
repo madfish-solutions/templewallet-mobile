@@ -10,7 +10,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { ScreensEnum } from '../enums/screens.enum';
 import { useNavigationState } from '../hooks/use-navigation.hook';
 
-export const NOT_AVAILABLE_MESSAGE = 'Not available on this RPC node';
+export const NOT_AVAILABLE_MESSAGE = 'Swaps for Etherlink network in progress. Sorry for the inconvenience.';
 
 type RouteType = { params?: { descriptor: TokenScreenDescriptor } };
 type RouteParams = { name: string } & RouteType;
