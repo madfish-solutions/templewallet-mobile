@@ -1,12 +1,13 @@
 import FastImage from '@d11/react-native-fast-image';
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { SvgUri, SvgXml } from 'react-native-svg';
 
 import { CryptoLogo } from 'src/components/crypto-logo';
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum.ts';
+import { useCollectionLogoImagesStack } from 'src/hooks/use-images-stack';
 import { formatSize } from 'src/styles/format-size.ts';
-import { formatImgUri, isImgUriSvg, isSvgDataUriInBase64Encoding } from 'src/utils/image.utils.ts';
+import { isImgUriSvg, isSvgDataUriInBase64Encoding } from 'src/utils/image.utils.ts';
 
 import { COLLECTION_ICON_SIZE } from '../../constants.ts';
 
@@ -17,10 +18,10 @@ interface Props {
 }
 
 export const CollectionImage: FC<Props> = ({ uri }) => {
-  const [loadedUri, setLoadedUri] = useState<string | null>(null);
-  const [failedUri, setFailedUri] = useState<string | null>(null);
-  const handleLoad = useCallback(() => setLoadedUri(uri ?? null), [uri]);
-  const handleError = useCallback(() => setFailedUri(uri ?? null), [uri]);
+  const base64SvgUri = uri && isSvgDataUriInBase64Encoding(uri) ? uri : undefined;
+  const { src, isLoading, isStackFailed, onSuccess, onFail } = useCollectionLogoImagesStack(
+    base64SvgUri ? undefined : uri
+  );
   const fallback = (
     <CryptoLogo
       name={CryptoLogoNameEnum.CollectiblePlaceholder}
@@ -30,13 +31,8 @@ export const CollectionImage: FC<Props> = ({ uri }) => {
     />
   );
 
-  if (!uri || failedUri === uri) {
-    return fallback;
-  }
-
-  if (isSvgDataUriInBase64Encoding(uri)) {
-    const base64Data = uri.replace(/^data:image\/svg\+xml;base64,/, '');
-    const svgXml = Buffer.from(base64Data, 'base64').toString('utf8');
+  if (base64SvgUri) {
+    const svgXml = Buffer.from(base64SvgUri.replace(/^data:image\/svg\+xml;base64,/, ''), 'base64').toString('utf8');
 
     return (
       <View style={styles.container}>
@@ -45,26 +41,28 @@ export const CollectionImage: FC<Props> = ({ uri }) => {
     );
   }
 
-  const imageStyle = [styles.logo, loadedUri !== uri && styles.hidden];
+  if (isStackFailed || src == null) {
+    return fallback;
+  }
 
-  if (isImgUriSvg(uri)) {
+  const imageStyle = [styles.logo, isLoading && styles.hidden];
+
+  if (isImgUriSvg(src)) {
     return (
       <View style={styles.container}>
-        {loadedUri !== uri && fallback}
-        <SvgUri uri={uri} height={size} width={size} style={imageStyle} onLoad={handleLoad} onError={handleError} />
+        {isLoading && fallback}
+        <SvgUri uri={src} height={size} width={size} style={imageStyle} onLoad={onSuccess} onError={onFail} />
       </View>
     );
   }
 
-  const formattedUri = formatImgUri(uri);
-
   return (
     <View style={styles.container}>
-      {loadedUri !== uri && fallback}
-      {formattedUri == null ? (
-        <Image source={{ uri }} style={imageStyle} onLoad={handleLoad} onError={handleError} />
+      {isLoading && fallback}
+      {src.startsWith('data:') ? (
+        <Image key={src} source={{ uri: src }} style={imageStyle} onLoad={onSuccess} onError={onFail} />
       ) : (
-        <FastImage source={{ uri: formattedUri }} style={imageStyle} onLoad={handleLoad} onError={handleError} />
+        <FastImage key={src} source={{ uri: src }} style={imageStyle} onLoad={onSuccess} onError={onFail} />
       )}
     </View>
   );

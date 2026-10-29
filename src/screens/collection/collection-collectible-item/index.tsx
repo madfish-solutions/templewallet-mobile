@@ -9,8 +9,8 @@ import { ButtonLargePrimary } from 'src/components/button/button-large/button-la
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { CollectibleImage } from 'src/components/collectible-image';
 import { Divider } from 'src/components/divider/divider';
-import { Icon } from 'src/components/icon/icon';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { IconV2 } from 'src/components/icon-v2';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
 import { APIS_SYNC_INTERVAL } from 'src/config/fixed-times';
 import { emptyFn } from 'src/config/general';
 import { LIMIT_NFT_FEATURES } from 'src/config/system';
@@ -193,7 +193,7 @@ export const CollectionCollectibleItem = memo<Props>(({ item, collectionContract
     };
   }, [accountPkh, isAccountHolder, collectionContract, item.id, item.holders, item.listingsActive, navigateToModal]);
 
-  const handleShare = useShareNFT(slug, item.thumbnailUri, item.name, item.description);
+  const handleShare = useShareNFT(slug, item.name, item.description);
 
   const navigateToCollectibleModal = () =>
     navigateToModal(ModalsEnum.CollectibleModal, { chainKind: TempleChainKind.Tezos, slug });
@@ -231,7 +231,7 @@ export const CollectionCollectibleItem = memo<Props>(({ item, collectionContract
             </Text>
 
             <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
-              <Icon name={IconNameEnum.Share} />
+              <IconV2 name={IconNameV2Enum.Share} />
               <Divider size={formatSize(4)} />
               <Text style={styles.shareButtonText}>Share</Text>
             </TouchableOpacity>

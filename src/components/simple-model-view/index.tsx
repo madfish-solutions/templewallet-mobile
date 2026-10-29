@@ -1,6 +1,7 @@
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
+import { WebViewHttpErrorEvent } from 'react-native-webview/lib/WebViewTypes';
 
 import { useWillUnmount } from 'src/utils/hooks/use-will-unmount';
 
@@ -17,20 +18,12 @@ interface Props {
   setScrollEnabled?: SyncFn<boolean>;
 }
 
+const MODEL_LOAD_ERROR_MESSAGE = 'model-load-error';
+
 export const SimpleModelView = memo<Props>(({ uri, isBinary, style, onFail, setScrollEnabled }) => {
   const styles = useSimpleModelViewStyles();
 
-  const source = useMemo(() => {
-    if (isBinary) {
-      return { html: getHTML(uri) };
-    }
-
-    if (!uri.includes('/index.html')) {
-      uri += '/index.html';
-    }
-
-    return { uri };
-  }, [uri]);
+  const source = useMemo(() => (isBinary ? { html: getHTML(uri) } : { uri }), [isBinary, uri]);
 
   const [isLoading, setIsLoading] = useState(false);
   const [shouldUseFallback, setShouldUseFallback] = useState(false);
@@ -42,13 +35,32 @@ export const SimpleModelView = memo<Props>(({ uri, isBinary, style, onFail, setS
 
   useEffect(() => setShouldUseFallback(false), [uri]);
 
-  const handleWebViewMessage = useCallback((event: WebViewMessageEvent) => {
-    const { data } = event.nativeEvent;
-    if (data.startsWith('"Uncaught')) {
-      setShouldUseFallback(true);
-    }
-    console.error('WebView embeded page error:', data);
-  }, []);
+  const handleWebViewMessage = useCallback(
+    (event: WebViewMessageEvent) => {
+      const { data } = event.nativeEvent;
+
+      if (data === MODEL_LOAD_ERROR_MESSAGE) {
+        onFail?.();
+
+        return;
+      }
+
+      if (data.startsWith('"Uncaught')) {
+        setShouldUseFallback(true);
+      }
+      console.error('WebView embeded page error:', data);
+    },
+    [onFail]
+  );
+
+  const handleHttpError = useCallback(
+    (event: WebViewHttpErrorEvent) => {
+      if (event.nativeEvent.url === uri) {
+        onFail?.();
+      }
+    },
+    [onFail, uri]
+  );
 
   return (
     <>
@@ -59,6 +71,7 @@ export const SimpleModelView = memo<Props>(({ uri, isBinary, style, onFail, setS
           source={source}
           style={[styles.lowerOpacity, style]}
           onError={onFail}
+          onHttpError={handleHttpError}
           onMessage={handleWebViewMessage}
           onLoadStart={() => setIsLoading(true)}
           onLoadEnd={() => setIsLoading(false)}
@@ -93,6 +106,13 @@ const getHTML = (uri: string) =>
   <body>
     <model-viewer src=${JSON.stringify(uri)} auto-rotate camera-controls autoplay shadow-intensity="1">
     </model-viewer>
+    <script>
+      document.querySelector('model-viewer').addEventListener('error', function (event) {
+        if (!event.detail || event.detail.type !== 'webglcontextlost') {
+          window.ReactNativeWebView.postMessage(${JSON.stringify(MODEL_LOAD_ERROR_MESSAGE)});
+        }
+      });
+    </script>
   </body>
 </html>`;
 

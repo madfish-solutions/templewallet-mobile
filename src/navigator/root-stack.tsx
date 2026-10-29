@@ -11,6 +11,7 @@ import { RootHooks } from 'src/hooks/root-hooks';
 import { useAppSplash } from 'src/hooks/use-app-splash.hook';
 import { useDevicePasscode } from 'src/hooks/use-device-passcode.hook';
 import { AddAssetModal } from 'src/modals/add-asset-modal/add-asset-modal';
+import { BridgeModal } from 'src/modals/bridge-modal/bridge-modal';
 import { ChooseAccountImportType } from 'src/modals/choose-account-import-type';
 import { ChooseWalletImportType } from 'src/modals/choose-wallet-import-type';
 import { CollectibleModal } from 'src/modals/collectible-modal';
@@ -222,6 +223,7 @@ export const RootStackScreen = () => {
               component={RebalanceModal}
               options={useModalOptions('Rebalance')}
             />
+            <RootStack.Screen name={ModalsEnum.Bridge} component={BridgeModal} options={useModalOptions('Bridge')} />
             <RootStack.Screen
               name={ModalsEnum.PromoRewardsEnable}
               component={PromoRewardsEnableModal}

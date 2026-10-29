@@ -61,6 +61,7 @@ interface TezosTransferOperation extends TezosOperationBase {
   toAddress: string;
   /** Shielding deposit to / unshielding payout from the mainnet sapling contract */
   isShielded?: boolean;
+  isBridge?: boolean;
 }
 
 interface TezosInteractionOperation extends TezosOperationBase {
@@ -99,6 +100,7 @@ interface EvmTransferOperation extends EvmOperationBase {
   type: ActivityOperTransferType;
   fromAddress: string;
   toAddress: string;
+  isBridge?: boolean;
 }
 
 interface EvmInteractionOperation extends EvmOperationBase {
