@@ -13,7 +13,6 @@ import AudioIcon from './assets/audio.svg';
 import BlurEyeBlack from './assets/blur-eye-black.svg';
 import BlurEyeWhite from './assets/blur-eye-white.svg';
 import BrokenImage from './assets/broken-image.svg';
-import BurnIcon from './assets/burn.svg';
 import BuyWithCryptoIcon from './assets/buy-with-crypto.svg';
 import BuyIcon from './assets/buy.svg';
 import CalendarIcon from './assets/calendar.svg';
@@ -87,7 +86,6 @@ import MoonPayIcon from './assets/moonpay.svg';
 import MoreHorizontalIcon from './assets/more-horizontal.svg';
 import MtPelerinIcon from './assets/mt-pelerin.svg';
 import NewsIcon from './assets/news.svg';
-import NFTCollectionIcon from './assets/nft-collection.svg';
 import NoConnectionIcon from './assets/no-connection.svg';
 import NoResultIcon from './assets/no-result.svg';
 import NotificationDotIcon from './assets/notification-dot.svg';
@@ -103,7 +101,6 @@ import RetryIcon from './assets/retry.svg';
 import RewardIcon from './assets/reward.svg';
 import ScamInfoIcon from './assets/scam-info.svg';
 import SearchNewIcon from './assets/search-new.svg';
-import ShareIcon from './assets/share.svg';
 import SmileWithDollarIcon from './assets/smile-with-dollar.svg';
 import SmileWithGlassesIcon from './assets/smile-with-glasses.svg';
 import SmileIcon from './assets/smile.svg';
@@ -142,7 +139,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.ArrowUp]: ArrowUpIcon,
   [IconNameEnum.ArrowDown]: ArrowDownIcon,
   [IconNameEnum.ArrowRight]: ArrowRightIcon,
-  [IconNameEnum.Burn]: BurnIcon,
   [IconNameEnum.BrokenImage]: BrokenImage,
   [IconNameEnum.DetailsArrowUp]: DetailsArrowUpIcon,
   [IconNameEnum.DetailsArrowDown]: DetailsArrowDownIcon,
@@ -184,7 +180,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.TezToken]: TezTokenIcon,
   [IconNameEnum.InfoFilled]: InfoFilledIcon,
   [IconNameEnum.InfoFilledAlt]: InfoFilledAltIcon,
-  [IconNameEnum.NFTCollection]: NFTCollectionIcon,
   [IconNameEnum.GoogleDrive]: GoogleDriveIcon,
   [IconNameEnum.DollarFiled]: DollarFilledIcon,
   [IconNameEnum.SoundOff]: SoundOffIcon,
@@ -201,7 +196,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   /** deprecated icons **/
   [IconNameEnum.NoNameToken]: NoNameTokenIcon,
   [IconNameEnum.SwapTokenPlaceholderIcon]: SwapTokenPlaceholderIcon,
-  [IconNameEnum.Share]: ShareIcon,
   [IconNameEnum.Copy]: CopyIcon,
   [IconNameEnum.CopyBold]: CopyBoldIcon,
   [IconNameEnum.QrScannerBold]: QrScannerBoldIcon,

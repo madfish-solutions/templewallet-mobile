@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import Dialog from 'react-native-dialog';
 
 import { Divider } from 'src/components/divider/divider';
 import { Label } from 'src/components/label/label';
@@ -10,6 +10,7 @@ import { WhiteContainerAction } from 'src/components/white-container/white-conta
 import { WhiteContainerText } from 'src/components/white-container/white-container-text/white-container-text';
 import { usePromotionAfterConfirmation } from 'src/hooks/use-disable-promotion-after-confirmation.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { dispatch } from 'src/store';
 import { setIsNewsEnabledAction } from 'src/store/notifications/notifications-actions';
 import { useIsNewsEnabledSelector } from 'src/store/notifications/notifications-selectors';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
@@ -19,12 +20,11 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { AdvancedFeaturesSettingsSelectors } from './advanced-features-settings.selectors';
 
 export const AdvancedFeaturesSettings = () => {
-  const dispatch = useDispatch();
-
   const isNewsEnabled = useIsNewsEnabledSelector();
   const isAdsEnabled = useIsPartnersPromoEnabledSelector();
 
-  const { enablePromotion, disablePromotion } = usePromotionAfterConfirmation();
+  const { enablePromotion, disablePromotion, dialogProps } = usePromotionAfterConfirmation();
+  const { title, description, buttons, ...containerProps } = dialogProps;
 
   const handleAdsToggle = (value: boolean) => {
     if (value) {
@@ -69,6 +69,14 @@ export const AdvancedFeaturesSettings = () => {
           />
         </WhiteContainerAction>
       </WhiteContainer>
+
+      <Dialog.Container {...containerProps}>
+        <Dialog.Title>{title}</Dialog.Title>
+        <Dialog.Description>{description}</Dialog.Description>
+        {buttons.map((buttonProps, index) => (
+          <Dialog.Button key={index} {...buttonProps} />
+        ))}
+      </Dialog.Container>
     </ScreenContainer>
   );
 };

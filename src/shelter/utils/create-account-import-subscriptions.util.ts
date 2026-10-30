@@ -7,6 +7,7 @@ import {
   catchError,
   forkJoin,
   from,
+  throwError,
   lastValueFrom,
   map,
   merge,
@@ -250,15 +251,19 @@ const deriveImportedChainAccountFromSeed = ({
   seedPhrase,
   derivationPath
 }: CreateImportedChainAccountFromSeedParams) => {
-  const { chain, privateKey } = mnemonicToPrivateKey(seedPhrase, message => new Error(message), derivationPath);
+  try {
+    const { chain, privateKey } = mnemonicToPrivateKey(seedPhrase, message => new Error(message), derivationPath);
 
-  return from(deriveImportedChainAccountCredentials(privateKey, chain)).pipe(
-    map(credentials => ({
-      chain,
-      credentials,
-      privateKey
-    }))
-  );
+    return from(deriveImportedChainAccountCredentials(privateKey, chain)).pipe(
+      map(credentials => ({
+        chain,
+        credentials,
+        privateKey
+      }))
+    );
+  } catch (error) {
+    return throwError(() => error);
+  }
 };
 
 const deriveImportedMultichainAccountCredentials = ({ seedPhrase }: CreateImportedMultichainAccountFromSeedParams) => {

@@ -59,7 +59,7 @@ export const useEtherlinkDataLoading = () => {
   const chainAssetsRef = useRef(chainAssets);
   chainAssetsRef.current = chainAssets;
 
-  const refresh = useCallback(async (account: HexString) => {
+  const refresh = useCallback(async (account: HexString, force = false) => {
     const chain = etherlinkChainRef.current;
     if (!chain) {
       return;
@@ -67,7 +67,7 @@ export const useEtherlinkDataLoading = () => {
     const currentNetwork = toEvmNetworkEssentials(chain);
 
     const key = `${account}_${ETHERLINK_MAINNET_CHAIN_ID}`;
-    if (inFlightMap[key] || Date.now() - (lastLoadTimestampMap[key] ?? 0) < REFRESH_THROTTLE) {
+    if (inFlightMap[key] || (!force && Date.now() - (lastLoadTimestampMap[key] ?? 0) < REFRESH_THROTTLE)) {
       return;
     }
     inFlightMap[key] = true;
@@ -228,4 +228,11 @@ export const useEtherlinkDataLoading = () => {
       }
     }
   }, [chainAssets, tokensMetadata, collectiblesMetadata, evmAddress, hasNetwork]);
+
+  const refreshNow = useCallback(
+    () => (evmAddress && hasNetwork ? refresh(evmAddress, true) : Promise.resolve()),
+    [evmAddress, hasNetwork, refresh]
+  );
+
+  return { refreshNow };
 };
