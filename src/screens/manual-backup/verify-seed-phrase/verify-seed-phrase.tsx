@@ -37,7 +37,7 @@ const WORDS_TO_FILL = 2;
 export const VerifySeedPhrase: FC<Props> = ({ onGoBackPress }) => {
   const dispatch = useDispatch();
   const styles = useVerifySeedPhraseStyles();
-  const navigateToScreen = useNavigateToScreen();
+  const navigateToScreen = useNavigateToScreen({ pop: true });
   const { revealSeedPhrase } = useShelter();
 
   const [words, setWords] = useState<string[]>([]);
