@@ -198,9 +198,6 @@ export const buildEvmSwapApproval = (quote: EvmSwapQuote, input: EvmSwapAsset): 
 export const isSwapQuoteFresh = (quote: EvmSwapQuote, now = Date.now()): boolean =>
   now >= quote.receivedAt && now - quote.receivedAt < EVM_SWAP_QUOTE_LIFETIME;
 
-export const getNativeSwapMax = (balance: string, reserve?: bigint): string | undefined =>
-  reserve === undefined ? undefined : BigNumber.maximum(new BigNumber(balance).minus(reserve.toString()), 0).toFixed(0);
-
 export const assertSwapBalances = (
   request: EvmTransactionRequest,
   gasLimit: bigint,

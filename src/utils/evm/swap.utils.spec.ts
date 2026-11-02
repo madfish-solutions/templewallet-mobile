@@ -23,7 +23,6 @@ import {
   buildEvmSwapCatalog,
   buildEvmSwapRequest,
   createEvmSwapIdentity,
-  getNativeSwapMax,
   isSwapQuoteFresh,
   toSwapAssetSlug,
   toSwapProxyAddress,
@@ -169,12 +168,9 @@ describe('Etherlink swap assets and transaction rules', () => {
     expect(() => validateSwapAssets(SWAP_QUOTE, { ...SWAP_NATIVE_ASSET, decimals: 6 }, SWAP_ERC20_ASSET)).toThrow();
   });
 
-  it('blocks expired quotes and reserves native gas for MAX', () => {
+  it('blocks expired quotes', () => {
     expect(isSwapQuoteFresh(SWAP_QUOTE, 59999)).toBe(true);
     expect(isSwapQuoteFresh(SWAP_QUOTE, 60000)).toBe(false);
-    expect(getNativeSwapMax('1000')).toBeUndefined();
-    expect(getNativeSwapMax('1000', 200n)).toBe('800');
-    expect(getNativeSwapMax('1000', 2000n)).toBe('0');
   });
 
   it('requires current native and ERC20 balances for the selected fee cap', () => {

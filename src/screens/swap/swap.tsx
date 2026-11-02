@@ -21,7 +21,7 @@ import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 import { SwapAssetsContext } from './components/swap-assets-context';
 import { EvmSwapForm } from './evm-swap-form/evm-swap-form';
 import { useEvmSwapCatalog } from './evm-swap-form/use-evm-swap-catalog';
-import { SwapForm } from './swap-form/swap-form';
+import { TezosSwapForm } from './tezos-swap-form/tezos-swap-form';
 
 type SwapParams = ScreensParamList[ScreensEnum.SwapScreen];
 
@@ -78,7 +78,7 @@ const SwapScreenForm: FC<{ initialParams: SwapParams }> = ({ initialParams }) =>
       {evm ? (
         <EvmSwapForm inputAsset={evmParams?.inputAsset} outputAsset={evmParams?.outputAsset} />
       ) : (
-        <SwapForm inputToken={tezosParams?.inputToken} outputToken={tezosParams?.outputToken} />
+        <TezosSwapForm inputToken={tezosParams?.inputToken} outputToken={tezosParams?.outputToken} />
       )}
     </SwapAssetsContext.Provider>
   );

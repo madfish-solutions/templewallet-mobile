@@ -21,11 +21,11 @@ import { useSwapAssets } from './components/swap-assets-context';
 import { EvmSwapForm } from './evm-swap-form/evm-swap-form';
 import { useEvmSwapCatalog } from './evm-swap-form/use-evm-swap-catalog';
 import { SwapScreen } from './swap';
-import { SwapForm } from './swap-form/swap-form';
+import { TezosSwapForm } from './tezos-swap-form/tezos-swap-form';
 
 jest.mock('./evm-swap-form/evm-swap-form', () => ({ EvmSwapForm: jest.fn(() => null) }));
 jest.mock('./evm-swap-form/use-evm-swap-catalog', () => ({ useEvmSwapCatalog: jest.fn() }));
-jest.mock('./swap-form/swap-form', () => ({ SwapForm: jest.fn(() => null) }));
+jest.mock('./tezos-swap-form/tezos-swap-form', () => ({ TezosSwapForm: jest.fn(() => null) }));
 jest.mock('src/hooks/use-filtered-swap-tokens.hook', () => ({
   TokensInputsEnum: { From: 'From' },
   useFilteredSwapTokensList: jest.fn()
@@ -72,13 +72,13 @@ describe('unified swap screen', () => {
         tezosAsset,
         { ...SWAP_NATIVE_ASSET, assetSlug: EVM_TOKEN_SLUG, sendStandard: EvmAssetStandardEnum.NATIVE }
       ]);
-    jest.mocked(SwapForm).mockImplementation(FormProbe);
+    jest.mocked(TezosSwapForm).mockImplementation(FormProbe);
     jest.mocked(EvmSwapForm).mockImplementation(FormProbe);
   });
 
   it('uses Tezos by default and exposes both networks without tabs', () => {
     render(<SwapScreen />);
-    expect(SwapForm).toHaveBeenCalled();
+    expect(TezosSwapForm).toHaveBeenCalled();
     expect(EvmSwapForm).not.toHaveBeenCalled();
     expect(TextSegmentControl).not.toHaveBeenCalled();
     expect(context.inputAssets).toEqual([tezosAsset, SWAP_NATIVE_ASSET]);
@@ -88,7 +88,7 @@ describe('unified swap screen', () => {
     jest.mocked(useAccountAddressForTezos).mockReturnValue(undefined);
     render(<SwapScreen />);
     expect(EvmSwapForm).toHaveBeenCalled();
-    expect(SwapForm).not.toHaveBeenCalled();
+    expect(TezosSwapForm).not.toHaveBeenCalled();
     expect(context.inputAssets).toEqual([SWAP_NATIVE_ASSET]);
   });
 
@@ -107,7 +107,7 @@ describe('unified swap screen', () => {
   it('preserves the market Tezos output parameter', () => {
     params = { outputToken: emptyTezosLikeToken };
     render(<SwapScreen />);
-    expect(jest.mocked(SwapForm).mock.calls[0][0]).toMatchObject({ outputToken: emptyTezosLikeToken });
+    expect(jest.mocked(TezosSwapForm).mock.calls[0][0]).toMatchObject({ outputToken: emptyTezosLikeToken });
   });
 
   it('changes the technical form through input selection and clears the previous output', () => {
@@ -119,7 +119,7 @@ describe('unified swap screen', () => {
       outputAsset: undefined
     });
     act(() => context.onSelectInput(tezosAsset));
-    expect(jest.mocked(SwapForm).mock.lastCall?.[0]).toEqual({ inputToken: tezosAsset, outputToken: undefined });
+    expect(jest.mocked(TezosSwapForm).mock.lastCall?.[0]).toEqual({ inputToken: tezosAsset, outputToken: undefined });
   });
 
   it('applies a new route parameter after an input network change', () => {
@@ -127,7 +127,7 @@ describe('unified swap screen', () => {
     act(() => context.onSelectInput(SWAP_NATIVE_ASSET));
     params = { outputToken: tezosAsset };
     rerender(<SwapScreen />);
-    expect(jest.mocked(SwapForm).mock.lastCall?.[0]).toMatchObject({ outputToken: tezosAsset });
+    expect(jest.mocked(TezosSwapForm).mock.lastCall?.[0]).toMatchObject({ outputToken: tezosAsset });
   });
 
   it('resets the technical form when the account changes', () => {
@@ -135,13 +135,13 @@ describe('unified swap screen', () => {
     act(() => context.onSelectInput(SWAP_NATIVE_ASSET));
     jest.mocked(useCurrentAccountId).mockReturnValue('another-account');
     rerender(<SwapScreen />);
-    expect(jest.mocked(SwapForm).mock.lastCall?.[0]).toEqual({ inputToken: undefined, outputToken: undefined });
+    expect(jest.mocked(TezosSwapForm).mock.lastCall?.[0]).toEqual({ inputToken: undefined, outputToken: undefined });
   });
 
   it('rejects a different EVM chain at the screen boundary', () => {
     params = { chainKind: TempleChainKind.EVM, chainId: 1 };
     render(<SwapScreen />);
     expect(EvmSwapForm).not.toHaveBeenCalled();
-    expect(SwapForm).not.toHaveBeenCalled();
+    expect(TezosSwapForm).not.toHaveBeenCalled();
   });
 });

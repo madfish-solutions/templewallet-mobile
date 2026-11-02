@@ -3,15 +3,9 @@ import { ParamsWithKind, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { FormikProvider, isEmptyArray, useFormik } from 'formik';
 import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react';
-import { View } from 'react-native';
 
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
-import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
-import { Divider } from 'src/components/divider/divider';
 import { DeadEndBoundaryError } from 'src/components/error-boundary';
-import { InterfaceDisclaimer } from 'src/components/interface-disclaimer/interface-disclaimer';
-import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { tokenEqualityFn } from 'src/components/token-dropdown/token-equality-fn';
 import {
   ATOMIC_INPUT_THRESHOLD_FOR_FEE_FROM_INPUT,
@@ -28,7 +22,6 @@ import {
 import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
-import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
 import { TokensInputsEnum, useFilteredSwapTokensList } from 'src/hooks/use-filtered-swap-tokens.hook';
 import { useOnRampContinueOverlay } from 'src/hooks/use-on-ramp-continue-overlay.hook';
@@ -51,7 +44,6 @@ import {
   useSwapTokensMetadataSelector
 } from 'src/store/swap/swap-selectors';
 import { useAccountAddressForTezos, useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
-import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
@@ -74,22 +66,17 @@ import {
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
-import { SwapInputAssetAmountInput, SwapOutputAssetAmountInput } from '../components/swap-asset-amount-input';
+import { BaseSwapForm } from '../base-swap-form/base-swap-form';
+import { BridgeBanner } from '../swap-form/bridge-banner/bridge-banner';
+import { SwapExchangeRate } from '../swap-form/swap-exchange-rate/swap-exchange-rate';
+import { swapFormValidationSchema } from '../swap-form/swap-form.form';
 
-import { BridgeBanner } from './bridge-banner/bridge-banner';
-import { SwapAssetsButton } from './swap-assets-button/swap-assets-button';
-import { SwapExchangeRate } from './swap-exchange-rate/swap-exchange-rate';
-import { swapFormValidationSchema } from './swap-form.form';
-import { SwapFormSelectors } from './swap-form.selectors';
-import { useSwapFormStyles } from './swap-form.styles';
-
-interface SwapFormProps {
+interface TezosSwapFormProps {
   inputToken?: TokenInterface;
   outputToken?: TokenInterface;
 }
 
-export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
-  const styles = useSwapFormStyles();
+export const TezosSwapForm: FC<TezosSwapFormProps> = ({ inputToken, outputToken }) => {
   const tezosAddress = useAccountAddressForTezos();
 
   if (!tezosAddress) {
@@ -395,7 +382,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
     onSubmit: handleSubmit
   });
 
-  const { values, setFieldValue, isValid, submitForm, submitCount, isSubmitting } = formik;
+  const { values, setFieldValue, setValues, isValid, submitForm, submitCount, isSubmitting } = formik;
   const { inputAssets, outputAssets } = values;
   const { outputAtomicAmountBeforeFee, minimumReceivedAtomic, outputFeeAtomicAmount } = useMemo(
     () =>
@@ -515,51 +502,21 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
   return (
     <FormikProvider value={formik}>
-      <ScreenContainer>
-        <Divider size={formatSize(8)} />
-
-        <FormAssetAmountInput
-          name="inputAssets"
-          inputComponent={SwapInputAssetAmountInput}
-          label="From"
-          isSearchable
-          maxButton
-          showTokenNameForValue
-          dropdownDescription="Select Token"
-          searchPlaceholder="Search"
-          listBalanceTextStyle={styles.tokenListBalance}
-          listDollarEquivalentTextStyle={styles.tokenListDollarEquivalent}
-          scrollToSelectedOnOpen={false}
-          assetsList={fromTokensList}
-          isLoading={isLoading}
-          onValueChange={handleInputAssetsValueChange}
-          testID={SwapFormSelectors.fromAssetAmountInput}
-          tokenTestID={SwapFormSelectors.fromTokenChange}
-        />
-        <SwapAssetsButton />
-
-        <FormAssetAmountInput
-          name="outputAssets"
-          inputComponent={SwapOutputAssetAmountInput}
-          label="To"
-          toUsdToggle={false}
-          editable={false}
-          isSearchable
-          showTokenNameForValue
-          dropdownDescription="Select Token"
-          searchPlaceholder="Search"
-          listBalanceTextStyle={styles.tokenListBalance}
-          listDollarEquivalentTextStyle={styles.tokenListDollarEquivalent}
-          scrollToSelectedOnOpen={false}
-          stylesConfig={{ amountInput: styles.outputAmountInput, inputContainer: styles.outputInputContainer }}
-          assetsList={outputTokens}
-          isLoading={isLoading}
-          onValueChange={handleOutputAssetsValueChange}
-          testID={SwapFormSelectors.toAssetAmountInput}
-          tokenTestID={SwapFormSelectors.toTokenChange}
-        />
-        {inputAssetSlug === TEZ_TOKEN_SLUG && <BridgeBanner />}
-        <View>
+      <BaseSwapForm
+        inputTokens={fromTokensList}
+        outputTokens={outputTokens}
+        isLoading={isLoading}
+        onInputChange={handleInputAssetsValueChange}
+        onOutputChange={handleOutputAssetsValueChange}
+        onReverse={() => {
+          setValues({
+            inputAssets: { asset: outputAssets.asset, amount: undefined },
+            outputAssets: { asset: inputAssets.asset, amount: undefined }
+          });
+          dispatch(resetSwapParamsAction());
+        }}
+        banner={inputAssetSlug === TEZ_TOKEN_SLUG ? <BridgeBanner /> : undefined}
+        exchangeRate={
           <SwapExchangeRate
             inputAsset={inputAssets.asset}
             slippageRatio={slippageRatio}
@@ -568,27 +525,13 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
             outputAmount={outputAmount}
             routingFeeIsTakenFromOutput={routingFeeIsTakenFromOutput}
           />
-        </View>
-
-        <View style={styles.disclaimerContainer}>
-          <InterfaceDisclaimer linkText="3route DEX aggregator" url="https://3route.io/" />
-        </View>
-      </ScreenContainer>
-
-      <ButtonsFloatingContainer style={styles.buttonContainer}>
-        <ButtonLargePrimary
-          disabled={
-            (submitCount !== 0 && !isValid) ||
-            (submitCount !== 0 && chainsAreAbsent) ||
-            swapParams.isLoading ||
-            isSubmitting ||
-            !tezosAddress
-          }
-          title={Boolean(swapParams.isLoading) ? 'Searching the best route' : 'Swap'}
-          onPress={submitForm}
-          testID={SwapFormSelectors.swapButton}
-        />
-      </ButtonsFloatingContainer>
+        }
+        swapParamsAreLoading={Boolean(swapParams.isLoading)}
+        submitDisabled={
+          (submitCount !== 0 && !isValid) || (submitCount !== 0 && chainsAreAbsent) || isSubmitting || !tezosAddress
+        }
+        onSubmit={submitForm}
+      />
 
       <OnRampOverlay isStart={false} onClose={onOnRampOverlayClose} isOpen={onRampOverlayIsOpened} />
     </FormikProvider>
