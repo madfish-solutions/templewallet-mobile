@@ -49,7 +49,8 @@ const loadSwapParamsEpic: AnyActionEpic = (action$, state$) =>
             }
 
             return of(loadSwapParamsAction.fail(error.message));
-          })
+          }),
+          takeUntil(action$.pipe(ofType(resetSwapParamsAction, resetApplicationAction.success)))
         );
       }
 

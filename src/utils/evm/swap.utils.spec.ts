@@ -1,6 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import { decodeFunctionData, erc20Abi, zeroAddress } from 'viem';
 
+import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { EvmAssetStandardEnum, EVM_TOKEN_SLUG } from 'src/token/interfaces/token-metadata.interface';
 
@@ -46,13 +47,39 @@ describe('Etherlink swap assets and transaction rules', () => {
       symbol: 'XTZ',
       decimals: 18,
       balance: '0',
-      standard: EvmAssetStandardEnum.NATIVE
+      standard: EvmAssetStandardEnum.NATIVE,
+      iconName: CryptoLogoNameEnum.Etherlink
     });
     expect(catalog[1]).toMatchObject({
       symbol: 'WXTZ',
       assetSlug: SWAP_TOKEN_ADDRESS,
       standard: EvmAssetStandardEnum.ERC20
     });
+  });
+
+  it.each([false, true])('uses stored token icons for manual=%s without a provider logo', manual => {
+    const iconURL = 'https://example.com/usdc.png';
+    const [asset] = buildEvmSwapCatalog(
+      { token: SWAP_ERC20_TOKEN },
+      {},
+      { [SWAP_TOKEN_ADDRESS]: { standard: EvmAssetStandardEnum.ERC20, manual, visibility: VisibilityEnum.Visible } },
+      { [SWAP_TOKEN_ADDRESS]: { address: SWAP_TOKEN_ADDRESS, standard: EvmAssetStandardEnum.ERC20, iconURL } }
+    );
+
+    expect(asset.thumbnailUri).toBe(iconURL);
+    expect(asset.decimals).toBe(SWAP_ERC20_TOKEN.decimals);
+  });
+
+  it.each([undefined, '', '   '])('uses the provider logo when the stored icon is %s', iconURL => {
+    const logoURI = 'https://example.com/provider.png';
+    const [asset] = buildEvmSwapCatalog(
+      { token: { ...SWAP_ERC20_TOKEN, logoURI } },
+      {},
+      {},
+      { [SWAP_TOKEN_ADDRESS]: { address: SWAP_TOKEN_ADDRESS, standard: EvmAssetStandardEnum.ERC20, iconURL } }
+    );
+
+    expect(asset.thumbnailUri).toBe(logoURI);
   });
 
   it('deduplicates addresses and includes zero-balance output tokens without false prices', () => {

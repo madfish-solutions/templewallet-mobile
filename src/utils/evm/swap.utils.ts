@@ -7,6 +7,7 @@ import {
   Route3EvmRouteRequest,
   Route3EvmTokenWithPrice
 } from 'src/apis/temple-wallet/evm-swap';
+import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { ROUTING_FEE_EVM_ADDRESS, ROUTING_FEE_RATIO } from 'src/config/swap';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { EvmTransactionRequest } from 'src/interfaces/evm-transaction-request.interface';
@@ -57,7 +58,8 @@ export const buildEvmSwapCatalog = (
       decimals: isNative ? currency.decimals : manualMetadata?.decimals ?? token.decimals,
       symbol: isNative ? currency.symbol : manualMetadata?.symbol ?? token.symbol,
       name: isNative ? currency.name : manualMetadata?.name ?? token.name,
-      thumbnailUri: manualMetadata?.iconURL ?? token.logoURI,
+      iconName: isNative ? CryptoLogoNameEnum.Etherlink : undefined,
+      thumbnailUri: metadata[assetSlug]?.iconURL?.trim() || token.logoURI?.trim() || undefined,
       balance: balances[assetSlug] ?? '0',
       exchangeRate:
         price?.gt(0) && fiatToUsdRate !== undefined && Number.isFinite(price.toNumber())

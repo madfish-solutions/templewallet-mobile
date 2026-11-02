@@ -3,6 +3,7 @@ import { StyleProp, View, ViewStyle } from 'react-native';
 
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import { useEvmTokenIconUrl } from 'src/hooks/evm/use-evm-token-icon-url';
 import {
   EvmTokenImagesStackParams,
   TezosTokenImagesStackParams,
@@ -51,7 +52,8 @@ const TezosTokenIcon: FC<TezosIconProps | UnspecifiedIconProps> = props => {
 };
 
 const EvmTokenIcon: FC<EvmIconProps> = props => {
-  const sourceStack = useEvmTokenImagesStack(props);
+  const iconURL = useEvmTokenIconUrl(props);
+  const sourceStack = useEvmTokenImagesStack({ ...props, iconURL });
 
   return <TokenIconView {...props} sourceStack={sourceStack} />;
 };

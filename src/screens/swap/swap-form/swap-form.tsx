@@ -44,7 +44,7 @@ import { useUsdToTokenRates } from 'src/store/currency/currency-selectors';
 import { navigateAction } from 'src/store/root-state.actions';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import { useSlippageSelector } from 'src/store/settings/settings-selectors';
-import { loadSwapParamsAction } from 'src/store/swap/swap-actions';
+import { loadSwapParamsAction, resetSwapParamsAction } from 'src/store/swap/swap-actions';
 import {
   useSwapParamsSelector,
   useSwapTokenBySlugSelector,
@@ -73,6 +73,8 @@ import {
 } from 'src/utils/swap.utils';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
+
+import { SwapInputAssetAmountInput, SwapOutputAssetAmountInput } from '../components/swap-asset-amount-input';
 
 import { BridgeBanner } from './bridge-banner/bridge-banner';
 import { SwapAssetsButton } from './swap-assets-button/swap-assets-button';
@@ -383,7 +385,9 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         amount: undefined
       },
       outputAssets: {
-        asset: outputToken ? { ...outputToken, chainKind: TempleChainKind.Tezos } : emptyTezosLikeToken,
+        asset: outputToken
+          ? { ...outputToken, chainKind: TempleChainKind.Tezos }
+          : { ...emptyTezosLikeToken, chainKind: TempleChainKind.Tezos },
         amount: undefined
       }
     },
@@ -415,13 +419,11 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const fromRoute3Token = useSwapTokenBySlugSelector(inputAssetSlug ?? '');
   const toRoute3Token = useSwapTokenBySlugSelector(outputAssetSlug ?? '');
 
-  const { filteredTokensList: fromTokensList, setSearchValue: setSearchValueFromTokens } = useFilteredSwapTokensList(
-    TokensInputsEnum.From,
-    inputAssetSlug
-  );
-  const { filteredTokensList: toTokensList, setSearchValue: setSearchValueToTokens } = useFilteredSwapTokensList(
-    TokensInputsEnum.To,
-    outputAssetSlug
+  const { filteredTokensList: fromTokensList } = useFilteredSwapTokensList(TokensInputsEnum.From, inputAssetSlug);
+  const { filteredTokensList: toTokensList } = useFilteredSwapTokensList(TokensInputsEnum.To, outputAssetSlug);
+  const outputTokens = useMemo(
+    () => toTokensList.filter(token => getTokenSlug(token) !== inputAssetSlug),
+    [inputAssetSlug, toTokensList]
   );
 
   const dispatchLoadSwapParams = useCallback(
@@ -479,7 +481,13 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       const isEmptyToken = tokenEqualityFn(newInputValue.asset, emptyTezosLikeToken);
 
       if (getTokenSlug(newInputValue.asset) === outputAssetSlug && !isEmptyToken) {
-        setFieldValue('outputAssets', { asset: emptyTezosLikeToken, amount: undefined });
+        setFieldValue('outputAssets', {
+          asset: { ...emptyTezosLikeToken, chainKind: TempleChainKind.Tezos },
+          amount: undefined
+        });
+        dispatch(resetSwapParamsAction());
+
+        return;
       }
 
       dispatchLoadSwapParams(newInputValue, outputAssets);
@@ -490,12 +498,12 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const handleOutputAssetsValueChange = useCallback(
     (newOutputValue: AssetAmountInterface) => {
       if (getTokenSlug(newOutputValue.asset) === inputAssetSlug) {
-        setFieldValue('inputAssets', { asset: emptyTezosLikeToken, amount: undefined });
+        return false;
       }
 
       dispatchLoadSwapParams(inputAssets, newOutputValue);
     },
-    [inputAssetSlug, dispatchLoadSwapParams, inputAssets, setFieldValue]
+    [inputAssetSlug, dispatchLoadSwapParams, inputAssets]
   );
 
   const chainsAreAbsent = isLiquidityBakingParamsResponse(swapParams.data)
@@ -512,6 +520,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
         <FormAssetAmountInput
           name="inputAssets"
+          inputComponent={SwapInputAssetAmountInput}
           label="From"
           isSearchable
           maxButton
@@ -523,7 +532,6 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           scrollToSelectedOnOpen={false}
           assetsList={fromTokensList}
           isLoading={isLoading}
-          setSearchValue={setSearchValueFromTokens}
           onValueChange={handleInputAssetsValueChange}
           testID={SwapFormSelectors.fromAssetAmountInput}
           tokenTestID={SwapFormSelectors.fromTokenChange}
@@ -532,6 +540,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
         <FormAssetAmountInput
           name="outputAssets"
+          inputComponent={SwapOutputAssetAmountInput}
           label="To"
           toUsdToggle={false}
           editable={false}
@@ -543,9 +552,8 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           listDollarEquivalentTextStyle={styles.tokenListDollarEquivalent}
           scrollToSelectedOnOpen={false}
           stylesConfig={{ amountInput: styles.outputAmountInput, inputContainer: styles.outputInputContainer }}
-          assetsList={toTokensList}
+          assetsList={outputTokens}
           isLoading={isLoading}
-          setSearchValue={setSearchValueToTokens}
           onValueChange={handleOutputAssetsValueChange}
           testID={SwapFormSelectors.toAssetAmountInput}
           tokenTestID={SwapFormSelectors.toTokenChange}

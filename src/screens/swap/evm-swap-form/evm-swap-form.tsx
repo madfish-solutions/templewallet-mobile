@@ -2,36 +2,32 @@ import { useIsFocused } from '@react-navigation/native';
 import { BigNumber } from 'bignumber.js';
 import { useFormik } from 'formik';
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
-import { AppState, Text, View } from 'react-native';
+import { AppState, Text } from 'react-native';
 
-import { AssetAmountInterface, AssetAmountInputV2 } from 'src/components/asset-amount-input/asset-amount-input';
+import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
 import { Divider } from 'src/components/divider/divider';
-import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
-import { Label } from 'src/components/label/label';
 import { LoadingPlaceholder } from 'src/components/loading-placeholder/loading-placeholder';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
-import { TouchableIconV2 } from 'src/components/touchable-icon-v2';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useEvmChain } from 'src/hooks/evm/use-evm-chains.hook';
 import { useEvmTransactionFee } from 'src/hooks/evm/use-evm-transaction-fee';
+import { AssetInterface } from 'src/interfaces/asset.interface';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
-import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-assets-selectors';
-import { useEvmAccountChainBalancesSelector } from 'src/store/evm/balances/evm-balances-selectors';
-import { useEvmChainTokensMetadataSelector } from 'src/store/evm/tokens-metadata/evm-tokens-metadata-selectors';
-import { useFiatToUsdRateSelector, useSlippageSelector } from 'src/store/settings/settings-selectors';
+import { useSlippageSelector } from 'src/store/settings/settings-selectors';
 import { loadEvmSwapTokensAction } from 'src/store/swap/swap-actions';
 import { useEvmSwapTokensSelector } from 'src/store/swap/swap-selectors';
 import { useAccountAddressForEvm, useCurrentAccountId } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { EvmAssetStandardEnum, EVM_TOKEN_SLUG } from 'src/token/interfaces/token-metadata.interface';
-import { EvmSwapAsset, EvmSwapAssetDescriptor } from 'src/types/evm-swap';
+import { emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
+import { EvmSwapAssetDescriptor } from 'src/types/evm-swap';
 import {
-  buildEvmSwapCatalog,
   buildEvmSwapRequest,
   createEvmSwapIdentity,
   getNativeSwapMax,
@@ -42,9 +38,12 @@ import {
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
 import { dispatch } from '../../../store';
+import { SwapAssetAmountInput } from '../components/swap-asset-amount-input';
+import { SwapDirectionButton } from '../components/swap-direction-button';
 import { useSwapFormStyles } from '../swap-form/swap-form.styles';
 
 import { EvmSwapDetails } from './evm-swap-details';
+import { useEvmSwapCatalog } from './use-evm-swap-catalog';
 import { useEvmSwapQuote } from './use-evm-swap-quote';
 
 interface Props {
@@ -66,13 +65,7 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
   const chain = useEvmChain(ETHERLINK_MAINNET_CHAIN_ID);
   const focused = useIsFocused();
   const [appActive, setAppActive] = useState(AppState.currentState === 'active');
-  const { data: tokens, error: catalogError, isLoading: catalogLoading } = useEvmSwapTokensSelector();
-  const [inputSearch, setInputSearch] = useState('');
-  const [outputSearch, setOutputSearch] = useState('');
-  const balances = useEvmAccountChainBalancesSelector(address, ETHERLINK_MAINNET_CHAIN_ID);
-  const assets = useEvmAccountChainAssetsSelector(address, ETHERLINK_MAINNET_CHAIN_ID);
-  const metadata = useEvmChainTokensMetadataSelector(ETHERLINK_MAINNET_CHAIN_ID);
-  const fiatRate = useFiatToUsdRateSelector();
+  const { error: catalogError, isLoading: catalogLoading } = useEvmSwapTokensSelector();
   const slippage = useSlippageSelector();
   const form = useFormik<FormValues>({
     initialValues: {
@@ -81,19 +74,13 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
     },
     onSubmit: () => undefined
   });
-  const catalog = useMemo(
-    () => buildEvmSwapCatalog(tokens, balances, assets, metadata, fiatRate),
-    [tokens, balances, assets, metadata, fiatRate]
-  );
+  const catalog = useEvmSwapCatalog();
   const input = catalog.find(asset => asset.assetSlug === form.values.inputSlug);
   const output = catalog.find(asset => asset.assetSlug === form.values.outputSlug);
-  const setFieldValue = form.setFieldValue;
-  useEffect(() => {
-    if (!form.values.outputSlug) {
-      const first = catalog.find(asset => asset.assetSlug !== form.values.inputSlug);
-      if (first) void setFieldValue('outputSlug', first.assetSlug);
-    }
-  }, [catalog, form.values.outputSlug, form.values.inputSlug, setFieldValue]);
+  const outputAssets = useMemo(
+    () => catalog.filter(asset => asset.assetSlug !== form.values.inputSlug),
+    [catalog, form.values.inputSlug]
+  );
   const active = focused && appActive;
   const identity = useMemo(() => {
     if (!address || !input || !output || !form.values.amount || !chain || chain.disabled || chain.disabledAutomatically)
@@ -147,17 +134,22 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
     if (focused) invalidate();
   }, [focused, invalidate]);
 
-  const changeInput = (value: AssetAmountInterface<EvmSwapAsset>): void => {
+  const changeInput = (value: AssetAmountInterface<AssetInterface>): void => {
+    const asset = catalog.find(item => item.assetSlug === value.asset.assetSlug);
+    if (!asset) return;
     invalidate();
     void form.setValues({
       ...form.values,
-      inputSlug: value.asset.assetSlug,
-      amount: value.asset.assetSlug === input?.assetSlug ? value.amount : undefined
+      inputSlug: asset.assetSlug,
+      outputSlug: asset.assetSlug === output?.assetSlug ? '' : form.values.outputSlug,
+      amount: asset.assetSlug === input?.assetSlug ? value.amount : undefined
     });
   };
-  const changeOutput = (value: AssetAmountInterface<EvmSwapAsset>): void => {
+  const changeOutput = (value: AssetAmountInterface<AssetInterface>): void => {
+    const asset = catalog.find(item => item.assetSlug === value.asset.assetSlug);
+    if (!asset || asset.assetSlug === form.values.inputSlug) return;
     invalidate();
-    void form.setFieldValue('outputSlug', value.asset.assetSlug);
+    void form.setFieldValue('outputSlug', asset.assetSlug);
   };
   const review = (): void => {
     if (
@@ -196,92 +188,65 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
     invalidate();
   };
   const insufficientBalance = input && form.values.amount?.gt(input.balance);
-  const matchesSearch = (asset: EvmSwapAsset, search: string): boolean =>
-    `${asset.name} ${asset.symbol} ${asset.assetSlug}`.toLowerCase().includes(search.toLowerCase());
-  const fromList = catalog.filter(asset => asset.assetSlug !== output?.assetSlug && matchesSearch(asset, inputSearch));
-  const toList = catalog.filter(asset => asset.assetSlug !== input?.assetSlug && matchesSearch(asset, outputSearch));
+  const emptyAsset = { ...emptyTezosLikeToken, chainKind: TempleChainKind.EVM };
 
   return (
     <>
       <ScreenContainer>
         {catalogLoading && <LoadingPlaceholder text="Request token catalog..." />}
         <Divider size={formatSize(8)} />
-        <Label description={`Slippage tolerance: ${slippage}%`} />
-        <Divider size={formatSize(16)} />
-        {input && (
-          <AssetAmountInputV2
-            value={{ asset: input, amount: form.values.amount }}
-            assetsList={fromList}
-            balance={input.balance}
-            onValueChange={changeInput}
-            label="From"
-            maxButton
-            maxAmount={input.standard === EvmAssetStandardEnum.NATIVE ? maxAmount : input.balance}
-            maxButtonDisabled={
-              input.standard === EvmAssetStandardEnum.NATIVE &&
-              (maxAmount === undefined || feeState.isEstimating || Boolean(feeState.estimationError))
-            }
-            toUsdToggle={false}
-            footerErrorMessage={insufficientBalance ? 'Insufficient token balance.' : undefined}
-            isSearchable
-            setSearchValue={setInputSearch}
-            showTokenNameForValue
-            testID="EvmSwap/Input"
-            tokenTestID="EvmSwap/InputToken"
-          />
-        )}
+        <SwapAssetAmountInput
+          field="input"
+          value={{ asset: input ?? emptyAsset, amount: form.values.amount }}
+          assetsList={catalog}
+          balance={input?.balance ?? '0'}
+          onValueChange={changeInput}
+          label="From"
+          maxButton
+          maxAmount={input?.standard === EvmAssetStandardEnum.NATIVE ? maxAmount : input?.balance}
+          maxButtonDisabled={
+            !input ||
+            (input.standard === EvmAssetStandardEnum.NATIVE &&
+              (maxAmount === undefined || feeState.isEstimating || Boolean(feeState.estimationError)))
+          }
+          footerErrorMessage={insufficientBalance ? 'Insufficient token balance.' : undefined}
+          isSearchable
+          showTokenNameForValue
+          testID="EvmSwap/Input"
+          tokenTestID="EvmSwap/InputToken"
+        />
         {input?.standard === EvmAssetStandardEnum.NATIVE && maxAmount === undefined && (
           <Text style={{ color: colors.black }}>
             Enter an amount before you use MAX. The wallet reserves XTZ for the network fee.
           </Text>
         )}
-        {!input && catalog.length > 0 && (
-          <ButtonLargeSecondary
-            title="Select source token"
-            onPress={() => {
-              invalidate();
-              void form.setFieldValue('inputSlug', catalog[0].assetSlug);
-            }}
-            testID="EvmSwap/Source"
-          />
-        )}
-        <Divider size={formatSize(12)} />
-        <View style={{ alignItems: 'center' }}>
-          <TouchableIconV2
-            name={IconNameV2Enum.ArrowUpDown}
-            size={formatSize(24)}
-            iconSize={24}
-            color={colors.orange}
-            disabled={!input || !output}
-            onPress={() => {
-              invalidate();
-              void form.setValues({
-                inputSlug: form.values.outputSlug,
-                outputSlug: form.values.inputSlug,
-                amount: undefined
-              });
-            }}
-            testID="EvmSwap/Reverse"
-          />
-        </View>
-        <Divider size={formatSize(12)} />
-        {output && (
-          <AssetAmountInputV2
-            value={{ asset: output, amount: quote ? new BigNumber(quote.route.toAmount) : undefined }}
-            assetsList={toList}
-            balance={output.balance}
-            onValueChange={changeOutput}
-            label="To"
-            editable={false}
-            toUsdToggle={false}
-            isSearchable
-            setSearchValue={setOutputSearch}
-            showTokenNameForValue
-            isLoading={quoteState.isLoading}
-            testID="EvmSwap/Output"
-            tokenTestID="EvmSwap/OutputToken"
-          />
-        )}
+        <SwapDirectionButton
+          disabled={!input && !output}
+          onPress={() => {
+            invalidate();
+            void form.setValues({
+              inputSlug: form.values.outputSlug,
+              outputSlug: form.values.inputSlug,
+              amount: undefined
+            });
+          }}
+          testID="EvmSwap/Reverse"
+        />
+        <SwapAssetAmountInput
+          field="output"
+          value={{ asset: output ?? emptyAsset, amount: quote ? new BigNumber(quote.route.toAmount) : undefined }}
+          assetsList={outputAssets}
+          balance={output?.balance ?? '0'}
+          onValueChange={changeOutput}
+          label="To"
+          editable={false}
+          isSearchable
+          showTokenNameForValue
+          testID="EvmSwap/Output"
+          tokenTestID="EvmSwap/OutputToken"
+          toUsdToggle={false}
+          stylesConfig={{ amountInput: styles.outputAmountInput, inputContainer: styles.outputInputContainer }}
+        />
         {quote && input && output && <EvmSwapDetails quote={quote} input={input} output={output} />}
         {(!chain || chain.disabled || chain.disabledAutomatically) && (
           <Text style={{ color: colors.black }}>Etherlink mainnet is unavailable.</Text>
@@ -306,7 +271,7 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
       </ScreenContainer>
       <ButtonsFloatingContainer style={styles.buttonContainer}>
         <ButtonLargePrimary
-          title={quoteState.isLoading ? 'Request quote' : 'Review swap'}
+          title={quoteState.isLoading ? 'Searching the best route' : 'Swap'}
           disabled={!quote || !address || Boolean(insufficientBalance) || quoteState.isLoading || catalogLoading}
           onPress={review}
           testID="EvmSwap/Review"

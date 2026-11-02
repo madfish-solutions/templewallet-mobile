@@ -2,16 +2,13 @@ import { useNavigation } from '@react-navigation/core';
 import { BigNumber } from 'bignumber.js';
 import { FormikErrors, FormikProvider, useFormik } from 'formik';
 import React, { FC, useCallback, useEffect, useRef } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, View } from 'react-native';
 
+import { AssetNetworkFilter } from 'src/components/asset-network-filter/asset-network-filter';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { KnownRecipientInput } from 'src/components/contact-dropdown/known-recipient-input';
-import { CryptoLogo } from 'src/components/crypto-logo';
-import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { Divider } from 'src/components/divider/divider';
-import { IconV2 } from 'src/components/icon-v2';
-import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum.ts';
 import { Label } from 'src/components/label/label';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
@@ -37,7 +34,6 @@ import {
   useCurrentAccountTezosBalance
 } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { useColors } from 'src/styles/use-colors';
 import { TEZ_SHIELDED_ANALYTICS_NAME, TEZ_SHIELDED_TOKEN_SLUG, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { AnalyticsPageName } from 'src/utils/analytics/analytics-event.enum';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -45,18 +41,12 @@ import { isSaplingAddress } from 'src/utils/sapling/address-utils';
 
 import { SendAssetAmount, SendModalFormValues, sendModalValidationSchema } from './form';
 import { useEvmMaxAmount } from './hooks/use-evm-max-amount';
-import { getInitialSendAsset, NetworkFilter, useSendAssetSelection } from './hooks/use-send-asset-selection';
+import { getInitialSendAsset, useSendAssetSelection } from './hooks/use-send-asset-selection';
 import { useSendAssets } from './hooks/use-send-assets';
 import { useSendRecipientSelection } from './hooks/use-send-recipient-selection';
 import { useSendSubmission } from './hooks/use-send-submission';
 import { SendModalSelectors } from './selectors';
 import { useSendModalStyles } from './styles';
-
-const NETWORK_FILTERS: Array<{ label: string; value: NetworkFilter }> = [
-  { label: 'All', value: 'all' },
-  { label: 'Tezos', value: TempleChainKind.Tezos },
-  { label: 'Etherlink', value: TempleChainKind.EVM }
-];
 
 export const SendModal: FC = () => {
   const {
@@ -65,7 +55,6 @@ export const SendModal: FC = () => {
     assetKey: initialAssetKey
   } = useModalParams<ModalsEnum.Send>();
   const styles = useSendModalStyles();
-  const colors = useColors();
   const { goBack } = useNavigation();
 
   const assets = useSendAssets();
@@ -202,33 +191,6 @@ export const SendModal: FC = () => {
   const sendPageToken = isShieldedSend ? TEZ_SHIELDED_ANALYTICS_NAME : selectedAsset.symbol;
   usePageAnalytic(sendPageName, '', { token: sendPageToken });
 
-  const tokenFilterHeader = (
-    <View style={styles.filterRow}>
-      {NETWORK_FILTERS.map(filter => (
-        <TouchableOpacity
-          key={filter.value}
-          style={[styles.filterChip, networkFilter === filter.value && styles.filterChipSelected]}
-          onPress={() => setNetworkFilter(filter.value)}
-        >
-          <View style={styles.filterIconContainer}>
-            {filter.value === 'all' ? (
-              <IconV2 name={IconNameV2Enum.Earth} color={colors.blue} />
-            ) : (
-              <CryptoLogo
-                name={filter.value === TempleChainKind.Tezos ? CryptoLogoNameEnum.Tezos : CryptoLogoNameEnum.Etherlink}
-                size={formatSize(20)}
-              />
-            )}
-          </View>
-          <Divider size={formatSize(4)} />
-          <Text style={[styles.filterChipText, networkFilter === filter.value && styles.filterChipTextSelected]}>
-            {filter.label}
-          </Text>
-        </TouchableOpacity>
-      ))}
-    </View>
-  );
-
   return (
     <FormikProvider value={formik}>
       <ScreenContainer>
@@ -247,7 +209,7 @@ export const SendModal: FC = () => {
             isSearchable
             dropdownDescription="Select Token"
             searchPlaceholder="Search by name or address"
-            dropdownListHeader={tokenFilterHeader}
+            dropdownListHeader={<AssetNetworkFilter value={networkFilter} onChange={setNetworkFilter} />}
             scrollToSelectedOnOpen={false}
             setSearchValue={setAssetSearch}
             onValueChange={handleAssetChange}

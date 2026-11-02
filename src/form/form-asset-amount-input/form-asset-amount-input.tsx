@@ -22,6 +22,7 @@ interface Props<TAsset extends AssetInterface = TokenInterface>
   extends Omit<AssetAmountInputProps<TAsset>, 'value' | 'onValueChange'> {
   name: string;
   variant?: AssetAmountInputVariant;
+  inputComponent?: typeof AssetAmountInputV2;
   showErrorInFooter?: boolean;
   /** Return false to prevent the default Formik value update. */
   onValueChange?: (value: AssetAmountInterface<TAsset>) => boolean | void;
@@ -35,6 +36,7 @@ export const FormAssetAmountInput = memo<Props<AssetInterface>>(
   ({
     name,
     variant = 'v2',
+    inputComponent,
     label,
     assetsList,
     frozenBalance,
@@ -114,7 +116,7 @@ export const FormAssetAmountInput = memo<Props<AssetInterface>>(
       [exchangeRateStored]
     );
 
-    const AssetAmountInputComponent = variant === 'v2' ? AssetAmountInputV2 : AssetAmountInput;
+    const AssetAmountInputComponent = inputComponent ?? (variant === 'v2' ? AssetAmountInputV2 : AssetAmountInput);
 
     return (
       <>
