@@ -4,10 +4,12 @@ import { ParamsWithKind } from '@taquito/taquito';
 
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { TestIdProps } from 'src/interfaces/test-id.props';
+import { EvmSwapAsset, EvmSwapQuote } from 'src/types/evm-swap';
 import { EvmSendAsset } from 'src/types/send-asset';
 import { StrictWcSessionRequest } from 'src/types/strict-wc-session-request';
 
 export type ConfirmationModalParams =
+  | EvmSwapConfirmationModalParams
   | InternalOperationsConfirmationModalParams
   | DAppOperationsConfirmationModalParams
   | RebalanceConfirmationModalParams
@@ -66,4 +68,13 @@ export interface EvmInternalOperationsConfirmationModalParams {
   asset: EvmSendAsset;
   receiverAddress: HexString;
   atomicAmount: string;
+}
+
+export interface EvmSwapConfirmationModalParams {
+  type: ConfirmationTypeEnum.EvmSwap;
+  accountId: string;
+  chainId: number;
+  quote: EvmSwapQuote;
+  input: EvmSwapAsset;
+  output: EvmSwapAsset;
 }

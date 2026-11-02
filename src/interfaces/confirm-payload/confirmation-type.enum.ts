@@ -4,6 +4,7 @@ export enum ConfirmationTypeEnum {
   RebalanceOperation = 'RebalanceOperation',
   BridgeDepositOperation = 'BridgeDepositOperation',
   BridgeWithdrawOperation = 'BridgeWithdrawOperation',
+  EvmSwap = 'EvmSwap',
   EvmInternalOperations = 'EvmInternalOperations',
   WcSessionProposal = 'WcSessionProposal',
   WcSessionRequest = 'WcSessionRequest'

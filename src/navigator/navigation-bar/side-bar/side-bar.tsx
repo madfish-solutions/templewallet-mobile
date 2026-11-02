@@ -22,7 +22,12 @@ import { showErrorToast } from 'src/toast/toast.utils';
 import { isStackFocused } from 'src/utils/is-stack-focused.util';
 
 import { NavigationBarIconNameEnum } from '../navigation-bar-icon/icon-name.enum';
-import { NOT_AVAILABLE_MESSAGE, useIsManageCollectiblesTab, useSwapScreenParams } from '../utils';
+import {
+  NOT_AVAILABLE_MESSAGE,
+  useCanSwapOnEtherlink,
+  useIsManageCollectiblesTab,
+  useSwapScreenParams
+} from '../utils';
 
 import { SideBarButton } from './side-bar-button/side-bar-button';
 import { useSideBarStyles } from './side-bar.styles';
@@ -34,6 +39,7 @@ interface Props {
 export const SideBar = memo<Props>(({ currentRouteName }) => {
   const styles = useSideBarStyles();
   const tezosAddress = useAccountAddressForTezos();
+  const canSwapOnEtherlink = useCanSwapOnEtherlink();
   const swapScreenParams = useSwapScreenParams(currentRouteName);
   const isManageCollectiblesTab = useIsManageCollectiblesTab(currentRouteName);
 
@@ -69,7 +75,7 @@ export const SideBar = memo<Props>(({ currentRouteName }) => {
           {!LIMIT_FIN_FEATURES && (
             <SideBarButton
               label="Swap"
-              disabled={!tezosAddress}
+              disabled={!tezosAddress && !canSwapOnEtherlink}
               iconName={NavigationBarIconNameEnum.Swap}
               routeName={ScreensEnum.SwapScreen}
               swapScreenParams={swapScreenParams}

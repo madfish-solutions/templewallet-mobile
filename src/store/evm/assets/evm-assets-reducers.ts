@@ -6,6 +6,7 @@ import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interf
 import { SlicedAsyncStorage } from 'src/utils/sliced-async-storage';
 
 import {
+  mergeEvmAssetsAction,
   processLoadedEvmAssetsAction,
   setEvmAssetManualAction,
   setEvmAssetVisibilityAction
@@ -45,6 +46,13 @@ const evmAssetsReducers = createReducer<EvmAssetsState>(evmAssetsInitialState, b
       } else if (stored.standard !== assets[slug].standard) {
         stored.standard = assets[slug].standard;
       }
+    }
+  });
+
+  builder.addCase(mergeEvmAssetsAction, (state, { payload }) => {
+    const chainAssetsRecord = getChainAssetsRecord(state, payload.account, payload.chainId);
+    for (const [slug, asset] of Object.entries(payload.assets)) {
+      chainAssetsRecord[slug] ??= { standard: asset.standard, manual: false, visibility: VisibilityEnum.Visible };
     }
   });
 
