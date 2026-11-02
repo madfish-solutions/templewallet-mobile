@@ -13,3 +13,5 @@ export const useSwapTokenBySlugSelector = (slug: string) =>
  * @knipignore
  */
 export const useSwapDexesSelector = () => useSelector(state => state.swap.dexes);
+
+export const useEvmSwapTokensSelector = () => useSelector(state => state.swap.evmTokens);

@@ -4,7 +4,6 @@ import { useFormik } from 'formik';
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { AppState, Text, View } from 'react-native';
 
-import { EvmSwapApiError, get3RouteEvmTokens, Route3EvmTokenWithPrice } from 'src/apis/temple-wallet/evm-swap';
 import { AssetAmountInterface, AssetAmountInputV2 } from 'src/components/asset-amount-input/asset-amount-input';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
@@ -24,6 +23,8 @@ import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-asset
 import { useEvmAccountChainBalancesSelector } from 'src/store/evm/balances/evm-balances-selectors';
 import { useEvmChainTokensMetadataSelector } from 'src/store/evm/tokens-metadata/evm-tokens-metadata-selectors';
 import { useFiatToUsdRateSelector, useSlippageSelector } from 'src/store/settings/settings-selectors';
+import { loadEvmSwapTokensAction } from 'src/store/swap/swap-actions';
+import { useEvmSwapTokensSelector } from 'src/store/swap/swap-selectors';
 import { useAccountAddressForEvm, useCurrentAccountId } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
@@ -40,6 +41,7 @@ import {
 } from 'src/utils/evm/swap.utils';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
+import { dispatch } from '../../../store';
 import { useSwapFormStyles } from '../swap-form/swap-form.styles';
 
 import { EvmSwapDetails } from './evm-swap-details';
@@ -64,13 +66,9 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
   const chain = useEvmChain(ETHERLINK_MAINNET_CHAIN_ID);
   const focused = useIsFocused();
   const [appActive, setAppActive] = useState(AppState.currentState === 'active');
-  const [tokens, setTokens] = useState<Record<string, Route3EvmTokenWithPrice>>({});
-  const [catalogError, setCatalogError] = useState<Error>();
-  const [catalogRevision, setCatalogRevision] = useState(0);
+  const { data: tokens, error: catalogError, isLoading: catalogLoading } = useEvmSwapTokensSelector();
   const [inputSearch, setInputSearch] = useState('');
   const [outputSearch, setOutputSearch] = useState('');
-  const [catalogLoading, setCatalogLoading] = useState(false);
-  const catalogRetryAt = useRef(0);
   const balances = useEvmAccountChainBalancesSelector(address, ETHERLINK_MAINNET_CHAIN_ID);
   const assets = useEvmAccountChainAssetsSelector(address, ETHERLINK_MAINNET_CHAIN_ID);
   const metadata = useEvmChainTokensMetadataSelector(ETHERLINK_MAINNET_CHAIN_ID);
@@ -148,40 +146,6 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
     reviewing.current = false;
     if (focused) invalidate();
   }, [focused, invalidate]);
-
-  useEffect(() => {
-    if (!address) {
-      setTokens({});
-
-      return;
-    }
-    const controller = new AbortController();
-    let cancelled = false;
-    setCatalogLoading(true);
-    setCatalogError(undefined);
-    const load = async () => {
-      try {
-        if (Date.now() < catalogRetryAt.current)
-          throw new EvmSwapApiError('rate-limit', 'Wait before you retry the token request.', catalogRetryAt.current);
-        const next = await get3RouteEvmTokens(controller.signal);
-        if (!cancelled) setTokens(next);
-      } catch (error) {
-        if (!cancelled) {
-          if (error instanceof EvmSwapApiError && error.code === 'rate-limit')
-            catalogRetryAt.current = error.retryAt ?? Date.now() + 60_000;
-          setCatalogError(error instanceof Error ? error : new Error('Cannot load 3Route tokens.'));
-        }
-      } finally {
-        if (!cancelled) setCatalogLoading(false);
-      }
-    };
-    void load();
-
-    return () => {
-      cancelled = true;
-      controller.abort();
-    };
-  }, [address, catalogRevision]);
 
   const changeInput = (value: AssetAmountInterface<EvmSwapAsset>): void => {
     invalidate();
@@ -323,16 +287,16 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
           <Text style={{ color: colors.black }}>Etherlink mainnet is unavailable.</Text>
         )}
         {!address && <Text style={{ color: colors.black }}>This account has no Etherlink address.</Text>}
-        {(catalogError || quoteState.error || validatedQuote.error) && (
+        {Boolean(catalogError || quoteState.error || validatedQuote.error) && (
           <>
             <Divider size={formatSize(16)} />
             <Text style={{ color: colors.black }}>
-              {(catalogError ?? quoteState.error ?? validatedQuote.error)?.message}
+              {catalogError ?? (quoteState.error ?? validatedQuote.error)?.message}
             </Text>
             <ButtonLargeSecondary
               title="Retry"
               onPress={() => {
-                if (catalogError) setCatalogRevision(value => value + 1);
+                if (catalogError) dispatch(loadEvmSwapTokensAction.submit());
                 else invalidate();
               }}
               testID="EvmSwap/Retry"

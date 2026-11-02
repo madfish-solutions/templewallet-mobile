@@ -1,8 +1,9 @@
 import { BigNumber } from 'bignumber.js';
 import { combineEpics } from 'redux-observable';
-import { catchError, from, map, merge, mergeMap, of, switchMap } from 'rxjs';
+import { from, merge, mergeMap, of, switchMap, defer, catchError, exhaustMap, finalize, map, takeUntil } from 'rxjs';
 import { ofType, toPayload } from 'ts-action-operators';
 
+import { EvmSwapApiError, get3RouteEvmTokens } from 'src/apis/temple-wallet/evm-swap';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { Route3SwapParamsRequest, Route3SwapParamsRequestRaw } from 'src/interfaces/route3.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
@@ -13,9 +14,11 @@ import { isDefined } from 'src/utils/is-defined';
 import { fetchRoute3Tokens$, fetchRoute3Dexes$, fetchRoute3SwapParams } from 'src/utils/route3.util';
 import { loadTokensMetadata$ } from 'src/utils/token-metadata.utils';
 
+import { resetApplicationAction } from '../root-state.actions';
 import { AnyActionEpic } from '../types';
 
 import {
+  loadEvmSwapTokensAction,
   loadSwapDexesAction,
   loadSwapParamsAction,
   loadSwapTokensAction,
@@ -114,4 +117,34 @@ const loadSwapDexesEpic: AnyActionEpic = (action$, state$) =>
     )
   );
 
-export const swapEpics = combineEpics(loadSwapParamsEpic, loadSwapTokensEpic, loadSwapDexesEpic);
+const loadEvmSwapTokensEpic: AnyActionEpic = (action$, state$) =>
+  action$.pipe(
+    ofType(loadEvmSwapTokensAction.submit),
+    exhaustMap(() => {
+      const retryAt = state$.value.swap.evmTokens.retryAt;
+      if (retryAt !== undefined && Date.now() < retryAt) {
+        return of(loadEvmSwapTokensAction.fail({ message: 'Wait before you retry the token request.', retryAt }));
+      }
+
+      const controller = new AbortController();
+
+      return defer(() => from(get3RouteEvmTokens(controller.signal))).pipe(
+        map(tokens => loadEvmSwapTokensAction.success(tokens)),
+        catchError((error: unknown) =>
+          of(
+            loadEvmSwapTokensAction.fail({
+              message: error instanceof Error ? error.message : 'Cannot load 3Route tokens.',
+              retryAt:
+                error instanceof EvmSwapApiError && error.code === 'rate-limit'
+                  ? error.retryAt ?? Date.now() + 60_000
+                  : undefined
+            })
+          )
+        ),
+        takeUntil(action$.pipe(ofType(resetApplicationAction.success))),
+        finalize(() => controller.abort())
+      );
+    })
+  );
+
+export const swapEpics = combineEpics(loadSwapParamsEpic, loadSwapTokensEpic, loadSwapDexesEpic, loadEvmSwapTokensEpic);
