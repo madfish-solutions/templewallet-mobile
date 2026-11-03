@@ -5,7 +5,6 @@ import { BottomSheet } from 'src/components/bottom-sheet/bottom-sheet';
 import { useDropdownBottomSheetStyles } from 'src/components/bottom-sheet/bottom-sheet.styles';
 import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
 import { Divider } from 'src/components/divider/divider';
-import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { useOpenUrl } from 'src/hooks/use-open-url.hook';
@@ -27,20 +26,15 @@ import { getWertLink } from './utils/get-wert-link.util';
 
 interface OverlayBodyProps {
   isStart: boolean;
+  tezosAddress: string;
 }
 
-interface OnRampOverlayProps extends OverlayBodyProps {
+interface OnRampOverlayProps extends Omit<OverlayBodyProps, 'tezosAddress'> {
   isOpen: boolean;
   onClose: EmptyFn;
 }
 
-const OverlayBody = memo<OverlayBodyProps>(({ isStart }) => {
-  const tezosAddress = useAccountAddressForTezos();
-
-  if (!tezosAddress) {
-    throw new DeadEndBoundaryError();
-  }
-
+const OverlayBody = memo<OverlayBodyProps>(({ isStart, tezosAddress }) => {
   const [isLinkLoading, setIsLinkLoading] = useState(false);
   const { trackErrorEvent } = useAnalytics();
   const openUrl = useOpenUrl({ rethrowError: true });
@@ -160,6 +154,7 @@ const OverlayBody = memo<OverlayBodyProps>(({ isStart }) => {
 });
 
 export const OnRampOverlay: FC<OnRampOverlayProps> = ({ isOpen, isStart, onClose }) => {
+  const tezosAddress = useAccountAddressForTezos();
   const bottomSheetController = useBottomSheetController();
   const isInitiallyOpenRef = useRef(isOpen);
 
@@ -173,6 +168,10 @@ export const OnRampOverlay: FC<OnRampOverlayProps> = ({ isOpen, isStart, onClose
     bottomSheetController.close();
   }, [bottomSheetController, isOpen]);
 
+  if (!tezosAddress) {
+    return null;
+  }
+
   return (
     <BottomSheet
       contentHeight={formatSize(352)}
@@ -183,7 +182,7 @@ export const OnRampOverlay: FC<OnRampOverlayProps> = ({ isOpen, isStart, onClose
       onCancelButtonPress={onClose}
       onClose={onClose}
     >
-      <OverlayBody isStart={isStart} />
+      <OverlayBody isStart={isStart} tezosAddress={tezosAddress} />
     </BottomSheet>
   );
 };

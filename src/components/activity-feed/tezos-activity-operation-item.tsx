@@ -5,7 +5,7 @@ import { ActivityOperKindEnum, ActivityStatus, TezosOperation } from 'src/activi
 import { ActivityOperationRow } from './activity-operation-row';
 import { useTezosChainRef } from './hooks/use-activity-chain-ref.hook';
 import { useTezosActivityAsset } from './hooks/use-tezos-activity-asset.hook';
-import { getActivityOperTransferType, getTezosOperationIsShielded } from './utils';
+import { getActivityOperTransferType, getOperationIsBridge, getTezosOperationIsShielded } from './utils';
 
 interface Props {
   chainId: string;
@@ -25,6 +25,7 @@ export const TezosActivityOperationItem = memo<Props>(({ chainId, hash, operatio
       kind={operation?.kind ?? ActivityOperKindEnum.interaction}
       transferType={getActivityOperTransferType(operation)}
       isShielded={getTezosOperationIsShielded(operation)}
+      isBridge={getOperationIsBridge(operation)}
       hash={hash}
       status={status}
       asset={asset}

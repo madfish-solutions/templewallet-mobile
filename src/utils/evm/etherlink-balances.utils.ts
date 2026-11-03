@@ -11,10 +11,7 @@ import {
 import { dispatch, store } from 'src/store';
 import { processLoadedEvmAssetsAction } from 'src/store/evm/assets/evm-assets-actions';
 import { EvmChainAssetsRecord } from 'src/store/evm/assets/evm-assets-state';
-import {
-  processLoadedEvmBalancesAction,
-  processLoadedOnChainEvmBalancesAction
-} from 'src/store/evm/balances/evm-balances-actions';
+import { processLoadedEvmBalances, processLoadedOnChainEvmBalances } from 'src/store/evm/balances/evm-balances-actions';
 import { processLoadedEvmCollectiblesMetadataAction } from 'src/store/evm/collectibles-metadata/evm-collectibles-metadata-actions';
 import { buildEvmCollectibleMetadataFromApi } from 'src/store/evm/collectibles-metadata/utils';
 import { processLoadedEvmExchangeRatesAction } from 'src/store/evm/exchange-rates/evm-exchange-rates-actions';
@@ -150,7 +147,7 @@ export const dispatchEtherlinkAccountData = ({
   );
 
   dispatch(processLoadedEvmAssetsAction({ account, chainId, assets: data.assets }));
-  dispatch(processLoadedEvmBalancesAction({ account, chainId, balances: data.balances, timestamp, preservedSlugs }));
+  dispatch(processLoadedEvmBalances({ account, chainId, balances: data.balances, timestamp, preservedSlugs }));
   dispatch(processLoadedEvmTokensMetadataAction({ chainId, metadata: tokensMetadata }));
   dispatch(processLoadedEvmCollectiblesMetadataAction({ chainId, metadata: collectiblesMetadata }));
   dispatch(processLoadedEvmExchangeRatesAction({ chainId, rates: data.exchangeRates }));
@@ -240,7 +237,7 @@ export const loadEtherlinkBalancesOnChain = async ({
   }
 
   dispatch(
-    processLoadedOnChainEvmBalancesAction({
+    processLoadedOnChainEvmBalances({
       account,
       chainId: network.chainId,
       balances,

@@ -6,6 +6,7 @@ import {
   isErc20TokenTransfer,
   isErc721TokenTransfer
 } from 'src/apis/etherlink';
+import { ETHERLINK_DEPOSIT_SENDER_ADDRESS, ETHERLINK_XTZ_PRECOMPILE_ADDRESS } from 'src/config/etherlink-bridge';
 import { DEFAULT_EVM_CURRENCY } from 'src/token/interfaces/token-metadata.interface';
 import { DEFAULT_EVM_CHAINS_SPECS } from 'src/types/networks';
 import { equalsIgnoreCase } from 'src/utils/evm/on-chain/common.utils';
@@ -34,6 +35,9 @@ const makeGasTokenTransfer = (
 ): EvmOperation => {
   const { from, to, value, logIndex } = operation;
   const isSending = equalsIgnoreCase(from.hash, accountAddress);
+  const isBridge = isSending
+    ? equalsIgnoreCase(to?.hash, ETHERLINK_XTZ_PRECOMPILE_ADDRESS)
+    : equalsIgnoreCase(from.hash, ETHERLINK_DEPOSIT_SENDER_ADDRESS);
 
   return {
     kind: ActivityOperKindEnum.transfer,
@@ -41,7 +45,8 @@ const makeGasTokenTransfer = (
     toAddress: to?.hash ?? zeroAddress,
     asset: { ...makeGasAsset(chainId), amountSigned: isSending ? `-${value}` : value },
     logIndex,
-    type: isSending ? ActivityOperTransferType.sendToAccount : ActivityOperTransferType.receiveFromAccount
+    type: isSending ? ActivityOperTransferType.sendToAccount : ActivityOperTransferType.receiveFromAccount,
+    isBridge: isBridge ? true : undefined
   };
 };
 
@@ -130,8 +135,14 @@ export const toUnorderedOperations = async (
   const toAddress = to?.hash;
   const parsedTokensTransfers = tokensTransfers.map(transfer => parseTokenTransfer(transfer, accountAddress));
 
-  const operationKind = getEvmOperationKind({ data: rawInput, to: toAddress, value: toBigInt(value) });
+  const valueBigInt = toBigInt(value);
+  const operationKind = getEvmOperationKind({ data: rawInput, to: toAddress, value: valueBigInt });
   const gasTokenTransfer = makeGasTokenTransfer({ ...tx, logIndex: position }, chainId, accountAddress);
+
+  if (equalsIgnoreCase(toAddress, ETHERLINK_XTZ_PRECOMPILE_ADDRESS) && valueBigInt > 0n) {
+    return [gasTokenTransfer];
+  }
+
   const fallbackOperations: EvmOperation[] = [
     {
       kind: ActivityOperKindEnum.interaction,

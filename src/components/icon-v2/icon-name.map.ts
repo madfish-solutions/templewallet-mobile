@@ -6,6 +6,7 @@ import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowLeftIcon from './assets/arrow-left.svg';
 import ArrowUpDownIcon from './assets/arrow-up-down.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
+import BurnIcon from './assets/burn.svg';
 import CartIcon from './assets/cart.svg';
 import CheckboxCheckedFillIcon from './assets/checkbox-checked-fill.svg';
 import CheckboxCheckedIcon from './assets/checkbox-checked.svg';
@@ -28,6 +29,7 @@ import LinkNoIcon from './assets/link-no.svg';
 import LinkYesIcon from './assets/link-yes.svg';
 import LockOpenIcon from './assets/lock-open.svg';
 import LogoutIcon from './assets/logout.svg';
+import NftCollectionIcon from './assets/nft-collection.svg';
 import NotificationIcon from './assets/notification.svg';
 import OkIcon from './assets/ok.svg';
 import OutLinkIcon from './assets/out-link.svg';
@@ -89,5 +91,7 @@ export const IconNameV2Map: Record<IconNameV2Enum, FC<SvgProps>> = {
   [IconNameV2Enum.ArrowUpDown]: ArrowUpDownIcon,
   [IconNameV2Enum.LockOpen]: LockOpenIcon,
   [IconNameV2Enum.Cube]: CubeIcon,
-  [IconNameV2Enum.DocumentGear]: DocumentGearIcon
+  [IconNameV2Enum.DocumentGear]: DocumentGearIcon,
+  [IconNameV2Enum.NftCollection]: NftCollectionIcon,
+  [IconNameV2Enum.Burn]: BurnIcon
 };

@@ -1,5 +1,11 @@
 import { BigNumber } from 'bignumber.js';
 
+import {
+  ETHERLINK_BRIDGE_EXCHANGER_ADDRESS,
+  ETHERLINK_BRIDGE_HELPER_ADDRESS,
+  ETHERLINK_FAST_WITHDRAWAL_CONTRACT_ADDRESS,
+  ETHERLINK_ROLLUP_ADDRESS
+} from 'src/config/etherlink-bridge';
 import { SAPLING_CONTRACT_ADDRESS } from 'src/config/sapling';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
@@ -34,7 +40,7 @@ export function parseTezosOperationsGroup(
     hash,
     chain: TempleChainKind.Tezos,
     chainId,
-    operations: withoutUnshieldingCall(operations),
+    operations: withoutBridgeInternalCalls(withoutUnshieldingCall(operations)),
     addedAt: new Date(addedAt).getTime(),
     status: toActivityStatus(status)
   };
@@ -52,6 +58,24 @@ const isShieldedInteraction = (operation: TezosOperation) =>
 const withoutUnshieldingCall = (operations: TezosOperation[]) =>
   operations.filter(isShieldedInteraction).length === 1 && operations.some(isShieldedPayout)
     ? operations.filter(operation => !isShieldedInteraction(operation))
+    : operations;
+
+const BRIDGE_CONTRACT_ADDRESSES = new Set([
+  ETHERLINK_BRIDGE_HELPER_ADDRESS,
+  ETHERLINK_BRIDGE_EXCHANGER_ADDRESS,
+  ETHERLINK_ROLLUP_ADDRESS,
+  ETHERLINK_FAST_WITHDRAWAL_CONTRACT_ADDRESS
+]);
+
+const isBridgeContractInteraction = (operation: TezosOperation) =>
+  operation.kind === ActivityOperKindEnum.interaction &&
+  operation.withAddress != null &&
+  BRIDGE_CONTRACT_ADDRESSES.has(operation.withAddress);
+
+// A bridge deposit or payout carries the bridge contracts' own calls, only the TEZ transfer is the user's activity
+const withoutBridgeInternalCalls = (operations: TezosOperation[]) =>
+  operations.some(operation => operation.kind === ActivityOperKindEnum.transfer && operation.isBridge === true)
+    ? operations.filter(operation => !isBridgeContractInteraction(operation))
     : operations;
 
 const toActivityStatus = (status: TezosPreActivityStatus): ActivityStatus => {
@@ -106,7 +130,9 @@ function parseTezosPreActivityOperation(preOperation: TezosPreActivityOperation,
       toAddress,
       assetSlug,
       amountSigned,
-      isShielded: isShielded ? true : undefined
+      isShielded: isShielded ? true : undefined,
+      // Deposits go through the helper contract only, payouts may come from any bridge contract
+      isBridge: assetSlug === TEZ_TOKEN_SLUG && toAddress === ETHERLINK_BRIDGE_HELPER_ADDRESS ? true : undefined
     };
   }
 
@@ -118,7 +144,8 @@ function parseTezosPreActivityOperation(preOperation: TezosPreActivityOperation,
       toAddress,
       assetSlug,
       amountSigned,
-      isShielded: isShielded ? true : undefined
+      isShielded: isShielded ? true : undefined,
+      isBridge: assetSlug === TEZ_TOKEN_SLUG && BRIDGE_CONTRACT_ADDRESSES.has(fromAddress) ? true : undefined
     };
   }
 

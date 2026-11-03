@@ -1,12 +1,12 @@
 import FastImage from '@d11/react-native-fast-image';
-import React, { memo, useState } from 'react';
+import React, { memo } from 'react';
 import { View } from 'react-native';
 
-import { Icon } from 'src/components/icon/icon';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { IconV2 } from 'src/components/icon-v2';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
+import { useCollectionLogoImagesStack } from 'src/hooks/use-images-stack';
 import { Collection } from 'src/store/collectons/collections-state';
-import { formatSize } from 'src/styles/format-size';
-import { formatObjktLogoUri } from 'src/utils/image.utils';
+import { useColors } from 'src/styles/use-colors';
 
 import { useCollectionButtonStyles } from '../styles';
 
@@ -16,24 +16,25 @@ interface Props {
 
 export const CollectionLogo = memo<Props>(({ logo }) => {
   const styles = useCollectionButtonStyles();
-  const uri = formatObjktLogoUri(logo);
-  const [failedUri, setFailedUri] = useState<string>();
+  const { gray3 } = useColors();
+  const { src, isStackFailed, onSuccess, onFail } = useCollectionLogoImagesStack(logo);
 
-  if (!uri || failedUri === uri) {
+  if (isStackFailed || src == null) {
     return (
       <View testID="collection-logo-fallback" style={[styles.logo, styles.image, styles.brokenImage]}>
-        <Icon name={IconNameEnum.NFTCollection} size={formatSize(31)} />
+        <IconV2 name={IconNameV2Enum.NftCollection} size={32} color={gray3} />
       </View>
     );
   }
 
   return (
     <FastImage
-      key={uri}
+      key={src}
       testID="collection-logo-image"
-      source={{ uri }}
+      source={{ uri: src }}
       style={[styles.logo, styles.image]}
-      onError={() => setFailedUri(uri)}
+      onLoad={onSuccess}
+      onError={onFail}
     />
   );
 });

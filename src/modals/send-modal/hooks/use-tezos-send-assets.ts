@@ -11,8 +11,7 @@ import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { TezosSendAsset } from 'src/types/send-asset';
 import { useCurrentAccountCollectibles, useCurrentAccountTokens } from 'src/utils/assets/hooks';
-
-import { toTezosSendAsset } from '../tezos-send-asset.mapper';
+import { toTezosSendAsset } from 'src/utils/assets/tezos-send-asset.mapper';
 
 interface CreateTezosSendAssetsParams {
   hasTezosAccount: boolean;

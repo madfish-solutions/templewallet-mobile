@@ -1,4 +1,4 @@
-import React, { FC, memo, useCallback, useMemo, useState } from 'react';
+import React, { FC, memo, useMemo, useState } from 'react';
 import { View } from 'react-native';
 
 import { ActivityIndicator } from 'src/components/activity-indicator';
@@ -7,11 +7,12 @@ import { CollectibleImage } from 'src/components/collectible-image';
 import { SimpleModelView } from 'src/components/simple-model-view';
 import { SimplePlayer } from 'src/components/simple-player';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import { useImagesStack } from 'src/hooks/use-images-stack';
 import { useCollectibleIsAdultSelector } from 'src/store/collectibles/collectibles-selectors';
 import { showErrorToast } from 'src/toast/error-toast.utils';
 import { AssetMediaURIs } from 'src/utils/assets/types';
 import { useDidUpdate } from 'src/utils/hooks';
-import { formatCollectibleArtifactUri } from 'src/utils/image.utils';
+import { buildObjktCollectibleArtifactUris } from 'src/utils/image.utils';
 
 import { useCollectibleMediaStyles } from './styles';
 
@@ -58,30 +59,28 @@ const MediaContent = memo<MediaContentProps>(
   ({ slug, size, artifactUri, displayUri, thumbnailUri, mime, setScrollEnabled }) => {
     const styles = useCollectibleMediaStyles();
 
-    const mediaUri = useMemo(
-      () => (artifactUri ? formatCollectibleArtifactUri(artifactUri) : undefined),
-      [artifactUri]
+    const mediaUris = useMemo(
+      () => (artifactUri ? buildObjktCollectibleArtifactUris(artifactUri, mime === 'application/x-directory') : []),
+      [artifactUri, mime]
     );
 
-    const [mediaFailed, setMediaFailed] = useState(false);
-    useDidUpdate(() => setMediaFailed(false), [mime, mediaUri]);
+    const { src: mediaUri, isStackFailed, onFail: onMediaFail } = useImagesStack(mediaUris);
 
-    const onMediaFail = useCallback((subject = 'media') => {
-      showErrorToast({ description: `Invalid ${subject}` });
-      setMediaFailed(true);
-    }, []);
-    const onModelMediaFail = useCallback(() => onMediaFail('3D model'), [onMediaFail]);
-    const onVideoMediaFail = useCallback(() => onMediaFail('video'), [onMediaFail]);
-    const onAudioMediaFail = useCallback(() => onMediaFail('audio'), [onMediaFail]);
+    useDidUpdate(() => {
+      if (isStackFailed && mediaUris.length > 0) {
+        showErrorToast({ description: `Invalid ${getMediaSubject(mime)}` });
+      }
+    }, [isStackFailed, mediaUris, mime]);
 
-    if (!mediaFailed && mime && mediaUri) {
+    if (mime && mediaUri) {
       if (mime === 'model/gltf-binary') {
         return (
           <SimpleModelView
+            key={mediaUri}
             uri={mediaUri}
             isBinary={true}
             style={styles.container}
-            onFail={onModelMediaFail}
+            onFail={onMediaFail}
             setScrollEnabled={setScrollEnabled}
           />
         );
@@ -89,6 +88,7 @@ const MediaContent = memo<MediaContentProps>(
       if (mime === 'application/x-directory') {
         return (
           <SimpleModelView
+            key={mediaUri}
             uri={mediaUri}
             isBinary={false}
             style={styles.container}
@@ -98,7 +98,7 @@ const MediaContent = memo<MediaContentProps>(
         );
       }
       if (mime.startsWith('video/')) {
-        return <SimplePlayer uri={mediaUri} width={size} height={size} onError={onVideoMediaFail} isVideo />;
+        return <SimplePlayer key={mediaUri} uri={mediaUri} width={size} height={size} onError={onMediaFail} isVideo />;
       }
       if (mime.startsWith('audio/')) {
         return (
@@ -113,7 +113,14 @@ const MediaContent = memo<MediaContentProps>(
               thumbnailUri={thumbnailUri}
               Fallback={AudioPlaceholderLocal}
             />
-            <SimplePlayer uri={mediaUri} width={size} height={size} onError={onAudioMediaFail} style={styles.audio} />
+            <SimplePlayer
+              key={mediaUri}
+              uri={mediaUri}
+              width={size}
+              height={size}
+              onError={onMediaFail}
+              style={styles.audio}
+            />
           </View>
         );
       }
@@ -134,3 +141,17 @@ const MediaContent = memo<MediaContentProps>(
 );
 
 const AudioPlaceholderLocal: FC<{ isFullView?: boolean }> = () => <AudioPlaceholder />;
+
+const getMediaSubject = (mime?: string) => {
+  if (mime === 'model/gltf-binary') {
+    return '3D model';
+  }
+  if (mime?.startsWith('video/')) {
+    return 'video';
+  }
+  if (mime?.startsWith('audio/')) {
+    return 'audio';
+  }
+
+  return 'media';
+};

@@ -1,6 +1,6 @@
 import { string } from 'yup';
 
-import { isTruthy } from 'src/utils/is-truthy.ts';
+const derivationPathPartRegex = /^(\d+)'?$/;
 
 export const derivationPathValidation = string().test('validateDerivationPath', 'Invalid path', path => {
   const p = path ?? '';
@@ -13,10 +13,14 @@ export const derivationPathValidation = string().test('validateDerivationPath', 
     return false;
   }
 
-  const parts = p.replace('m', '').split('/').filter(isTruthy);
+  const parts = p.split('/').slice(1);
 
   return parts.every(itemPart => {
-    const pNum = +(itemPart.includes("'") ? itemPart.replace("'", '') : itemPart);
+    const execResult = derivationPathPartRegex.exec(itemPart);
+    if (!execResult) return false;
+
+    const [, pNumStr] = execResult;
+    const pNum = +pNumStr;
 
     return Number.isSafeInteger(pNum) && pNum >= 0;
   });

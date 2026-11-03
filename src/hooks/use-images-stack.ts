@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import {
+  buildCollectionLogoStack,
   buildTezosCollectibleImagesStack,
   buildEvmCollectibleImagesStack,
   buildEvmTokenIconSources,
@@ -76,6 +77,12 @@ export const useEvmCollectibleImagesStack = (chainId: number, assetSlug: string,
   const sourcesStack = useMemo(() => buildEvmCollectibleImagesStack(uri), [uri]);
 
   return useImagesStack(sourcesStack, `evm-collectible:${chainId}:${assetSlug}`);
+};
+
+export const useCollectionLogoImagesStack = (logoUri: string | nullish) => {
+  const sourcesStack = useMemo(() => buildCollectionLogoStack(logoUri), [logoUri]);
+
+  return useImagesStack(sourcesStack, `collection-logo:${logoUri ?? ''}`);
 };
 
 export const useTezosTokenImagesStack = ({

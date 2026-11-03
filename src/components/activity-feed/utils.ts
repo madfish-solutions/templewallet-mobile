@@ -57,10 +57,26 @@ const shieldedTransferRowKinds: Record<ActivityOperTransferType, ActivityRowKind
   [ActivityOperTransferType.receive]: ActivityRowKind.receive
 };
 
+const bridgeTransferRowKinds: Record<TempleChainKind, Record<ActivityOperTransferType, ActivityRowKind>> = {
+  [TempleChainKind.Tezos]: {
+    [ActivityOperTransferType.sendToAccount]: ActivityRowKind.bridgeToEtherlink,
+    [ActivityOperTransferType.receiveFromAccount]: ActivityRowKind.bridgeFromEtherlink,
+    [ActivityOperTransferType.send]: ActivityRowKind.bridgeToEtherlink,
+    [ActivityOperTransferType.receive]: ActivityRowKind.bridgeFromEtherlink
+  },
+  [TempleChainKind.EVM]: {
+    [ActivityOperTransferType.sendToAccount]: ActivityRowKind.bridgeToTezos,
+    [ActivityOperTransferType.receiveFromAccount]: ActivityRowKind.bridgeFromTezos,
+    [ActivityOperTransferType.send]: ActivityRowKind.bridgeToTezos,
+    [ActivityOperTransferType.receive]: ActivityRowKind.bridgeFromTezos
+  }
+};
+
 export const getActivityRowKind = (
   kind: ActivityFaceKind,
   transferType?: ActivityOperTransferType,
-  isShielded?: boolean
+  isShielded?: boolean,
+  bridgeChain?: TempleChainKind
 ) => {
   if (kind === BUNDLE_FACE_KIND) {
     return ActivityRowKind.bundle;
@@ -74,6 +90,10 @@ export const getActivityRowKind = (
     return ActivityRowKind.interaction;
   }
 
+  if (bridgeChain != null) {
+    return bridgeTransferRowKinds[bridgeChain][transferType];
+  }
+
   return (isShielded === true ? shieldedTransferRowKinds : transferRowKinds)[transferType];
 };
 
@@ -83,7 +103,11 @@ const activityRowTitles: Record<ActivityRowKind, string> = {
   [ActivityRowKind.transfer]: 'Transfer',
   [ActivityRowKind.interaction]: 'Interaction',
   [ActivityRowKind.approve]: 'Approve',
-  [ActivityRowKind.bundle]: 'Bundle'
+  [ActivityRowKind.bundle]: 'Bundle',
+  [ActivityRowKind.bridgeToEtherlink]: 'Bridge to Etherlink',
+  [ActivityRowKind.bridgeFromEtherlink]: 'Bridge from Etherlink',
+  [ActivityRowKind.bridgeToTezos]: 'Bridge to Tezos',
+  [ActivityRowKind.bridgeFromTezos]: 'Bridge from Tezos'
 };
 
 export const getActivityRowTitle = (rowKind: ActivityRowKind) => activityRowTitles[rowKind];
@@ -94,7 +118,11 @@ const assetPlaceholderIconNames: Record<ActivityRowKind, IconNameV2Enum> = {
   [ActivityRowKind.transfer]: IconNameV2Enum.Documents,
   [ActivityRowKind.interaction]: IconNameV2Enum.Documents,
   [ActivityRowKind.approve]: IconNameV2Enum.Ok,
-  [ActivityRowKind.bundle]: IconNameV2Enum.Documents
+  [ActivityRowKind.bundle]: IconNameV2Enum.Documents,
+  [ActivityRowKind.bridgeToEtherlink]: IconNameV2Enum.ArrowUpDown,
+  [ActivityRowKind.bridgeFromEtherlink]: IconNameV2Enum.ArrowUpDown,
+  [ActivityRowKind.bridgeToTezos]: IconNameV2Enum.ArrowUpDown,
+  [ActivityRowKind.bridgeFromTezos]: IconNameV2Enum.ArrowUpDown
 };
 
 // Rows without an asset logo (token page) name the operation with the glyph itself
@@ -104,7 +132,11 @@ const operationIconNames: Record<ActivityRowKind, IconNameV2Enum> = {
   [ActivityRowKind.transfer]: IconNameV2Enum.DocumentGear,
   [ActivityRowKind.interaction]: IconNameV2Enum.DocumentGear,
   [ActivityRowKind.approve]: IconNameV2Enum.LockOpen,
-  [ActivityRowKind.bundle]: IconNameV2Enum.Cube
+  [ActivityRowKind.bundle]: IconNameV2Enum.Cube,
+  [ActivityRowKind.bridgeToEtherlink]: IconNameV2Enum.ArrowUpDown,
+  [ActivityRowKind.bridgeFromEtherlink]: IconNameV2Enum.ArrowUpDown,
+  [ActivityRowKind.bridgeToTezos]: IconNameV2Enum.ArrowUpDown,
+  [ActivityRowKind.bridgeFromTezos]: IconNameV2Enum.ArrowUpDown
 };
 
 export const getActivityRowIconName = (rowKind: ActivityRowKind, withoutAssetIcon = false) =>
@@ -134,6 +166,9 @@ export const getTezosOperationIsShielded = (operation?: TezosOperation) =>
   operation?.kind === ActivityOperKindEnum.interaction || operation?.kind === ActivityOperKindEnum.transfer
     ? operation.isShielded
     : undefined;
+
+export const getOperationIsBridge = (operation?: TezosOperation | EvmOperation) =>
+  operation?.kind === ActivityOperKindEnum.transfer && operation.isBridge === true;
 
 export const getTezosBundleIsShielded = (operations: TezosOperation[]) =>
   operations.some(operation => getTezosOperationIsShielded(operation) === true);

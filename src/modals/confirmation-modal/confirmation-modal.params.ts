@@ -11,6 +11,8 @@ export type ConfirmationModalParams =
   | InternalOperationsConfirmationModalParams
   | DAppOperationsConfirmationModalParams
   | RebalanceConfirmationModalParams
+  | BridgeDepositConfirmationModalParams
+  | BridgeWithdrawConfirmationModalParams
   | EvmInternalOperationsConfirmationModalParams
   | WcSessionProposalConfirmationModalParams
   | WcSessionRequestConfirmationModalParams;
@@ -44,6 +46,18 @@ interface RebalanceConfirmationModalParams {
   opParams?: ParamsWithKind[];
   direction: 'shield' | 'unshield';
   amount: string;
+}
+
+interface BridgeDepositConfirmationModalParams {
+  type: ConfirmationTypeEnum.BridgeDepositOperation;
+  amountMutez: string;
+}
+
+interface BridgeWithdrawConfirmationModalParams {
+  type: ConfirmationTypeEnum.BridgeWithdrawOperation;
+  amountMutez: string;
+  receiveMutez: string;
+  feeRate: string;
 }
 
 export interface EvmInternalOperationsConfirmationModalParams {

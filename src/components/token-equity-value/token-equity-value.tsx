@@ -16,8 +16,7 @@ import { HideBalance } from '../hide-balance/hide-balance';
 import { useTokenEquityValueStyles } from './token-equity-value.styles';
 
 interface Props {
-  token: TokenInterface;
-  forTotalBalance?: boolean;
+  token?: TokenInterface;
 }
 
 const ErrorBoundaryFallback = memo(() => {
@@ -46,7 +45,7 @@ export const TokenEquityValue = memo<Props>(props => {
   );
 });
 
-const TokenEquityValueContent = memo<Props>(({ token, forTotalBalance = false }) => {
+const TokenEquityValueContent = memo<Props>(({ token }) => {
   const styles = useTokenEquityValueStyles();
 
   const totalDollarBalance = useTotalBalance();
@@ -59,20 +58,20 @@ const TokenEquityValueContent = memo<Props>(({ token, forTotalBalance = false })
 
   return (
     <View style={styles.container}>
-      {forTotalBalance ? (
-        <>
-          <Text style={styles.totalEquityText}>Total Equity Value</Text>
-          <HideBalance textStyle={styles.mainValueText} interactive testID={WalletSelectors.tokenEquity}>
-            <FormattedAmount isDollarValue amount={totalFiatBalance} />
-          </HideBalance>
-        </>
-      ) : (
+      {token ? (
         <>
           <HideBalance textStyle={styles.mainValueText} interactive testID={WalletSelectors.tokenEquity}>
             <AssetValueText asset={token} amount={token.balance} />
           </HideBalance>
           <HideBalance textStyle={styles.additionalValueText}>
             <AssetValueText convertToDollar asset={token} amount={token.balance} hideApproximateSign />
+          </HideBalance>
+        </>
+      ) : (
+        <>
+          <Text style={styles.totalEquityText}>Total Equity Value</Text>
+          <HideBalance textStyle={styles.mainValueText} interactive testID={WalletSelectors.tokenEquity}>
+            <FormattedAmount isDollarValue amount={totalFiatBalance} />
           </HideBalance>
         </>
       )}

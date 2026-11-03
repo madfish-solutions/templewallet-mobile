@@ -15,7 +15,8 @@ export const useDropdownStyles = createUseStyles(({ typography, colors }) => ({
   },
   valueContainer: {
     flexGrow: 1,
-    flexShrink: 1
+    flexShrink: 1,
+    justifyContent: 'center'
   },
   contentContainer: {
     flexGrow: 1,

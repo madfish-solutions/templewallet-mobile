@@ -1,3 +1,5 @@
+import { StyleSheet } from 'react-native';
+
 import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
@@ -9,7 +11,7 @@ export const useTokenApyPillStyles = createUseStyles(({ colors, typography }) =>
     paddingHorizontal: formatSize(8),
     paddingVertical: formatSize(4),
     borderRadius: formatSize(8),
-    borderWidth: formatSize(0.5),
+    borderWidth: Math.max(formatSize(0.5), StyleSheet.hairlineWidth),
     borderColor: colors.lines,
     backgroundColor: colors.gray4,
     gap: formatSize(4)

@@ -71,6 +71,9 @@ const irregularPaddingByIconName: Partial<Record<IconNameV2Enum, Partial<Record<
   },
   [IconNameV2Enum.ChevronRight2]: {
     16: 1.5
+  },
+  [IconNameV2Enum.NftCollection]: {
+    32: 2
   }
 };
 

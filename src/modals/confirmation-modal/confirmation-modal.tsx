@@ -11,6 +11,8 @@ import { usePreparedOpParamsSelector } from 'src/store/sapling';
 import { cancelSaplingPreparationAction, clearPreparedOpParamsAction } from 'src/store/sapling/sapling-actions';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
+import { BridgeDepositConfirmation } from './bridge-confirmation/bridge-deposit-confirmation';
+import { BridgeWithdrawConfirmation } from './bridge-confirmation/bridge-withdraw-confirmation';
 import { InternalOperationsConfirmation } from './common/internal-operations-confirmation';
 import { DAppOperationsConfirmation } from './d-app-operations-confirmation/d-app-operations-confirmation';
 import { EvmInternalOperationsConfirmation } from './evm-internal-operations-confirmation';
@@ -77,6 +79,16 @@ const ConfirmationModalContent: FC = () => {
           opParams={preparedOpParams ?? params.opParams ?? []}
           amount={params.amount}
           direction={params.direction}
+        />
+      );
+    case ConfirmationTypeEnum.BridgeDepositOperation:
+      return <BridgeDepositConfirmation amountMutez={params.amountMutez} />;
+    case ConfirmationTypeEnum.BridgeWithdrawOperation:
+      return (
+        <BridgeWithdrawConfirmation
+          amountMutez={params.amountMutez}
+          receiveMutez={params.receiveMutez}
+          feeRate={params.feeRate}
         />
       );
     case ConfirmationTypeEnum.EvmInternalOperations:

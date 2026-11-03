@@ -10,6 +10,7 @@ import { ButtonLargePrimary } from 'src/components/button/button-large/button-la
 import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
 import { Divider } from 'src/components/divider/divider';
 import { DeadEndBoundaryError } from 'src/components/error-boundary';
+import { InterfaceDisclaimer } from 'src/components/interface-disclaimer/interface-disclaimer';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { tokenEqualityFn } from 'src/components/token-dropdown/token-equality-fn';
 import {
@@ -73,8 +74,8 @@ import {
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
+import { BridgeBanner } from './bridge-banner/bridge-banner';
 import { SwapAssetsButton } from './swap-assets-button/swap-assets-button';
-import { SwapDisclaimer } from './swap-disclaimer/swap-disclaimer';
 import { SwapExchangeRate } from './swap-exchange-rate/swap-exchange-rate';
 import { swapFormValidationSchema } from './swap-form.form';
 import { SwapFormSelectors } from './swap-form.selectors';
@@ -510,7 +511,6 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         <Divider size={formatSize(8)} />
 
         <FormAssetAmountInput
-          variant="v2"
           name="inputAssets"
           label="From"
           isSearchable
@@ -531,7 +531,6 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         <SwapAssetsButton />
 
         <FormAssetAmountInput
-          variant="v2"
           name="outputAssets"
           label="To"
           toUsdToggle={false}
@@ -551,6 +550,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           testID={SwapFormSelectors.toAssetAmountInput}
           tokenTestID={SwapFormSelectors.toTokenChange}
         />
+        {inputAssetSlug === TEZ_TOKEN_SLUG && <BridgeBanner />}
         <View>
           <SwapExchangeRate
             inputAsset={inputAssets.asset}
@@ -563,7 +563,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         </View>
 
         <View style={styles.disclaimerContainer}>
-          <SwapDisclaimer />
+          <InterfaceDisclaimer linkText="3route DEX aggregator" url="https://3route.io/" />
         </View>
       </ScreenContainer>
 

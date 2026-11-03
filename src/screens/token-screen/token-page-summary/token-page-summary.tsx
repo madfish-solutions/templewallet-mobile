@@ -98,12 +98,7 @@ export const TokenPageSummary = memo<Props>(
           )}
 
           <View style={styles.actionsRow}>
-            <HeaderCardActionButtons
-              token={token}
-              onSendPress={onSendPress}
-              scopeReceiveToTokenChain
-              style={styles.actionButtons}
-            />
+            <HeaderCardActionButtons token={token} onSendPress={onSendPress} style={styles.actionButtons} />
           </View>
         </View>
 

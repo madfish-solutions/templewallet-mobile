@@ -22,6 +22,12 @@ if [ -f "$rn_gradle_plugin_settings" ]; then
   sed -i ${sed_mac_arg:+""} 's/org.gradle.toolchains.foojay-resolver-convention").version("0.5.0")/org.gradle.toolchains.foojay-resolver-convention").version("1.0.0")/' "$rn_gradle_plugin_settings"
 fi
 
+# Keep the Hermes podspec checksum identical across checkout paths.
+hermes_engine_podspec="node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
+if [ -f "$hermes_engine_podspec" ]; then
+  sed -i ${sed_mac_arg:+""} 's|#{hermes_compiler_path}/hermesc/osx-bin/hermesc|$(PODS_ROOT)/../../node_modules/hermes-compiler/hermesc/osx-bin/hermesc|' "$hermes_engine_podspec"
+fi
+
 search_string="compile 'com.facebook.react:react-native:+'"
 replace_string="implementation 'com.facebook.react:react-native:+'"
 sed -i ${sed_mac_arg:+""} "s/$search_string/$replace_string/" node_modules/react-native-scrypt/android/build.gradle

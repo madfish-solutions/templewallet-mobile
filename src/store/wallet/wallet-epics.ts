@@ -9,6 +9,7 @@ import { ofType, toPayload } from 'ts-action-operators';
 import { BLOCK_DURATION } from 'src/config/fixed-times';
 import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
+import { Account } from 'src/interfaces/account.interfaces';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
@@ -35,6 +36,8 @@ import {
   waitForOperationCompletionAction
 } from './wallet-actions';
 
+const hasAccountId = (accounts: Account[], accountId: string) => accounts.some(account => account.id === accountId);
+
 const highPriorityLoadTokenBalanceEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(highPriorityLoadTokenBalanceAction),
@@ -42,15 +45,22 @@ const highPriorityLoadTokenBalanceEpic: AnyActionEpic = (action$, state$) =>
     withUserAnalyticsCredentials(state$),
     switchMap(([payload, userAnalyticsCredentials]) =>
       loadAssetBalance$(payload.publicKeyHash, payload.slug, userAnalyticsCredentials).pipe(
-        map(balance =>
-          isDefined(balance)
-            ? loadAssetsBalancesActions.success({
-                accountId: payload.accountId,
-                publicKeyHash: payload.publicKeyHash,
-                balances: { [payload.slug]: balance }
-              })
-            : loadAssetsBalancesActions.fail(`${payload.slug} balance load FAILED`)
-        )
+        concatMap(balance => {
+          // The account can be removed while this request is in flight, for example by a wallet reset.
+          if (!hasAccountId(state$.value.wallet.accounts, payload.accountId)) {
+            return EMPTY;
+          }
+
+          return of(
+            isDefined(balance)
+              ? loadAssetsBalancesActions.success({
+                  accountId: payload.accountId,
+                  publicKeyHash: payload.publicKeyHash,
+                  balances: { [payload.slug]: balance }
+                })
+              : loadAssetsBalancesActions.fail(`${payload.slug} balance load FAILED`)
+          );
+        })
       )
     )
   );
@@ -68,14 +78,24 @@ const loadTokensBalancesEpic: AnyActionEpic = (action$, state$) =>
       }
 
       return from(fetchAllAssetsBalancesFromTzkt(selectedTezosAddress)).pipe(
-        map(data =>
-          loadAssetsBalancesActions.success({
-            accountId: selectedAccount.id,
-            publicKeyHash: selectedTezosAddress,
-            balances: data
-          })
-        ),
+        concatMap(data => {
+          if (!hasAccountId(state$.value.wallet.accounts, selectedAccount.id)) {
+            return EMPTY;
+          }
+
+          return of(
+            loadAssetsBalancesActions.success({
+              accountId: selectedAccount.id,
+              publicKeyHash: selectedTezosAddress,
+              balances: data
+            })
+          );
+        }),
         catchError(err => {
+          if (!hasAccountId(state$.value.wallet.accounts, selectedAccount.id)) {
+            return EMPTY;
+          }
+
           if (isAnalyticsEnabled) {
             sendErrorAnalyticsEvent('LoadTokensBalancesError', err, [selectedTezosAddress], {
               userId,
@@ -99,7 +119,12 @@ const loadTezosBalanceEpic: AnyActionEpic = (action$, state$) =>
       loadTezosBalances$(allAccounts.map(getAccountAddressForTezos).filter(isDefined)).pipe(
         withOnRampOverlayState(state$),
         concatMap(([balances, overlayState]) => {
+          const currentAccountIds = new Set(state$.value.wallet.accounts.map(account => account.id));
           const balancesByAccountId = allAccounts.reduce<StringRecord>((acc, account) => {
+            if (!currentAccountIds.has(account.id)) {
+              return acc;
+            }
+
             const tezosAddress = getAccountAddressForTezos(account);
             const balance = tezosAddress ? balances[tezosAddress] : undefined;
 
@@ -109,11 +134,17 @@ const loadTezosBalanceEpic: AnyActionEpic = (action$, state$) =>
 
             return acc;
           }, {});
+
+          if (Object.keys(balancesByAccountId).length === 0) {
+            return EMPTY;
+          }
+
           const successAction = loadTezosBalanceActions.success(balancesByAccountId);
           const selectedTezosAddress = getAccountAddressForTezos(selectedAccount);
           const balance = selectedTezosAddress ? balances[selectedTezosAddress] : undefined;
           const showOnRampAction =
             !LIMIT_FIN_FEATURES &&
+            currentAccountIds.has(selectedAccount.id) &&
             overlayState === OnRampOverlayState.Closed &&
             isDefined(balance) &&
             new BigNumber(balance).isZero()
@@ -123,6 +154,10 @@ const loadTezosBalanceEpic: AnyActionEpic = (action$, state$) =>
           return showOnRampAction ? [successAction, showOnRampAction] : [successAction];
         }),
         catchError(err => {
+          if (!hasAccountId(state$.value.wallet.accounts, selectedAccount.id)) {
+            return EMPTY;
+          }
+
           if (isAnalyticsEnabled) {
             sendErrorAnalyticsEvent(
               'LoadTezosBalanceError',

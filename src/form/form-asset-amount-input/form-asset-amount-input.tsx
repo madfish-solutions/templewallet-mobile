@@ -34,7 +34,7 @@ type FormAssetAmountInputComponent = <TAsset extends AssetInterface = TokenInter
 export const FormAssetAmountInput = memo<Props<AssetInterface>>(
   ({
     name,
-    variant,
+    variant = 'v2',
     label,
     assetsList,
     frozenBalance,

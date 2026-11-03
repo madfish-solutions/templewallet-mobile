@@ -7,17 +7,18 @@ import { showErrorToast } from 'src/toast/error-toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
-import { formatImgUri } from 'src/utils/image.utils';
-import { isDefined } from 'src/utils/is-defined';
+import { fromTokenSlug } from 'src/utils/from-token-slug';
 import { buildCollectibleUniversalLink } from 'src/utils/nft-universal-links';
+import { buildObjktTokenThumbnailUrl } from 'src/utils/objkt-cdn';
 
-export const useShareNFT = (slug: string, image?: string, title?: string, description?: string) => {
+export const useShareNFT = (slug: string, title?: string, description?: string) => {
   const { trackEvent } = useAnalytics();
 
   return useCallback(async () => {
+    const [address, id] = fromTokenSlug(slug);
     const linkUrl = buildCollectibleUniversalLink(
       slug,
-      isDefined(image) ? formatImgUri(image) : image,
+      id ? buildObjktTokenThumbnailUrl(address, id) : undefined,
       title,
       description
     );
@@ -40,5 +41,5 @@ export const useShareNFT = (slug: string, image?: string, title?: string, descri
         errorMessage: message
       });
     }
-  }, [description, image, slug, title, trackEvent]);
+  }, [description, slug, title, trackEvent]);
 };

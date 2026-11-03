@@ -81,6 +81,14 @@ export const useFarmsStakesLoadingSelector = () =>
     return Object.values(accountStakes).some(({ isLoading }) => isLoading);
   });
 
+export const useFarmStakeLoadingSelector = (farmAddress: string) =>
+  useSelector(({ farms, wallet }) => {
+    const selectedTezosAddress = getAccountAddressForTezos(getSelectedAccountFromWallet(wallet));
+    const accountStakes = selectedTezosAddress ? farms.stakes[selectedTezosAddress] ?? {} : {};
+
+    return accountStakes[farmAddress]?.isLoading ?? false;
+  });
+
 export const useSomeFarmsStakesWereLoadingSelector = () =>
   useSelector(({ farms, wallet }) => {
     const selectedTezosAddress = getAccountAddressForTezos(getSelectedAccountFromWallet(wallet));

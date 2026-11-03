@@ -169,6 +169,8 @@ const AssetAmountInputComponent: FC<
               setSearchValue={setSearchValue}
               renderValue={renderTokenValue}
               renderListItem={renderTopUpTokenListItem}
+              listItemSeparatorSize={formatSize(8)}
+              listItemDividerSize={0}
               keyExtractor={topUpInputKeyExtractor}
               testID={TopUpAssetAmountInputSelectors.assetInput}
               onValueChange={handleTokenChange}

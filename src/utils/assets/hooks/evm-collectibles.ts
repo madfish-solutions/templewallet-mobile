@@ -58,3 +58,9 @@ export const useCurrentAccountEvmCollectibles = (): EvmDisplayedCollectible[] =>
     return collectibles;
   }, [evmAddress, assets, balances, metadatas]);
 };
+
+export const useCurrentAccountEvmCollectiblesWithPositiveBalance = (): EvmDisplayedCollectible[] => {
+  const collectibles = useCurrentAccountEvmCollectibles();
+
+  return useMemo(() => collectibles.filter(c => Number(c.balance) > 0), [collectibles]);
+};

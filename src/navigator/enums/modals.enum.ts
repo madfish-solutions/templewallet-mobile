@@ -37,7 +37,8 @@ export enum ModalsEnum {
   ShieldedAnnouncement = 'ShieldedAnnouncement',
   PromoRewardsEnable = 'PromoRewardsEnable',
   RewardsAnnouncement = 'RewardsAnnouncement',
-  Rebalance = 'Rebalance'
+  Rebalance = 'Rebalance',
+  Bridge = 'Bridge'
 }
 
 export type ModalsParamList = {
@@ -72,6 +73,7 @@ export type ModalsParamList = {
   [ModalsEnum.PromoRewardsEnable]: undefined;
   [ModalsEnum.RewardsAnnouncement]: undefined;
   [ModalsEnum.Rebalance]: undefined;
+  [ModalsEnum.Bridge]: undefined;
 };
 
 type ModalParamsPart<T extends ModalsEnum> = undefined extends ModalsParamList[T]
@@ -109,4 +111,5 @@ export type ModalParams =
   | ModalParamsPart<ModalsEnum.ShieldedAnnouncement>
   | ModalParamsPart<ModalsEnum.PromoRewardsEnable>
   | ModalParamsPart<ModalsEnum.RewardsAnnouncement>
-  | ModalParamsPart<ModalsEnum.Rebalance>;
+  | ModalParamsPart<ModalsEnum.Rebalance>
+  | ModalParamsPart<ModalsEnum.Bridge>;

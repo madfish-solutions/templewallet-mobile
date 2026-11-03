@@ -4,5 +4,6 @@ export enum SwapFormSelectors {
   toAssetAmountInput = 'Swap (Form)/To Asset Amount Input',
   swapButton = 'Swap (Form)/Swap Button',
   fromTokenChange = 'Swap (Form)/From Token Change',
-  toTokenChange = 'Swap (Form)/To Token Change'
+  toTokenChange = 'Swap (Form)/To Token Change',
+  bridgeBanner = 'Swap (Form)/Bridge Banner'
 }

@@ -12,6 +12,9 @@ export const useTezosInfoStyles = createUseStyles(({ colors, typography }) => ({
     alignItems: 'center',
     justifyContent: 'space-between'
   },
+  alignStretch: {
+    alignItems: 'stretch'
+  },
   tooltipContainer: {
     flexDirection: 'row',
     alignItems: 'center'

@@ -12,6 +12,7 @@ export interface AssetAmountInputStylesConfig {
   balanceText?: TextStyle;
   amountInput?: TextStyle;
   inputContainer?: ViewStyle;
+  footerContainer?: ViewStyle;
 }
 
 export interface AssetAmountInputProps<TAsset extends AssetInterface = TokenInterface> extends TestIdProps {
