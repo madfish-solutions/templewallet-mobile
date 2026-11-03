@@ -37,7 +37,7 @@ export const useMetadataLoading = () => {
       return;
     }
 
-    if (metadataLoading || !slugsToCheck?.length || !isTezosMainnet) {
+    if (metadataLoading || !slugsToCheck?.length || !isTezosMainnet || !isAuthorised) {
       return;
     }
 
@@ -59,5 +59,5 @@ export const useMetadataLoading = () => {
 
       dispatch(loadTokensMetadataActions.submit(missingChunk));
     }
-  }, [metadataLoading, isAuthorised, isTezosMainnet, dispatch, slugsToCheck, getMetadata]);
+  }, [slugsToCheck, getMetadata, metadataLoading, isAuthorised, isTezosMainnet, dispatch]);
 };
