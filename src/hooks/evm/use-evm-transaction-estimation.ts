@@ -68,7 +68,14 @@ export const useEvmTransactionEstimation = ({ sourceAddress, request, publicClie
 
     const requestId = ++estimationRequestIdRef.current;
     const promise = (async () => {
-      if (!sourceAddress || !request || !publicClient) {
+      if (!request) {
+        setEstimationError(undefined);
+        setIsEstimating(false);
+
+        return undefined;
+      }
+
+      if (!sourceAddress || !publicClient) {
         const error = normalizeEvmTransactionError(new Error('EVM account or network is unavailable'));
 
         if (requestId === estimationRequestIdRef.current) {

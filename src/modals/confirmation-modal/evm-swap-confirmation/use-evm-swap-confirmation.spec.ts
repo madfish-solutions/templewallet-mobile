@@ -296,7 +296,8 @@ describe('Etherlink approval and swap coordinator', () => {
     });
     expect(fetchRoute).toHaveBeenCalledTimes(1);
     expect(submit).not.toHaveBeenCalled();
-    expect(result.current.notice).toContain('Review the output and minimum');
+    expect(result.current.phase).toBe('swap');
+    expect(result.current.quote.receivedAt).toBe(Date.now());
   });
 
   it('checks the new spender after approval and blocks the swap until its approval', async () => {

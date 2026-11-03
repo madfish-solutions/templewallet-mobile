@@ -48,8 +48,6 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
   const [error, setError] = useState<string>();
   const [pending, setPending] = useState<PendingAction>();
   const [confirmedHash, setConfirmedHash] = useState<Hash>();
-  const [approvalHash, setApprovalHash] = useState<Hash>();
-  const [notice, setNotice] = useState<string>();
   const [needsReview, setNeedsReview] = useState(false);
   const [allowanceRevision, setAllowanceRevision] = useState(0);
   const guard = useRef(false);
@@ -163,7 +161,6 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
     acceptedQuoteRef.current = next;
     mustRefreshRef.current = false;
     setQuote(next);
-    setNotice('The route is fresh. Review the output and minimum before you confirm.');
     setPhase('allowance');
     paused.current = false;
     setNeedsReview(false);
@@ -192,7 +189,6 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
     setPending(undefined);
     if (action.action === 'approval') {
       mustRefreshRef.current = true;
-      setApprovalHash(result.receipt.transactionHash);
       // Receipt success alone does not prove that the token grants the allowance.
       setPhase('refresh');
       if (!(await readAllowance(quote)))
@@ -323,9 +319,7 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
     ? 'Retry allowance'
     : feeState.estimationError
     ? 'Retry fee estimate'
-    : phase === 'approval'
-    ? 'Approve exact amount'
-    : 'Confirm swap';
+    : 'Confirm';
   const disabled =
     busy ||
     (!pending &&
@@ -344,8 +338,6 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
     feeState,
     pending,
     confirmedHash,
-    approvalHash,
-    notice,
     busy,
     error,
     confirm,
