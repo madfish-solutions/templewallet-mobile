@@ -18,7 +18,7 @@ import { useEvmSwapConfirmation } from './use-evm-swap-confirmation';
 
 const renderClose = () => <HeaderCloseButton />;
 
-const renderApprovalTitle = () => <HeaderTitle title="Confirm Send" />;
+const renderApprovalTitle = () => <HeaderTitle title="Approve" />;
 const renderSwapTitle = () => <HeaderTitle title="Confirm Swap" />;
 
 export const EvmSwapConfirmation: FC<EvmSwapConfirmationModalParams> = params => {
