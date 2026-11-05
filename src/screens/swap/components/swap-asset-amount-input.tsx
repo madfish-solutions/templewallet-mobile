@@ -16,7 +16,7 @@ interface Props<TAsset extends AssetInterface> extends AssetAmountInputProps<TAs
   field: 'input' | 'output';
 }
 
-export const SwapAssetAmountInput = <TAsset extends AssetInterface>({
+const SwapAssetAmountInput = <TAsset extends AssetInterface>({
   field,
   assetsList,
   value,

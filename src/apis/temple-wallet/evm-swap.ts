@@ -71,7 +71,7 @@ const address = (value: unknown): HexString => {
   return isAddress(normalized) ? normalized : invalidResponse();
 };
 
-export const parse3RouteEvmToken = (value: unknown): Route3EvmTokenWithPrice => {
+const parse3RouteEvmToken = (value: unknown): Route3EvmTokenWithPrice => {
   const token = record(value);
   const decimals = token.decimals;
   if (typeof decimals !== 'number' || !Number.isInteger(decimals) || decimals < 0 || decimals > 255) {
@@ -93,7 +93,7 @@ export const parse3RouteEvmToken = (value: unknown): Route3EvmTokenWithPrice => 
   };
 };
 
-export const parse3RouteEvmTokens = (value: unknown): Record<string, Route3EvmTokenWithPrice> => {
+const parse3RouteEvmTokens = (value: unknown): Record<string, Route3EvmTokenWithPrice> => {
   const result: Record<string, Route3EvmTokenWithPrice> = {};
   for (const [key, rawToken] of Object.entries(record(value))) {
     const token = parse3RouteEvmToken(rawToken);

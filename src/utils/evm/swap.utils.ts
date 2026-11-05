@@ -21,10 +21,11 @@ import { toEvmAssetSlug } from 'src/utils/from-token-slug';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
 export const EVM_SWAP_QUOTE_LIFETIME = 60_000;
-export const EVM_SWAP_FEE_PERCENT = new BigNumber(ROUTING_FEE_RATIO).multipliedBy(100).toFixed();
-export const toSwapAssetSlug = (address: string): string =>
+
+const toSwapAssetSlug = (address: string): string =>
   address.toLowerCase() === zeroAddress ? EVM_TOKEN_SLUG : toEvmAssetSlug(address);
-export const toSwapProxyAddress = (slug: string): HexString => {
+
+const toSwapProxyAddress = (slug: string): HexString => {
   if (slug === EVM_TOKEN_SLUG) return zeroAddress;
   const address = toEvmAssetSlug(slug);
   if (!isAddress(address)) throw new Error('Invalid Etherlink token address.');
@@ -79,6 +80,8 @@ export const buildEvmSwapCatalog = (
 
   return [...result.values()];
 };
+
+const EVM_SWAP_FEE_PERCENT = new BigNumber(ROUTING_FEE_RATIO).multipliedBy(100).toFixed();
 
 export const createEvmSwapIdentity = (
   fromAddress: HexString,
