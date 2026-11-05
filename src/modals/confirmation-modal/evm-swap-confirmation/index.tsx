@@ -71,7 +71,6 @@ export const EvmSwapConfirmation: FC<EvmSwapConfirmationModalParams> = params =>
       }
       details={
         !state.pending &&
-        !state.confirmedHash &&
         (phase === 'approval' || phase === 'swap') && <EvmTransactionFeeDetails feeState={state.feeState} />
       }
       backAction={{ disabled: state.busy, onPress: goBack }}
@@ -79,7 +78,7 @@ export const EvmSwapConfirmation: FC<EvmSwapConfirmationModalParams> = params =>
         title: state.title,
         disabled: state.disabled,
         isLoading: state.busy,
-        onPress: state.confirmedHash && !state.error ? goBack : state.confirm,
+        onPress: state.confirm,
         testID: 'EvmSwap/Confirm'
       }}
     />

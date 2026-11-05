@@ -6,13 +6,17 @@ import { EvmSwapApiError, get3RouteEvmSwap } from 'src/apis/temple-wallet/evm-sw
 import { useEvmChain } from 'src/hooks/evm/use-evm-chains.hook';
 import { useEvmTransactionFee } from 'src/hooks/evm/use-evm-transaction-fee';
 import { useViemPublicClient } from 'src/hooks/evm/use-viem-public-client.hook';
-import { store } from 'src/store';
+import { StacksEnum } from 'src/navigator/enums/stacks.enum';
+import { dispatch, store } from 'src/store';
+import { navigateAction } from 'src/store/root-state.actions';
 import { useAllAccounts, useCurrentAccountId } from 'src/store/wallet/wallet-selectors';
+import { showErrorToast } from 'src/toast/toast.utils';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
 import { EvmSwapQuote } from 'src/types/evm-swap';
 import { toEvmNetworkEssentials } from 'src/types/networks';
 import { getAccountAddressForEvm } from 'src/utils/account.utils';
 import { buildPreparedEvmTransaction } from 'src/utils/evm/build-prepared-evm-transaction';
+import { normalizeEvmTransactionError } from 'src/utils/evm/evm-transaction-error';
 import { evmTransactionSubmissionService } from 'src/utils/evm/evm-transaction-submission';
 import { EvmTransactionSubmissionError } from 'src/utils/evm/evm-transaction-submission-error';
 import { refreshSwapBalances } from 'src/utils/evm/refresh-swap-balances';
@@ -24,6 +28,7 @@ import {
   toSwapRouteRequest,
   validateSwapAssets
 } from 'src/utils/evm/swap.utils';
+import { showEvmTransactionSuccessToast } from 'src/utils/evm/transaction-toast.utils';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
 import { EvmSwapConfirmationModalParams } from '../confirmation-modal.params';
@@ -47,7 +52,6 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>();
   const [pending, setPending] = useState<PendingAction>();
-  const [confirmedHash, setConfirmedHash] = useState<Hash>();
   const [needsReview, setNeedsReview] = useState(false);
   const [allowanceRevision, setAllowanceRevision] = useState(0);
   const guard = useRef(false);
@@ -56,7 +60,8 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
   const failedRef = useRef(false);
   const mustRefreshRef = useRef(false);
   const acceptedQuoteRef = useRef(quote);
-  const canClose = useCallback(() => !guard.current, []);
+  const swapSubmittedRef = useRef(false);
+  const canClose = useCallback(() => !guard.current || swapSubmittedRef.current, []);
   const mounted = useRef(true);
   const paused = useRef(false);
   const retryAt = useRef(0);
@@ -169,7 +174,6 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
   const refreshBalances = async (): Promise<void> => {
     if (!chain || !sourceAddress) throw new Error('Cannot refresh the account balances.');
     await refreshSwapBalances(toEvmNetworkEssentials(chain), accountId, sourceAddress, input, output);
-    if (mounted.current) setPhase('confirmed');
   };
 
   const completeReceipt = async (
@@ -180,13 +184,16 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
       if (!(result.error instanceof EvmTransactionSubmissionError) || result.error.code !== 'receipt-unavailable') {
         pendingRef.current = undefined;
         failedRef.current = true;
-        setPending(undefined);
-        setPhase('failed');
+        if (mounted.current) {
+          setPending(undefined);
+          setPhase('failed');
+        }
       }
       throw result.error;
     }
     pendingRef.current = undefined;
-    setPending(undefined);
+    if (mounted.current) setPending(undefined);
+    if (chain) showEvmTransactionSuccessToast(chain, result.receipt.transactionHash, 'confirmed');
     if (action.action === 'approval') {
       mustRefreshRef.current = true;
       // Receipt success alone does not prove that the token grants the allowance.
@@ -196,12 +203,11 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
       await refreshQuote();
     } else {
       confirmedHashRef.current = result.receipt.transactionHash;
-      setConfirmedHash(result.receipt.transactionHash);
-      setPhase('confirmed');
+      if (mounted.current) setPhase('confirmed');
       try {
         await refreshBalances();
       } catch {
-        setError('The swap is confirmed. The balance refresh failed. Retry the balance refresh.');
+        showErrorToast({ description: 'The swap is confirmed. Cannot refresh the balances.' });
       }
     }
   };
@@ -212,11 +218,7 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
     setBusy(true);
     setError(undefined);
     try {
-      if (confirmedHashRef.current) {
-        await refreshBalances();
-
-        return;
-      }
+      if (confirmedHashRef.current) return;
       if (!chain || !sourceAddress || !client) throw new Error('Etherlink account or RPC is unavailable.');
       const network = toEvmNetworkEssentials(chain);
       const pendingAction = pendingRef.current;
@@ -291,6 +293,11 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
           broadcast = { hash, action };
           pendingRef.current = broadcast;
           if (mounted.current) setPending(broadcast);
+          showEvmTransactionSuccessToast(chain, hash, 'submitted');
+          if (action === 'swap') {
+            swapSubmittedRef.current = true;
+            dispatch(navigateAction({ screen: StacksEnum.MainStack }));
+          }
         }
       });
       if (broadcast) await completeReceipt(broadcast, result);
@@ -298,7 +305,10 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
     } catch (cause) {
       if (cause instanceof EvmSwapApiError && cause.code === 'rate-limit')
         retryAt.current = cause.retryAt ?? Date.now() + 60_000;
-      if (mounted.current)
+      if (swapSubmittedRef.current) {
+        const { message } = normalizeEvmTransactionError(cause);
+        showErrorToast({ title: `Failed to confirm ${chain?.name ?? 'Etherlink'} transaction`, description: message });
+      } else if (mounted.current)
         setError(cause instanceof Error ? cause.message : 'Cannot complete the Etherlink swap action.');
     } finally {
       guard.current = false;
@@ -307,11 +317,7 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
   };
 
   const refreshRequired = phase === 'refresh' || needsReview;
-  const title = confirmedHash
-    ? error
-      ? 'Retry balance refresh'
-      : 'Done'
-    : pending
+  const title = pending
     ? 'Retry transaction status'
     : refreshRequired
     ? 'Refresh route for review'
@@ -322,8 +328,8 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
     : 'Confirm';
   const disabled =
     busy ||
+    phase === 'confirmed' ||
     (!pending &&
-      !confirmedHash &&
       (!validAccount ||
         phase === 'failed' ||
         (!refreshRequired &&
@@ -337,7 +343,6 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
     phase,
     feeState,
     pending,
-    confirmedHash,
     busy,
     error,
     confirm,

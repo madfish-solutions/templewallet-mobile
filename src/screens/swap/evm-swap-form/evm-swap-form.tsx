@@ -178,6 +178,7 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
       input,
       output
     });
+    form.resetForm();
     invalidate();
   };
   const insufficientBalance = input && form.values.inputAssets.amount?.gt(input.balance);
