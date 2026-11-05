@@ -98,7 +98,6 @@ export const TezosSwapForm: FC<TezosSwapFormProps> = ({ inputToken, outputToken 
   const { isOpened: onRampOverlayIsOpened, onClose: onOnRampOverlayClose } = useOnRampContinueOverlay();
 
   const swapParams = useSwapParamsSelector();
-  const prevOutputRef = useRef(swapParams.data.output);
   const { input: rawInput, output: rawOutput } = swapParams.data;
   const slippageRatio = useMemo(() => calculateSlippageRatio(slippageTolerance), [slippageTolerance]);
 
@@ -383,17 +382,24 @@ export const TezosSwapForm: FC<TezosSwapFormProps> = ({ inputToken, outputToken 
   });
 
   const { values, setFieldValue, setValues, isValid, submitForm, submitCount, isSubmitting } = formik;
-  const { inputAssets, outputAssets } = values;
-  const { outputAtomicAmountBeforeFee, minimumReceivedAtomic, outputFeeAtomicAmount } = useMemo(
+  const { inputAssets, outputAssets: selectedOutputAssets } = values;
+  const { outputAtomicAmountBeforeFee, expectedReceivedAtomic, minimumReceivedAtomic, outputFeeAtomicAmount } = useMemo(
     () =>
       calculateOutputAmounts(
         inputAssets.amount,
         inputAssets.asset.decimals,
         swapParams.data.output,
-        outputAssets.asset.decimals,
+        selectedOutputAssets.asset.decimals,
         slippageRatio
       ),
-    [inputAssets, swapParams, outputAssets.asset.decimals, slippageRatio]
+    [inputAssets, swapParams, selectedOutputAssets.asset.decimals, slippageRatio]
+  );
+  const outputAssets = useMemo(
+    () => ({
+      asset: selectedOutputAssets.asset,
+      amount: isDefined(rawOutput) ? expectedReceivedAtomic : undefined
+    }),
+    [selectedOutputAssets.asset, rawOutput, expectedReceivedAtomic]
   );
 
   const inputAssetSlug = tokenEqualityFn(inputAssets.asset, emptyTezosLikeToken)
@@ -438,31 +444,6 @@ export const TezosSwapForm: FC<TezosSwapFormProps> = ({ inputToken, outputToken 
     prevBlockLevelRef.current = blockLevel;
   }, [blockLevel, dispatchLoadSwapParams, inputAssets, outputAssets]);
 
-  useEffect(() => {
-    const currentOutput = swapParams.data.output;
-
-    if (currentOutput === prevOutputRef.current) {
-      return;
-    }
-
-    prevOutputRef.current = currentOutput;
-    if (currentOutput === undefined) {
-      setFieldValue('outputAssets', { asset: outputAssets.asset, amount: undefined });
-    } else {
-      const { expectedReceivedAtomic } = calculateOutputAmounts(
-        inputAssets.amount,
-        inputAssets.asset.decimals,
-        currentOutput,
-        outputAssets.asset.decimals,
-        slippageRatio
-      );
-      setFieldValue('outputAssets', {
-        asset: outputAssets.asset,
-        amount: expectedReceivedAtomic
-      });
-    }
-  }, [swapParams.data.output, inputAssets, outputAssets.asset, setFieldValue, slippageRatio]);
-
   const handleInputAssetsValueChange = useCallback(
     (newInputValue: AssetAmountInterface) => {
       const isEmptyToken = tokenEqualityFn(newInputValue.asset, emptyTezosLikeToken);
@@ -505,6 +486,7 @@ export const TezosSwapForm: FC<TezosSwapFormProps> = ({ inputToken, outputToken 
       <BaseSwapForm
         inputTokens={fromTokensList}
         outputTokens={outputTokens}
+        outputValue={outputAssets}
         isLoading={isLoading}
         onInputChange={handleInputAssetsValueChange}
         onOutputChange={handleOutputAssetsValueChange}

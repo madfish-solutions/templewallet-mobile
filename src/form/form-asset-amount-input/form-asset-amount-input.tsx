@@ -21,6 +21,7 @@ import { ErrorMessage } from '../error-message/error-message';
 interface Props<TAsset extends AssetInterface = TokenInterface>
   extends Omit<AssetAmountInputProps<TAsset>, 'value' | 'onValueChange'> {
   name: string;
+  value?: AssetAmountInterface<TAsset>;
   variant?: AssetAmountInputVariant;
   inputComponent?: typeof AssetAmountInputV2;
   showErrorInFooter?: boolean;
@@ -35,6 +36,7 @@ type FormAssetAmountInputComponent = <TAsset extends AssetInterface = TokenInter
 export const FormAssetAmountInput = memo<Props<AssetInterface>>(
   ({
     name,
+    value,
     variant = 'v2',
     inputComponent,
     label,
@@ -121,7 +123,7 @@ export const FormAssetAmountInput = memo<Props<AssetInterface>>(
     return (
       <>
         <AssetAmountInputComponent
-          value={field.value}
+          value={value ?? field.value}
           label={label}
           assetsList={assetsList}
           frozenBalance={frozenBalance}

@@ -20,6 +20,7 @@ import { useSwapFormStyles } from '../swap-form/swap-form.styles';
 interface Props<TAsset extends AssetInterface> {
   inputTokens: TAsset[];
   outputTokens: TAsset[];
+  outputValue: AssetAmountInterface<TAsset>;
   isLoading: boolean;
   onInputChange: (value: AssetAmountInterface<TAsset>) => boolean | void;
   onOutputChange: (value: AssetAmountInterface<TAsset>) => boolean | void;
@@ -37,6 +38,7 @@ interface Props<TAsset extends AssetInterface> {
 export const BaseSwapForm = <TAsset extends AssetInterface>({
   inputTokens,
   outputTokens,
+  outputValue,
   isLoading,
   onInputChange,
   onOutputChange,
@@ -75,6 +77,7 @@ export const BaseSwapForm = <TAsset extends AssetInterface>({
         />
         <FormAssetAmountInput
           name="outputAssets"
+          value={outputValue}
           inputComponent={SwapOutputAssetAmountInput}
           label="To"
           toUsdToggle={false}

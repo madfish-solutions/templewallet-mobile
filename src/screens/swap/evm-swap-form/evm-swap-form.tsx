@@ -187,9 +187,8 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
     if (input) void setFieldValue('inputAssets.asset', input, false);
     if (output) void setFieldValue('outputAssets.asset', output, false);
   }, [input, output, setFieldValue]);
-  useEffect(() => {
-    void setFieldValue('outputAssets.amount', quote ? new BigNumber(quote.route.toAmount) : undefined, false);
-  }, [quote, setFieldValue]);
+
+  const outputAtomicAmount = useMemo(() => (quote ? new BigNumber(quote.route.toAmount) : undefined), [quote]);
 
   const inputAmount = quote && input ? new BigNumber(quote.route.fromAmount).shiftedBy(-input.decimals) : undefined;
   const outputAmount = quote && output ? new BigNumber(quote.route.toAmount).shiftedBy(-output.decimals) : undefined;
@@ -202,6 +201,7 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
       <BaseSwapForm
         inputTokens={catalog}
         outputTokens={outputAssets}
+        outputValue={{ asset: output ?? form.values.outputAssets.asset, amount: outputAtomicAmount }}
         isLoading={catalogLoading}
         onInputChange={changeInput}
         onOutputChange={changeOutput}
