@@ -39,7 +39,10 @@ export const useEvmTransactionFee = ({ chainId, sourceAddress, request, nativeCu
   const estimationState = useEvmTransactionEstimation({ sourceAddress, request, publicClient });
   const { estimation, gasPriceInput, selectedGasPrice, ...restEstimationState } = estimationState;
 
-  const feeOptions = useMemo(() => (estimation ? getEvmFeeOptions(estimation) : undefined), [estimation]);
+  const feeOptions = useMemo(
+    () => (estimation ? getEvmFeeOptions(estimation, request?.gas) : undefined),
+    [estimation, request?.gas]
+  );
   const selectedFees = useMemo(() => {
     if (!estimation || !feeOptions || !selectedGasPrice) return undefined;
 

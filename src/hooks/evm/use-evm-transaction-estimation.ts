@@ -177,13 +177,14 @@ export const useEvmTransactionEstimation = ({ sourceAddress, request, publicClie
     (value: number) => {
       if (!estimation) return;
 
-      const nextGasPriceInput = formatGwei(getGasPriceForNetworkFee(value, estimation.gas));
+      const gasLimit = resolveEvmGasLimit(estimation.gas, request?.gas);
+      const nextGasPriceInput = formatGwei(getGasPriceForNetworkFee(value, gasLimit));
 
       isGasPriceCustomizedRef.current = true;
       gasPriceInputRef.current = nextGasPriceInput;
       setGasPriceInput(nextGasPriceInput);
     },
-    [estimation]
+    [estimation, request?.gas]
   );
   const handleGasPriceInputChange = useCallback((value: string) => {
     isGasPriceCustomizedRef.current = true;
