@@ -1,6 +1,8 @@
 import { BigNumber } from 'bignumber.js';
 import { isNaN } from 'lodash-es';
 
+import { safeDecimalPlaces, safeToFixed } from './big-number.utils';
+
 export const isPositiveNumber = <T extends BigNumber.Value>(value?: T): value is T =>
   value != null && new BigNumber(value).isGreaterThan(0);
 
@@ -9,7 +11,8 @@ export const formatAssetAmount = (amount: BigNumber, decimalPlace = 6, showAllDe
     return '';
   }
 
-  const minDisplayedAmount = new BigNumber(`0.${'0'.repeat(decimalPlace - 1)}1`);
+  const fractionalZeros = Number.isInteger(decimalPlace) && decimalPlace > 0 ? decimalPlace - 1 : 0;
+  const minDisplayedAmount = new BigNumber(`0.${'0'.repeat(fractionalZeros)}1`);
 
   if (
     amount.isLessThan(minDisplayedAmount) &&
@@ -19,10 +22,10 @@ export const formatAssetAmount = (amount: BigNumber, decimalPlace = 6, showAllDe
     return amount.isNegative() ? `< -${minDisplayedAmount}` : `< ${minDisplayedAmount}`;
   } else {
     const decimalPlacesToShow = amount.abs().lt(1000) ? decimalPlace : 2;
-    const roundedAmount = amount.decimalPlaces(decimalPlacesToShow, BigNumber.ROUND_DOWN);
+    const roundedAmount = safeDecimalPlaces(amount, decimalPlacesToShow, BigNumber.ROUND_DOWN);
 
     return numberWithSpaces(
-      showAllDecimalPlaces ? roundedAmount.toFixed(decimalPlacesToShow) : roundedAmount.toFixed()
+      showAllDecimalPlaces ? safeToFixed(roundedAmount, decimalPlacesToShow) : roundedAmount.toFixed()
     );
   }
 };

@@ -10,6 +10,7 @@ import { PairLimitsRecord } from 'src/store/buy-with-credit-card/state';
 import { TopUpInputInterface, TopUpOutputInterface } from 'src/store/buy-with-credit-card/types';
 import { createEntity } from 'src/store/create-entity';
 import { showErrorToast } from 'src/toast/error-toast.utils';
+import { safeDecimalPlaces } from 'src/utils/big-number.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { PairLimits } from 'src/utils/pair-limits';
 
@@ -35,7 +36,7 @@ const MT_PELERIN_FEE_PROBE_AMOUNT = 100;
 const MT_PELERIN_LIMITS_CACHE_TTL = 300_000;
 
 const roundToFiatPrecision = (value: number, precision: number, roundingMode: BigNumber.RoundingMode) =>
-  new BigNumber(value).decimalPlaces(precision, roundingMode).toNumber();
+  safeDecimalPlaces(new BigNumber(value), precision, roundingMode).toNumber();
 
 const getMtPelerinFiatLimits = memoizee(
   async (fiatCode: string, cryptoCode: string, fiatPrecision: number): Promise<PairLimits> => {

@@ -5,6 +5,7 @@ import { AccountTokenInterface } from '../token/interfaces/account-token.interfa
 import { TezosTokenMetadata } from '../token/interfaces/token-metadata.interface';
 import { TokenInterface } from '../token/interfaces/token.interface';
 
+import { safeShiftedBy } from './big-number.utils';
 import { isDefined } from './is-defined';
 
 /** From @taquito/taquito */
@@ -16,20 +17,20 @@ export const RPC_RETRY_OPTIONS = {
   maxTimeout: 100
 };
 
-export const mutezToTz = (x: BigNumber, decimals: number) => {
-  if (!x.isFinite() || !Number.isFinite(decimals)) {
+export const mutezToTz = (x: BigNumber, decimals: number | nullish) => {
+  if (!x.isFinite() || typeof decimals !== 'number' || !Number.isInteger(decimals)) {
     return x;
   }
 
-  return new BigNumber(x).integerValue().shiftedBy(-decimals);
+  return safeShiftedBy(new BigNumber(x).integerValue(), -decimals);
 };
 
-export const tzToMutez = (x: BigNumber, decimals: number) => {
-  if (!x.isFinite() || !Number.isFinite(decimals)) {
+export const tzToMutez = (x: BigNumber, decimals: number | nullish) => {
+  if (!x.isFinite() || typeof decimals !== 'number' || !Number.isInteger(decimals)) {
     return x;
   }
 
-  return new BigNumber(x).shiftedBy(decimals).integerValue();
+  return safeShiftedBy(new BigNumber(x), decimals).integerValue();
 };
 
 export const isCollectible = <T extends TezosTokenMetadata>(asset: T) => isDefined(asset.artifactUri);

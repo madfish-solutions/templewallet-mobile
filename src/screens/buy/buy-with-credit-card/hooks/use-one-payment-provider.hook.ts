@@ -19,6 +19,7 @@ import {
 import { TopUpInputInterface, TopUpOutputInterface } from 'src/store/buy-with-credit-card/types';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { safeDecimalPlaces } from 'src/utils/big-number.utils';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { getUpdatedFiatLimits } from 'src/utils/get-updated-fiat-limits.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -39,20 +40,21 @@ const getOutputAmountFunctions: Record<TopUpProviderEnum, getOutputAmountFunctio
       await getMoonPayBuyQuote(outputAsset.code.toLowerCase(), inputAsset.code.toLowerCase(), inputAmount.toString());
 
     if (inputAmount.lt(totalAmount)) {
-      const expectedBaseCurrencyAmount = BigNumber.max(
+      const netInputAmount = safeDecimalPlaces(
         inputAmount
           .minus(feeAmount)
           .minus(networkFeeAmount)
-          .div(1 + extraFeePercentage / 100)
-          .decimalPlaces(inputAsset.precision ?? 0, BigNumber.ROUND_DOWN),
-        0
+          .div(1 + extraFeePercentage / 100),
+        inputAsset.precision ?? 0,
+        BigNumber.ROUND_DOWN
       );
+      const expectedBaseCurrencyAmount = BigNumber.max(netInputAmount, 0);
 
-      return expectedBaseCurrencyAmount
-        .times(quoteCurrencyAmount)
-        .div(baseCurrencyAmount)
-        .decimalPlaces(outputAsset.precision ?? 0, BigNumber.ROUND_DOWN)
-        .toNumber();
+      return safeDecimalPlaces(
+        expectedBaseCurrencyAmount.times(quoteCurrencyAmount).div(baseCurrencyAmount),
+        outputAsset.precision ?? 0,
+        BigNumber.ROUND_DOWN
+      ).toNumber();
     }
 
     return quoteCurrencyAmount;

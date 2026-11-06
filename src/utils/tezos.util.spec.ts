@@ -38,6 +38,11 @@ describe('mutezToTz', () => {
   it('should correctly map fiat value', () => {
     expect(mutezToTz(mockMutezValue, 2).toNumber()).toEqual(1000);
   });
+  it('should keep the original value when decimals are missing or not an integer', () => {
+    expect(mutezToTz(mockMutezValue, undefined).toNumber()).toEqual(100000);
+    expect(mutezToTz(mockMutezValue, Number.NaN).toNumber()).toEqual(100000);
+    expect(mutezToTz(mockMutezValue, 6.5).toNumber()).toEqual(100000);
+  });
 });
 
 describe('tzToMutez', () => {
@@ -49,6 +54,11 @@ describe('tzToMutez', () => {
   });
   it('should correctly map fiat value', () => {
     expect(tzToMutez(mockTzValue, 2).toNumber()).toEqual(10);
+  });
+  it('should keep the original value when decimals are missing or not an integer', () => {
+    expect(tzToMutez(mockTzValue, undefined).toNumber()).toEqual(0.1);
+    expect(tzToMutez(mockTzValue, Number.NaN).toNumber()).toEqual(0.1);
+    expect(tzToMutez(mockTzValue, 6.5).toNumber()).toEqual(0.1);
   });
 });
 
