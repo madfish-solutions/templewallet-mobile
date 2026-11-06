@@ -7,6 +7,7 @@ import { AppState, Text } from 'react-native';
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { Divider } from 'src/components/divider/divider';
+import { DEFAULT_EXPECTED_GAS_EXPENSE } from 'src/config/general';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useEvmChain } from 'src/hooks/evm/use-evm-chains.hook';
 import { AssetInterface } from 'src/interfaces/asset.interface';
@@ -219,6 +220,14 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
   const minimumReceivedAmount =
     displayedQuote && output ? new BigNumber(displayedQuote.route.toAmountMin).shiftedBy(-output.decimals) : undefined;
   const error = catalogError ?? (quoteState.error ?? validatedQuote.error)?.message;
+  const maxInputAmount = input
+    ? input.assetSlug === EVM_TOKEN_SLUG
+      ? BigNumber.maximum(
+          new BigNumber(input.balance).minus(new BigNumber(DEFAULT_EXPECTED_GAS_EXPENSE).shiftedBy(input.decimals)),
+          0
+        )
+      : input.balance
+    : undefined;
 
   return (
     <FormikProvider value={form}>
@@ -229,7 +238,7 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
         isLoading={catalogLoading}
         onInputChange={changeInput}
         onOutputChange={changeOutput}
-        inputProps={{ maxAmount: input?.balance, maxButtonDisabled: !input }}
+        inputProps={{ maxAmount: maxInputAmount, maxButtonDisabled: !input }}
         onReverse={() => {
           invalidate();
           void form.setValues({
