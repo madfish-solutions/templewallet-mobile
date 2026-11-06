@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js';
 
+import { safeDecimalPlaces } from 'src/utils/big-number.utils';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 
 export const FIAT_AMOUNT_DECIMALS = 2;
@@ -11,10 +12,14 @@ export const tokenToDollarAmount = (
   exchangeRate: number,
   fiatDecimals = decimals
 ) =>
-  mutezToTz(tokenMutezAmount, decimals).multipliedBy(exchangeRate).decimalPlaces(fiatDecimals, BigNumber.ROUND_FLOOR);
+  safeDecimalPlaces(
+    mutezToTz(tokenMutezAmount, decimals).multipliedBy(exchangeRate),
+    fiatDecimals,
+    BigNumber.ROUND_FLOOR
+  );
 
 export const dollarToTokenAmount = (dollarMutezAmount: BigNumber, decimals: number, exchangeRate: number) =>
-  tzToMutez(dollarMutezAmount, decimals).dividedBy(exchangeRate).decimalPlaces(0);
+  safeDecimalPlaces(tzToMutez(dollarMutezAmount, decimals).dividedBy(exchangeRate), 0);
 
 export const getFiatInputAmount = (tokenMutezAmount: BigNumber, decimals: number, exchangeRate: number) => {
   const fiatAmount = tokenToDollarAmount(tokenMutezAmount, decimals, exchangeRate, FIAT_AMOUNT_DECIMALS);

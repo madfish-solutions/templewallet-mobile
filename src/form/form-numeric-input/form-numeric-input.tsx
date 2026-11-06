@@ -6,6 +6,7 @@ import { StyledNumericInput } from 'src/components/styled-numberic-input/styled-
 import { StyledNumericInputProps } from 'src/components/styled-numberic-input/styled-numeric-input.props';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { TEZ_TOKEN_DECIMALS } from 'src/token/data/tokens-metadata';
+import { safeDecimalPlaces } from 'src/utils/big-number.utils';
 import { hasError } from 'src/utils/has-error';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -56,7 +57,7 @@ export const FormNumericInput: FC<Props> = ({
       {isDefined(maxValue) && (
         <FormNumericInputButtons
           maxValue={maxValue}
-          onButtonPress={newValue => helpers.setValue(newValue.decimalPlaces(decimalsWithFallback))}
+          onButtonPress={newValue => helpers.setValue(safeDecimalPlaces(newValue, decimalsWithFallback))}
         />
       )}
     </>
