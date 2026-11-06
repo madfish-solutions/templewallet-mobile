@@ -108,45 +108,48 @@ export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
       );
     });
 
-    const evmTokens = buildEvmAssetCatalog({
-      assets: evmAssets,
-      balances: evmBalances,
-      exchangeRates: evmExchangeRates,
-      fiatToUsdRate,
-      tokensMetadata: evmMetadata
-    }).flatMap<MultichainDisplayedToken>(item => {
-      if (!item.isVisible || (!item.isNative && !item.isManual && !isPositiveNumber(item.balance))) {
-        return [];
-      }
+    const evmTokens = evmAddress
+      ? buildEvmAssetCatalog({
+          assets: evmAssets,
+          balances: evmBalances,
+          exchangeRates: evmExchangeRates,
+          fiatToUsdRate,
+          tokensMetadata: evmMetadata
+        }).flatMap<MultichainDisplayedToken>(item => {
+          if (!item.isVisible || (!item.isNative && !item.isManual && !isPositiveNumber(item.balance))) {
+            return [];
+          }
 
-      const isFungible = item.standard === EvmAssetStandardEnum.NATIVE || item.standard === EvmAssetStandardEnum.ERC20;
-      if (!isFungible || isEvmCollectibleSlug(item.assetSlug)) {
-        return [];
-      }
+          const isFungible =
+            item.standard === EvmAssetStandardEnum.NATIVE || item.standard === EvmAssetStandardEnum.ERC20;
+          if (!isFungible || isEvmCollectibleSlug(item.assetSlug)) {
+            return [];
+          }
 
-      const asset = toEvmDisplayedAsset(item, ETHERLINK_MAINNET_CHAIN_SPECS);
-      if (!asset) {
-        return [];
-      }
+          const asset = toEvmDisplayedAsset(item, ETHERLINK_MAINNET_CHAIN_SPECS);
+          if (!asset) {
+            return [];
+          }
 
-      const fiatValue = isDefined(asset.exchangeRate)
-        ? getDollarValue(asset.balance, asset.decimals, asset.exchangeRate).toNumber()
-        : undefined;
+          const fiatValue = isDefined(asset.exchangeRate)
+            ? getDollarValue(asset.balance, asset.decimals, asset.exchangeRate).toNumber()
+            : undefined;
 
-      return [
-        {
-          slug: asset.assetSlug,
-          chainKind: TempleChainKind.EVM,
-          chainId: asset.chainId,
-          symbol: asset.symbol,
-          name: asset.name,
-          iconUri: asset.thumbnailUri,
-          atomicBalance: asset.balance,
-          decimals: asset.decimals,
-          fiatValue
-        }
-      ];
-    });
+          return [
+            {
+              slug: asset.assetSlug,
+              chainKind: TempleChainKind.EVM,
+              chainId: asset.chainId,
+              symbol: asset.symbol,
+              name: asset.name,
+              iconUri: asset.thumbnailUri,
+              atomicBalance: asset.balance,
+              decimals: asset.decimals,
+              fiatValue
+            }
+          ];
+        })
+      : [];
 
     return tezosTokens
       .concat(evmTokens)
@@ -157,6 +160,7 @@ export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
     accountTezosTokens,
     getExchangeRate,
     shieldedBalanceMutez,
+    evmAddress,
     evmBalances,
     evmAssets,
     evmMetadata,
