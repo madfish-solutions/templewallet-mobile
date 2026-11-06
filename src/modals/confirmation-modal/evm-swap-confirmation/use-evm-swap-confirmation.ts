@@ -324,7 +324,7 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
     : phase === 'allowance'
     ? 'Retry allowance'
     : feeState.estimationError
-    ? 'Retry fee estimate'
+    ? 'Retry'
     : 'Confirm';
   const disabled =
     busy ||

@@ -59,43 +59,47 @@ export const EvmTransactionFeeDetails: FC<Props> = ({ feeState }) => {
         </View>
       </View>
 
-      <Divider size={formatSize(32)} />
-      <View style={feeFormStyles.inputContainer}>
-        <View style={feeFormStyles.sliderContainer}>
-          {!isDetailedInputVisible && isSliderAvailable && (
-            <Slider
-              value={slider.value}
-              minimumValue={slider.minimumValue}
-              maximumValue={slider.maximumValue}
-              step={slider.step}
-              onValueChange={handleSliderValueChange}
-            />
-          )}
-          {isDetailedInputVisible && (
+      {!estimationError && (
+        <>
+          <Divider size={formatSize(32)} />
+          <View style={feeFormStyles.inputContainer}>
+            <View style={feeFormStyles.sliderContainer}>
+              {!isDetailedInputVisible && isSliderAvailable && (
+                <Slider
+                  value={slider.value}
+                  minimumValue={slider.minimumValue}
+                  maximumValue={slider.maximumValue}
+                  step={slider.step}
+                  onValueChange={handleSliderValueChange}
+                />
+              )}
+              {isDetailedInputVisible && (
+                <>
+                  <Label description="Gas price (GWEI):" />
+                  <StyledTextInput
+                    value={gasPriceInput}
+                    isError={Boolean(gasPriceError)}
+                    keyboardType="decimal-pad"
+                    placeholder="0"
+                    onChangeText={handleGasPriceInputChange}
+                  />
+                </>
+              )}
+            </View>
+            <Divider size={formatSize(8)} />
+            <TouchableOpacity style={feeFormStyles.toggleViewButton} onPress={toggleDetailedInput}>
+              <IconV2 name={isDetailedInputVisible ? IconNameV2Enum.XBig : IconNameV2Enum.Settings} />
+            </TouchableOpacity>
+          </View>
+
+          {isDefined(gasPriceError) && (
             <>
-              <Label description="Gas price (GWEI):" />
-              <StyledTextInput
-                value={gasPriceInput}
-                isError={Boolean(gasPriceError)}
-                keyboardType="decimal-pad"
-                placeholder="0"
-                onChangeText={handleGasPriceInputChange}
-              />
+              <Divider size={formatSize(16)} />
+              <AttentionMessageV2>
+                <Text style={styles.attentionMessageText}>{gasPriceError}</Text>
+              </AttentionMessageV2>
             </>
           )}
-        </View>
-        <Divider size={formatSize(8)} />
-        <TouchableOpacity style={feeFormStyles.toggleViewButton} onPress={toggleDetailedInput}>
-          <IconV2 name={isDetailedInputVisible ? IconNameV2Enum.XBig : IconNameV2Enum.Settings} />
-        </TouchableOpacity>
-      </View>
-
-      {isDefined(gasPriceError) && (
-        <>
-          <Divider size={formatSize(16)} />
-          <AttentionMessageV2>
-            <Text style={styles.attentionMessageText}>{gasPriceError}</Text>
-          </AttentionMessageV2>
         </>
       )}
       {hasInsufficientNativeBalance && (

@@ -4,6 +4,7 @@ import { FormikProvider, useFormik } from 'formik';
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { AppState, Text } from 'react-native';
 
+import { EvmSwapApiError } from 'src/apis/temple-wallet/evm-swap';
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { Divider } from 'src/components/divider/divider';
@@ -22,6 +23,7 @@ import { useEvmSwapTokensSelector } from 'src/store/swap/swap-selectors';
 import { useAccountAddressForEvm, useCurrentAccountId } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
+import { showErrorToast } from 'src/toast/error-toast.utils';
 import { EVM_TOKEN_SLUG } from 'src/token/interfaces/token-metadata.interface';
 import { emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
 import { EvmSwapAssetDescriptor, EvmSwapQuote } from 'src/types/evm-swap';
@@ -219,7 +221,12 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
     displayedQuote && output ? new BigNumber(displayedQuote.route.toAmount).shiftedBy(-output.decimals) : undefined;
   const minimumReceivedAmount =
     displayedQuote && output ? new BigNumber(displayedQuote.route.toAmountMin).shiftedBy(-output.decimals) : undefined;
-  const error = catalogError ?? (quoteState.error ?? validatedQuote.error)?.message;
+  const quoteError = quoteState.error ?? validatedQuote.error;
+  const noRouteError = quoteError instanceof EvmSwapApiError && quoteError.code === 'no-route' ? quoteError : undefined;
+  useEffect(() => {
+    if (active && noRouteError) showErrorToast({ description: noRouteError.message });
+  }, [active, noRouteError]);
+  const error = catalogError ?? (noRouteError ? undefined : quoteError?.message);
   const maxInputAmount = input
     ? input.assetSlug === EVM_TOKEN_SLUG
       ? BigNumber.maximum(

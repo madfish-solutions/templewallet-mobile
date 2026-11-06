@@ -64,6 +64,8 @@ export const EvmSwapConfirmation: FC<EvmSwapConfirmationModalParams> = params =>
       }
       details={
         !state.pending &&
+        !state.feeState.isEstimating &&
+        !state.feeState.estimationError &&
         (phase === 'approval' || phase === 'swap') && <EvmTransactionFeeDetails feeState={state.feeState} />
       }
       backAction={{ disabled: state.busy, onPress: goBack }}

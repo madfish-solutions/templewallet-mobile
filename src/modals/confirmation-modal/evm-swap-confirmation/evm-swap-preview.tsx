@@ -7,7 +7,6 @@ import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors'
 import { formatSize } from 'src/styles/format-size';
 import { EvmSwapAsset } from 'src/types/evm-swap';
 import { getFiatExchangeRate } from 'src/utils/get-fiat-exchange-rate';
-import { isDefined } from 'src/utils/is-defined';
 
 import { OperationPreviewAssetAmounts } from '../common/operation-preview-asset-amounts';
 import { OperationPreviewCard } from '../common/operation-preview-card';
@@ -31,7 +30,7 @@ export const EvmSwapPreview: FC<Props> = ({ asset, amount, amountUSD, destinatio
     quotedUsdRate.isFinite() && quotedUsdRate.gt(0)
       ? getFiatExchangeRate(quotedUsdRate.toNumber(), fiatToUsdRate)
       : undefined;
-  const previewAsset = { ...asset, exchangeRate: asset.exchangeRate ?? exchangeRate ?? quotedExchangeRate };
+  const previewAsset = { ...asset, exchangeRate: asset.exchangeRate ?? exchangeRate ?? quotedExchangeRate ?? 0 };
 
   return (
     <OperationPreviewCard
@@ -46,7 +45,6 @@ export const EvmSwapPreview: FC<Props> = ({ asset, amount, amountUSD, destinatio
         amount={amount}
         receiver={destination}
         showMinusSign={!approval}
-        showDollar={isDefined(previewAsset.exchangeRate)}
         hideApproximateSign
         textStyle={approval ? styles.approvalAmount : undefined}
       />

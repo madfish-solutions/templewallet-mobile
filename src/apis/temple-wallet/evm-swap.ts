@@ -143,15 +143,21 @@ export const parse3RouteEvmRoute = (value: unknown): Route3EvmRoute => {
 const request = async (path: string, signal?: AbortSignal, params?: Route3EvmRouteRequest): Promise<unknown> => {
   try {
     const response = await templeWalletApi.get<unknown>(path, { params, signal, timeout: 15_000 });
-    if (response.data == null) throw new EvmSwapApiError('no-route', 'No route is available for this pair and amount.');
+    if (response.data == null) throw new EvmSwapApiError('no-route', 'No route available');
 
     return response.data;
   } catch (error) {
     if (error instanceof EvmSwapApiError) throw error;
     if (axios.isCancel(error)) throw new EvmSwapApiError('cancelled', 'The request was cancelled.');
     if (axios.isAxiosError(error)) {
-      if (error.response?.status === 404)
-        throw new EvmSwapApiError('no-route', 'No route is available for this pair and amount.');
+      const body: unknown = error.response?.data;
+      const quoteNotFound =
+        error.response?.status === 400 &&
+        isRecord(body) &&
+        [body.error, body.description, body.message].some(
+          value => typeof value === 'string' && value.trim().toLowerCase() === 'quote not found'
+        );
+      if (error.response?.status === 404 || quoteNotFound) throw new EvmSwapApiError('no-route', 'No route available');
       if (error.response?.status === 429) {
         const header: unknown = error.response.headers['retry-after'];
         const delay = typeof header === 'string' ? new BigNumber(header) : undefined;

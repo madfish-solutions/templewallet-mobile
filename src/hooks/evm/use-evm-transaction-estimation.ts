@@ -20,6 +20,8 @@ import { isDefined } from 'src/utils/is-defined';
 
 const EVM_ESTIMATION_REFRESH_INTERVAL = 15_000;
 
+type EstimationTrigger = 'dependencies' | 'interval' | 'app-active' | 'retry' | 'submission';
+
 interface Props {
   sourceAddress?: HexString;
   request?: EvmTransactionRequest;
@@ -50,6 +52,8 @@ const parsePositiveGasPrice = (value: string) => {
 export const useEvmTransactionEstimation = ({ sourceAddress, request, publicClient }: Props) => {
   const [estimation, setEstimation] = useState<EvmEstimation>();
   const [estimationError, setEstimationError] = useState<EvmTransactionError>();
+  const estimationErrorRef = useRef(estimationError);
+  estimationErrorRef.current = estimationError;
   const [isEstimating, setIsEstimating] = useState(true);
   const [gasPriceInput, setGasPriceInput] = useState('');
   const estimationRef = useRef<EvmEstimation | undefined>(undefined);
@@ -61,83 +65,91 @@ export const useEvmTransactionEstimation = ({ sourceAddress, request, publicClie
   const requestRef = useRef(request);
   requestRef.current = request;
 
-  const runEstimation = useCallback((): Promise<EvmEstimation | undefined> => {
-    if (estimationPromiseRef.current) {
-      return estimationPromiseRef.current;
-    }
-
-    const requestId = ++estimationRequestIdRef.current;
-    const promise = (async () => {
-      if (!request) {
-        setEstimationError(undefined);
-        setIsEstimating(false);
-
-        return undefined;
+  const runEstimation = useCallback(
+    (trigger: EstimationTrigger): Promise<EvmEstimation | undefined> => {
+      if ((trigger === 'interval' || trigger === 'app-active') && estimationErrorRef.current) {
+        return Promise.resolve(undefined);
       }
 
-      if (!sourceAddress || !publicClient) {
-        const error = normalizeEvmTransactionError(new Error('EVM account or network is unavailable'));
+      if (estimationPromiseRef.current) {
+        return estimationPromiseRef.current;
+      }
 
-        if (requestId === estimationRequestIdRef.current) {
-          setEstimationError(error);
+      const requestId = ++estimationRequestIdRef.current;
+      const promise = (async () => {
+        if (!request) {
+          setEstimationError(undefined);
           setIsEstimating(false);
-        }
 
-        return undefined;
-      }
-
-      setIsEstimating(true);
-      setEstimationError(undefined);
-
-      try {
-        const nextEstimation = await estimateEvmTransaction(publicClient, sourceAddress, request);
-
-        if (requestId !== estimationRequestIdRef.current) {
           return undefined;
         }
 
-        estimationRef.current = nextEstimation;
-        estimatedAtRef.current = Date.now();
-        setEstimation(nextEstimation);
+        if (!sourceAddress || !publicClient) {
+          const error = normalizeEvmTransactionError(new Error('EVM account or network is unavailable'));
 
-        if (!isGasPriceCustomizedRef.current) {
-          const providedGasPrice = getProvidedGasPrice(request);
-          const nextGasPriceInput = formatGwei(providedGasPrice ?? getEstimatedGasPrice(nextEstimation));
+          if (requestId === estimationRequestIdRef.current) {
+            setEstimationError(error);
+            setIsEstimating(false);
+          }
 
-          gasPriceInputRef.current = nextGasPriceInput;
-          setGasPriceInput(nextGasPriceInput);
+          return undefined;
+        }
 
-          if (isDefined(providedGasPrice)) {
-            isGasPriceCustomizedRef.current = true;
+        setIsEstimating(true);
+        setEstimationError(undefined);
+
+        try {
+          const nextEstimation = await estimateEvmTransaction(publicClient, sourceAddress, request);
+
+          if (requestId !== estimationRequestIdRef.current) {
+            return undefined;
+          }
+
+          estimationRef.current = nextEstimation;
+          estimatedAtRef.current = Date.now();
+          setEstimation(nextEstimation);
+
+          if (!isGasPriceCustomizedRef.current) {
+            const providedGasPrice = getProvidedGasPrice(request);
+            const nextGasPriceInput = formatGwei(providedGasPrice ?? getEstimatedGasPrice(nextEstimation));
+
+            gasPriceInputRef.current = nextGasPriceInput;
+            setGasPriceInput(nextGasPriceInput);
+
+            if (isDefined(providedGasPrice)) {
+              isGasPriceCustomizedRef.current = true;
+            }
+          }
+
+          return nextEstimation;
+        } catch (error) {
+          const normalizedError = normalizeEvmTransactionError(error);
+          if (requestId === estimationRequestIdRef.current) {
+            setEstimationError(normalizedError);
+          }
+
+          return undefined;
+        } finally {
+          if (requestId === estimationRequestIdRef.current) {
+            setIsEstimating(false);
           }
         }
+      })();
 
-        return nextEstimation;
-      } catch (error) {
-        if (requestId === estimationRequestIdRef.current) {
-          setEstimationError(normalizeEvmTransactionError(error));
+      estimationPromiseRef.current = promise;
+      void promise.then(
+        () => {
+          if (estimationPromiseRef.current === promise) estimationPromiseRef.current = undefined;
+        },
+        () => {
+          if (estimationPromiseRef.current === promise) estimationPromiseRef.current = undefined;
         }
+      );
 
-        return undefined;
-      } finally {
-        if (requestId === estimationRequestIdRef.current) {
-          setIsEstimating(false);
-        }
-      }
-    })();
-
-    estimationPromiseRef.current = promise;
-    void promise.then(
-      () => {
-        if (estimationPromiseRef.current === promise) estimationPromiseRef.current = undefined;
-      },
-      () => {
-        if (estimationPromiseRef.current === promise) estimationPromiseRef.current = undefined;
-      }
-    );
-
-    return promise;
-  }, [publicClient, request, sourceAddress]);
+      return promise;
+    },
+    [publicClient, request, sourceAddress]
+  );
 
   const runEstimationRef = useRef(runEstimation);
   runEstimationRef.current = runEstimation;
@@ -150,7 +162,7 @@ export const useEvmTransactionEstimation = ({ sourceAddress, request, publicClie
     setEstimation(undefined);
     setGasPriceInput('');
 
-    void runEstimation();
+    void runEstimation('dependencies');
 
     return () => {
       estimationRequestIdRef.current += 1;
@@ -159,7 +171,7 @@ export const useEvmTransactionEstimation = ({ sourceAddress, request, publicClie
   }, [runEstimation]);
 
   useEffect(() => {
-    const interval = setInterval(() => void runEstimation(), EVM_ESTIMATION_REFRESH_INTERVAL);
+    const interval = setInterval(() => void runEstimation('interval'), EVM_ESTIMATION_REFRESH_INTERVAL);
 
     return () => clearInterval(interval);
   }, [runEstimation]);
@@ -167,7 +179,7 @@ export const useEvmTransactionEstimation = ({ sourceAddress, request, publicClie
   useAppStateStatus({
     onAppActiveState: () => {
       if (Date.now() - estimatedAtRef.current >= EVM_ESTIMATION_REFRESH_INTERVAL) {
-        void runEstimationRef.current();
+        void runEstimationRef.current('app-active');
       }
     }
   });
@@ -192,14 +204,14 @@ export const useEvmTransactionEstimation = ({ sourceAddress, request, publicClie
     setGasPriceInput(value);
   }, []);
   const retry = useCallback(
-    () => (isGasPriceCustomizedRef.current ? Promise.resolve(estimationRef.current) : runEstimation()),
+    () => (isGasPriceCustomizedRef.current ? Promise.resolve(estimationRef.current) : runEstimation('retry')),
     [runEstimation]
   );
   const getSubmissionFees = useCallback(async (): Promise<EvmSubmissionFees | undefined> => {
     let latestEstimation = estimationRef.current;
 
     if (Date.now() - estimatedAtRef.current >= EVM_ESTIMATION_REFRESH_INTERVAL) {
-      latestEstimation = await runEstimation();
+      latestEstimation = await runEstimation('submission');
     }
 
     const latestGasPrice = parsePositiveGasPrice(gasPriceInputRef.current);
