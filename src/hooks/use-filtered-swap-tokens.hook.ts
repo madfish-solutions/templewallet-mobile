@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react';
 
-import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useAssetExchangeRateGetter } from 'src/store/settings/settings-selectors';
 import { useSwapTokensMetadataSelector } from 'src/store/swap/swap-selectors';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { useAccountTokensBalancesRecord } from 'src/utils/assets/hooks';
+import { toTezosSendAsset } from 'src/utils/assets/tezos-send-asset.mapper';
 import { applySortByDollarValueDecrease, isAssetSearched } from 'src/utils/token-metadata.utils';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
@@ -31,20 +31,19 @@ export const useFilteredSwapTokensList = (
     const result = swapTokensMetadata.map<TokenInterface>(token => {
       const slug = toTokenSlug(token.address, token.id);
 
-      return {
+      return toTezosSendAsset({
         ...token,
-        chainKind: TempleChainKind.Tezos,
         exchangeRate: getTokenExchangeRate(slug),
         balance: balances[slug] ?? '0'
-      };
+      });
     });
 
     applySortByDollarValueDecrease(result);
 
-    result.unshift({ ...tezosToken, chainKind: TempleChainKind.Tezos });
+    result.unshift(toTezosSendAsset(tezosToken));
 
     return result;
-  }, [swapTokensMetadata, tezosToken, balances]);
+  }, [swapTokensMetadata, tezosToken, balances, getTokenExchangeRate]);
 
   const fromTokens = useMemo(() => swapTokensWithBalances.filter(isNonZeroBalance), [swapTokensWithBalances]);
 
@@ -73,7 +72,7 @@ export const useFilteredSwapTokensList = (
     } else {
       return withCurrentlySelectedToken(source);
     }
-  }, [searchValue, fromTokens, swapTokensWithBalances, currentlySelectedTokenSlug]);
+  }, [searchValue, fromTokens, swapTokensWithBalances, currentlySelectedTokenSlug, tokensInput]);
 
   return {
     filteredTokensList,

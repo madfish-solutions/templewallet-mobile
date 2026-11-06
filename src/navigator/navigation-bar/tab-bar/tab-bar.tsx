@@ -19,7 +19,12 @@ import { showErrorToast } from 'src/toast/toast.utils';
 import { isStackFocused } from 'src/utils/is-stack-focused.util';
 
 import { NavigationBarIconNameEnum } from '../navigation-bar-icon/icon-name.enum';
-import { NOT_AVAILABLE_MESSAGE, useIsManageCollectiblesTab, useSwapScreenParams } from '../utils';
+import {
+  NOT_AVAILABLE_MESSAGE,
+  useCanSwapOnEtherlink,
+  useIsManageCollectiblesTab,
+  useSwapScreenParams
+} from '../utils';
 
 import { TabBarButton } from './tab-bar-button/tab-bar-button';
 import { useTabBarStyles } from './tab-bar.styles';
@@ -31,6 +36,7 @@ interface Props {
 export const TabBar = memo<Props>(({ currentRouteName }) => {
   const styles = useTabBarStyles();
   const tezosAddress = useAccountAddressForTezos();
+  const canSwapOnEtherlink = useCanSwapOnEtherlink();
 
   const swapScreenParams = useSwapScreenParams(currentRouteName);
   const isManageCollectiblesTab = useIsManageCollectiblesTab(currentRouteName);
@@ -65,7 +71,7 @@ export const TabBar = memo<Props>(({ currentRouteName }) => {
           />
           {!LIMIT_FIN_FEATURES && (
             <TabBarButton
-              disabled={!tezosAddress}
+              disabled={!tezosAddress && !canSwapOnEtherlink}
               label="Swap"
               iconName={NavigationBarIconNameEnum.Swap}
               routeName={ScreensEnum.SwapScreen}

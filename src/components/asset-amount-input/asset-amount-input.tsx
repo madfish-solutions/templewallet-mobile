@@ -368,7 +368,7 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
 
           <PatchedTextInput
             ref={amountInputRef}
-            value={stringValue}
+            value={editable ? stringValue : numericInputValue?.toFixed() ?? ''}
             placeholder="0.00"
             style={[styles.numericInput, conditionalStyle(!editable, styles.disabledInput), configAmountInputStyles]}
             placeholderTextColor={colors.gray3}
