@@ -9,11 +9,10 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { showErrorToast } from 'src/toast/error-toast.utils';
 
 import { ConfirmationLayout } from '../common/confirmation-layout/confirmation-layout';
-import { EvmApprovalPreview } from '../common/evm-approval-preview';
 import { EvmTransactionFeeDetails } from '../common/evm-transaction-fee-details';
-import { EvmTransferPreview } from '../common/evm-transfer-preview';
 import { EvmSwapConfirmationModalParams } from '../confirmation-modal.params';
 
+import { EvmSwapPreview } from './evm-swap-preview';
 import { useEvmSwapConfirmation } from './use-evm-swap-confirmation';
 
 const renderClose = () => <HeaderCloseButton />;
@@ -55,19 +54,13 @@ export const EvmSwapConfirmation: FC<EvmSwapConfirmationModalParams> = params =>
       account={state.account}
       accountChainKind={TempleChainKind.EVM}
       preview={
-        approval ? (
-          <EvmApprovalPreview
-            spender={quote.route.txDestination}
-            asset={params.input}
-            amount={quote.route.fromAmount}
-          />
-        ) : (
-          <EvmTransferPreview
-            asset={params.input}
-            receiverAddress={quote.route.txDestination}
-            atomicAmount={quote.route.fromAmount}
-          />
-        )
+        <EvmSwapPreview
+          asset={params.input}
+          amount={quote.route.fromAmount}
+          amountUSD={quote.route.fromAmountUSD}
+          destination={quote.route.txDestination}
+          approval={approval}
+        />
       }
       details={
         !state.pending &&

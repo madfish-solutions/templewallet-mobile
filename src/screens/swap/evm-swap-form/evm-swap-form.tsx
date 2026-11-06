@@ -23,7 +23,7 @@ import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { EVM_TOKEN_SLUG } from 'src/token/interfaces/token-metadata.interface';
 import { emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
-import { EvmSwapAssetDescriptor } from 'src/types/evm-swap';
+import { EvmSwapAssetDescriptor, EvmSwapQuote } from 'src/types/evm-swap';
 import { createEvmSwapIdentity, isSwapQuoteFresh, swapIdentityKey, validateSwapAssets } from 'src/utils/evm/swap.utils';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
@@ -37,6 +37,8 @@ interface Props {
   inputAsset?: EvmSwapAssetDescriptor;
   outputAsset?: EvmSwapAssetDescriptor;
 }
+
+const TOKEN_PRICES_REFRESH_INTERVAL = 30_000;
 
 export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
   const colors = useColors();
@@ -76,6 +78,18 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
     [catalog, form.values.inputAssets.asset.assetSlug]
   );
   const active = focused && appActive;
+
+  useEffect(() => {
+    if (!active) return;
+    const refreshTokens = (): void => {
+      dispatch(loadEvmSwapTokensAction.submit());
+    };
+    refreshTokens();
+    const interval = setInterval(refreshTokens, TOKEN_PRICES_REFRESH_INTERVAL);
+
+    return () => clearInterval(interval);
+  }, [active]);
+
   const identity = useMemo(() => {
     if (
       !address ||
@@ -107,6 +121,7 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
   }, [quoteState.quote, input, output]);
   const quote = validatedQuote.quote;
   const reviewing = useRef(false);
+  const [reviewedQuote, setReviewedQuote] = useState<EvmSwapQuote>();
 
   useEffect(() => {
     const listener = AppState.addEventListener('change', state => {
@@ -118,8 +133,11 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
   }, [invalidate]);
 
   useEffect(() => {
-    reviewing.current = false;
-    if (focused) invalidate();
+    if (focused) {
+      reviewing.current = false;
+      setReviewedQuote(undefined);
+      invalidate();
+    }
   }, [focused, invalidate]);
 
   const changeInput = (value: AssetAmountInterface<AssetInterface>): false => {
@@ -170,6 +188,7 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
       return;
     }
     reviewing.current = true;
+    setReviewedQuote(quote);
     navigateToModal(ModalsEnum.Confirmation, {
       type: ConfirmationTypeEnum.EvmSwap,
       accountId,
@@ -178,7 +197,6 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
       input,
       output
     });
-    form.resetForm();
     invalidate();
   };
   const insufficientBalance = input && form.values.inputAssets.amount?.gt(input.balance);
@@ -188,12 +206,18 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
     if (output) void setFieldValue('outputAssets.asset', output, false);
   }, [input, output, setFieldValue]);
 
-  const outputAtomicAmount = useMemo(() => (quote ? new BigNumber(quote.route.toAmount) : undefined), [quote]);
+  const displayedQuote = reviewedQuote ?? quote;
+  const outputAtomicAmount = useMemo(
+    () => (displayedQuote ? new BigNumber(displayedQuote.route.toAmount) : undefined),
+    [displayedQuote]
+  );
 
-  const inputAmount = quote && input ? new BigNumber(quote.route.fromAmount).shiftedBy(-input.decimals) : undefined;
-  const outputAmount = quote && output ? new BigNumber(quote.route.toAmount).shiftedBy(-output.decimals) : undefined;
+  const inputAmount =
+    displayedQuote && input ? new BigNumber(displayedQuote.route.fromAmount).shiftedBy(-input.decimals) : undefined;
+  const outputAmount =
+    displayedQuote && output ? new BigNumber(displayedQuote.route.toAmount).shiftedBy(-output.decimals) : undefined;
   const minimumReceivedAmount =
-    quote && output ? new BigNumber(quote.route.toAmountMin).shiftedBy(-output.decimals) : undefined;
+    displayedQuote && output ? new BigNumber(displayedQuote.route.toAmountMin).shiftedBy(-output.decimals) : undefined;
   const error = catalogError ?? (quoteState.error ?? validatedQuote.error)?.message;
 
   return (

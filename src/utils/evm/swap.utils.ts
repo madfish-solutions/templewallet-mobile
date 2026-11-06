@@ -38,7 +38,8 @@ export const buildEvmSwapCatalog = (
   balances: Record<string, string>,
   assets: EvmChainAssetsRecord,
   metadata: Record<string, EvmStoredTokenMetadata>,
-  fiatToUsdRate?: number
+  fiatToUsdRate?: number,
+  exchangeRates: Record<string, number> = {}
 ): EvmSwapAsset[] => {
   const result = new Map<string, EvmSwapAsset>();
   for (const token of Object.values(tokens)) {
@@ -49,7 +50,8 @@ export const buildEvmSwapCatalog = (
     const manualMetadata = owned?.manual ? metadata[assetSlug] : undefined;
     const isNative = assetSlug === EVM_TOKEN_SLUG;
     const currency = ETHERLINK_MAINNET_CHAIN_SPECS.currency;
-    const price = token.priceUSD === undefined ? undefined : new BigNumber(token.priceUSD);
+    const usdRate = token.priceUSD ?? exchangeRates[assetSlug];
+    const price = usdRate === undefined ? undefined : new BigNumber(usdRate);
     const common = {
       chainKind: TempleChainKind.EVM,
       chainId: ETHERLINK_MAINNET_CHAIN_ID,
