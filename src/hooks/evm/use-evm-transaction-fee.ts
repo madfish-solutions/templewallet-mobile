@@ -44,24 +44,13 @@ export const useEvmTransactionFee = ({ chainId, sourceAddress, request, nativeCu
     [estimation, request?.gas]
   );
   const selectedFees = useMemo(() => {
-    if (!estimation || !feeOptions || !selectedGasPrice) return undefined;
-
-    const minimumGasPrice = feeOptions.slow.type === 'legacy' ? feeOptions.slow.gasPrice : feeOptions.slow.maxFeePerGas;
-    if (selectedGasPrice < minimumGasPrice) return undefined;
+    if (!estimation || !selectedGasPrice) return undefined;
 
     return resolveEvmSubmissionFees(selectedGasPrice, estimation, request);
-  }, [estimation, feeOptions, request, selectedGasPrice]);
+  }, [estimation, request, selectedGasPrice]);
   const gasLimit = estimation?.gas !== undefined ? resolveEvmGasLimit(estimation.gas, request?.gas) : undefined;
   const fee = gasLimit !== undefined && selectedGasPrice ? gasLimit * selectedGasPrice : undefined;
-  const gasPriceError = useMemo(() => {
-    if (!gasPriceInput || !estimation || !feeOptions) return undefined;
-    if (!selectedGasPrice) return 'Enter a valid gas price';
-
-    const minimumGasPrice = feeOptions.slow.type === 'legacy' ? feeOptions.slow.gasPrice : feeOptions.slow.maxFeePerGas;
-    if (selectedGasPrice < minimumGasPrice) return 'Gas price is too low';
-
-    return undefined;
-  }, [estimation, feeOptions, gasPriceInput, selectedGasPrice]);
+  const gasPriceError = selectedGasPrice ? undefined : 'Gas price must be positive';
   const slider = useMemo(
     () => getNetworkFeeSliderValues(feeOptions?.slow.fee, feeOptions?.fast.fee, fee),
     [fee, feeOptions]

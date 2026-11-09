@@ -1,7 +1,6 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { TokensInputsEnum, useFilteredSwapTokensList } from 'src/hooks/use-filtered-swap-tokens.hook';
 import { AssetInterface } from 'src/interfaces/asset.interface';
@@ -68,10 +67,6 @@ const SwapScreenForm: FC<{ initialParams: SwapParams }> = ({ initialParams }) =>
     [evmAddress, tezosAddress, tezosAssets]
   );
   const context = useMemo(() => ({ inputAssets, onSelectInput }), [inputAssets, onSelectInput]);
-
-  if (evm && evmParams && evmParams.chainId !== ETHERLINK_MAINNET_CHAIN_ID) {
-    return <DataPlaceholder text="Swaps support Etherlink mainnet only." />;
-  }
 
   return (
     <SwapAssetsContext.Provider value={context}>

@@ -11,7 +11,6 @@ import {
 } from 'src/utils/evm/estimate-evm-transaction';
 import { EvmTransactionError, normalizeEvmTransactionError } from 'src/utils/evm/evm-transaction-error';
 import {
-  getEvmFeeOptions,
   getGasPriceForNetworkFee,
   resolveEvmGasLimit,
   resolveEvmSubmissionFees
@@ -213,11 +212,6 @@ export const useEvmTransactionEstimation = ({ sourceAddress, request, publicClie
 
     const latestGasPrice = parsePositiveGasPrice(gasPriceInputRef.current);
     if (!latestEstimation || !latestGasPrice) return undefined;
-
-    const latestFeeOptions = getEvmFeeOptions(latestEstimation);
-    const minimumGasPrice =
-      latestFeeOptions.slow.type === 'legacy' ? latestFeeOptions.slow.gasPrice : latestFeeOptions.slow.maxFeePerGas;
-    if (latestGasPrice < minimumGasPrice) return undefined;
 
     const latestRequest = requestRef.current;
 

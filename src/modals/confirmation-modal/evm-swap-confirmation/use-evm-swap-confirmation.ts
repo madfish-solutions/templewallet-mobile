@@ -30,7 +30,6 @@ import {
 } from 'src/utils/evm/swap.utils';
 import { showEvmTransactionSuccessToast } from 'src/utils/evm/transaction-toast.utils';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
-import { sleep } from 'src/utils/timeouts.util';
 
 import { EvmSwapConfirmationModalParams } from '../confirmation-modal.params';
 
@@ -194,7 +193,6 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
     if (mounted.current) setPending(undefined);
     if (chain) showEvmTransactionSuccessToast(chain, result.receipt.transactionHash, 'confirmed');
     if (action.action === 'approval') {
-      await sleep(1_000);
       if (!mounted.current) return;
       if (isSwapQuoteFresh(quote)) {
         setPhase('allowance');
@@ -318,15 +316,7 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
   };
 
   const refreshRequired = phase === 'refresh' || needsReview;
-  const title = pending
-    ? 'Retry transaction status'
-    : refreshRequired
-    ? 'Refresh route for review'
-    : phase === 'allowance'
-    ? 'Retry allowance'
-    : feeState.estimationError
-    ? 'Retry'
-    : 'Confirm';
+  const title = feeState.estimationError ? 'Retry' : 'Confirm';
   const disabled =
     busy ||
     phase === 'confirmed' ||

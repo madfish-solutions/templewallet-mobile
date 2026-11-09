@@ -9,6 +9,7 @@ import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum.ts';
 import { Label } from 'src/components/label/label';
 import { Slider } from 'src/components/slider/slider';
 import { StyledTextInput } from 'src/components/styled-text-input/styled-text-input';
+import { useErrorMessageStyles } from 'src/form/error-message/error-message.styles';
 import { useEvmTransactionFee } from 'src/hooks/evm/use-evm-transaction-fee';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined.ts';
@@ -24,6 +25,7 @@ interface Props {
 export const EvmTransactionFeeDetails: FC<Props> = ({ feeState }) => {
   const styles = useEvmTransactionFeeDetailsStyles();
   const feeFormStyles = useFeeFormInputStyles();
+  const errorMessageStyles = useErrorMessageStyles();
   const {
     estimationError,
     fee,
@@ -48,7 +50,7 @@ export const EvmTransactionFeeDetails: FC<Props> = ({ feeState }) => {
         <View style={[feeFormStyles.infoContainerItem, styles.feeInfoItem]}>
           <Text style={feeFormStyles.infoTitle}>Network fee:</Text>
           <Text style={feeFormStyles.infoFeeAmount}>
-            {estimationError ? 'Unavailable' : formattedFee ? `${formattedFee} ${feeAsset.symbol}` : 'Estimating...'}
+            {formattedFee ? `${formattedFee} ${feeAsset.symbol}` : 'Estimating...'}
           </Text>
           {isDefined(fee) && isDefined(feeAsset.exchangeRate) && (
             <Text style={feeFormStyles.infoFeeValue}>
@@ -83,6 +85,9 @@ export const EvmTransactionFeeDetails: FC<Props> = ({ feeState }) => {
                     placeholder="0"
                     onChangeText={handleGasPriceInputChange}
                   />
+                  {isDefined(gasPriceError) && (
+                    <Text style={[errorMessageStyles.root, errorMessageStyles.rootVisible]}>{gasPriceError}</Text>
+                  )}
                 </>
               )}
             </View>
