@@ -1,21 +1,29 @@
+import { BigNumber } from 'bignumber.js';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
 
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import { VisibilityEnum } from 'src/enums/visibility.enum';
+import { useEvmChain } from 'src/hooks/evm/use-evm-chains.hook';
 import { TokensInputsEnum, useFilteredSwapTokensList } from 'src/hooks/use-filtered-swap-tokens.hook';
 import { AssetInterface } from 'src/interfaces/asset.interface';
-import { useSendAssets } from 'src/modals/send-modal/hooks/use-send-assets';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { useScreenParams } from 'src/navigator/hooks/use-navigation.hook';
+import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-assets-selectors';
+import { useEvmChainTokensMetadataSelector } from 'src/store/evm/tokens-metadata/evm-tokens-metadata-selectors';
 import { resetSwapParamsAction } from 'src/store/swap/swap-actions';
 import {
   useAccountAddressForEvm,
   useAccountAddressForTezos,
-  useCurrentAccountId
+  useCurrentAccountId,
+  useCurrentAccountStoredAssetsSelector
 } from 'src/store/wallet/wallet-selectors';
+import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import { EvmAssetStandardEnum, EVM_TOKEN_SLUG } from 'src/token/interfaces/token-metadata.interface';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { getAssetKey, getAssetSlug } from 'src/utils/asset.utils';
+import { getAssetSlug } from 'src/utils/asset.utils';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
+
+import { dispatch } from '../../store';
 
 import { SwapAssetsContext } from './components/swap-assets-context';
 import { EvmSwapForm } from './evm-swap-form/evm-swap-form';
@@ -25,7 +33,6 @@ import { TezosSwapForm } from './tezos-swap-form/tezos-swap-form';
 type SwapParams = ScreensParamList[ScreensEnum.SwapScreen];
 
 const SwapScreenForm: FC<{ initialParams: SwapParams }> = ({ initialParams }) => {
-  const dispatch = useDispatch();
   const tezosAddress = useAccountAddressForTezos();
   const evmAddress = useAccountAddressForEvm();
   const [params, setParams] = useState(initialParams);
@@ -34,14 +41,42 @@ const SwapScreenForm: FC<{ initialParams: SwapParams }> = ({ initialParams }) =>
   const tezosParams = params?.chainKind !== TempleChainKind.EVM ? params : undefined;
   const { filteredTokensList: tezosAssets } = useFilteredSwapTokensList(TokensInputsEnum.From);
   const evmAssets = useEvmSwapCatalog();
-  const ownedAssets = useSendAssets();
+  const tezosTokens = useCurrentAccountStoredAssetsSelector('tokens');
+  const evmTokens = useEvmAccountChainAssetsSelector(evmAddress, ETHERLINK_MAINNET_CHAIN_ID);
+  const evmMetadata = useEvmChainTokensMetadataSelector(ETHERLINK_MAINNET_CHAIN_ID);
+  const evmChain = useEvmChain(ETHERLINK_MAINNET_CHAIN_ID);
   const inputAssets = useMemo(() => {
-    const ownedKeys = new Set(ownedAssets.map(getAssetKey));
-
-    return [...(tezosAddress ? tezosAssets : []), ...(evmAddress ? evmAssets : [])].filter(asset =>
-      ownedKeys.has(getAssetKey(asset))
+    const visibleTezosSlugs = new Set(
+      tezosTokens
+        .filter(token => token.visibility !== VisibilityEnum.Hidden && new BigNumber(token.balance).gt(0))
+        .map(token => token.slug)
     );
-  }, [evmAddress, evmAssets, ownedAssets, tezosAddress, tezosAssets]);
+    const ownedTezosAssets = tezosAddress
+      ? tezosAssets.filter(asset => {
+          const slug = getAssetSlug(asset);
+
+          return slug === TEZ_TOKEN_SLUG || visibleTezosSlugs.has(slug);
+        })
+      : [];
+    const ownedEvmAssets =
+      evmAddress && evmChain
+        ? evmAssets.filter(asset => {
+            if (!new BigNumber(asset.balance).gt(0)) return false;
+            if (asset.assetSlug === EVM_TOKEN_SLUG) return true;
+            const token = evmTokens[asset.assetSlug];
+            const metadata = evmMetadata[asset.assetSlug];
+
+            return (
+              token?.visibility !== VisibilityEnum.Hidden &&
+              (token?.standard ?? metadata?.standard) === EvmAssetStandardEnum.ERC20 &&
+              metadata?.decimals != null &&
+              Boolean(metadata.address && metadata.address !== EVM_TOKEN_SLUG)
+            );
+          })
+        : [];
+
+    return [...ownedTezosAssets, ...ownedEvmAssets];
+  }, [evmAddress, evmAssets, evmChain, evmMetadata, evmTokens, tezosAddress, tezosAssets, tezosTokens]);
 
   useEffect(() => {
     dispatch(resetSwapParamsAction());
@@ -49,7 +84,7 @@ const SwapScreenForm: FC<{ initialParams: SwapParams }> = ({ initialParams }) =>
     return () => {
       dispatch(resetSwapParamsAction());
     };
-  }, [dispatch, evm]);
+  }, [evm]);
 
   const onSelectInput = useCallback(
     (asset: AssetInterface): void => {
