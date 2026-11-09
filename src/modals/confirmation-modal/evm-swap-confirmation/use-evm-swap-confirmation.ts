@@ -30,6 +30,7 @@ import {
 } from 'src/utils/evm/swap.utils';
 import { showEvmTransactionSuccessToast } from 'src/utils/evm/transaction-toast.utils';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
+import { sleep } from 'src/utils/timeouts.util';
 
 import { EvmSwapConfirmationModalParams } from '../confirmation-modal.params';
 
@@ -58,7 +59,6 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
   const pendingRef = useRef<PendingAction | undefined>(undefined);
   const confirmedHashRef = useRef<Hash | undefined>(undefined);
   const failedRef = useRef(false);
-  const mustRefreshRef = useRef(false);
   const acceptedQuoteRef = useRef(quote);
   const swapSubmittedRef = useRef(false);
   const canClose = useCallback(() => !guard.current || swapSubmittedRef.current, []);
@@ -164,7 +164,6 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
     assertAccount();
     if (controller.signal.aborted || !mounted.current) return;
     acceptedQuoteRef.current = next;
-    mustRefreshRef.current = false;
     setQuote(next);
     setPhase('allowance');
     paused.current = false;
@@ -195,12 +194,14 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
     if (mounted.current) setPending(undefined);
     if (chain) showEvmTransactionSuccessToast(chain, result.receipt.transactionHash, 'confirmed');
     if (action.action === 'approval') {
-      mustRefreshRef.current = true;
-      // Receipt success alone does not prove that the token grants the allowance.
-      setPhase('refresh');
-      if (!(await readAllowance(quote)))
-        throw new Error('The approval receipt is confirmed, but the allowance is insufficient. Retry the route.');
-      await refreshQuote();
+      await sleep(1_000);
+      if (!mounted.current) return;
+      if (isSwapQuoteFresh(quote)) {
+        setPhase('allowance');
+      } else {
+        setPhase('refresh');
+        await refreshQuote();
+      }
     } else {
       confirmedHashRef.current = result.receipt.transactionHash;
       if (mounted.current) setPhase('confirmed');
@@ -224,7 +225,7 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
       const pendingAction = pendingRef.current;
       if (pendingAction) {
         const result = await evmTransactionSubmissionService.waitForConfirmation(network, pendingAction.hash, {
-          confirmations: 2
+          confirmations: pendingAction.action === 'approval' ? 1 : 2
         });
         await completeReceipt(pendingAction, result);
 
@@ -233,7 +234,7 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
       assertAccount();
       if (failedRef.current) return;
       if (quote !== acceptedQuoteRef.current) throw new Error('Review the fresh route before you confirm.');
-      if (mustRefreshRef.current || phase === 'refresh' || needsReview || paused.current || !isSwapQuoteFresh(quote)) {
+      if (phase === 'refresh' || needsReview || paused.current || !isSwapQuoteFresh(quote)) {
         await refreshQuote();
 
         return;
@@ -257,7 +258,7 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
         return;
       }
       if (phase === 'approval' && sufficient) {
-        await refreshQuote();
+        setPhase('swap');
 
         return;
       }
@@ -288,7 +289,7 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
         network,
         sourceAddress,
         transaction: buildPreparedEvmTransaction(request, fees),
-        receiptOptions: { confirmations: 2 },
+        receiptOptions: { confirmations: action === 'approval' ? 1 : 2 },
         onBroadcast: hash => {
           broadcast = { hash, action };
           pendingRef.current = broadcast;
