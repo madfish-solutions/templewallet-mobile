@@ -203,10 +203,7 @@ export const useEvmTransactionEstimation = ({ sourceAddress, request, publicClie
     gasPriceInputRef.current = value;
     setGasPriceInput(value);
   }, []);
-  const retry = useCallback(
-    () => (isGasPriceCustomizedRef.current ? Promise.resolve(estimationRef.current) : runEstimation('retry')),
-    [runEstimation]
-  );
+  const retry = useCallback(() => runEstimation('retry'), [runEstimation]);
   const getSubmissionFees = useCallback(async (): Promise<EvmSubmissionFees | undefined> => {
     let latestEstimation = estimationRef.current;
 

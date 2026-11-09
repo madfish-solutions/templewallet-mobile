@@ -80,13 +80,22 @@ export const useEvmSwapQuote = (identity: EvmSwapQuoteIdentity | undefined, acti
   }, [key, active, revision]);
 
   useEffect(() => {
-    if (!active || state.error) return;
+    if (!active || !key) return;
+    if (state.error) {
+      const delay =
+        state.error instanceof EvmSwapApiError && state.error.code === 'rate-limit'
+          ? Math.max(0, retryAt.current - Date.now())
+          : EVM_SWAP_QUOTE_LIFETIME;
+      const timeout = setTimeout(invalidate, delay);
+
+      return () => clearTimeout(timeout);
+    }
     const interval = setInterval(() => {
       if (!activeRequest.current) invalidate();
     }, EVM_SWAP_QUOTE_LIFETIME);
 
     return () => clearInterval(interval);
-  }, [active, invalidate, state.error]);
+  }, [key, active, invalidate, state.error]);
 
   const quote = active && state.quote && swapIdentityKey(state.quote.identity) === key ? state.quote : undefined;
 
