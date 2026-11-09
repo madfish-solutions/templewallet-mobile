@@ -2,12 +2,10 @@ import { useIsFocused } from '@react-navigation/native';
 import { BigNumber } from 'bignumber.js';
 import { FormikProvider, useFormik } from 'formik';
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
-import { AppState, Text } from 'react-native';
+import { AppState } from 'react-native';
 
 import { EvmSwapApiError } from 'src/apis/temple-wallet/evm-swap';
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
-import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
-import { Divider } from 'src/components/divider/divider';
 import { DEFAULT_EXPECTED_GAS_EXPENSE } from 'src/config/general';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useEvmChain } from 'src/hooks/evm/use-evm-chains.hook';
@@ -21,8 +19,6 @@ import { useSlippageSelector } from 'src/store/settings/settings-selectors';
 import { loadEvmSwapTokensAction } from 'src/store/swap/swap-actions';
 import { useEvmSwapTokensSelector } from 'src/store/swap/swap-selectors';
 import { useAccountAddressForEvm, useCurrentAccountId } from 'src/store/wallet/wallet-selectors';
-import { formatSize } from 'src/styles/format-size';
-import { useColors } from 'src/styles/use-colors';
 import { showErrorToast } from 'src/toast/error-toast.utils';
 import { EVM_TOKEN_SLUG } from 'src/token/interfaces/token-metadata.interface';
 import { emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
@@ -44,14 +40,13 @@ interface Props {
 const TOKEN_PRICES_REFRESH_INTERVAL = 30_000;
 
 export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
-  const colors = useColors();
   const navigateToModal = useNavigateToModal();
   const accountId = useCurrentAccountId();
   const address = useAccountAddressForEvm();
   const chain = useEvmChain(ETHERLINK_MAINNET_CHAIN_ID);
   const focused = useIsFocused();
   const [appActive, setAppActive] = useState(AppState.currentState === 'active');
-  const { error: catalogError, isLoading: catalogLoading } = useEvmSwapTokensSelector();
+  const { isLoading: catalogLoading } = useEvmSwapTokensSelector();
   const slippage = useSlippageSelector();
   const catalog = useEvmSwapCatalog();
   const emptyAsset = { ...emptyTezosLikeToken, chainKind: TempleChainKind.EVM, assetSlug: '' };
@@ -226,7 +221,6 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
   useEffect(() => {
     if (active && noRouteError) showErrorToast({ description: noRouteError.message });
   }, [active, noRouteError]);
-  const error = catalogError ?? (noRouteError ? undefined : quoteError?.message);
   const maxInputAmount = input
     ? input.assetSlug === EVM_TOKEN_SLUG
       ? BigNumber.maximum(
@@ -265,29 +259,6 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
             minimumReceivedAmount={minimumReceivedAmount}
             chainKind={TempleChainKind.EVM}
           />
-        }
-        status={
-          <>
-            {insufficientBalance && <Text style={{ color: colors.black }}>Insufficient token balance.</Text>}
-            {(!chain || chain.disabled || chain.disabledAutomatically) && (
-              <Text style={{ color: colors.black }}>Etherlink mainnet is unavailable.</Text>
-            )}
-            {!address && <Text style={{ color: colors.black }}>This account has no Etherlink address.</Text>}
-            {Boolean(error) && (
-              <>
-                <Divider size={formatSize(16)} />
-                <Text style={{ color: colors.black }}>{error}</Text>
-                <ButtonLargeSecondary
-                  title="Retry"
-                  onPress={() => {
-                    if (catalogError) dispatch(loadEvmSwapTokensAction.submit());
-                    else invalidate();
-                  }}
-                  testID="EvmSwap/Retry"
-                />
-              </>
-            )}
-          </>
         }
         swapParamsAreLoading={quoteState.isLoading}
         submitDisabled={!quote || !address || Boolean(insufficientBalance) || catalogLoading}

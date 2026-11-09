@@ -29,7 +29,6 @@ interface Props<TAsset extends AssetInterface> {
   inputProps?: Pick<AssetAmountInputProps<TAsset>, 'maxAmount' | 'maxButtonDisabled'>;
   banner?: ReactNode;
   exchangeRate: ReactNode;
-  status?: ReactNode;
   swapParamsAreLoading: boolean;
   submitDisabled: boolean;
   onSubmit: EmptyFn;
@@ -47,7 +46,6 @@ export const BaseSwapForm = <TAsset extends AssetInterface>({
   inputProps,
   banner,
   exchangeRate,
-  status,
   swapParamsAreLoading,
   submitDisabled,
   onSubmit
@@ -91,7 +89,6 @@ export const BaseSwapForm = <TAsset extends AssetInterface>({
         />
         {banner}
         <View>{exchangeRate}</View>
-        {status}
         <View style={styles.disclaimerContainer}>
           <InterfaceDisclaimer linkText="3route DEX aggregator" url="https://3route.io/" />
         </View>

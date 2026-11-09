@@ -91,15 +91,6 @@ export const EvmTransactionFeeDetails: FC<Props> = ({ feeState }) => {
               <IconV2 name={isDetailedInputVisible ? IconNameV2Enum.XBig : IconNameV2Enum.Settings} />
             </TouchableOpacity>
           </View>
-
-          {isDefined(gasPriceError) && (
-            <>
-              <Divider size={formatSize(16)} />
-              <AttentionMessageV2>
-                <Text style={styles.attentionMessageText}>{gasPriceError}</Text>
-              </AttentionMessageV2>
-            </>
-          )}
         </>
       )}
       {hasInsufficientNativeBalance && (
