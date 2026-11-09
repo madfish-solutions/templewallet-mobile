@@ -8,6 +8,7 @@ import {
 } from 'src/components/asset-amount-input/asset-amount-input';
 import { AssetAmountInputProps } from 'src/components/asset-amount-input/asset-amount-input.props';
 import { AssetAmountInputVariant } from 'src/components/asset-amount-input/asset-amount-input.variants';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { AssetInterface } from 'src/interfaces/asset.interface';
 import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
 import { useAssetBalanceSelector } from 'src/store/wallet/wallet-selectors';
@@ -91,32 +92,32 @@ export const FormAssetAmountInput = memo<Props<AssetInterface>>(
     const balanceStored = useAssetBalanceSelector(slug);
     const exchangeRateStored = useAssetExchangeRate(slug);
 
-    useDidUpdate(
-      () =>
-        void helpers.setValue(
-          {
-            ...field.value,
-            asset: { ...field.value.asset, balance: balanceStored ?? field.value.asset.balance ?? '0' }
-          },
-          true
-        ),
-      [balanceStored]
-    );
+    useDidUpdate(() => {
+      if (field.value.asset.chainKind === TempleChainKind.EVM) return;
 
-    useDidUpdate(
-      () =>
-        void helpers.setValue(
-          {
-            ...field.value,
-            asset: {
-              ...field.value.asset,
-              exchangeRate: exchangeRateStored ?? field.value.asset.exchangeRate
-            }
-          },
-          true
-        ),
-      [exchangeRateStored]
-    );
+      void helpers.setValue(
+        {
+          ...field.value,
+          asset: { ...field.value.asset, balance: balanceStored ?? field.value.asset.balance ?? '0' }
+        },
+        true
+      );
+    }, [balanceStored]);
+
+    useDidUpdate(() => {
+      if (field.value.asset.chainKind === TempleChainKind.EVM) return;
+
+      void helpers.setValue(
+        {
+          ...field.value,
+          asset: {
+            ...field.value.asset,
+            exchangeRate: exchangeRateStored ?? field.value.asset.exchangeRate
+          }
+        },
+        true
+      );
+    }, [exchangeRateStored]);
 
     const AssetAmountInputComponent = inputComponent ?? (variant === 'v2' ? AssetAmountInputV2 : AssetAmountInput);
 

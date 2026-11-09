@@ -20,7 +20,6 @@ import { useSwapFormStyles } from '../swap-form/swap-form.styles';
 interface Props<TAsset extends AssetInterface> {
   inputTokens: TAsset[];
   outputTokens: TAsset[];
-  inputValue?: AssetAmountInterface<TAsset>;
   outputValue: AssetAmountInterface<TAsset>;
   isLoading: boolean;
   onInputChange: (value: AssetAmountInterface<TAsset>) => boolean | void;
@@ -38,7 +37,6 @@ interface Props<TAsset extends AssetInterface> {
 export const BaseSwapForm = <TAsset extends AssetInterface>({
   inputTokens,
   outputTokens,
-  inputValue,
   outputValue,
   isLoading,
   onInputChange,
@@ -80,21 +78,13 @@ export const BaseSwapForm = <TAsset extends AssetInterface>({
     <>
       <ScreenContainer>
         <Divider size={formatSize(8)} />
-        {inputValue ? (
-          <SwapInputAssetAmountInput {...fromProps} value={inputValue} />
-        ) : (
-          <FormAssetAmountInput {...fromProps} name="inputAssets" inputComponent={SwapInputAssetAmountInput} />
-        )}
+        <FormAssetAmountInput {...fromProps} name="inputAssets" inputComponent={SwapInputAssetAmountInput} />
         <SwapDirectionButton
           onPress={onReverse}
           disabled={reverseDisabled}
           testID={SwapFormSelectors.swapAssetsButton}
         />
-        {inputValue ? (
-          <SwapOutputAssetAmountInput {...toProps} />
-        ) : (
-          <FormAssetAmountInput {...toProps} name="outputAssets" inputComponent={SwapOutputAssetAmountInput} />
-        )}
+        <FormAssetAmountInput {...toProps} name="outputAssets" inputComponent={SwapOutputAssetAmountInput} />
         {banner}
         <View>{exchangeRate}</View>
         <View style={styles.disclaimerContainer}>

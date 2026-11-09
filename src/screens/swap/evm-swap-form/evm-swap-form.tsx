@@ -1,5 +1,6 @@
 import { useIsFocused } from '@react-navigation/native';
 import { BigNumber } from 'bignumber.js';
+import { FormikProvider, useFormik } from 'formik';
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 
@@ -28,6 +29,7 @@ import { BaseSwapForm } from '../base-swap-form/base-swap-form';
 import { useSwapAssets } from '../components/swap-assets-context';
 import { SwapExchangeRate } from '../swap-form/swap-exchange-rate/swap-exchange-rate';
 
+import { createEvmSwapFormValidationSchema } from './evm-swap-form.form';
 import { useEvmSwapQuote } from './use-evm-swap-quote';
 
 interface Props {
@@ -36,9 +38,8 @@ interface Props {
 }
 
 interface FormValues {
-  inputSlug: string;
-  outputSlug: string;
-  amount?: BigNumber;
+  inputAssets: AssetAmountInterface<AssetInterface>;
+  outputAssets: AssetAmountInterface<AssetInterface>;
 }
 
 const EMPTY_ASSET = { ...emptyTezosLikeToken, chainKind: TempleChainKind.EVM, assetSlug: '' };
@@ -54,16 +55,45 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
   const { isLoading: catalogLoading } = useEvmSwapTokensSelector();
   const slippage = useSlippageSelector();
   const { evmAssets: catalog } = useSwapAssets();
-  const [values, setValues] = useState<FormValues>(() => ({
-    inputSlug: inputAsset?.chainId === ETHERLINK_MAINNET_CHAIN_ID ? inputAsset.slug : EVM_TOKEN_SLUG,
-    outputSlug: outputAsset?.chainId === ETHERLINK_MAINNET_CHAIN_ID ? outputAsset.slug : ''
-  }));
-  const input = catalog.find(asset => asset.assetSlug === values.inputSlug);
-  const output = catalog.find(asset => asset.assetSlug === values.outputSlug);
-  const outputAssets = useMemo(
-    () => catalog.filter(asset => asset.assetSlug !== values.inputSlug),
-    [catalog, values.inputSlug]
-  );
+  const validationSchema = useMemo(() => createEvmSwapFormValidationSchema(catalog), [catalog]);
+  const formik = useFormik<FormValues>({
+    initialValues: {
+      inputAssets: {
+        asset: {
+          ...EMPTY_ASSET,
+          assetSlug: inputAsset?.chainId === ETHERLINK_MAINNET_CHAIN_ID ? inputAsset.slug : EVM_TOKEN_SLUG
+        }
+      },
+      outputAssets: {
+        asset: {
+          ...EMPTY_ASSET,
+          assetSlug: outputAsset?.chainId === ETHERLINK_MAINNET_CHAIN_ID ? outputAsset.slug : ''
+        }
+      }
+    },
+    validationSchema,
+    validateOnMount: true,
+    onSubmit: async () => review()
+  });
+  const { values, setValues, isValid, isSubmitting, submitCount, submitForm, validateForm } = formik;
+  const inputSlug = values.inputAssets.asset.assetSlug;
+  const outputSlug = values.outputAssets.asset.assetSlug;
+  const amount = values.inputAssets.amount;
+  const input = catalog.find(asset => asset.assetSlug === inputSlug);
+  const output = catalog.find(asset => asset.assetSlug === outputSlug);
+  const outputAssets = useMemo(() => catalog.filter(asset => asset.assetSlug !== inputSlug), [catalog, inputSlug]);
+
+  useEffect(() => {
+    if ((!input || input === values.inputAssets.asset) && (!output || output === values.outputAssets.asset)) return;
+
+    void setValues(current => ({
+      inputAssets: { ...current.inputAssets, asset: input ?? current.inputAssets.asset },
+      outputAssets: { ...current.outputAssets, asset: output ?? current.outputAssets.asset }
+    }));
+  }, [input, output, values.inputAssets.asset, values.outputAssets.asset, setValues]);
+  useEffect(() => {
+    void validateForm();
+  }, [validationSchema, validateForm]);
   const active = focused && appActive;
 
   useEffect(() => {
@@ -78,14 +108,13 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
   }, [active]);
 
   const identity = useMemo(() => {
-    if (!address || !input || !output || !values.amount || !chain || chain.disabled || chain.disabledAutomatically)
-      return;
+    if (!address || !input || !output || !amount || !chain || chain.disabled || chain.disabledAutomatically) return;
     try {
-      return createEvmSwapIdentity(address, input, output, values.amount, slippage);
+      return createEvmSwapIdentity(address, input, output, amount, slippage);
     } catch {
       return;
     }
-  }, [address, input, output, values.amount, slippage, chain]);
+  }, [address, input, output, amount, slippage, chain]);
   const quoteState = useEvmSwapQuote(identity, active);
   const { invalidate } = quoteState;
   const validatedQuote = useMemo(() => {
@@ -119,25 +148,34 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
     }
   }, [focused, invalidate]);
 
-  const changeInput = (value: AssetAmountInterface<AssetInterface>): void => {
+  const changeInput = (value: AssetAmountInterface<AssetInterface>): boolean => {
     const asset = catalog.find(item => item.assetSlug === value.asset.assetSlug);
-    if (!asset) return;
+    if (!asset) return false;
     invalidate();
-    setValues(current => ({
-      inputSlug: asset.assetSlug,
-      amount: asset.assetSlug === current.inputSlug ? value.amount : undefined,
-      outputSlug: asset.assetSlug === current.outputSlug ? '' : current.outputSlug
+    void setValues(current => ({
+      inputAssets: {
+        asset,
+        amount: asset.assetSlug === current.inputAssets.asset.assetSlug ? value.amount : undefined
+      },
+      outputAssets:
+        asset.assetSlug === current.outputAssets.asset.assetSlug ? { asset: EMPTY_ASSET } : current.outputAssets
     }));
+
+    return false;
   };
-  const changeOutput = (value: AssetAmountInterface<AssetInterface>): void => {
+  const changeOutput = (value: AssetAmountInterface<AssetInterface>): boolean => {
     const asset = catalog.find(item => item.assetSlug === value.asset.assetSlug);
-    if (!asset || asset.assetSlug === values.inputSlug) return;
+    if (!asset || asset.assetSlug === inputSlug) return false;
     invalidate();
-    setValues(current => ({ ...current, outputSlug: asset.assetSlug }));
+    void setValues(current => ({ ...current, outputAssets: { asset } }));
+
+    return false;
   };
   const review = (): void => {
     if (
       reviewing.current ||
+      !isValid ||
+      (input && amount?.gt(input.balance)) ||
       !accountId ||
       !input ||
       !output ||
@@ -172,7 +210,6 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
     });
     invalidate();
   };
-  const insufficientBalance = input && values.amount?.gt(input.balance);
 
   const displayedQuote = reviewedQuote ?? quote;
   const outputAtomicAmount = useMemo(
@@ -201,35 +238,41 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
     : undefined;
 
   return (
-    <BaseSwapForm
-      inputTokens={catalog}
-      inputValue={{ asset: input ?? { ...EMPTY_ASSET, assetSlug: values.inputSlug }, amount: values.amount }}
-      outputTokens={outputAssets}
-      outputValue={{ asset: output ?? { ...EMPTY_ASSET, assetSlug: values.outputSlug }, amount: outputAtomicAmount }}
-      isLoading={catalogLoading}
-      onInputChange={changeInput}
-      onOutputChange={changeOutput}
-      inputProps={{ maxAmount: maxInputAmount, maxButtonDisabled: !input }}
-      onReverse={() => {
-        invalidate();
-        setValues({ inputSlug: output?.assetSlug ?? '', outputSlug: input?.assetSlug ?? '' });
-      }}
-      reverseDisabled={!input && !output}
-      exchangeRate={
-        <SwapExchangeRate
-          inputAsset={input ?? EMPTY_ASSET}
-          outputAsset={output ?? EMPTY_ASSET}
-          inputAmount={inputAmount}
-          outputAmount={outputAmount}
-          slippageRatio={1 - slippage / 100}
-          routingFeeIsTakenFromOutput={false}
-          minimumReceivedAmount={minimumReceivedAmount}
-          chainKind={TempleChainKind.EVM}
-        />
-      }
-      swapParamsAreLoading={quoteState.isLoading}
-      submitDisabled={!quote || !address || Boolean(insufficientBalance) || catalogLoading}
-      onSubmit={review}
-    />
+    <FormikProvider value={formik}>
+      <BaseSwapForm
+        inputTokens={catalog}
+        outputTokens={outputAssets}
+        outputValue={{ asset: output ?? { ...EMPTY_ASSET, assetSlug: outputSlug }, amount: outputAtomicAmount }}
+        isLoading={catalogLoading}
+        onInputChange={changeInput}
+        onOutputChange={changeOutput}
+        inputProps={{ maxAmount: maxInputAmount, maxButtonDisabled: !input }}
+        onReverse={() => {
+          invalidate();
+          void setValues({
+            inputAssets: { asset: output ?? EMPTY_ASSET },
+            outputAssets: { asset: input ?? EMPTY_ASSET }
+          });
+        }}
+        reverseDisabled={!input && !output}
+        exchangeRate={
+          <SwapExchangeRate
+            inputAsset={input ?? EMPTY_ASSET}
+            outputAsset={output ?? EMPTY_ASSET}
+            inputAmount={inputAmount}
+            outputAmount={outputAmount}
+            slippageRatio={1 - slippage / 100}
+            routingFeeIsTakenFromOutput={false}
+            minimumReceivedAmount={minimumReceivedAmount}
+            chainKind={TempleChainKind.EVM}
+          />
+        }
+        swapParamsAreLoading={quoteState.isLoading}
+        submitDisabled={
+          (submitCount !== 0 && !isValid) || (isValid && !quote) || !address || catalogLoading || isSubmitting
+        }
+        onSubmit={submitForm}
+      />
+    </FormikProvider>
   );
 };
