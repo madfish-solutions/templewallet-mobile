@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
 import { AppState } from 'react-native';
-import { erc20Abi, Hash } from 'viem';
+import { erc20Abi } from 'viem';
 
-import { EvmSwapApiError, get3RouteEvmSwap } from 'src/apis/temple-wallet/evm-swap';
 import { useEvmChain } from 'src/hooks/evm/use-evm-chains.hook';
 import { useEvmTransactionFee } from 'src/hooks/evm/use-evm-transaction-fee';
 import { useViemPublicClient } from 'src/hooks/evm/use-viem-public-client.hook';
@@ -16,6 +15,7 @@ import { EvmSwapQuote } from 'src/types/evm-swap';
 import { toEvmNetworkEssentials } from 'src/types/networks';
 import { getAccountAddressForEvm } from 'src/utils/account.utils';
 import { buildPreparedEvmTransaction } from 'src/utils/evm/build-prepared-evm-transaction';
+import { evmSwapQuoteService } from 'src/utils/evm/evm-swap-quote-service';
 import { normalizeEvmTransactionError } from 'src/utils/evm/evm-transaction-error';
 import { evmTransactionSubmissionService } from 'src/utils/evm/evm-transaction-submission';
 import { EvmTransactionSubmissionError } from 'src/utils/evm/evm-transaction-submission-error';
@@ -25,7 +25,6 @@ import {
   buildEvmSwapApproval,
   buildEvmSwapRequest,
   isSwapQuoteFresh,
-  toSwapRouteRequest,
   validateSwapAssets
 } from 'src/utils/evm/swap.utils';
 import { showEvmTransactionSuccessToast } from 'src/utils/evm/transaction-toast.utils';
@@ -33,11 +32,13 @@ import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
 import { EvmSwapConfirmationModalParams } from '../confirmation-modal.params';
 
-type Phase = 'allowance' | 'approval' | 'swap' | 'refresh' | 'confirmed' | 'failed';
-interface PendingAction {
-  hash: Hash;
-  action: 'approval' | 'swap';
-}
+import {
+  createEvmSwapConfirmationState,
+  EvmSwapConfirmationEvent,
+  evmSwapConfirmationReducer,
+  isSwapSubmitted,
+  PendingSwapAction
+} from './evm-swap-confirmation-state';
 
 export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) => {
   const { accountId, chainId, input, output } = params;
@@ -47,23 +48,19 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
   const sourceAddress = account ? getAccountAddressForEvm(account) : undefined;
   const chain = useEvmChain(chainId);
   const client = useViemPublicClient(chainId);
-  const [quote, setQuote] = useState(params.quote);
-  const [phase, setPhase] = useState<Phase>('allowance');
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string>();
-  const [pending, setPending] = useState<PendingAction>();
-  const [needsReview, setNeedsReview] = useState(false);
-  const [allowanceRevision, setAllowanceRevision] = useState(0);
+  const [state, dispatchState] = useReducer(evmSwapConfirmationReducer, params.quote, createEvmSwapConfirmationState);
+  const { quote, busy, error, needsReview, allowanceRevision, step } = state;
+  const phase = step.type === 'pending' ? step.transaction.action : step.type;
+  const pending = step.type === 'pending' ? step.transaction : undefined;
   const guard = useRef(false);
-  const pendingRef = useRef<PendingAction | undefined>(undefined);
-  const confirmedHashRef = useRef<Hash | undefined>(undefined);
-  const failedRef = useRef(false);
-  const acceptedQuoteRef = useRef(quote);
-  const swapSubmittedRef = useRef(false);
-  const canClose = useCallback(() => !guard.current || swapSubmittedRef.current, []);
   const mounted = useRef(true);
-  const paused = useRef(false);
-  const retryAt = useRef(0);
+  const stateRef = useRef(state);
+  const transition = useCallback((event: EvmSwapConfirmationEvent): void => {
+    // Receipt handlers continue after the modal closes, so they need the latest transition immediately.
+    stateRef.current = evmSwapConfirmationReducer(stateRef.current, event);
+    if (mounted.current) dispatchState(event);
+  }, []);
+  const canClose = useCallback(() => !guard.current || isSwapSubmitted(stateRef.current), []);
   const requestController = useRef<AbortController | undefined>(undefined);
   const validAccount =
     selectedId === accountId && sourceAddress?.toLowerCase() === quote.identity.fromAddress.toLowerCase();
@@ -91,8 +88,7 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
     mounted.current = true;
     const listener = AppState.addEventListener('change', state => {
       if (state !== 'active') {
-        paused.current = true;
-        setNeedsReview(true);
+        transition({ type: 'require-review' });
         requestController.current?.abort();
       }
     });
@@ -102,7 +98,7 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
       requestController.current?.abort();
       listener.remove();
     };
-  }, []);
+  }, [transition]);
 
   const readAllowance = async (accepted: EvmSwapQuote): Promise<boolean> => {
     if (input.standard === EvmAssetStandardEnum.NATIVE) return true;
@@ -120,14 +116,18 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
   useEffect(() => {
     let cancelled = false;
     if (phase !== 'allowance' || !validAccount) return;
-    setError(undefined);
+    transition({ type: 'error' });
     const check = async () => {
       try {
         validateSwapAssets(quote, input, output);
         const sufficient = await readAllowance(quote);
-        if (!cancelled) setPhase(sufficient ? 'swap' : 'approval');
+        if (!cancelled) transition({ type: 'allowance-resolved', sufficient });
       } catch (cause) {
-        if (!cancelled) setError(cause instanceof Error ? cause.message : 'Cannot read the token allowance.');
+        if (!cancelled)
+          transition({
+            type: 'error',
+            message: cause instanceof Error ? cause.message : 'Cannot read the token allowance.'
+          });
       }
     };
     void check();
@@ -153,20 +153,14 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
 
   const refreshQuote = async (): Promise<void> => {
     assertAccount();
-    if (Date.now() < retryAt.current) throw new Error('3Route limits requests. Wait before you retry.');
     requestController.current?.abort();
     const controller = new AbortController();
     requestController.current = controller;
-    const route = await get3RouteEvmSwap(toSwapRouteRequest(quote.identity), controller.signal);
-    const next = { identity: quote.identity, route, receivedAt: Date.now() };
+    const next = await evmSwapQuoteService.load(quote.identity, controller.signal);
     validateSwapAssets(next, input, output);
     assertAccount();
     if (controller.signal.aborted || !mounted.current) return;
-    acceptedQuoteRef.current = next;
-    setQuote(next);
-    setPhase('allowance');
-    paused.current = false;
-    setNeedsReview(false);
+    transition({ type: 'quote-refreshed', quote: next });
   };
 
   const refreshBalances = async (): Promise<void> => {
@@ -175,34 +169,23 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
   };
 
   const completeReceipt = async (
-    action: PendingAction,
+    action: PendingSwapAction,
     result: Awaited<ReturnType<typeof evmTransactionSubmissionService.waitForConfirmation>>
   ): Promise<void> => {
     if (!result.success) {
       if (!(result.error instanceof EvmTransactionSubmissionError) || result.error.code !== 'receipt-unavailable') {
-        pendingRef.current = undefined;
-        failedRef.current = true;
-        if (mounted.current) {
-          setPending(undefined);
-          setPhase('failed');
-        }
+        transition({ type: 'transaction-failed', transaction: action });
       }
       throw result.error;
     }
-    pendingRef.current = undefined;
-    if (mounted.current) setPending(undefined);
     if (chain) showEvmTransactionSuccessToast(chain, result.receipt.transactionHash, 'confirmed');
     if (action.action === 'approval') {
       if (!mounted.current) return;
-      if (isSwapQuoteFresh(quote)) {
-        setPhase('allowance');
-      } else {
-        setPhase('refresh');
-        await refreshQuote();
-      }
+      const fresh = isSwapQuoteFresh(quote);
+      transition({ type: 'approval-confirmed', fresh });
+      if (!fresh) await refreshQuote();
     } else {
-      confirmedHashRef.current = result.receipt.transactionHash;
-      if (mounted.current) setPhase('confirmed');
+      transition({ type: 'swap-confirmed', hash: result.receipt.transactionHash });
       try {
         await refreshBalances();
       } catch {
@@ -214,13 +197,13 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
   const confirm = async (): Promise<void> => {
     if (guard.current) return;
     guard.current = true;
-    setBusy(true);
-    setError(undefined);
+    transition({ type: 'start' });
     try {
-      if (confirmedHashRef.current) return;
+      if (stateRef.current.step.type === 'confirmed') return;
       if (!chain || !sourceAddress || !client) throw new Error('Etherlink account or RPC is unavailable.');
       const network = toEvmNetworkEssentials(chain);
-      const pendingAction = pendingRef.current;
+      const currentStep = stateRef.current.step;
+      const pendingAction = currentStep.type === 'pending' ? currentStep.transaction : undefined;
       if (pendingAction) {
         const result = await evmTransactionSubmissionService.waitForConfirmation(network, pendingAction.hash, {
           confirmations: pendingAction.action === 'approval' ? 1 : 2
@@ -230,15 +213,15 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
         return;
       }
       assertAccount();
-      if (failedRef.current) return;
-      if (quote !== acceptedQuoteRef.current) throw new Error('Review the fresh route before you confirm.');
-      if (phase === 'refresh' || needsReview || paused.current || !isSwapQuoteFresh(quote)) {
+      if (currentStep.type === 'failed') return;
+      if (quote !== stateRef.current.quote) throw new Error('Review the fresh route before you confirm.');
+      if (phase === 'refresh' || stateRef.current.needsReview || !isSwapQuoteFresh(quote)) {
         await refreshQuote();
 
         return;
       }
       if (phase === 'allowance') {
-        setAllowanceRevision(value => value + 1);
+        transition({ type: 'retry-allowance' });
 
         return;
       }
@@ -251,12 +234,12 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
       validateSwapAssets(quote, input, output);
       const sufficient = await readAllowance(quote);
       if (phase === 'swap' && !sufficient) {
-        setPhase('approval');
+        transition({ type: 'allowance-resolved', sufficient: false });
 
         return;
       }
       if (phase === 'approval' && sufficient) {
-        setPhase('swap');
+        transition({ type: 'allowance-resolved', sufficient: true });
 
         return;
       }
@@ -274,7 +257,7 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
           : Promise.resolve(undefined)
       ]);
       assertAccount();
-      if (paused.current || !isSwapQuoteFresh(quote)) {
+      if (stateRef.current.needsReview || !isSwapQuoteFresh(quote)) {
         await refreshQuote();
 
         return;
@@ -282,7 +265,7 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
       const feeCap = fees.fees.type === 'legacy' ? fees.fees.gasPrice : fees.fees.maxFeePerGas;
       assertSwapBalances(request, fees.gasLimit, feeCap, nativeBalance, BigInt(quote.route.fromAmount), tokenBalance);
       const action = phase;
-      let broadcast: PendingAction | undefined;
+      let broadcast: PendingSwapAction | undefined;
       const result = await evmTransactionSubmissionService.submit({
         network,
         sourceAddress,
@@ -290,11 +273,9 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
         receiptOptions: { confirmations: action === 'approval' ? 1 : 2 },
         onBroadcast: hash => {
           broadcast = { hash, action };
-          pendingRef.current = broadcast;
-          if (mounted.current) setPending(broadcast);
+          transition({ type: 'broadcast', transaction: broadcast });
           showEvmTransactionSuccessToast(chain, hash, 'submitted');
           if (action === 'swap') {
-            swapSubmittedRef.current = true;
             dispatch(navigateAction({ screen: StacksEnum.MainStack }));
           }
         }
@@ -302,16 +283,17 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
       if (broadcast) await completeReceipt(broadcast, result);
       else if (!result.success) throw result.error;
     } catch (cause) {
-      if (cause instanceof EvmSwapApiError && cause.code === 'rate-limit')
-        retryAt.current = cause.retryAt ?? Date.now() + 60_000;
-      if (swapSubmittedRef.current) {
+      if (isSwapSubmitted(stateRef.current)) {
         const { message } = normalizeEvmTransactionError(cause);
         showErrorToast({ title: `Failed to confirm ${chain?.name ?? 'Etherlink'} transaction`, description: message });
       } else if (mounted.current)
-        setError(cause instanceof Error ? cause.message : 'Cannot complete the Etherlink swap action.');
+        transition({
+          type: 'error',
+          message: cause instanceof Error ? cause.message : 'Cannot complete the Etherlink swap action.'
+        });
     } finally {
       guard.current = false;
-      if (mounted.current) setBusy(false);
+      transition({ type: 'finish' });
     }
   };
 

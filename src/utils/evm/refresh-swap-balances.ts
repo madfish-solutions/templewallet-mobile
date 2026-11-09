@@ -9,6 +9,7 @@ import { EvmAssetStandardEnum, EVM_TOKEN_SLUG } from 'src/token/interfaces/token
 import { EvmSwapAsset } from 'src/types/evm-swap';
 import { ETHERLINK_MAINNET_CHAIN_SPECS, EvmNetworkEssentials } from 'src/types/networks';
 import { getAccountAddressForEvm } from 'src/utils/account.utils';
+import { filterManualAssetMetadata } from 'src/utils/evm/filter-manual-asset-metadata';
 import { getViemPublicClient } from 'src/utils/rpc/evm-client.utils';
 
 export const refreshSwapBalances = async (
@@ -44,19 +45,16 @@ export const refreshSwapBalances = async (
       const metadata: Record<string, EvmStoredTokenMetadata> = {
         [EVM_TOKEN_SLUG]: ETHERLINK_MAINNET_CHAIN_SPECS.currency
       };
-      const currentAssets = store.getState().evmAssets.record[account]?.[network.chainId] ?? {};
       for (const [index, token] of tokens.entries()) {
         balances[token.assetSlug] = tokenBalances[index].toString();
-        if (!currentAssets[token.assetSlug]?.manual) {
-          metadata[token.assetSlug] = {
-            address: token.contractAddress,
-            standard: EvmAssetStandardEnum.ERC20,
-            decimals: token.decimals,
-            name: token.name,
-            symbol: token.symbol,
-            iconURL: token.thumbnailUri
-          };
-        }
+        metadata[token.assetSlug] = {
+          address: token.contractAddress,
+          standard: EvmAssetStandardEnum.ERC20,
+          decimals: token.decimals,
+          name: token.name,
+          symbol: token.symbol,
+          iconURL: token.thumbnailUri
+        };
       }
       if (BigInt(balances[output.assetSlug]) === 0n) throw new Error('The destination balance is not available yet.');
       dispatch(
@@ -70,7 +68,12 @@ export const refreshSwapBalances = async (
           }
         })
       );
-      dispatch(processLoadedEvmTokensMetadataAction({ chainId: network.chainId, metadata }));
+      dispatch(
+        processLoadedEvmTokensMetadataAction({
+          chainId: network.chainId,
+          metadata: filterManualAssetMetadata(metadata, store.getState().evmAssets.record, network.chainId)
+        })
+      );
       dispatch(processLoadedOnChainEvmBalances({ account, chainId: network.chainId, balances, timestamp: Date.now() }));
 
       return;

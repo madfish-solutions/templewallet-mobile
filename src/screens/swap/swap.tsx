@@ -101,7 +101,7 @@ const SwapScreenForm: FC<{ initialParams: SwapParams }> = ({ initialParams }) =>
     },
     [evmAddress, tezosAddress, tezosAssets]
   );
-  const context = useMemo(() => ({ inputAssets, onSelectInput }), [inputAssets, onSelectInput]);
+  const context = useMemo(() => ({ inputAssets, evmAssets, onSelectInput }), [inputAssets, evmAssets, onSelectInput]);
 
   return (
     <SwapAssetsContext.Provider value={context}>
