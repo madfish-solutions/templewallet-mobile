@@ -1,4 +1,4 @@
-import { Network, NetworkType, PermissionInfo } from '@airgap/beacon-sdk';
+import { Network, NetworkType, PermissionInfo } from '@ecadlabs/beacon-sdk';
 import { SessionTypes } from '@walletconnect/types';
 import { capitalize } from 'lodash-es';
 import { Address } from 'viem';

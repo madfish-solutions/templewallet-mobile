@@ -1,4 +1,4 @@
-import { PermissionInfo } from '@airgap/beacon-sdk';
+import { PermissionInfo } from '@ecadlabs/beacon-sdk';
 import { PersistedState } from 'redux-persist';
 
 import type { Account } from 'src/interfaces/account.interfaces';

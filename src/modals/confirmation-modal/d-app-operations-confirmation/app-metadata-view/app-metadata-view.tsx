@@ -1,4 +1,4 @@
-import { AppMetadata } from '@airgap/beacon-sdk';
+import { AppMetadata } from '@ecadlabs/beacon-sdk';
 import React, { FC } from 'react';
 
 import { AppMetadataView as SharedAppMetadataView } from '../../common/app-metadata-view';

@@ -12,135 +12,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@airgap/beacon-blockchain-substrate@npm:4.6.4":
-  version: 4.6.4
-  resolution: "@airgap/beacon-blockchain-substrate@npm:4.6.4"
-  dependencies:
-    "@airgap/beacon-types": "npm:4.6.4"
-    "@airgap/beacon-ui": "npm:4.6.4"
-  checksum: 10c0/fe9db649694b8af61ee78d6842ba4ba896ac6cdb9c19e55cdf731a4ea94f8499c7ba05ca7818cf20535f0cb258a33f9cec437f39fbd24cd9630e20f17fb1df91
-  languageName: node
-  linkType: hard
-
-"@airgap/beacon-blockchain-tezos@npm:4.6.4":
-  version: 4.6.4
-  resolution: "@airgap/beacon-blockchain-tezos@npm:4.6.4"
-  dependencies:
-    "@airgap/beacon-types": "npm:4.6.4"
-    "@airgap/beacon-ui": "npm:4.6.4"
-  checksum: 10c0/42d81fc2fbe0c5653b7efce29f10d4e52bad6b75cfffbc6cff625aed8bf0af0571bad8051dfaf0eb182966a4819a661e09204dbbce2a25c5c4edf2d6fd30b065
-  languageName: node
-  linkType: hard
-
-"@airgap/beacon-core@npm:4.6.4":
-  version: 4.6.4
-  resolution: "@airgap/beacon-core@npm:4.6.4"
-  dependencies:
-    "@airgap/beacon-types": "npm:4.6.4"
-    "@airgap/beacon-utils": "npm:4.6.4"
-    "@stablelib/ed25519": "npm:^2.0.2"
-    "@stablelib/nacl": "npm:^2.0.1"
-    "@stablelib/utf8": "npm:^2.0.1"
-    "@stablelib/x25519-session": "npm:^2.0.1"
-    broadcast-channel: "npm:^7.1.0"
-    bs58check: "npm:4.0.0"
-  checksum: 10c0/0ea4d6137896abc9a73fa999c118551723374561bcdc862b8b77d876bf03671e269cbac7ac7f92b3c5931f3751dd42f863d612a9c4a3323fa232a8f6937532cd
-  languageName: node
-  linkType: hard
-
-"@airgap/beacon-dapp@link:./node_modules/.cache/null::locator=temple-wallet%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@airgap/beacon-dapp@link:./node_modules/.cache/null::locator=temple-wallet%40workspace%3A."
-  languageName: node
-  linkType: soft
-
-"@airgap/beacon-sdk@npm:4.6.4":
-  version: 4.6.4
-  resolution: "@airgap/beacon-sdk@npm:4.6.4"
-  dependencies:
-    "@airgap/beacon-blockchain-substrate": "npm:4.6.4"
-    "@airgap/beacon-blockchain-tezos": "npm:4.6.4"
-    "@airgap/beacon-core": "npm:4.6.4"
-    "@airgap/beacon-dapp": "npm:4.6.4"
-    "@airgap/beacon-transport-matrix": "npm:4.6.4"
-    "@airgap/beacon-transport-postmessage": "npm:4.6.4"
-    "@airgap/beacon-types": "npm:4.6.4"
-    "@airgap/beacon-ui": "npm:4.6.4"
-    "@airgap/beacon-utils": "npm:4.6.4"
-    "@airgap/beacon-wallet": "npm:4.6.4"
-  checksum: 10c0/c7b10068aad67b16aac500283a28c37e4704cf1afbd3d4db6753692bb9420e284e1bbd74d62b75a5c8b2357f4a92f7ad21af60e247e1c80de43a879ea12dbc9b
-  languageName: node
-  linkType: hard
-
-"@airgap/beacon-transport-matrix@npm:4.6.4":
-  version: 4.6.4
-  resolution: "@airgap/beacon-transport-matrix@npm:4.6.4"
-  dependencies:
-    "@airgap/beacon-core": "npm:4.6.4"
-    "@airgap/beacon-utils": "npm:4.6.4"
-    axios: "npm:^1.8.4"
-  checksum: 10c0/2aac48dbb1c0a897acb75757e374b3279cca0c7307fdd78054629598171df057433bae72ab64f00e43e7ddfa352ae8abf0ced722f6b4a2dc68b4d053dfab128a
-  languageName: node
-  linkType: hard
-
-"@airgap/beacon-transport-postmessage@link:./node_modules/.cache/null::locator=temple-wallet%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@airgap/beacon-transport-postmessage@link:./node_modules/.cache/null::locator=temple-wallet%40workspace%3A."
-  languageName: node
-  linkType: soft
-
-"@airgap/beacon-transport-walletconnect@npm:4.6.4":
-  version: 4.6.4
-  resolution: "@airgap/beacon-transport-walletconnect@npm:4.6.4"
-  dependencies:
-    "@airgap/beacon-core": "npm:4.6.4"
-    "@airgap/beacon-types": "npm:4.6.4"
-    "@airgap/beacon-utils": "npm:4.6.4"
-    "@walletconnect/sign-client": "npm:2.18.0"
-    elliptic: "npm:^6.6.1"
-  checksum: 10c0/cfbc11c3f15ea5f8cf4abbe199548ac84c86143b81ba577b0123d1e00c6ecee35c10066b5cf721a18c31217ff2e6dff005e3e0758d99bb6bcb67d95a75dc743c
-  languageName: node
-  linkType: hard
-
-"@airgap/beacon-types@npm:4.6.4":
-  version: 4.6.4
-  resolution: "@airgap/beacon-types@npm:4.6.4"
-  dependencies:
-    "@types/chrome": "npm:0.0.315"
-  checksum: 10c0/962f0a789f03564dc06ad1cf30e7a112a018a013ac76bdae605a0848850a06c3c81873d3b174afd916ceefc259816426d5c25b3ff3018003454ff92e34074d5e
-  languageName: node
-  linkType: hard
-
-"@airgap/beacon-ui@link:./node_modules/.cache/null::locator=temple-wallet%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@airgap/beacon-ui@link:./node_modules/.cache/null::locator=temple-wallet%40workspace%3A."
-  languageName: node
-  linkType: soft
-
-"@airgap/beacon-utils@npm:4.6.4":
-  version: 4.6.4
-  resolution: "@airgap/beacon-utils@npm:4.6.4"
-  dependencies:
-    "@stablelib/ed25519": "npm:^2.0.2"
-    "@stablelib/nacl": "npm:^2.0.1"
-    "@stablelib/random": "npm:^2.0.1"
-    "@stablelib/utf8": "npm:^2.0.1"
-    bs58check: "npm:4.0.0"
-  checksum: 10c0/2e7c1cd009dfcd306576f1910b84fc8e85ecf0805ae2ea5d5df3d2658d1be1ee48bbfd96c4a3cfdb140fd0577e23efd85a6452fcc431d844ee2bdc7283a6b0ee
-  languageName: node
-  linkType: hard
-
-"@airgap/beacon-wallet@npm:4.6.4":
-  version: 4.6.4
-  resolution: "@airgap/beacon-wallet@npm:4.6.4"
-  dependencies:
-    "@airgap/beacon-core": "npm:4.6.4"
-    "@airgap/beacon-transport-matrix": "npm:4.6.4"
-    "@airgap/beacon-transport-postmessage": "npm:4.6.4"
-  checksum: 10c0/9e88b1b72269f15b8350a9d492057cfb4cbb9ef961c88adca751c207edadfee00a9d067b391558b1e303db9782c37d0b38e7778aac5c1e5359e2dc920cfa8b9f
-  languageName: node
-  linkType: hard
-
 "@apollo/client@npm:^3.7.1":
   version: 3.14.0
   resolution: "@apollo/client@npm:3.14.0"
@@ -1881,10 +1752,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:7.28.4, @babel/runtime@npm:^7.25.0":
-  version: 7.28.4
-  resolution: "@babel/runtime@npm:7.28.4"
-  checksum: 10c0/792ce7af9750fb9b93879cc9d1db175701c4689da890e6ced242ea0207c9da411ccf16dc04e689cc01158b28d7898c40d75598f4559109f761c12ce01e959bf7
+"@babel/runtime@npm:7.29.7":
+  version: 7.29.7
+  resolution: "@babel/runtime@npm:7.29.7"
+  checksum: 10c0/ca11572f7146b21e0bde6a9ed4bb6a89eafbee5f0944c7eb54d0d8a2dac962c33638a1d611e14faa71dfbb92b4b5f9236232208568a6b7d5c6f3f39ddb91771e
   languageName: node
   linkType: hard
 
@@ -1892,6 +1763,13 @@ __metadata:
   version: 7.28.6
   resolution: "@babel/runtime@npm:7.28.6"
   checksum: 10c0/358cf2429992ac1c466df1a21c1601d595c46930a13c1d4662fde908d44ee78ec3c183aaff513ecb01ef8c55c3624afe0309eeeb34715672dbfadb7feedb2c0d
+  languageName: node
+  linkType: hard
+
+"@babel/runtime@npm:^7.25.0":
+  version: 7.28.4
+  resolution: "@babel/runtime@npm:7.28.4"
+  checksum: 10c0/792ce7af9750fb9b93879cc9d1db175701c4689da890e6ced242ea0207c9da411ccf16dc04e689cc01158b28d7898c40d75598f4559109f761c12ce01e959bf7
   languageName: node
   linkType: hard
 
@@ -1999,6 +1877,143 @@ __metadata:
   dependencies:
     "@types/json-schema": "npm:^7.0.15"
   checksum: 10c0/ca5aa4fcdb91988601fdde56a476a439465c835ce8789b9666205f6e841e5cf0524e545a8fdce5e40be95b88920c4873e892d1e24e34a5d6a4f9dd6b1e43c4fc
+  languageName: node
+  linkType: hard
+
+"@ecadlabs/beacon-blockchain-substrate@npm:4.8.5-ecad":
+  version: 4.8.5-ecad
+  resolution: "@ecadlabs/beacon-blockchain-substrate@npm:4.8.5-ecad"
+  dependencies:
+    "@ecadlabs/beacon-types": "npm:4.8.5-ecad"
+    "@ecadlabs/beacon-ui": "npm:4.8.5-ecad"
+  checksum: 10c0/4f7646c37aa468a511fdca5b91fc1d0a4bba56d33a4fb2a4b8b0903432ff1adf7065c0bce0227a54083ba39b42a107b9b00d6833ae194109c0c89a65bfeebb0d
+  languageName: node
+  linkType: hard
+
+"@ecadlabs/beacon-blockchain-tezos@npm:4.8.5-ecad":
+  version: 4.8.5-ecad
+  resolution: "@ecadlabs/beacon-blockchain-tezos@npm:4.8.5-ecad"
+  dependencies:
+    "@ecadlabs/beacon-types": "npm:4.8.5-ecad"
+    "@ecadlabs/beacon-ui": "npm:4.8.5-ecad"
+  checksum: 10c0/3c89aeb458b505afca996d1f251e23204e7c03bfc729e7197e7d0279e13922dd3cc3d43a908e117b766eaf93c9803cdbbf6ebe20ec8fec06c833d00818792f6b
+  languageName: node
+  linkType: hard
+
+"@ecadlabs/beacon-core@npm:4.8.5-ecad":
+  version: 4.8.5-ecad
+  resolution: "@ecadlabs/beacon-core@npm:4.8.5-ecad"
+  dependencies:
+    "@ecadlabs/beacon-types": "npm:4.8.5-ecad"
+    "@ecadlabs/beacon-utils": "npm:4.8.5-ecad"
+    "@stablelib/blake2b": "npm:^2.0.1"
+    "@stablelib/nacl": "npm:^2.0.1"
+    "@stablelib/utf8": "npm:^2.1.0"
+    "@stablelib/x25519-session": "npm:^2.0.1"
+    broadcast-channel: "npm:^7.3.0"
+    bs58check: "npm:4.0.0"
+  checksum: 10c0/16c13bc810d53fa900fd9b5bf67906abde7075f728a7deacc3226f6f09b48dbee02b159f26d47a84fae5ca6e989d7730410b6eb9b3487df19a4f1619fbca3f5d
+  languageName: node
+  linkType: hard
+
+"@ecadlabs/beacon-dapp@link:./node_modules/.cache/null::locator=temple-wallet%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@ecadlabs/beacon-dapp@link:./node_modules/.cache/null::locator=temple-wallet%40workspace%3A."
+  languageName: node
+  linkType: soft
+
+"@ecadlabs/beacon-sdk@npm:4.8.5-ecad":
+  version: 4.8.5-ecad
+  resolution: "@ecadlabs/beacon-sdk@npm:4.8.5-ecad"
+  dependencies:
+    "@ecadlabs/beacon-blockchain-substrate": "npm:4.8.5-ecad"
+    "@ecadlabs/beacon-blockchain-tezos": "npm:4.8.5-ecad"
+    "@ecadlabs/beacon-core": "npm:4.8.5-ecad"
+    "@ecadlabs/beacon-dapp": "npm:4.8.5-ecad"
+    "@ecadlabs/beacon-transport-matrix": "npm:4.8.5-ecad"
+    "@ecadlabs/beacon-transport-postmessage": "npm:4.8.5-ecad"
+    "@ecadlabs/beacon-transport-walletconnect": "npm:4.8.5-ecad"
+    "@ecadlabs/beacon-types": "npm:4.8.5-ecad"
+    "@ecadlabs/beacon-ui": "npm:4.8.5-ecad"
+    "@ecadlabs/beacon-utils": "npm:4.8.5-ecad"
+    "@ecadlabs/beacon-wallet": "npm:4.8.5-ecad"
+  checksum: 10c0/a887cc71461184a23d7fa96afb3ba3d4ed77f6ed39627b56a08fe31a00b6fdb9435a82d0469454f7005090e6bcc1b19667891c40142dacfd8e00cb7cb5bc73ce
+  languageName: node
+  linkType: hard
+
+"@ecadlabs/beacon-transport-matrix@npm:4.8.5-ecad":
+  version: 4.8.5-ecad
+  resolution: "@ecadlabs/beacon-transport-matrix@npm:4.8.5-ecad"
+  dependencies:
+    "@ecadlabs/beacon-core": "npm:4.8.5-ecad"
+    "@ecadlabs/beacon-types": "npm:4.8.5-ecad"
+    "@ecadlabs/beacon-utils": "npm:4.8.5-ecad"
+    "@stablelib/blake2b": "npm:^2.0.1"
+    "@stablelib/utf8": "npm:^2.1.0"
+  checksum: 10c0/a2c5ce6965aaf01dfa6b518c8a0166139713128a61087718324ce5c22081c21d33727656a0cb279aa5623c9dda1c8495652b03b47735e29eb55936c2f5d64fdc
+  languageName: node
+  linkType: hard
+
+"@ecadlabs/beacon-transport-postmessage@link:./node_modules/.cache/null::locator=temple-wallet%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@ecadlabs/beacon-transport-postmessage@link:./node_modules/.cache/null::locator=temple-wallet%40workspace%3A."
+  languageName: node
+  linkType: soft
+
+"@ecadlabs/beacon-transport-walletconnect@npm:4.8.5-ecad":
+  version: 4.8.5-ecad
+  resolution: "@ecadlabs/beacon-transport-walletconnect@npm:4.8.5-ecad"
+  dependencies:
+    "@ecadlabs/beacon-core": "npm:4.8.5-ecad"
+    "@ecadlabs/beacon-types": "npm:4.8.5-ecad"
+    "@ecadlabs/beacon-utils": "npm:4.8.5-ecad"
+    "@walletconnect/sign-client": "npm:2.18.0"
+    "@walletconnect/types": "npm:2.18.0"
+    "@walletconnect/utils": "npm:2.18.0"
+  checksum: 10c0/5f68f9628e03ea1e6a3fdc861da13ceac8ebbdb61a504ee315c651f9eb69ee8ff436ec97cbbc6e8c1c5e9ba476e913eaf7c7eeb7f9787dcea870fcac1c1d8869
+  languageName: node
+  linkType: hard
+
+"@ecadlabs/beacon-types@npm:4.8.5-ecad":
+  version: 4.8.5-ecad
+  resolution: "@ecadlabs/beacon-types@npm:4.8.5-ecad"
+  dependencies:
+    "@types/chrome": "npm:^0.1.40"
+  checksum: 10c0/1c078cdf9523e7722baaccab5d0ba833e6438f1b9c08402600b677824806b70982eb7cb38ca23dfb5efec27f271b370e1689bf6fdb769d6595d4619bfbd51cf7
+  languageName: node
+  linkType: hard
+
+"@ecadlabs/beacon-ui@link:./node_modules/.cache/null::locator=temple-wallet%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@ecadlabs/beacon-ui@link:./node_modules/.cache/null::locator=temple-wallet%40workspace%3A."
+  languageName: node
+  linkType: soft
+
+"@ecadlabs/beacon-utils@npm:4.8.5-ecad":
+  version: 4.8.5-ecad
+  resolution: "@ecadlabs/beacon-utils@npm:4.8.5-ecad"
+  dependencies:
+    "@stablelib/blake2b": "npm:^2.0.1"
+    "@stablelib/bytes": "npm:^2.0.1"
+    "@stablelib/ed25519": "npm:^2.1.0"
+    "@stablelib/nacl": "npm:^2.0.1"
+    "@stablelib/random": "npm:^2.0.1"
+    "@stablelib/utf8": "npm:^2.1.0"
+    bs58check: "npm:4.0.0"
+  checksum: 10c0/d6d0e7248240d4f496aa31be861f4ef4dde89b1a908393497b1af1b3c3c192b147d8fa429b75e6e379591861b0b3c20ae7759135df5661218feb13d885c4861b
+  languageName: node
+  linkType: hard
+
+"@ecadlabs/beacon-wallet@npm:4.8.5-ecad":
+  version: 4.8.5-ecad
+  resolution: "@ecadlabs/beacon-wallet@npm:4.8.5-ecad"
+  dependencies:
+    "@ecadlabs/beacon-core": "npm:4.8.5-ecad"
+    "@ecadlabs/beacon-transport-matrix": "npm:4.8.5-ecad"
+    "@ecadlabs/beacon-transport-postmessage": "npm:4.8.5-ecad"
+    "@ecadlabs/beacon-types": "npm:4.8.5-ecad"
+    "@ecadlabs/beacon-utils": "npm:4.8.5-ecad"
+  checksum: 10c0/aafcb1283b70b053068296fde35fd5513f7a2d9fc5147388c23f37a84d5958549bfbc14cd98fd337b786d5b16c592d88b85c4c1634613dbad2e98ddc5b1b4467
   languageName: node
   linkType: hard
 
@@ -4982,14 +4997,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stablelib/ed25519@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "@stablelib/ed25519@npm:2.0.2"
+"@stablelib/ed25519@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@stablelib/ed25519@npm:2.1.0"
   dependencies:
     "@stablelib/random": "npm:^2.0.1"
     "@stablelib/sha512": "npm:^2.0.1"
     "@stablelib/wipe": "npm:^2.0.1"
-  checksum: 10c0/d75e0c0b8243f3307d7f13d743b76434f18deff85537c5cb184e6061ded9a999df7ed593e8e17801e82aa18536e94e6027c64f5a4c57b9993a0f1a3362993c0f
+  checksum: 10c0/6ed9fbb12c64e56d0fc6eee93d0e9eff07e89d2ec4f46cb6f01a85c6e26b150c6303c37a2b73e019b66c068e77233260634c99bba4fc684728a7cc7157f63ef1
   languageName: node
   linkType: hard
 
@@ -5131,10 +5146,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stablelib/utf8@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "@stablelib/utf8@npm:2.0.1"
-  checksum: 10c0/b429c53b78ab0243ad4a679189d41f9b08561bd6e152ac36c32f7c0d05bc8b0d52a03025c1120f4bac630b6b9304a1abc62cdcd55904ae105d4a3694bc01fe64
+"@stablelib/utf8@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@stablelib/utf8@npm:2.1.0"
+  checksum: 10c0/6d3bed06f32bd1fd57e96682bb85c3f4624817818973fd137ce85a498be9b7145b877ae8178b5421a5c53ae8acf1b095bd8b60bd121043281cb7414fa6bb6328
   languageName: node
   linkType: hard
 
@@ -5724,13 +5739,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/chrome@npm:0.0.315":
-  version: 0.0.315
-  resolution: "@types/chrome@npm:0.0.315"
+"@types/chrome@npm:^0.1.40":
+  version: 0.1.43
+  resolution: "@types/chrome@npm:0.1.43"
   dependencies:
     "@types/filesystem": "npm:*"
     "@types/har-format": "npm:*"
-  checksum: 10c0/9f49b76201a48b8df195b1163fc1b32ccb83622fc025b02ef9404c9ecb6bd4553e610e61b13b8a474176c316b7bd88a71c180a69cdfe22181a17d548a04464b1
+  checksum: 10c0/ee9bf6c81b8621f87582ad02e4193a18e94775d6e13bf9012c925101fdc014baba1edf81b0fe220b006d69088b1ac6eb64ac37386c6948ccea4f7dcff5ed5aa2
   languageName: node
   linkType: hard
 
@@ -7543,15 +7558,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"broadcast-channel@npm:^7.1.0":
-  version: 7.2.0
-  resolution: "broadcast-channel@npm:7.2.0"
+"broadcast-channel@npm:^7.3.0":
+  version: 7.4.0
+  resolution: "broadcast-channel@npm:7.4.0"
   dependencies:
-    "@babel/runtime": "npm:7.28.4"
+    "@babel/runtime": "npm:7.29.7"
     oblivious-set: "npm:2.0.0"
     p-queue: "npm:6.6.2"
     unload: "npm:2.4.1"
-  checksum: 10c0/e11b3f617a43a59d1fa256dd16930a1e09367d5bef1ad0e9734c557edb67f4dce1c7e680dfccb1e874023dac512877783f8cc3f3899137b00c11d9c2de72a505
+  checksum: 10c0/38b7f093f2bd2fcb52e4b37c2cc3067a9c8d5762b5833b928213a7665a17c0726002c24d16e9966794bb0ac5a3142db7c91672ea61d59202b2e1eeade4caac78
   languageName: node
   linkType: hard
 
@@ -16079,8 +16094,6 @@ react-native-randombytes@madfish-solutions/react-native-randombytes:
   version: 0.0.0-use.local
   resolution: "temple-wallet@workspace:."
   dependencies:
-    "@airgap/beacon-sdk": "npm:4.6.4"
-    "@airgap/beacon-transport-walletconnect": "npm:4.6.4"
     "@apollo/client": "npm:^3.7.1"
     "@babel/core": "npm:^7.25.2"
     "@babel/preset-env": "npm:^7.25.3"
@@ -16088,6 +16101,8 @@ react-native-randombytes@madfish-solutions/react-native-randombytes:
     "@d11/react-native-fast-image": "npm:^8.13.0"
     "@dicebear/bottts": "npm:^9.3.0"
     "@dicebear/core": "npm:^9.4.2"
+    "@ecadlabs/beacon-sdk": "npm:4.8.5-ecad"
+    "@ecadlabs/beacon-transport-walletconnect": "npm:4.8.5-ecad"
     "@gorhom/bottom-sheet": "npm:^5"
     "@gorhom/portal": "npm:^1.0.14"
     "@jitsu/sdk-js": "madfish-solutions/jitsu-js#87c49de334f5747952f7beda573b95ceb5d86903"

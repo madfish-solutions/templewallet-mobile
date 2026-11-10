@@ -1,4 +1,4 @@
-import { OperationRequestOutput } from '@airgap/beacon-sdk';
+import { OperationRequestOutput } from '@ecadlabs/beacon-sdk';
 import { ParamsWithKind } from '@taquito/taquito';
 
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum.ts';

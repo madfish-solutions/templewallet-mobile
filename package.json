@@ -26,12 +26,12 @@
     "audit-deps": "node ./audit-deps.mjs"
   },
   "dependencies": {
-    "@airgap/beacon-sdk": "4.6.4",
-    "@airgap/beacon-transport-walletconnect": "4.6.4",
     "@apollo/client": "^3.7.1",
     "@d11/react-native-fast-image": "^8.13.0",
     "@dicebear/bottts": "^9.3.0",
     "@dicebear/core": "^9.4.2",
+    "@ecadlabs/beacon-sdk": "4.8.5-ecad",
+    "@ecadlabs/beacon-transport-walletconnect": "4.8.5-ecad",
     "@gorhom/bottom-sheet": "^5",
     "@gorhom/portal": "^1.0.14",
     "@jitsu/sdk-js": "madfish-solutions/jitsu-js#87c49de334f5747952f7beda573b95ceb5d86903",
@@ -181,9 +181,9 @@
     "typescript": "^5.8.3"
   },
   "resolutions": {
-    "@airgap/beacon-dapp": "link:./node_modules/.cache/null",
-    "@airgap/beacon-ui": "link:./node_modules/.cache/null",
-    "@airgap/beacon-transport-postmessage": "link:./node_modules/.cache/null",
+    "@ecadlabs/beacon-dapp": "link:./node_modules/.cache/null",
+    "@ecadlabs/beacon-ui": "link:./node_modules/.cache/null",
+    "@ecadlabs/beacon-transport-postmessage": "link:./node_modules/.cache/null",
     "axios": "1.20.0",
     "node-libs-react-native/react-native-randombytes": "madfish-solutions/react-native-randombytes",
     "fast-xml-parser": "5.5.6",
