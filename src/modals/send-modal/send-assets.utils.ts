@@ -3,6 +3,7 @@ import { BigNumber } from 'bignumber.js';
 import { SendAsset } from 'src/types/send-asset';
 import { getDollarValue } from 'src/utils/balance.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { mutezToTz } from 'src/utils/tezos.util';
 
 const compareSendAssets = (first: SendAsset, second: SendAsset) => {
   const firstFiat = isDefined(first.exchangeRate)
@@ -16,9 +17,9 @@ const compareSendAssets = (first: SendAsset, second: SendAsset) => {
     return secondFiat - firstFiat;
   }
 
-  const balanceDifference = new BigNumber(second.balance)
-    .shiftedBy(-second.decimals)
-    .minus(new BigNumber(first.balance).shiftedBy(-first.decimals));
+  const balanceDifference = mutezToTz(new BigNumber(second.balance), second.decimals).minus(
+    mutezToTz(new BigNumber(first.balance), first.decimals)
+  );
 
   return balanceDifference.isZero() ? first.symbol.localeCompare(second.symbol) : balanceDifference.toNumber();
 };

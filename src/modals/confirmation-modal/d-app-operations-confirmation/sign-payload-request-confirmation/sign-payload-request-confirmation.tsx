@@ -1,4 +1,4 @@
-import { BeaconMessageType, SignPayloadRequestOutput } from '@airgap/beacon-sdk';
+import { BeaconMessageType, SignPayloadRequestOutput } from '@ecadlabs/beacon-sdk';
 import React, { FC, useMemo } from 'react';
 import { map, switchMap } from 'rxjs/operators';
 

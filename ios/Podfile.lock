@@ -1,14 +1,16 @@
 PODS:
-  - AppAuth (2.0.0):
-    - AppAuth/Core (= 2.0.0)
-    - AppAuth/ExternalUserAgent (= 2.0.0)
-  - AppAuth/Core (2.0.0)
-  - AppAuth/ExternalUserAgent (2.0.0):
+  - AppAuth (2.1.0):
+    - AppAuth/Core (= 2.1.0)
+    - AppAuth/ExternalUserAgent (= 2.1.0)
+  - AppAuth/Core (2.1.0)
+  - AppAuth/ExternalUserAgent (2.1.0):
     - AppAuth/Core
-  - AppCheckCore (11.2.0):
+  - AppCheckCore (11.3.2):
     - GoogleUtilities/Environment (~> 8.0)
     - GoogleUtilities/UserDefaults (~> 8.0)
     - PromisesObjC (~> 2.4)
+    - PromisesSwift (~> 2.4)
+    - RecaptchaInterop (~> 101.0)
   - boost (1.84.0)
   - DoubleConversion (1.1.6)
   - fast_float (8.0.0)
@@ -52,36 +54,36 @@ PODS:
     - nanopb (~> 3.30910.0)
   - fmt (12.1.0)
   - glog (0.3.5)
-  - GoogleDataTransport (10.1.0):
+  - GoogleDataTransport (10.1.1):
     - nanopb (~> 3.30910.0)
     - PromisesObjC (~> 2.4)
-  - GoogleSignIn (9.1.0):
-    - AppAuth (~> 2.0)
+  - GoogleSignIn (9.2.0):
+    - AppAuth (~> 2.1)
     - AppCheckCore (~> 11.0)
     - GTMAppAuth (~> 5.0)
     - GTMSessionFetcher/Core (~> 3.3)
-  - GoogleUtilities/AppDelegateSwizzler (8.1.0):
+  - GoogleUtilities/AppDelegateSwizzler (8.1.5):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
     - GoogleUtilities/Network
     - GoogleUtilities/Privacy
-  - GoogleUtilities/Environment (8.1.0):
+  - GoogleUtilities/Environment (8.1.5):
     - GoogleUtilities/Privacy
-  - GoogleUtilities/Logger (8.1.0):
+  - GoogleUtilities/Logger (8.1.5):
     - GoogleUtilities/Environment
     - GoogleUtilities/Privacy
-  - GoogleUtilities/Network (8.1.0):
+  - GoogleUtilities/Network (8.1.5):
     - GoogleUtilities/Logger
     - "GoogleUtilities/NSData+zlib"
     - GoogleUtilities/Privacy
     - GoogleUtilities/Reachability
-  - "GoogleUtilities/NSData+zlib (8.1.0)":
+  - "GoogleUtilities/NSData+zlib (8.1.5)":
     - GoogleUtilities/Privacy
-  - GoogleUtilities/Privacy (8.1.0)
-  - GoogleUtilities/Reachability (8.1.0):
+  - GoogleUtilities/Privacy (8.1.5)
+  - GoogleUtilities/Reachability (8.1.5):
     - GoogleUtilities/Logger
     - GoogleUtilities/Privacy
-  - GoogleUtilities/UserDefaults (8.1.0):
+  - GoogleUtilities/UserDefaults (8.1.5):
     - GoogleUtilities/Logger
     - GoogleUtilities/Privacy
   - GTMAppAuth (5.0.0):
@@ -96,17 +98,17 @@ PODS:
     - libavif/core
     - libdav1d (>= 0.6.0)
   - libdav1d (1.2.0)
-  - libwebp (1.5.0):
-    - libwebp/demux (= 1.5.0)
-    - libwebp/mux (= 1.5.0)
-    - libwebp/sharpyuv (= 1.5.0)
-    - libwebp/webp (= 1.5.0)
-  - libwebp/demux (1.5.0):
+  - libwebp (1.6.0):
+    - libwebp/demux (= 1.6.0)
+    - libwebp/mux (= 1.6.0)
+    - libwebp/sharpyuv (= 1.6.0)
+    - libwebp/webp (= 1.6.0)
+  - libwebp/demux (1.6.0):
     - libwebp/webp
-  - libwebp/mux (1.5.0):
+  - libwebp/mux (1.6.0):
     - libwebp/demux
-  - libwebp/sharpyuv (1.5.0)
-  - libwebp/webp (1.5.0):
+  - libwebp/sharpyuv (1.6.0)
+  - libwebp/webp (1.6.0):
     - libwebp/sharpyuv
   - lottie-ios (4.6.0)
   - lottie-react-native (7.3.8):
@@ -143,7 +145,9 @@ PODS:
     - nanopb/encode (= 3.30910.0)
   - nanopb/decode (3.30910.0)
   - nanopb/encode (3.30910.0)
-  - PromisesObjC (2.4.0)
+  - PromisesObjC (2.4.1)
+  - PromisesSwift (2.4.1):
+    - PromisesObjC (= 2.4.1)
   - RCT-Folly (2024.11.18.00):
     - boost
     - DoubleConversion
@@ -2067,7 +2071,7 @@ PODS:
     - Yoga
   - react-native-cloud-fs (2.6.0):
     - React
-  - react-native-compat (2.23.10):
+  - react-native-compat (2.26.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -2095,7 +2099,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-    - YttriumWrapper (= 0.10.54)
+    - YttriumWrapper (= 0.10.59)
   - react-native-config (1.6.1):
     - react-native-config/App (= 1.6.1)
   - react-native-config/App (1.6.1):
@@ -3038,6 +3042,7 @@ PODS:
     - SocketRocket
   - ReactNativeExceptionHandler (2.10.10):
     - React-Core
+  - RecaptchaInterop (101.0.0)
   - RNBootSplash (6.3.11):
     - boost
     - DoubleConversion
@@ -3786,7 +3791,7 @@ PODS:
   - VisionCamera/React (4.7.3):
     - React-Core
   - Yoga (0.0.0)
-  - YttriumWrapper (0.10.54)
+  - YttriumWrapper (0.10.59)
 
 DEPENDENCIES:
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
@@ -3938,7 +3943,9 @@ SPEC REPOS:
     - lottie-ios
     - nanopb
     - PromisesObjC
+    - PromisesSwift
     - React-Codegen
+    - RecaptchaInterop
     - SDWebImage
     - SDWebImageAVIFCoder
     - SDWebImageSVGCoder
@@ -4197,8 +4204,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  AppAuth: 1c1a8afa7e12f2ec3a294d9882dfa5ab7d3cb063
-  AppCheckCore: cc8fd0a3a230ddd401f326489c99990b013f0c4f
+  AppAuth: ef4da5a3fc2e10b90c09a0a94a9baeaedc0341d5
+  AppCheckCore: be8fce5469f68d7f6a29aa94b25f097409ff7fdc
   boost: 7e761d76ca2ce687f7cc98e698152abd03a18f90
   DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
   fast_float: b32c788ed9c6a8c584d114d0047beda9664e7cc6
@@ -4213,20 +4220,21 @@ SPEC CHECKSUMS:
   FirebaseMessaging: ed18fb50634e6e85b5d3e77e628c21e2c928cc53
   fmt: 530618a01105dae0fa3a2f27c81ae11fa8f67eac
   glog: e56ede4028c4b7418e6b1195a36b1656bb35e225
-  GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
-  GoogleSignIn: fcee2257188d5eda57a5e2b6a715550ffff9206d
-  GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1
+  GoogleDataTransport: a24e58982ab3ba2f64d79613e027fe7f57e88539
+  GoogleSignIn: e449a40a92e9f2eea56e98b5214d13725dc5a00a
+  GoogleUtilities: 7dc09b3fa9ecb5c2298b952313d14628b61b9da3
   GTMAppAuth: 217a876b249c3c585a54fd6f73e6b58c4f5c4238
   GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
-  hermes-engine: 1887d821aabf73487e281c61c126c940f97744cd
+  hermes-engine: 37b94eff4b4a177f875427013e486b2594e97dba
   libavif: 84bbb62fb232c3018d6f1bab79beea87e35de7b7
   libdav1d: 23581a4d8ec811ff171ed5e2e05cd27bad64c39f
-  libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
+  libwebp: af5937a13536ef73f3784d69cc342b98961acf33
   lottie-ios: 8f959969761e9c45d70353667d00af0e5b9cadb3
   lottie-react-native: 7696ee54db539844f215c7e1f37372ae3138f37d
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
-  PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
-  RCT-Folly: 957659fd132051eccf60310f242798220177d26e
+  PromisesObjC: 752c3227f599e3467650e47ea36f433eeb10c273
+  PromisesSwift: 217dea0fd5d2ad65222a109c48698add13cc1c5b
+  RCT-Folly: 36c4f904fb6cd0219dcb76b94e9502d2a72fab0b
   RCTDeprecation: 225e022b85a206cf0883a909c4a114159783363c
   RCTRequired: 827a95c181af0886a11e21bc66c084088cf87839
   RCTSwiftUI: 7babb07156ae0a8e5ea97f77e43959ddaca2c6f2
@@ -4267,7 +4275,7 @@ SPEC CHECKSUMS:
   react-native-biometrics: 43ed5b828646a7862dbc7945556446be00798e7d
   react-native-blur: b83ffbc5380d8bd2f06804b4b0e848be3507e65c
   react-native-cloud-fs: 1f838a872b0204376514f5df175ccbbd342f496f
-  react-native-compat: 333b976ebee0a2df1ed9dd4c1506c30e6153913a
+  react-native-compat: 7e22cf3d72594a831d568781feb93fec91af137f
   react-native-config: 916e53e7333d5b2bcb7ee9882f5605143b4fc4c5
   react-native-document-picker: 910f7b853dc56664285752289d477a48537f0178
   react-native-get-random-values: 5c2e7ce0c1eedefde8e97fe60152601887fcfa08
@@ -4315,6 +4323,7 @@ SPEC CHECKSUMS:
   ReactCodegen: 3a96f3289dc44bc80ba172d16419c058874afa20
   ReactCommon: f7748c97e657e7be0df505a5fc51c4ace9791a32
   ReactNativeExceptionHandler: a23922ca00122b050ae9412f960061791c232c47
+  RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba
   RNBootSplash: 7fcc9a58ae343aeb1a1dd49f9030832fe432c544
   RNCAsyncStorage: fd44f4b03e007e642e98df6726737bc66e9ba609
   RNCClipboard: e560338bf6cc4656a09ff90610b62ddc0dbdad65
@@ -4348,8 +4357,8 @@ SPEC CHECKSUMS:
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   VisionCamera: b51af005669c6642dd1b4fca434eda4c1778de87
   Yoga: 9d8e8094a2bed6a175d9e6001a0546d5dae663ee
-  YttriumWrapper: 850d3c5bfa7815ad9962591ff3c1b289039266f2
+  YttriumWrapper: 64983f0edbf609b800ac3074010224fc5341aaeb
 
 PODFILE CHECKSUM: 20adfe4b5f5e38625dcdb506d1bffbaa80cbda89
 
-COCOAPODS: 1.16.2
+COCOAPODS: 1.17.0

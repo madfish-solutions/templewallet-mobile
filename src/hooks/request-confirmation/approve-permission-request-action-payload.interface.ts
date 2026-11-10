@@ -1,4 +1,4 @@
-import { PermissionRequestOutput } from '@airgap/beacon-sdk';
+import { PermissionRequestOutput } from '@ecadlabs/beacon-sdk';
 
 export interface ApprovePermissionRequestActionPayloadInterface {
   message: PermissionRequestOutput;

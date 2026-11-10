@@ -1,4 +1,4 @@
-import { SignPayloadRequestOutput } from '@airgap/beacon-sdk';
+import { SignPayloadRequestOutput } from '@ecadlabs/beacon-sdk';
 import { useEffect, useState } from 'react';
 
 import { getParsedSignPayload } from '../utils/get-parsed-sign-payload.utils';
