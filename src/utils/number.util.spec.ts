@@ -45,6 +45,9 @@ describe('formatAssetAmount', () => {
   it('should return less-than sign if passed negative value is greater than min rounded value additive inverse', () => {
     expect(formatAssetAmount(new BigNumber('-0.0001'), 3)).toEqual('< -0.001');
   });
+  it('should not throw when the decimal place count is not an integer', () => {
+    expect(formatAssetAmount(new BigNumber(1.2345), Number.NaN)).toEqual('1.2345');
+  });
 });
 
 describe('roundFiat', () => {

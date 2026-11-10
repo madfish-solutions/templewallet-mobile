@@ -21,6 +21,7 @@ import { TopUpInputInterface } from 'src/store/buy-with-credit-card/types';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { safeDecimalPlaces } from 'src/utils/big-number.utils';
 import { useInterval } from 'src/utils/hooks';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
@@ -49,7 +50,7 @@ const newTopUpAssetAmountFn = (
   amount: BigNumber | undefined
 ) => ({
   asset: newAsset,
-  amount: isDefined(newAsset.precision) ? amount?.decimalPlaces(newAsset.precision) : amount,
+  amount: isDefined(newAsset.precision) && isDefined(amount) ? safeDecimalPlaces(amount, newAsset.precision) : amount,
   min: newAsset.minAmount,
   max: newAsset.maxAmount
 });

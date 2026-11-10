@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { FocusEvent, TextInputProps } from 'react-native';
 
 import { emptyFn } from '../config/general';
+import { safeDecimalPlaces } from '../utils/big-number.utils';
 import { isDefined } from '../utils/is-defined';
 
 const DEFAULT_MIN_VALUE = 0;
@@ -45,7 +46,7 @@ export const useNumericInput = (
     (newStringValue: string) => {
       let normalizedStringValue = newStringValue.replace(/ /g, '').replace(/,/g, '.');
 
-      const newValue = new BigNumber(normalizedStringValue || 0).decimalPlaces(decimals, BigNumber.ROUND_DOWN);
+      const newValue = safeDecimalPlaces(new BigNumber(normalizedStringValue || 0), decimals, BigNumber.ROUND_DOWN);
 
       const indexOfDot = normalizedStringValue.indexOf('.');
       const decimalsCount = indexOfDot === -1 ? 0 : normalizedStringValue.length - indexOfDot - 1;
