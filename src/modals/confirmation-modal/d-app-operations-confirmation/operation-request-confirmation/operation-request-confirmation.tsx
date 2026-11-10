@@ -1,4 +1,4 @@
-import { BeaconMessageType, OperationRequestOutput } from '@airgap/beacon-sdk';
+import { BeaconMessageType, OperationRequestOutput } from '@ecadlabs/beacon-sdk';
 import React, { FC, useCallback, useMemo } from 'react';
 import { from } from 'rxjs';
 import { mapTo, switchMap } from 'rxjs/operators';

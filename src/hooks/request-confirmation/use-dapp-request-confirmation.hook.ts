@@ -1,4 +1,4 @@
-import { BeaconRequestOutputMessage } from '@airgap/beacon-sdk';
+import { BeaconRequestOutputMessage } from '@ecadlabs/beacon-sdk';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { ObservableInput } from 'rxjs';

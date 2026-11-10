@@ -1,4 +1,4 @@
-import { TezosOperationType } from '@airgap/beacon-sdk';
+import { TezosOperationType } from '@ecadlabs/beacon-sdk';
 
 import { SemiPartialTezosOperation } from './semi-partial-tezos-operation';
 
