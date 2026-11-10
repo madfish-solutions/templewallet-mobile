@@ -193,7 +193,7 @@
     "@typescript-eslint/typescript-estree/minimatch": "^9.0.7",
     "sharp": "^0.35.3",
     "viem/ws": "8.21.0",
-    "@walletconnect/utils": "2.26.0"
+    "@walletconnect/utils": "2.23.10"
   },
   "reanimated": {
     "staticFeatureFlags": {
