@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 import React, { FC, memo, useCallback, useMemo } from 'react';
-import { ListRenderItem, useWindowDimensions, View } from 'react-native';
+import { ListRenderItem, StyleProp, useWindowDimensions, View, ViewStyle } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import Animated, { ScrollHandlerProcessed } from 'react-native-reanimated';
 
@@ -107,9 +107,11 @@ export const CollectiblesList = memo<Props>(({ collectibles, showInfo, onScroll 
 });
 
 const ListFooterComponent: FC<{ empty: boolean; isSyncing: boolean }> = ({ empty, isSyncing }) => {
+  const styles = useCollectiblesGridStyles();
+
   if (empty) {
     return isSyncing ? (
-      <Spinner />
+      <Spinner style={styles.emptyListLoader} />
     ) : (
       <DataPlaceholder text={`Not found any ${LIMIT_NFT_FEATURES ? 'collectible' : 'NFT'}`} />
     );
@@ -118,11 +120,15 @@ const ListFooterComponent: FC<{ empty: boolean; isSyncing: boolean }> = ({ empty
   return isSyncing ? <Spinner /> : null;
 };
 
-const Spinner = () => {
+interface SpinnerProps {
+  style?: StyleProp<ViewStyle>;
+}
+
+const Spinner = ({ style }: SpinnerProps) => {
   const styles = useCollectiblesGridStyles();
 
   return (
-    <View style={styles.loader}>
+    <View style={[styles.loader, style]}>
       <ActivityIndicator size="large" style={styles.loader} />
     </View>
   );
