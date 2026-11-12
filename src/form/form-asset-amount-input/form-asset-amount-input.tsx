@@ -8,6 +8,7 @@ import {
 } from 'src/components/asset-amount-input/asset-amount-input';
 import { AssetAmountInputProps } from 'src/components/asset-amount-input/asset-amount-input.props';
 import { AssetAmountInputVariant } from 'src/components/asset-amount-input/asset-amount-input.variants';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { AssetInterface } from 'src/interfaces/asset.interface';
 import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
 import { useAssetBalanceSelector } from 'src/store/wallet/wallet-selectors';
@@ -21,7 +22,9 @@ import { ErrorMessage } from '../error-message/error-message';
 interface Props<TAsset extends AssetInterface = TokenInterface>
   extends Omit<AssetAmountInputProps<TAsset>, 'value' | 'onValueChange'> {
   name: string;
+  value?: AssetAmountInterface<TAsset>;
   variant?: AssetAmountInputVariant;
+  inputComponent?: typeof AssetAmountInputV2;
   showErrorInFooter?: boolean;
   /** Return false to prevent the default Formik value update. */
   onValueChange?: (value: AssetAmountInterface<TAsset>) => boolean | void;
@@ -34,7 +37,9 @@ type FormAssetAmountInputComponent = <TAsset extends AssetInterface = TokenInter
 export const FormAssetAmountInput = memo<Props<AssetInterface>>(
   ({
     name,
+    value,
     variant = 'v2',
+    inputComponent,
     label,
     assetsList,
     frozenBalance,
@@ -87,39 +92,39 @@ export const FormAssetAmountInput = memo<Props<AssetInterface>>(
     const balanceStored = useAssetBalanceSelector(slug);
     const exchangeRateStored = useAssetExchangeRate(slug);
 
-    useDidUpdate(
-      () =>
-        void helpers.setValue(
-          {
-            ...field.value,
-            asset: { ...field.value.asset, balance: balanceStored ?? field.value.asset.balance ?? '0' }
-          },
-          true
-        ),
-      [balanceStored]
-    );
+    useDidUpdate(() => {
+      if (field.value.asset.chainKind === TempleChainKind.EVM) return;
 
-    useDidUpdate(
-      () =>
-        void helpers.setValue(
-          {
-            ...field.value,
-            asset: {
-              ...field.value.asset,
-              exchangeRate: exchangeRateStored ?? field.value.asset.exchangeRate
-            }
-          },
-          true
-        ),
-      [exchangeRateStored]
-    );
+      void helpers.setValue(
+        {
+          ...field.value,
+          asset: { ...field.value.asset, balance: balanceStored ?? field.value.asset.balance ?? '0' }
+        },
+        true
+      );
+    }, [balanceStored]);
 
-    const AssetAmountInputComponent = variant === 'v2' ? AssetAmountInputV2 : AssetAmountInput;
+    useDidUpdate(() => {
+      if (field.value.asset.chainKind === TempleChainKind.EVM) return;
+
+      void helpers.setValue(
+        {
+          ...field.value,
+          asset: {
+            ...field.value.asset,
+            exchangeRate: exchangeRateStored ?? field.value.asset.exchangeRate
+          }
+        },
+        true
+      );
+    }, [exchangeRateStored]);
+
+    const AssetAmountInputComponent = inputComponent ?? (variant === 'v2' ? AssetAmountInputV2 : AssetAmountInput);
 
     return (
       <>
         <AssetAmountInputComponent
-          value={field.value}
+          value={value ?? field.value}
           label={label}
           assetsList={assetsList}
           frozenBalance={frozenBalance}

@@ -14,12 +14,10 @@ import {
   swapStackScreens,
   walletStackScreens
 } from 'src/navigator/enums/screens.enum';
-import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
-import { showErrorToast } from 'src/toast/toast.utils';
 import { isStackFocused } from 'src/utils/is-stack-focused.util';
 
 import { NavigationBarIconNameEnum } from '../navigation-bar-icon/icon-name.enum';
-import { NOT_AVAILABLE_MESSAGE, useIsManageCollectiblesTab, useSwapScreenParams } from '../utils';
+import { useIsManageCollectiblesTab, useSwapScreenParams } from '../utils';
 
 import { TabBarButton } from './tab-bar-button/tab-bar-button';
 import { useTabBarStyles } from './tab-bar.styles';
@@ -30,7 +28,6 @@ interface Props {
 
 export const TabBar = memo<Props>(({ currentRouteName }) => {
   const styles = useTabBarStyles();
-  const tezosAddress = useAccountAddressForTezos();
 
   const swapScreenParams = useSwapScreenParams(currentRouteName);
   const isManageCollectiblesTab = useIsManageCollectiblesTab(currentRouteName);
@@ -39,8 +36,6 @@ export const TabBar = memo<Props>(({ currentRouteName }) => {
     (screensStack: ScreensOrModalsEnum[]) => isStackFocused(currentRouteName, screensStack),
     [currentRouteName]
   );
-
-  const handleDisabledPress = useCallback(() => showErrorToast({ description: NOT_AVAILABLE_MESSAGE }), []);
 
   return (
     <>
@@ -61,17 +56,14 @@ export const TabBar = memo<Props>(({ currentRouteName }) => {
             iconName={NavigationBarIconNameEnum.Nft}
             routeName={ScreensEnum.CollectiblesHome}
             focused={isStackFocusedMemo(nftStackScreens) || isManageCollectiblesTab}
-            disabledOnPress={handleDisabledPress}
           />
           {!LIMIT_FIN_FEATURES && (
             <TabBarButton
-              disabled={!tezosAddress}
               label="Swap"
               iconName={NavigationBarIconNameEnum.Swap}
               routeName={ScreensEnum.SwapScreen}
               swapScreenParams={swapScreenParams}
               focused={isStackFocusedMemo(swapStackScreens)}
-              disabledOnPress={handleDisabledPress}
             />
           )}
           <TabBarButton
@@ -79,7 +71,6 @@ export const TabBar = memo<Props>(({ currentRouteName }) => {
             iconName={NavigationBarIconNameEnum.DApps}
             routeName={ScreensEnum.DApps}
             focused={isStackFocusedMemo(dAppsStackScreens)}
-            disabledOnPress={handleDisabledPress}
           />
           <TabBarButton
             label="Market"

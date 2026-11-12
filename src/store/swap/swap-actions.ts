@@ -1,5 +1,6 @@
 import { createAction } from '@reduxjs/toolkit';
 
+import { Route3EvmTokenWithPrice } from 'src/apis/temple-wallet/evm-swap';
 import {
   Route3Dex,
   Route3SwapParamsResponse,
@@ -22,3 +23,12 @@ export const loadSwapTokensMetadataAction = createActions<void, Array<TokenInter
   'swap/LOAD_ROUTE3_TOKENS_METADATA'
 );
 export const loadSwapDexesAction = createActions<void, Array<Route3Dex>, string>('swap/LOAD_ROUTE3_DEXES');
+
+interface EvmSwapTokensError {
+  message: string;
+  retryAt?: number;
+}
+
+export const loadEvmSwapTokensAction = createActions<void, Record<string, Route3EvmTokenWithPrice>, EvmSwapTokensError>(
+  'swap/LOAD_EVM_TOKENS'
+);

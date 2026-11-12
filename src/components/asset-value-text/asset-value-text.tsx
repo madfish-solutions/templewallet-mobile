@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { StyleProp, TextStyle, Text } from 'react-native';
 
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { AssetInterface } from 'src/interfaces/asset.interface';
 import { getDollarValue } from 'src/utils/balance.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -34,7 +35,9 @@ export const AssetValueText: FC<Props> = ({
   convertToDollar = false,
   hideApproximateSign = false
 }) => {
-  const hideText = convertToDollar && !isDefined(asset.decimals);
+  const hideText =
+    convertToDollar &&
+    (!isDefined(asset.decimals) || (asset.chainKind === TempleChainKind.EVM && !isDefined(asset.exchangeRate)));
 
   const visibleAmount = getDollarValue(amount, asset.decimals, convertToDollar ? asset.exchangeRate : 1);
   const isBurnReceiverAddress = receiver === BURN_ADDRESS;

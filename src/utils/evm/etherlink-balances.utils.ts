@@ -24,6 +24,7 @@ import {
   EVM_TOKEN_SLUG
 } from 'src/token/interfaces/token-metadata.interface';
 import { ETHERLINK_MAINNET_CHAIN_SPECS, EvmNetworkEssentials } from 'src/types/networks';
+import { filterManualAssetMetadata } from 'src/utils/evm/filter-manual-asset-metadata';
 import { getEvmAssetBalance, getEvmNativeBalance } from 'src/utils/evm/on-chain/balance';
 import { getEvmAssetsBalances, EvmAssetToReadBalanceFor } from 'src/utils/evm/on-chain/multicall-balances';
 import { EvmContractAssetStandard } from 'src/utils/evm/on-chain/types';
@@ -137,14 +138,8 @@ export const dispatchEtherlinkAccountData = ({
   const chainId = ETHERLINK_MAINNET_CHAIN_ID;
 
   const evmAssetsRecord = store.getState().evmAssets.record;
-  const isManualSlug = (slug: string) =>
-    Object.values(evmAssetsRecord).some(accountChains => accountChains[chainId]?.[slug]?.manual === true);
-  const tokensMetadata = Object.fromEntries(
-    Object.entries(data.tokensMetadata).filter(([slug]) => !isManualSlug(slug))
-  );
-  const collectiblesMetadata = Object.fromEntries(
-    Object.entries(data.collectiblesMetadata).filter(([slug]) => !isManualSlug(slug))
-  );
+  const tokensMetadata = filterManualAssetMetadata(data.tokensMetadata, evmAssetsRecord, chainId);
+  const collectiblesMetadata = filterManualAssetMetadata(data.collectiblesMetadata, evmAssetsRecord, chainId);
 
   dispatch(processLoadedEvmAssetsAction({ account, chainId, assets: data.assets }));
   dispatch(processLoadedEvmBalances({ account, chainId, balances: data.balances, timestamp, preservedSlugs }));

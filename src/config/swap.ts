@@ -36,3 +36,5 @@ export const TEMPLE_TOKEN: Route3Token = {
 };
 
 export const APP_ID = 2;
+
+export const ROUTING_FEE_EVM_ADDRESS = '0x3d7F458494A020dB3280e6f1C182B6b69862ce25';
