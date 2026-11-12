@@ -1,12 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import { encodeFunctionData, erc20Abi, isAddress, zeroAddress } from 'viem';
 
-import {
-  parse3RouteEvmRoute,
-  Route3EvmRoute,
-  Route3EvmRouteRequest,
-  Route3EvmTokenWithPrice
-} from 'src/apis/temple-wallet/evm-swap';
+import { Route3EvmRoute, Route3EvmRouteRequest, Route3EvmTokenWithPrice } from 'src/apis/temple-wallet/evm-swap';
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { ROUTING_FEE_EVM_ADDRESS, ROUTING_FEE_RATIO } from 'src/config/swap';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
@@ -145,7 +140,6 @@ export const validateSwapRouteIdentity = (route: Route3EvmRoute, identity: EvmSw
 };
 
 export const validateSwapAssets = (quote: EvmSwapQuote, input: EvmSwapAsset, output: EvmSwapAsset): void => {
-  parse3RouteEvmRoute(quote.route);
   validateSwapRouteIdentity(quote.route, quote.identity);
   if (
     input.chainKind !== TempleChainKind.EVM ||
