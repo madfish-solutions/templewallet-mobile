@@ -6,14 +6,13 @@ import { useEvmChain } from 'src/hooks/evm/use-evm-chains.hook';
 import { useEvmTransactionFee } from 'src/hooks/evm/use-evm-transaction-fee';
 import { useViemPublicClient } from 'src/hooks/evm/use-viem-public-client.hook';
 import { StacksEnum } from 'src/navigator/enums/stacks.enum';
-import { dispatch, store } from 'src/store';
+import { dispatch } from 'src/store';
 import { navigateAction } from 'src/store/root-state.actions';
-import { useAllAccounts, useCurrentAccountId } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForEvm } from 'src/store/wallet/wallet-selectors';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
 import { EvmSwapQuote } from 'src/types/evm-swap';
 import { toEvmNetworkEssentials } from 'src/types/networks';
-import { getAccountAddressForEvm } from 'src/utils/account.utils';
 import { buildPreparedEvmTransaction } from 'src/utils/evm/build-prepared-evm-transaction';
 import { evmSwapQuoteService } from 'src/utils/evm/evm-swap-quote-service';
 import { normalizeEvmTransactionError } from 'src/utils/evm/evm-transaction-error';
@@ -28,7 +27,6 @@ import {
   validateSwapAssets
 } from 'src/utils/evm/swap.utils';
 import { showEvmTransactionSuccessToast } from 'src/utils/evm/transaction-toast.utils';
-import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
 import { EvmSwapConfirmationModalParams } from '../confirmation-modal.params';
 
@@ -42,10 +40,7 @@ import {
 
 export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) => {
   const { accountId, chainId, input, output } = params;
-  const accounts = useAllAccounts();
-  const selectedId = useCurrentAccountId();
-  const account = accounts.find(item => item.id === accountId);
-  const sourceAddress = account ? getAccountAddressForEvm(account) : undefined;
+  const sourceAddress = useAccountAddressForEvm();
   const chain = useEvmChain(chainId);
   const client = useViemPublicClient(chainId);
   const [state, dispatchState] = useReducer(evmSwapConfirmationReducer, params.quote, createEvmSwapConfirmationState);
@@ -62,27 +57,6 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
   }, []);
   const canClose = useCallback(() => !guard.current || isSwapSubmitted(stateRef.current), []);
   const requestController = useRef<AbortController | undefined>(undefined);
-  const validAccount =
-    selectedId === accountId && sourceAddress?.toLowerCase() === quote.identity.fromAddress.toLowerCase();
-
-  const assertAccount = (): void => {
-    const state = store.getState();
-    const wallet = state.wallet;
-    if (String(state.settings.slippage) !== quote.identity.slippage)
-      throw new Error('The slippage changed. Return to the swap form.');
-    const current = wallet.accounts.find(item => item.id === accountId);
-    if (
-      wallet.selectedAccountId !== accountId ||
-      !current ||
-      getAccountAddressForEvm(current)?.toLowerCase() !== quote.identity.fromAddress.toLowerCase()
-    ) {
-      throw new Error('The selected account changed. Return to the swap form.');
-    }
-    if (AppState.currentState !== 'active') throw new Error('Return to the app before you confirm.');
-    if (chainId !== ETHERLINK_MAINNET_CHAIN_ID || chainId !== quote.identity.chainId)
-      throw new Error('Invalid Etherlink network.');
-    if (!chain || chain.disabled || chain.disabledAutomatically) throw new Error('Etherlink is unavailable.');
-  };
 
   useEffect(() => {
     mounted.current = true;
@@ -115,7 +89,7 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
 
   useEffect(() => {
     let cancelled = false;
-    if (phase !== 'allowance' || !validAccount) return;
+    if (phase !== 'allowance') return;
     transition({ type: 'error' });
     const check = async () => {
       try {
@@ -137,7 +111,7 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
     };
     // The quote and client define the allowance owner and spender.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phase, quote, client, validAccount, allowanceRevision]);
+  }, [phase, quote, client, allowanceRevision]);
 
   const request = useMemo(() => {
     if (phase !== 'approval' && phase !== 'swap') return;
@@ -152,13 +126,11 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
   const feeState = useEvmTransactionFee({ chainId, sourceAddress, request });
 
   const refreshQuote = async (): Promise<void> => {
-    assertAccount();
     requestController.current?.abort();
     const controller = new AbortController();
     requestController.current = controller;
     const next = await evmSwapQuoteService.load(quote.identity, controller.signal);
     validateSwapAssets(next, input, output);
-    assertAccount();
     if (controller.signal.aborted || !mounted.current) return;
     transition({ type: 'quote-refreshed', quote: next });
   };
@@ -212,7 +184,6 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
 
         return;
       }
-      assertAccount();
       if (currentStep.type === 'failed') return;
       if (quote !== stateRef.current.quote) throw new Error('Review the fresh route before you confirm.');
       if (phase === 'refresh' || stateRef.current.needsReview || !isSwapQuoteFresh(quote)) {
@@ -256,7 +227,6 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
             })
           : Promise.resolve(undefined)
       ]);
-      assertAccount();
       if (stateRef.current.needsReview || !isSwapQuoteFresh(quote)) {
         await refreshQuote();
 
@@ -303,15 +273,13 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
     busy ||
     phase === 'confirmed' ||
     (!pending &&
-      (!validAccount ||
-        phase === 'failed' ||
+      (phase === 'failed' ||
         (!refreshRequired &&
           phase !== 'allowance' &&
           !feeState.estimationError &&
           (feeState.isEstimating || !feeState.selectedFees || !request || feeState.hasInsufficientNativeBalance))));
 
   return {
-    account,
     quote,
     phase,
     feeState,
@@ -321,7 +289,6 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
     confirm,
     canClose,
     title,
-    disabled,
-    validAccount
+    disabled
   };
 };

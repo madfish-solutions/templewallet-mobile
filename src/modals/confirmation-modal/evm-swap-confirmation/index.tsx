@@ -6,6 +6,7 @@ import { useNavigationSetOptions } from 'src/components/header/use-navigation-se
 import { emptyComponent } from 'src/config/general';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useAccount } from 'src/store/wallet/wallet-selectors.ts';
 import { showErrorToast } from 'src/toast/error-toast.utils';
 
 import { ConfirmationLayout } from '../common/confirmation-layout/confirmation-layout';
@@ -22,6 +23,7 @@ const renderSwapTitle = () => <HeaderTitle title="Confirm Swap" />;
 
 export const EvmSwapConfirmation: FC<EvmSwapConfirmationModalParams> = params => {
   const { goBack, addListener } = useNavigation();
+  const account = useAccount();
   const state = useEvmSwapConfirmation(params);
   const { quote, phase } = state;
   const approval = phase === 'approval' || state.pending?.action === 'approval';
@@ -42,16 +44,14 @@ export const EvmSwapConfirmation: FC<EvmSwapConfirmationModalParams> = params =>
     [addListener, canClose]
   );
 
-  const error = !state.validAccount
-    ? 'The selected account changed. Return to the swap form.'
-    : state.error || state.feeState.estimationError?.message;
+  const error = state.error || state.feeState.estimationError?.message;
   useEffect(() => {
     if (error) showErrorToast({ description: error });
   }, [error]);
 
   return (
     <ConfirmationLayout
-      account={state.account}
+      account={account}
       accountChainKind={TempleChainKind.EVM}
       preview={
         <EvmSwapPreview
