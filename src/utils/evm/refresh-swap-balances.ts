@@ -35,12 +35,15 @@ export const refreshSwapBalances = async (
           })
         )
       ]);
+
+      // The account can disappear while Promise.all waits, for example after a wallet reset
       const exists = store
         .getState()
         .wallet.accounts.some(
           item => item.id === accountId && getAccountAddressForEvm(item)?.toLowerCase() === account.toLowerCase()
         );
       if (!exists) return;
+
       const balances: Record<string, string> = { [EVM_TOKEN_SLUG]: nativeBalance.toString() };
       const metadata: Record<string, EvmStoredTokenMetadata> = {
         [EVM_TOKEN_SLUG]: ETHERLINK_MAINNET_CHAIN_SPECS.currency

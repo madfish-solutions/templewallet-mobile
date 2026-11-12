@@ -22,6 +22,7 @@ import { showErrorToast } from 'src/toast/error-toast.utils';
 import { EVM_TOKEN_SLUG } from 'src/token/interfaces/token-metadata.interface';
 import { emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
 import { EvmSwapAssetDescriptor, EvmSwapQuote } from 'src/types/evm-swap';
+import { safeShiftedBy } from 'src/utils/big-number.utils';
 import { createEvmSwapIdentity, isSwapQuoteFresh, swapIdentityKey, validateSwapAssets } from 'src/utils/evm/swap.utils';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
@@ -55,7 +56,9 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
   const { isLoading: catalogLoading } = useEvmSwapTokensSelector();
   const slippage = useSlippageSelector();
   const { evmAssets: catalog } = useSwapAssets();
+
   const validationSchema = useMemo(() => createEvmSwapFormValidationSchema(catalog), [catalog]);
+
   const formik = useFormik<FormValues>({
     initialValues: {
       inputAssets: {
@@ -75,12 +78,16 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
     validateOnMount: true,
     onSubmit: async () => review()
   });
+
   const { values, setValues, isValid, isSubmitting, submitCount, submitForm, validateForm } = formik;
+
   const inputSlug = values.inputAssets.asset.assetSlug;
   const outputSlug = values.outputAssets.asset.assetSlug;
   const amount = values.inputAssets.amount;
+
   const input = catalog.find(asset => asset.assetSlug === inputSlug);
   const output = catalog.find(asset => asset.assetSlug === outputSlug);
+
   const outputAssets = useMemo(() => catalog.filter(asset => asset.assetSlug !== inputSlug), [catalog, inputSlug]);
 
   useEffect(() => {
@@ -91,6 +98,7 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
       outputAssets: { ...current.outputAssets, asset: output ?? current.outputAssets.asset }
     }));
   }, [input, output, values.inputAssets.asset, values.outputAssets.asset, setValues]);
+
   useEffect(() => {
     void validateForm();
   }, [validationSchema, validateForm]);
@@ -115,9 +123,11 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
       return;
     }
   }, [address, input, output, amount, slippage, chain]);
+
   const quoteState = useEvmSwapQuote(identity, active);
   const { invalidate } = quoteState;
-  const validatedQuote = useMemo(() => {
+
+  const { quote, error: validationError } = useMemo(() => {
     if (!quoteState.quote || !input || !output) return {};
     try {
       validateSwapAssets(quoteState.quote, input, output);
@@ -127,7 +137,7 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
       return { error: new Error('The route token metadata does not match the selected assets. Retry the quote.') };
     }
   }, [quoteState.quote, input, output]);
-  const quote = validatedQuote.quote;
+
   const reviewing = useRef(false);
   const [reviewedQuote, setReviewedQuote] = useState<EvmSwapQuote>();
 
@@ -163,6 +173,7 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
 
     return false;
   };
+
   const changeOutput = (value: AssetAmountInterface<AssetInterface>): boolean => {
     const asset = catalog.find(item => item.assetSlug === value.asset.assetSlug);
     if (!asset || asset.assetSlug === inputSlug) return false;
@@ -171,12 +182,12 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
 
     return false;
   };
+
   const review = (): void => {
     if (
       reviewing.current ||
       !isValid ||
       (input && amount?.gt(input.balance)) ||
-      !accountId ||
       !input ||
       !output ||
       !quote ||
@@ -218,24 +229,30 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
   );
 
   const inputAmount =
-    displayedQuote && input ? new BigNumber(displayedQuote.route.fromAmount).shiftedBy(-input.decimals) : undefined;
-  const outputAmount =
-    displayedQuote && output ? new BigNumber(displayedQuote.route.toAmount).shiftedBy(-output.decimals) : undefined;
+    displayedQuote && input
+      ? safeShiftedBy(new BigNumber(displayedQuote.route.fromAmount), -input.decimals)
+      : undefined;
+  const outputAmount = outputAtomicAmount && output ? safeShiftedBy(outputAtomicAmount, -output.decimals) : undefined;
+
   const minimumReceivedAmount =
-    displayedQuote && output ? new BigNumber(displayedQuote.route.toAmountMin).shiftedBy(-output.decimals) : undefined;
-  const quoteError = quoteState.error ?? validatedQuote.error;
+    displayedQuote && output
+      ? safeShiftedBy(new BigNumber(displayedQuote.route.toAmountMin), -output.decimals)
+      : undefined;
+
+  const quoteError = quoteState.error ?? validationError;
   const noRouteError = quoteError instanceof EvmSwapApiError && quoteError.code === 'no-route' ? quoteError : undefined;
+
   useEffect(() => {
     if (active && noRouteError) showErrorToast({ description: noRouteError.message });
   }, [active, noRouteError]);
-  const maxInputAmount = input
-    ? input.assetSlug === EVM_TOKEN_SLUG
-      ? BigNumber.maximum(
-          new BigNumber(input.balance).minus(new BigNumber(DEFAULT_EXPECTED_GAS_EXPENSE).shiftedBy(input.decimals)),
-          0
-        )
-      : input.balance
-    : undefined;
+
+  const maxInputAmount = useMemo(() => {
+    if (!input || input.assetSlug !== EVM_TOKEN_SLUG) return input?.balance;
+
+    const gasExpense = safeShiftedBy(new BigNumber(DEFAULT_EXPECTED_GAS_EXPENSE), input.decimals);
+
+    return BigNumber.maximum(new BigNumber(input.balance).minus(gasExpense), 0);
+  }, [input]);
 
   return (
     <FormikProvider value={formik}>
