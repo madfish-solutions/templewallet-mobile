@@ -3,7 +3,7 @@ import { EvmSwapQuote, EvmSwapQuoteIdentity } from 'src/types/evm-swap';
 
 import { toSwapRouteRequest, validateSwapRouteIdentity } from './swap.utils';
 
-export class EvmSwapQuoteService {
+class EvmSwapQuoteService {
   private retryAt = 0;
 
   async load(identity: EvmSwapQuoteIdentity, signal?: AbortSignal): Promise<EvmSwapQuote> {
