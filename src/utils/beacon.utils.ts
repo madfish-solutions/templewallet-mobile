@@ -1,4 +1,4 @@
-import { TezosOperationType } from '@airgap/beacon-sdk';
+import { TezosOperationType } from '@ecadlabs/beacon-sdk';
 import { ParamsWithKind } from '@taquito/taquito';
 import { of } from 'rxjs';
 

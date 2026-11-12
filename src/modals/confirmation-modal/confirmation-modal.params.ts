@@ -1,4 +1,4 @@
-import { BeaconRequestOutputMessage } from '@airgap/beacon-sdk';
+import { BeaconRequestOutputMessage } from '@ecadlabs/beacon-sdk';
 import { WalletKitTypes } from '@reown/walletkit';
 import { ParamsWithKind } from '@taquito/taquito';
 

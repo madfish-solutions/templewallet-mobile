@@ -8,6 +8,7 @@ import { CASHBACK_RATIO, ROUTING_FEE_RATIO } from 'src/config/swap';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { AssetInterface } from 'src/interfaces/asset.interface';
 import { formatSize } from 'src/styles/format-size';
+import { safeToFixed } from 'src/utils/big-number.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { formatAssetAmount } from 'src/utils/number.util';
 
@@ -51,15 +52,16 @@ export const SwapExchangeRate: FC<Props> = ({
 
   const minimumReceivedAmount = useMemo(() => {
     if (isDefined(minimumReceived)) {
-      return `${minimumReceived.toFixed(Math.min(8, outputAsset.decimals), BigNumber.ROUND_DOWN)} ${
+      return `${safeToFixed(minimumReceived, Math.min(8, outputAsset.decimals), BigNumber.ROUND_DOWN)} ${
         outputAsset.symbol
       }`;
     }
     if (isDefined(outputAmount) && outputAmount.isGreaterThan(0)) {
-      return `${outputAmount
-        .multipliedBy(slippageRatio)
-        .multipliedBy(routingFeeIsTakenFromOutput ? 1 - ROUTING_FEE_RATIO : 1)
-        .toFixed(Math.min(8, outputAsset.decimals), BigNumber.ROUND_DOWN)} ${outputAsset.symbol}`;
+      return `${safeToFixed(
+        outputAmount.multipliedBy(slippageRatio).multipliedBy(routingFeeIsTakenFromOutput ? 1 - ROUTING_FEE_RATIO : 1),
+        Math.min(8, outputAsset.decimals),
+        BigNumber.ROUND_DOWN
+      )} ${outputAsset.symbol}`;
     }
 
     return '---';

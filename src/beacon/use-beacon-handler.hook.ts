@@ -1,4 +1,4 @@
-import { Serializer } from '@airgap/beacon-sdk';
+import { Serializer } from '@ecadlabs/beacon-sdk';
 import { useEffect } from 'react';
 import { EmitterSubscription, Linking } from 'react-native';
 

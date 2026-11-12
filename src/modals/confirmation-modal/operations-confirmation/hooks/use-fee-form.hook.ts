@@ -87,6 +87,10 @@ const applyEstimations = (initialParams: ParamsWithKind[], estimationsList: Esti
   const finalParams: ParamsWithKind[] = initialParams.map((opParam, i) => {
     const estimation = estimationsList[withReveal ? i + 1 : i];
 
+    if (!estimation) {
+      return opParam;
+    }
+
     const {
       fee = estimation.suggestedFeeMutez,
       gasLimit = estimation.gasLimit,

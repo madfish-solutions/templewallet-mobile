@@ -2,6 +2,7 @@ import { BigNumber } from 'bignumber.js';
 
 import { AssetInterface } from 'src/interfaces/asset.interface';
 import { getDollarValue } from 'src/utils/balance.utils';
+import { safeShiftedBy } from 'src/utils/big-number.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 const compareAssetsByValue = (first: AssetInterface, second: AssetInterface) => {
@@ -16,9 +17,9 @@ const compareAssetsByValue = (first: AssetInterface, second: AssetInterface) => 
     return secondFiat - firstFiat;
   }
 
-  const balanceDifference = new BigNumber(second.balance)
-    .shiftedBy(-second.decimals)
-    .minus(new BigNumber(first.balance).shiftedBy(-first.decimals));
+  const balanceDifference = safeShiftedBy(new BigNumber(second.balance), -second.decimals).minus(
+    safeShiftedBy(new BigNumber(first.balance), -first.decimals)
+  );
 
   return balanceDifference.isZero() ? first.symbol.localeCompare(second.symbol) : balanceDifference.toNumber();
 };

@@ -29,6 +29,7 @@ import {
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 
+import { safeDecimalPlaces } from './big-number.utils';
 import { TEMPLE_WALLET_ROUTE3_AUTH_TOKEN } from './env.utils';
 import { getLbStorage } from './swap.utils';
 import { mutezToTz, tzToMutez } from './tezos.util';
@@ -126,9 +127,11 @@ const correctOutput = <T extends Route3TreeNode>(tree: T, newOutput: BigNumber, 
         const newOutput =
           index === lastItemIndex
             ? outputLeft
-            : new BigNumber(item.tokenOutAmount)
-                .times(multiplier)
-                .decimalPlaces(toTokenDecimals, BigNumber.ROUND_FLOOR);
+            : safeDecimalPlaces(
+                new BigNumber(item.tokenOutAmount).times(multiplier),
+                toTokenDecimals,
+                BigNumber.ROUND_FLOOR
+              );
         outputLeft = outputLeft.minus(newOutput);
 
         return correctOutput(item, newOutput, toTokenDecimals);

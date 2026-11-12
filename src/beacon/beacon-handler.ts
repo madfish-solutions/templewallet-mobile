@@ -5,9 +5,9 @@ import {
   P2PPairingRequest,
   BeaconResponseInputMessage,
   PeerInfo,
-  WalletClient
-} from '@airgap/beacon-sdk';
-import type { ExtendedP2PPairingResponse } from '@airgap/beacon-types';
+  WalletClient,
+  ExtendedP2PPairingResponse
+} from '@ecadlabs/beacon-sdk';
 
 import { isDefined } from '../utils/is-defined';
 

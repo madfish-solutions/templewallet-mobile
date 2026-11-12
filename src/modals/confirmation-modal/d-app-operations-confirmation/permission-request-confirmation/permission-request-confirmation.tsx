@@ -1,4 +1,4 @@
-import { BeaconMessageType, PermissionRequestOutput } from '@airgap/beacon-sdk';
+import { BeaconMessageType, PermissionRequestOutput } from '@ecadlabs/beacon-sdk';
 import React, { FC, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { from } from 'rxjs';
