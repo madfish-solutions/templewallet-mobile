@@ -22,9 +22,9 @@ const EVM_ESTIMATION_REFRESH_INTERVAL = 15_000;
 type EstimationTrigger = 'dependencies' | 'interval' | 'app-active' | 'retry' | 'submission';
 
 interface Props {
-  sourceAddress?: HexString;
+  sourceAddress: HexString;
+  publicClient: EvmTransactionPreparer;
   request?: EvmTransactionRequest;
-  publicClient?: EvmTransactionPreparer;
 }
 
 const getEstimatedGasPrice = (estimation: EvmEstimation) =>
@@ -48,7 +48,7 @@ const parsePositiveGasPrice = (value: string) => {
   }
 };
 
-export const useEvmTransactionEstimation = ({ sourceAddress, request, publicClient }: Props) => {
+export const useEvmTransactionEstimation = ({ sourceAddress, publicClient, request }: Props) => {
   const [estimation, setEstimation] = useState<EvmEstimation>();
   const [estimationError, setEstimationError] = useState<EvmTransactionError>();
   const estimationErrorRef = useRef(estimationError);
@@ -79,17 +79,6 @@ export const useEvmTransactionEstimation = ({ sourceAddress, request, publicClie
         if (!request) {
           setEstimationError(undefined);
           setIsEstimating(false);
-
-          return undefined;
-        }
-
-        if (!sourceAddress || !publicClient) {
-          const error = normalizeEvmTransactionError(new Error('EVM account or network is unavailable'));
-
-          if (requestId === estimationRequestIdRef.current) {
-            setEstimationError(error);
-            setIsEstimating(false);
-          }
 
           return undefined;
         }

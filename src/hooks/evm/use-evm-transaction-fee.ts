@@ -15,6 +15,8 @@ import {
   resolveEvmSubmissionFees
 } from 'src/utils/evm/evm-transaction-fee.utils';
 
+import { DeadEndBoundaryError } from '../../components/error-boundary';
+
 import { useEvmTransactionEstimation } from './use-evm-transaction-estimation';
 
 interface NativeCurrencyFallback {
@@ -33,6 +35,9 @@ interface Props {
 export const useEvmTransactionFee = ({ chainId, sourceAddress, request, nativeCurrencyFallback }: Props) => {
   const chain = useEvmChain(chainId);
   const publicClient = useViemPublicClient(chainId);
+
+  if (!chain || !publicClient || !sourceAddress) throw new DeadEndBoundaryError();
+
   const balances = useEvmAccountChainBalancesSelector(sourceAddress, chainId);
   const nativeExchangeRate = useEvmAssetExchangeRate(chainId, EVM_TOKEN_SLUG);
   const [isDetailedInputVisible, setIsDetailedInputVisible] = useState(false);
