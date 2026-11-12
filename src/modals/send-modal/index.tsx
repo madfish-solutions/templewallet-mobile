@@ -209,7 +209,11 @@ export const SendModal: FC = () => {
             isSearchable
             dropdownDescription="Select Token"
             searchPlaceholder="Search by name or address"
-            dropdownListHeader={<AssetNetworkFilter value={networkFilter} onChange={setNetworkFilter} />}
+            dropdownListHeader={
+              tezosAddress && evmAddress ? (
+                <AssetNetworkFilter value={networkFilter} onChange={setNetworkFilter} />
+              ) : undefined
+            }
             scrollToSelectedOnOpen={false}
             setSearchValue={setAssetSearch}
             onValueChange={handleAssetChange}

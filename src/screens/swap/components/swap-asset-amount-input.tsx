@@ -5,6 +5,7 @@ import { AssetAmountInputProps } from 'src/components/asset-amount-input/asset-a
 import { AssetNetworkFilter } from 'src/components/asset-network-filter/asset-network-filter';
 import { useAssetSelection } from 'src/hooks/use-asset-selection';
 import { AssetInterface } from 'src/interfaces/asset.interface';
+import { useAccountAddressForEvm, useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { assetsEqualityFn, getAssetKey, getAssetSlug } from 'src/utils/asset.utils';
 import { sortAssetsByValue } from 'src/utils/assets/sort-assets';
 
@@ -24,6 +25,8 @@ const SwapAssetAmountInput = <TAsset extends AssetInterface>({
   ...props
 }: Props<TAsset>) => {
   const styles = useSwapFormStyles();
+  const tezosAddress = useAccountAddressForTezos();
+  const evmAddress = useAccountAddressForEvm();
   const { inputAssets, onSelectInput } = useSwapAssets();
   const assets = useMemo(() => {
     if (field === 'output') return sortAssetsByValue(assetsList);
@@ -66,7 +69,9 @@ const SwapAssetAmountInput = <TAsset extends AssetInterface>({
       listDollarEquivalentTextStyle={styles.tokenListDollarEquivalent}
       setSearchValue={setAssetSearch}
       dropdownListHeader={
-        field === 'input' ? <AssetNetworkFilter value={networkFilter} onChange={setNetworkFilter} /> : undefined
+        field === 'input' && tezosAddress && evmAddress ? (
+          <AssetNetworkFilter value={networkFilter} onChange={setNetworkFilter} />
+        ) : undefined
       }
     />
   );
