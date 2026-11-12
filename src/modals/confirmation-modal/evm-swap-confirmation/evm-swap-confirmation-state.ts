@@ -8,9 +8,9 @@ export interface PendingSwapAction {
 }
 
 type ConfirmationStep =
-  | { type: 'allowance' | 'approval' | 'swap' | 'refresh' }
+  | { type: 'allowance' | 'approval' | 'swap' }
   | { type: 'pending'; transaction: PendingSwapAction }
-  | { type: 'confirmed'; hash: Hash }
+  | { type: 'confirmed'; transaction: PendingSwapAction }
   | { type: 'failed'; transaction: PendingSwapAction };
 
 interface EvmSwapConfirmationState {
@@ -18,25 +18,22 @@ interface EvmSwapConfirmationState {
   step: ConfirmationStep;
   busy: boolean;
   error?: string;
-  needsReview: boolean;
   allowanceRevision: number;
 }
 
 export type EvmSwapConfirmationEvent =
-  | { type: 'start' | 'finish' | 'require-review' | 'retry-allowance' }
+  | { type: 'start' | 'finish' | 'retry-allowance' }
   | { type: 'error'; message?: string }
   | { type: 'quote-refreshed'; quote: EvmSwapQuote }
   | { type: 'allowance-resolved'; sufficient: boolean }
   | { type: 'broadcast'; transaction: PendingSwapAction }
-  | { type: 'approval-confirmed'; fresh: boolean }
-  | { type: 'swap-confirmed'; hash: Hash }
+  | { type: 'transaction-confirmed'; transaction: PendingSwapAction }
   | { type: 'transaction-failed'; transaction: PendingSwapAction };
 
 export const createEvmSwapConfirmationState = (quote: EvmSwapQuote): EvmSwapConfirmationState => ({
   quote,
   step: { type: 'allowance' },
   busy: false,
-  needsReview: false,
   allowanceRevision: 0
 });
 
@@ -55,17 +52,13 @@ export const evmSwapConfirmationReducer = (
       if (state.error === event.message) return state;
 
       return { ...state, error: event.message };
-    case 'require-review':
-      if (state.needsReview) return state;
-
-      return { ...state, needsReview: true };
     case 'retry-allowance':
       return { ...state, allowanceRevision: state.allowanceRevision + 1 };
     case 'quote-refreshed':
       if (state.step.type === 'pending' || state.step.type === 'confirmed' || state.step.type === 'failed')
         return state;
 
-      return { ...state, quote: event.quote, step: { type: 'allowance' }, needsReview: false };
+      return { ...state, quote: event.quote, step: { type: 'allowance' } };
     case 'allowance-resolved':
       if (state.step.type !== 'allowance' && state.step.type !== 'approval' && state.step.type !== 'swap') return state;
 
@@ -74,14 +67,10 @@ export const evmSwapConfirmationReducer = (
       if (state.step.type !== event.transaction.action) return state;
 
       return { ...state, step: { type: 'pending', transaction: event.transaction } };
-    case 'approval-confirmed':
-      if (state.step.type !== 'pending' || state.step.transaction.action !== 'approval') return state;
+    case 'transaction-confirmed':
+      if (state.step.type !== 'pending' || state.step.transaction.action !== event.transaction.action) return state;
 
-      return { ...state, step: { type: event.fresh ? 'allowance' : 'refresh' } };
-    case 'swap-confirmed':
-      if (state.step.type !== 'pending' || state.step.transaction.action !== 'swap') return state;
-
-      return { ...state, step: { type: 'confirmed', hash: event.hash } };
+      return { ...state, step: { type: 'confirmed', transaction: event.transaction } };
     case 'transaction-failed':
       if (state.step.type !== 'pending' || state.step.transaction.hash !== event.transaction.hash) return state;
 
@@ -90,5 +79,5 @@ export const evmSwapConfirmationReducer = (
 };
 
 export const isSwapSubmitted = ({ step }: EvmSwapConfirmationState): boolean =>
-  step.type === 'confirmed' ||
-  ((step.type === 'pending' || step.type === 'failed') && step.transaction.action === 'swap');
+  (step.type === 'pending' || step.type === 'confirmed' || step.type === 'failed') &&
+  step.transaction.action === 'swap';
