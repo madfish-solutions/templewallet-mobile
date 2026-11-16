@@ -81,7 +81,7 @@ const request = async <T>(path: string, signal?: AbortSignal, params?: Route3Evm
         throw new EvmSwapApiError(
           'rate-limit',
           '3Route limits requests. Wait before you retry.',
-          retryAt !== undefined && Number.isFinite(retryAt) ? retryAt : Date.now() + 60_000
+          retryAt !== undefined && Number.isFinite(retryAt) ? retryAt : undefined
         );
       }
     }

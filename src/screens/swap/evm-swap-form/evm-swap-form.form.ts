@@ -4,6 +4,7 @@ import { mixed, object } from 'yup';
 import { assetAmountValidation } from 'src/form/validation/asset-amount';
 import { AssetInterface } from 'src/interfaces/asset.interface';
 import { EvmSwapAsset } from 'src/types/evm-swap';
+import { evmSwapAmountValidationSchema } from 'src/utils/evm/validation-schemas/swap';
 
 export const createEvmSwapFormValidationSchema = (catalog: EvmSwapAsset[]) => {
   const assetValidation = mixed<AssetInterface>().test('selected-asset', 'Asset must be selected', asset =>
@@ -12,16 +13,7 @@ export const createEvmSwapFormValidationSchema = (catalog: EvmSwapAsset[]) => {
 
   return object().shape({
     inputAssets: assetAmountValidation
-      .shape({ asset: assetValidation })
-      .test('valid-amount', 'Enter a valid amount', (value, context) => {
-        const amount = value.amount;
-        if (!(amount instanceof BigNumber) || !amount.gt(0)) return true;
-
-        return (
-          (amount.isFinite() && amount.isInteger() && amount.lt(new BigNumber(2).pow(256))) ||
-          context.createError({ path: `${context.path}.amount`, message: 'Enter a valid amount' })
-        );
-      })
+      .shape({ asset: assetValidation, amount: evmSwapAmountValidationSchema })
       .test('balance', 'Insufficient balance', (value, context) => {
         const asset = catalog.find(item => item.assetSlug === value.asset?.assetSlug);
 

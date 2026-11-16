@@ -6,6 +6,7 @@ import { useEvmAssetExchangeRate } from 'src/store/evm/exchange-rates/evm-exchan
 import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { EvmSwapAsset } from 'src/types/evm-swap';
+import { atomsToTokens } from 'src/utils/big-number.utils';
 import { getFiatExchangeRate } from 'src/utils/get-fiat-exchange-rate';
 
 import { OperationPreviewAssetAmounts } from '../common/operation-preview-asset-amounts';
@@ -25,7 +26,7 @@ export const EvmSwapPreview: FC<Props> = ({ asset, amount, amountUSD, destinatio
   const styles = useEvmSwapPreviewStyles();
   const exchangeRate = useEvmAssetExchangeRate(asset.chainId, asset.assetSlug);
   const fiatToUsdRate = useFiatToUsdRateSelector();
-  const quotedUsdRate = new BigNumber(amountUSD).dividedBy(new BigNumber(amount).shiftedBy(-asset.decimals));
+  const quotedUsdRate = new BigNumber(amountUSD).dividedBy(atomsToTokens(new BigNumber(amount), asset.decimals));
   const quotedExchangeRate =
     quotedUsdRate.isFinite() && quotedUsdRate.gt(0)
       ? getFiatExchangeRate(quotedUsdRate.toNumber(), fiatToUsdRate)

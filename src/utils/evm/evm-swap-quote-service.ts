@@ -1,4 +1,5 @@
 import { EvmSwapApiError, get3RouteEvmSwap } from 'src/apis/temple-wallet/evm-swap';
+import { EVM_SWAP_RATE_LIMIT_DELAY } from 'src/config/swap';
 import { EvmSwapQuote, EvmSwapQuoteIdentity } from 'src/types/evm-swap';
 
 import { toSwapRouteRequest, validateSwapRouteIdentity } from './swap.utils';
@@ -18,7 +19,7 @@ class EvmSwapQuoteService {
       return { identity, route, receivedAt: Date.now() };
     } catch (error) {
       if (error instanceof EvmSwapApiError && error.code === 'rate-limit') {
-        this.retryAt = error.retryAt ?? Date.now() + 60_000;
+        this.retryAt = error.retryAt ?? Date.now() + EVM_SWAP_RATE_LIMIT_DELAY;
         throw new EvmSwapApiError(error.code, error.message, this.retryAt);
       }
 

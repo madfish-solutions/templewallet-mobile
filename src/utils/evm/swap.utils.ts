@@ -15,6 +15,14 @@ import { toChainAssetSlug } from 'src/utils/chain-asset-slug';
 import { toEvmAssetSlug } from 'src/utils/from-token-slug';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
+import {
+  createEvmSwapApprovalValidationSchema,
+  createEvmSwapAssetValidationSchema,
+  createEvmSwapRouteValidationSchema,
+  evmSwapParametersValidationSchema,
+  isValidEvmSwapAccount
+} from './validation-schemas/swap';
+
 export const EVM_SWAP_QUOTE_LIFETIME = 60_000;
 
 const toSwapAssetSlug = (address: string): string =>
@@ -87,32 +95,19 @@ export const createEvmSwapIdentity = (
   amount: BigNumber,
   slippage: number
 ): EvmSwapQuoteIdentity => {
-  if (
-    input.chainId !== ETHERLINK_MAINNET_CHAIN_ID ||
-    output.chainId !== input.chainId ||
-    input.assetSlug === output.assetSlug ||
-    !amount.isInteger() ||
-    !amount.gt(0) ||
-    !amount.isFinite() ||
-    amount.gte(new BigNumber(2).pow(256)) ||
-    !Number.isFinite(slippage) ||
-    slippage < 0 ||
-    slippage > 30
-  )
+  if (!evmSwapParametersValidationSchema.isValidSync({ input, output, amount, slippage }, { strict: true }))
     throw new Error('Invalid Etherlink swap pair or amount.');
-  const normalizedFrom = fromAddress.toLowerCase();
-  const referrer = ROUTING_FEE_EVM_ADDRESS.toLowerCase();
-  if (!isAddress(normalizedFrom) || normalizedFrom === zeroAddress || !isAddress(referrer))
-    throw new Error('Invalid swap account.');
+  const account = { fromAddress: fromAddress.toLowerCase(), referrer: ROUTING_FEE_EVM_ADDRESS.toLowerCase() };
+  if (!isValidEvmSwapAccount(account)) throw new Error('Invalid swap account.');
 
   return {
     chainId: input.chainId,
-    fromAddress: normalizedFrom,
+    fromAddress: account.fromAddress,
     src: toSwapProxyAddress(input.assetSlug),
     dst: toSwapProxyAddress(output.assetSlug),
     amount: amount.toFixed(0),
     slippage: new BigNumber(slippage).toFixed(),
-    referrer,
+    referrer: account.referrer,
     fee: EVM_SWAP_FEE_PERCENT
   };
 };
@@ -131,30 +126,24 @@ export const toSwapRouteRequest = (identity: EvmSwapQuoteIdentity): Route3EvmRou
 export const validateSwapRouteIdentity = (route: Route3EvmRoute, identity: EvmSwapQuoteIdentity): void => {
   if (
     identity.chainId !== ETHERLINK_MAINNET_CHAIN_ID ||
-    route.fromAddress.toLowerCase() !== identity.fromAddress.toLowerCase() ||
-    route.fromToken.address.toLowerCase() !== identity.src.toLowerCase() ||
-    route.toToken.address.toLowerCase() !== identity.dst.toLowerCase() ||
-    route.fromAmount !== identity.amount
+    !createEvmSwapRouteValidationSchema(identity).isValidSync(route, { strict: true })
   )
     throw new Error('The route does not match the selected account, pair, or amount.');
 };
 
 export const validateSwapAssets = (quote: EvmSwapQuote, input: EvmSwapAsset, output: EvmSwapAsset): void => {
   validateSwapRouteIdentity(quote.route, quote.identity);
-  if (
-    input.chainKind !== TempleChainKind.EVM ||
-    output.chainKind !== TempleChainKind.EVM ||
-    (input.standard === EvmAssetStandardEnum.ERC20 && input.contractAddress.toLowerCase() !== quote.identity.src) ||
-    (output.standard === EvmAssetStandardEnum.ERC20 && output.contractAddress.toLowerCase() !== quote.identity.dst) ||
-    input.chainId !== quote.identity.chainId ||
-    output.chainId !== quote.identity.chainId ||
-    toSwapProxyAddress(input.assetSlug) !== quote.identity.src ||
-    toSwapProxyAddress(output.assetSlug) !== quote.identity.dst ||
-    input.decimals !== quote.route.fromToken.decimals ||
-    output.decimals !== quote.route.toToken.decimals ||
-    (input.standard === EvmAssetStandardEnum.NATIVE) !== (quote.identity.src === zeroAddress) ||
-    (output.standard === EvmAssetStandardEnum.NATIVE) !== (quote.identity.dst === zeroAddress)
-  )
+  const inputSchema = createEvmSwapAssetValidationSchema(
+    quote.identity.src,
+    quote.identity.chainId,
+    quote.route.fromToken.decimals
+  );
+  const outputSchema = createEvmSwapAssetValidationSchema(
+    quote.identity.dst,
+    quote.identity.chainId,
+    quote.route.toToken.decimals
+  );
+  if (!inputSchema.isValidSync(input, { strict: true }) || !outputSchema.isValidSync(output, { strict: true }))
     throw new Error('The route token metadata does not match the selected assets.');
 };
 
@@ -177,8 +166,7 @@ export const buildEvmSwapRequest = (
 export const buildEvmSwapApproval = (quote: EvmSwapQuote, input: EvmSwapAsset): EvmTransactionRequest => {
   if (
     input.standard !== EvmAssetStandardEnum.ERC20 ||
-    toSwapProxyAddress(input.assetSlug) !== quote.identity.src ||
-    input.contractAddress.toLowerCase() !== quote.identity.src
+    !createEvmSwapApprovalValidationSchema(quote.identity.src).isValidSync(input, { strict: true })
   ) {
     throw new Error('Only the source ERC20 token can receive approval.');
   }

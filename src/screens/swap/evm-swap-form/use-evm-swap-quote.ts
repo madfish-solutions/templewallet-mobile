@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { EvmSwapApiError } from 'src/apis/temple-wallet/evm-swap';
+import { EVM_SWAP_RATE_LIMIT_DELAY } from 'src/config/swap';
 import { EvmSwapQuote, EvmSwapQuoteIdentity } from 'src/types/evm-swap';
 import { evmSwapQuoteService } from 'src/utils/evm/evm-swap-quote-service';
 import { EVM_SWAP_QUOTE_LIFETIME, swapIdentityKey } from 'src/utils/evm/swap.utils';
@@ -68,7 +69,7 @@ export const useEvmSwapQuote = (identity: EvmSwapQuoteIdentity | undefined, acti
     if (state.error) {
       const delay =
         state.error instanceof EvmSwapApiError && state.error.code === 'rate-limit'
-          ? Math.max(0, (state.error.retryAt ?? Date.now() + EVM_SWAP_QUOTE_LIFETIME) - Date.now())
+          ? Math.max(0, (state.error.retryAt ?? Date.now() + EVM_SWAP_RATE_LIMIT_DELAY) - Date.now())
           : EVM_SWAP_QUOTE_LIFETIME;
       const timeout = setTimeout(invalidate, delay);
 

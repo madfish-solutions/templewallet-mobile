@@ -106,9 +106,7 @@ export const EvmSwapForm: FC<Props> = ({ inputAsset, outputAsset }) => {
 
   useEffect(() => {
     if (!active) return;
-    const refreshTokens = (): void => {
-      dispatch(loadEvmSwapTokensAction.submit());
-    };
+    const refreshTokens = () => void dispatch(loadEvmSwapTokensAction.submit());
     refreshTokens();
     const interval = setInterval(refreshTokens, TOKEN_PRICES_REFRESH_INTERVAL);
 

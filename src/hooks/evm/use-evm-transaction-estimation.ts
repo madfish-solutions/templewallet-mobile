@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { formatGwei, parseGwei } from 'viem';
 
 import { useAppStateStatus } from 'src/hooks/use-app-state-status.hook';
+import { useUpdatableRef } from 'src/hooks/use-updatable-ref.hook';
 import { EvmTransactionRequest } from 'src/interfaces/evm-transaction-request.interface';
 import {
   EvmEstimation,
@@ -51,8 +52,7 @@ const parsePositiveGasPrice = (value: string) => {
 export const useEvmTransactionEstimation = ({ sourceAddress, publicClient, request }: Props) => {
   const [estimation, setEstimation] = useState<EvmEstimation>();
   const [estimationError, setEstimationError] = useState<EvmTransactionError>();
-  const estimationErrorRef = useRef(estimationError);
-  estimationErrorRef.current = estimationError;
+  const estimationErrorRef = useUpdatableRef(estimationError);
   const [isEstimating, setIsEstimating] = useState(true);
   const [gasPriceInput, setGasPriceInput] = useState('');
   const estimationRef = useRef<EvmEstimation | undefined>(undefined);
@@ -61,8 +61,7 @@ export const useEvmTransactionEstimation = ({ sourceAddress, publicClient, reque
   const estimatedAtRef = useRef(0);
   const estimationRequestIdRef = useRef(0);
   const estimationPromiseRef = useRef<Promise<EvmEstimation | undefined> | undefined>(undefined);
-  const requestRef = useRef(request);
-  requestRef.current = request;
+  const requestRef = useUpdatableRef(request);
 
   const runEstimation = useCallback(
     (trigger: EstimationTrigger): Promise<EvmEstimation | undefined> => {
@@ -136,11 +135,10 @@ export const useEvmTransactionEstimation = ({ sourceAddress, publicClient, reque
 
       return promise;
     },
-    [publicClient, request, sourceAddress]
+    [estimationErrorRef, publicClient, request, sourceAddress]
   );
 
-  const runEstimationRef = useRef(runEstimation);
-  runEstimationRef.current = runEstimation;
+  const runEstimationRef = useUpdatableRef(runEstimation);
 
   useEffect(() => {
     isGasPriceCustomizedRef.current = false;
@@ -208,7 +206,7 @@ export const useEvmTransactionEstimation = ({ sourceAddress, publicClient, reque
       gasLimit: resolveEvmGasLimit(latestEstimation.gas, latestRequest?.gas),
       fees: resolveEvmSubmissionFees(latestGasPrice, latestEstimation, latestRequest)
     };
-  }, [runEstimation]);
+  }, [requestRef, runEstimation]);
 
   return {
     estimation,
