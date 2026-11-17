@@ -10,6 +10,7 @@ import { DAppConnectionProtocol } from 'src/enums/dapp-connection-protocol.enum'
 import { DAppConnection } from 'src/interfaces/dapp-connection.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { dispatch } from 'src/store';
+import { groupConnectionsByDApp } from 'src/store/d-apps/connection.utils';
 import { loadConnectionsActions, removeConnectionsAction } from 'src/store/d-apps/d-apps-actions';
 import { useSelectedAccountConnectionsSelector } from 'src/store/d-apps/d-apps-selectors';
 import { setIsInAppBrowserEnabledAction } from 'src/store/settings/settings-actions';
@@ -23,15 +24,16 @@ import { useDAppsSettingsStyles } from './d-apps-settings.styles';
 import { DAppsSettingsSelectors } from './d-apps.settings.selectors';
 import { DisconnectAllButton } from './disconnect-all-button';
 
-const keyExtractor = (connection: DAppConnection) => connection.id;
+const keyExtractor = ([connection]: NonEmptyArray<DAppConnection>) => connection.id;
 
-const renderItem: ListRenderItem<DAppConnection> = ({ item }) => <ConnectionItem connection={item} />;
+const renderItem: ListRenderItem<NonEmptyArray<DAppConnection>> = ({ item }) => <ConnectionItem connections={item} />;
 
 export const DAppsSettings = () => {
   const styles = useDAppsSettingsStyles();
   const { trackEvent } = useAnalytics();
 
   const connections = useSelectedAccountConnectionsSelector();
+  const connectionGroups = useMemo(() => groupConnectionsByDApp(connections), [connections]);
   const isInAppBrowserEnabled = useIsInAppBrowserEnabledSelector();
   const hasConnections = connections.length > 0;
 
@@ -89,7 +91,7 @@ export const DAppsSettings = () => {
         {hasConnections && <Text style={styles.sectionLabel}>Connected Dapps</Text>}
       </View>
       <FlatList
-        data={connections}
+        data={connectionGroups}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         style={styles.list}

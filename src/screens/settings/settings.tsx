@@ -34,6 +34,7 @@ import {
 } from 'src/store/settings/settings-selectors';
 import { useAccount } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { usePageAnalytic, useAnalytics } from 'src/utils/analytics/use-analytics.hook';
@@ -48,6 +49,7 @@ const SHARE_CONTENT = 'Hey friend! You should download Temple and discover the T
 
 export const Settings = () => {
   const styles = useSettingsStyles();
+  const colors = useColors();
   const dispatch = useDispatch();
   const navigateToScreen = useNavigateToScreen();
   const { resetInProgress, resetData: handleLogoutButtonPress } = useResetDataHandler();
@@ -254,7 +256,7 @@ export const Settings = () => {
             testID={SettingsSelectors.resetWalletButton}
           >
             <Text style={styles.logoutButtonText}>Reset wallet</Text>
-            <IconV2 name={IconNameV2Enum.Logout} />
+            <IconV2 name={IconNameV2Enum.Logout} color={colors.destructive} />
           </TouchableWithAnalytics>
 
           <Divider />

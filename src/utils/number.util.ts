@@ -24,7 +24,7 @@ export const formatAssetAmount = (amount: BigNumber, decimalPlace = 6, showAllDe
     const decimalPlacesToShow = amount.abs().lt(1000) ? decimalPlace : 2;
     const roundedAmount = safeDecimalPlaces(amount, decimalPlacesToShow, BigNumber.ROUND_DOWN);
 
-    return numberWithSpaces(
+    return numberWithCommas(
       showAllDecimalPlaces ? safeToFixed(roundedAmount, decimalPlacesToShow) : roundedAmount.toFixed()
     );
   }
@@ -70,9 +70,9 @@ export const kFormatter = (num: number): string => {
   return (sign * formattedValue).toLocaleString();
 };
 
-const numberWithSpaces = (amount: string) => {
+const numberWithCommas = (amount: string) => {
   const parts = amount.split('.');
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
   return parts.join('.');
 };
