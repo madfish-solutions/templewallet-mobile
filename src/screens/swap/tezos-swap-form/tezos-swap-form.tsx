@@ -76,6 +76,8 @@ interface TezosSwapFormProps {
   outputToken?: TokenInterface;
 }
 
+const EMPTY_ASSET: TokenInterface = { ...emptyTezosLikeToken, chainKind: TempleChainKind.Tezos, assetSlug: '' };
+
 export const TezosSwapForm: FC<TezosSwapFormProps> = ({ inputToken, outputToken }) => {
   const tezosAddress = useAccountAddressForTezos();
 
@@ -372,9 +374,7 @@ export const TezosSwapForm: FC<TezosSwapFormProps> = ({ inputToken, outputToken 
         amount: undefined
       },
       outputAssets: {
-        asset: outputToken
-          ? { ...outputToken, chainKind: TempleChainKind.Tezos }
-          : { ...emptyTezosLikeToken, chainKind: TempleChainKind.Tezos },
+        asset: outputToken ? { ...outputToken, chainKind: TempleChainKind.Tezos } : EMPTY_ASSET,
         amount: undefined
       }
     },
@@ -403,10 +403,8 @@ export const TezosSwapForm: FC<TezosSwapFormProps> = ({ inputToken, outputToken 
     [selectedOutputAssets.asset, rawOutput, expectedReceivedAtomic]
   );
 
-  const inputAssetSlug = tokenEqualityFn(inputAssets.asset, emptyTezosLikeToken)
-    ? undefined
-    : getTokenSlug(inputAssets.asset);
-  const outputAssetSlug = tokenEqualityFn(outputAssets.asset, emptyTezosLikeToken)
+  const inputAssetSlug = tokenEqualityFn(inputAssets.asset, EMPTY_ASSET) ? undefined : getTokenSlug(inputAssets.asset);
+  const outputAssetSlug = tokenEqualityFn(outputAssets.asset, EMPTY_ASSET)
     ? undefined
     : getTokenSlug(outputAssets.asset);
 
@@ -422,13 +420,17 @@ export const TezosSwapForm: FC<TezosSwapFormProps> = ({ inputToken, outputToken 
 
   const dispatchLoadSwapParams = useCallback(
     (input: AssetAmountInterface, output: AssetAmountInterface) => {
+      const fromSymbol = getRoute3TokenSymbol(input.asset);
+      const toSymbol = getRoute3TokenSymbol(output.asset);
+      if (!fromSymbol || !toSymbol) return;
+
       const { swapInputMinusFeeAtomic: amount } = calculateSidePaymentsFromInput(input.amount);
       const { mainSwapMaxDexes } = getSwapWithFeeParams(input, output);
 
       dispatch(
         loadSwapParamsAction.submit({
-          fromSymbol: getRoute3TokenSymbol(input.asset),
-          toSymbol: getRoute3TokenSymbol(output.asset),
+          fromSymbol,
+          toSymbol,
           toTokenDecimals: output.asset.decimals,
           amount: mutezToTz(amount, input.asset.decimals).toFixed(),
           dexesLimit: mainSwapMaxDexes
@@ -447,11 +449,11 @@ export const TezosSwapForm: FC<TezosSwapFormProps> = ({ inputToken, outputToken 
 
   const handleInputAssetsValueChange = useCallback(
     (newInputValue: AssetAmountInterface) => {
-      const isEmptyToken = tokenEqualityFn(newInputValue.asset, emptyTezosLikeToken);
+      const isEmptyToken = tokenEqualityFn(newInputValue.asset, EMPTY_ASSET);
 
       if (getTokenSlug(newInputValue.asset) === outputAssetSlug && !isEmptyToken) {
         setFieldValue('outputAssets', {
-          asset: { ...emptyTezosLikeToken, chainKind: TempleChainKind.Tezos },
+          asset: EMPTY_ASSET,
           amount: undefined
         });
         dispatch(resetSwapParamsAction());
