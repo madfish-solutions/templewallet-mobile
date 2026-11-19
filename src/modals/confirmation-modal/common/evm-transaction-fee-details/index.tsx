@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
-import { AttentionMessageV2 } from 'src/components/attention-message/attention-message';
 import { Divider } from 'src/components/divider/divider';
 import { FormattedAmount } from 'src/components/formatted-amount';
 import { IconV2 } from 'src/components/icon-v2';
@@ -20,10 +19,9 @@ import { useEvmTransactionFeeDetailsStyles } from './styles';
 
 interface Props {
   feeState: ReturnType<typeof useEvmTransactionFee>;
-  showInsufficientBalanceMessage?: boolean;
 }
 
-export const EvmTransactionFeeDetails: FC<Props> = ({ feeState, showInsufficientBalanceMessage = true }) => {
+export const EvmTransactionFeeDetails: FC<Props> = ({ feeState }) => {
   const styles = useEvmTransactionFeeDetailsStyles();
   const feeFormStyles = useFeeFormInputStyles();
   const errorMessageStyles = useErrorMessageStyles();
@@ -37,7 +35,6 @@ export const EvmTransactionFeeDetails: FC<Props> = ({ feeState, showInsufficient
     gasPriceInput,
     handleGasPriceInputChange,
     handleSliderValueChange,
-    hasInsufficientNativeBalance,
     isDetailedInputVisible,
     isSliderAvailable,
     slider,
@@ -97,16 +94,6 @@ export const EvmTransactionFeeDetails: FC<Props> = ({ feeState, showInsufficient
               <IconV2 name={isDetailedInputVisible ? IconNameV2Enum.XBig : IconNameV2Enum.Settings} />
             </TouchableOpacity>
           </View>
-        </>
-      )}
-      {showInsufficientBalanceMessage && hasInsufficientNativeBalance && (
-        <>
-          <Divider size={formatSize(16)} />
-          <AttentionMessageV2>
-            <Text style={styles.attentionMessageText}>
-              Insufficient {feeAsset.symbol} balance for the amount and network fee
-            </Text>
-          </AttentionMessageV2>
         </>
       )}
       <Divider size={formatSize(24)} />

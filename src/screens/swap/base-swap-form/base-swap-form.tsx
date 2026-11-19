@@ -17,6 +17,8 @@ import { SwapDirectionButton } from '../components/swap-direction-button';
 import { SwapFormSelectors } from '../swap-form/swap-form.selectors';
 import { useSwapFormStyles } from '../swap-form/swap-form.styles';
 
+const outputSelection = { start: 0, end: 0 };
+
 interface Props<TAsset extends AssetInterface> {
   inputTokens: TAsset[];
   outputTokens: TAsset[];
@@ -66,6 +68,7 @@ export const BaseSwapForm = <TAsset extends AssetInterface>({
     label: 'To',
     toUsdToggle: false,
     editable: false,
+    selectionOptions: outputSelection,
     stylesConfig: { amountInput: styles.outputAmountInput, inputContainer: styles.outputInputContainer },
     assetsList: outputTokens,
     isLoading,
