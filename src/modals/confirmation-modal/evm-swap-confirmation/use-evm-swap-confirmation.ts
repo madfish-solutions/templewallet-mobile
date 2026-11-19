@@ -12,6 +12,7 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { dispatch } from 'src/store';
 import { navigateAction } from 'src/store/root-state.actions';
 import { useAccountAddressForEvm } from 'src/store/wallet/wallet-selectors';
+import { showInsufficientGasBalanceToast } from 'src/toast/error-toast.utils';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
 import { EvmSwapQuote } from 'src/types/evm-swap';
@@ -271,14 +272,19 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
       if (broadcast) await completeReceipt(broadcast, result);
       else if (!result.success) throw result.error;
     } catch (cause) {
+      const { code, message } = normalizeEvmTransactionError(cause);
       if (isSwapSubmitted(stateRef.current)) {
-        const { message } = normalizeEvmTransactionError(cause);
-        showErrorToast({ title: `Failed to confirm ${chain?.name} transaction`, description: message });
-      } else if (mounted.current)
-        transition({
-          type: 'error',
-          message: cause instanceof Error ? cause.message : 'Cannot complete swap action.'
-        });
+        showErrorToast({ title: `Failed to confirm ${chain.name} transaction`, description: message });
+      } else if (mounted.current) {
+        if (code === 'insufficient-native-balance') {
+          showInsufficientGasBalanceToast(chain.name);
+        } else {
+          transition({
+            type: 'error',
+            message: cause instanceof Error ? cause.message : 'Cannot complete swap action.'
+          });
+        }
+      }
     } finally {
       guard.current = false;
       transition({ type: 'finish' });
@@ -299,6 +305,7 @@ export const useEvmSwapConfirmation = (params: EvmSwapConfirmationModalParams) =
   return {
     quote,
     phase,
+    networkName: chain.name,
     feeState,
     pending,
     busy,

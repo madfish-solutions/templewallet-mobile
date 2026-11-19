@@ -356,6 +356,7 @@ export const TezosSwapForm: FC<TezosSwapFormProps> = ({ inputToken, outputToken 
           params: {
             type: ConfirmationTypeEnum.InternalOperations,
             opParams,
+            isSwap: true,
             modalTitle: 'Confirm Swap',
             testID: 'SWAP_TRANSACTION_SENT'
           }

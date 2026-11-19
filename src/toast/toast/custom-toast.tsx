@@ -5,6 +5,8 @@ import { Divider } from 'src/components/divider/divider';
 import { ExternalLinkButton } from 'src/components/icon/external-link-button/external-link-button';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { IconV2 } from 'src/components/icon-v2';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { white } from 'src/config/styles';
 import { ToastTypeEnum } from 'src/enums/toast-type.enum';
@@ -21,6 +23,7 @@ interface Props {
   title?: string;
   description?: string;
   iconName?: IconNameEnum;
+  iconNameV2?: IconNameV2Enum;
   hide: EmptyFn;
   toastType: ToastTypeEnum;
   operationHash?: string;
@@ -39,6 +42,7 @@ export const CustomToast: FC<Props> = ({
   title,
   description,
   iconName,
+  iconNameV2,
   hide,
   toastType,
   operationHash,
@@ -48,6 +52,7 @@ export const CustomToast: FC<Props> = ({
 }) => {
   const styles = useToastStyles();
   const colors = useColors();
+  const iconColor = toastType === ToastTypeEnum.Warning ? undefined : colors.white;
 
   const backgroundColorMap: Record<string, string> = {
     [ToastTypeEnum.Success]: colors.adding,
@@ -64,12 +69,16 @@ export const CustomToast: FC<Props> = ({
     <TouchableOpacity style={styles.container} onPress={handlePress}>
       <View style={[styles.overlay, { backgroundColor: backgroundColorMap[toastType] }]}>
         <View style={styles.innerContent}>
-          <Icon
-            name={iconName ?? iconNameMap[toastType]}
-            size={formatSize(16)}
-            style={styles.iconLeft}
-            {...(toastType !== ToastTypeEnum.Warning && { color: colors.white })}
-          />
+          {isDefined(iconNameV2) ? (
+            <IconV2 name={iconNameV2} style={styles.iconLeft} color={iconColor} />
+          ) : (
+            <Icon
+              name={iconName ?? iconNameMap[toastType]}
+              size={formatSize(16)}
+              style={styles.iconLeft}
+              color={iconColor}
+            />
+          )}
           <View style={styles.textWrapper}>
             {isString(title) && (
               <Text

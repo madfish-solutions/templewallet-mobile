@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import { encodeFunctionData, erc20Abi, isAddress, zeroAddress } from 'viem';
+import { encodeFunctionData, erc20Abi, InsufficientFundsError, isAddress, zeroAddress } from 'viem';
 
 import { Route3EvmRoute, Route3EvmRouteRequest, Route3EvmTokenWithPrice } from 'src/apis/temple-wallet/evm-swap';
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
@@ -193,7 +193,6 @@ export const assertSwapBalances = (
   sourceAmount: bigint,
   tokenBalance?: bigint
 ): void => {
-  if (nativeBalance < request.value + gasLimit * feeCap)
-    throw new Error('Insufficient XTZ for the amount and network fee.');
+  if (nativeBalance < request.value + gasLimit * feeCap) throw new InsufficientFundsError();
   if (tokenBalance !== undefined && tokenBalance < sourceAmount) throw new Error('Insufficient source token balance.');
 };

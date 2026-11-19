@@ -7,7 +7,7 @@ import { emptyComponent } from 'src/config/general';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useAccount } from 'src/store/wallet/wallet-selectors.ts';
-import { showErrorToast } from 'src/toast/error-toast.utils';
+import { showErrorToast, showInsufficientGasBalanceToast } from 'src/toast/error-toast.utils';
 
 import { ConfirmationLayout } from '../common/confirmation-layout/confirmation-layout';
 import { EvmTransactionFeeDetails } from '../common/evm-transaction-fee-details';
@@ -25,7 +25,7 @@ export const EvmSwapConfirmation: FC<EvmSwapConfirmationModalParams> = params =>
   const { goBack, addListener } = useNavigation();
   const account = useAccount();
   const state = useEvmSwapConfirmation(params);
-  const { quote, phase } = state;
+  const { quote, phase, networkName, feeState } = state;
   const approval = phase === 'approval' || state.pending?.action === 'approval';
   useNavigationSetOptions(
     {
@@ -44,10 +44,16 @@ export const EvmSwapConfirmation: FC<EvmSwapConfirmationModalParams> = params =>
     [addListener, canClose]
   );
 
-  const error = state.error || state.feeState.estimationError?.message;
+  const { estimationError, hasInsufficientNativeBalance } = feeState;
+  const isReviewingTransaction = !state.pending && (phase === 'approval' || phase === 'swap');
+  const hasInsufficientGasBalance =
+    isReviewingTransaction &&
+    (estimationError ? estimationError.code === 'insufficient-native-balance' : hasInsufficientNativeBalance);
+  const error = state.error || (hasInsufficientGasBalance ? undefined : estimationError?.message);
   useEffect(() => {
     if (error) showErrorToast({ description: error });
-  }, [error]);
+    else if (hasInsufficientGasBalance) showInsufficientGasBalanceToast(networkName);
+  }, [error, hasInsufficientGasBalance, networkName]);
 
   return (
     <ConfirmationLayout
@@ -63,9 +69,8 @@ export const EvmSwapConfirmation: FC<EvmSwapConfirmationModalParams> = params =>
         />
       }
       details={
-        !state.pending &&
-        !state.feeState.estimationError &&
-        (phase === 'approval' || phase === 'swap') && <EvmTransactionFeeDetails feeState={state.feeState} />
+        isReviewingTransaction &&
+        !estimationError && <EvmTransactionFeeDetails feeState={feeState} showInsufficientBalanceMessage={false} />
       }
       backAction={{ disabled: state.busy, onPress: goBack }}
       confirmAction={{

@@ -31,6 +31,7 @@ interface WcSessionRequestConfirmationModalParams {
 export interface InternalOperationsConfirmationModalParams extends TestIdProps {
   type: ConfirmationTypeEnum.InternalOperations;
   opParams: ParamsWithKind[];
+  isSwap?: boolean;
   disclaimerMessage?: string;
   modalTitle?: string;
   saplingAmount?: string;

@@ -20,9 +20,10 @@ import { useEvmTransactionFeeDetailsStyles } from './styles';
 
 interface Props {
   feeState: ReturnType<typeof useEvmTransactionFee>;
+  showInsufficientBalanceMessage?: boolean;
 }
 
-export const EvmTransactionFeeDetails: FC<Props> = ({ feeState }) => {
+export const EvmTransactionFeeDetails: FC<Props> = ({ feeState, showInsufficientBalanceMessage = true }) => {
   const styles = useEvmTransactionFeeDetailsStyles();
   const feeFormStyles = useFeeFormInputStyles();
   const errorMessageStyles = useErrorMessageStyles();
@@ -98,7 +99,7 @@ export const EvmTransactionFeeDetails: FC<Props> = ({ feeState }) => {
           </View>
         </>
       )}
-      {hasInsufficientNativeBalance && (
+      {showInsufficientBalanceMessage && hasInsufficientNativeBalance && (
         <>
           <Divider size={formatSize(16)} />
           <AttentionMessageV2>

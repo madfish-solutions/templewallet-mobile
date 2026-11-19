@@ -69,6 +69,7 @@ const approveInternalOperationRequest = ({ sender, opParams }: ApproveInternalOp
 
 export const InternalOperationsConfirmation: FC<Props> = ({
   opParams,
+  isSwap = false,
   modalTitle,
   disclaimerMessage,
   testID,
@@ -155,16 +156,19 @@ export const InternalOperationsConfirmation: FC<Props> = ({
         return;
       }
 
-      showErrorToast({ title: 'Warning!', description: 'The transaction is likely to fail!' });
+      if (!isSwap) {
+        showErrorToast({ title: 'Warning!', description: 'The transaction is likely to fail!' });
+      }
       updateOverlayState();
     },
-    [tezosBalance, updateOverlayState]
+    [isSwap, tezosBalance, updateOverlayState]
   );
 
   return (
     <OperationsConfirmation
       sender={account}
       opParams={opParams}
+      isSwap={isSwap}
       isLoading={isLoading}
       onEstimationError={handleEstimationError}
       onSubmit={newOpParams => confirmRequest({ sender: tezosAccount, opParams: newOpParams })}
