@@ -144,8 +144,10 @@ const removeConnectionEpic: Epic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(removeConnectionAction),
     toPayload(),
-    switchMap(connection =>
-      removeConnection$(connection).pipe(
+    concatMap(connections =>
+      from(connections).pipe(
+        concatMap(connection => removeConnection$(connection)),
+        toArray(),
         map(() => {
           showSuccessToast({ description: 'Connection successfully removed!' });
 

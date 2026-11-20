@@ -8,7 +8,6 @@ import { Divider } from 'src/components/divider/divider';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { Label } from 'src/components/label/label';
-import { MAX_PASSWORD_ATTEMPTS } from 'src/config/security';
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { FormPasswordInput } from 'src/form/form-password-input';
 import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
@@ -64,11 +63,7 @@ export const ConfirmSync = memo<Props>(({ onSubmit }) => {
         <Label label="Password" description="The same password is used to unlock your extension." />
         <FormPasswordInput
           name="password"
-          error={
-            isDisabled
-              ? `You have entered the wrong password ${MAX_PASSWORD_ATTEMPTS} times. Your wallet is being blocked for ${timeleft}`
-              : undefined
-          }
+          error={isDisabled ? `Too many attempts. Wait ${timeleft}` : undefined}
           testID={ConfirmSyncSelectors.passwordInput}
         />
 

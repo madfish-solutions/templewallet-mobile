@@ -12,10 +12,11 @@ export const usePasswordLock = () => {
   const isDisabled: boolean = Date.now() - lockTime <= lockLevel;
 
   useEffect(() => {
-    const interval = setInterval(
-      () => setTimeleft(Date.now() - lockTime <= lockLevel ? getTimeLeft(lockTime, lockLevel) : '-'),
-      1000
-    );
+    const updateTimeleft = () =>
+      setTimeleft(Date.now() - lockTime <= lockLevel ? getTimeLeft(lockTime, lockLevel) : '-');
+
+    updateTimeleft();
+    const interval = setInterval(updateTimeleft, 1000);
 
     return () => void clearInterval(interval);
   }, [lockTime, lockLevel]);

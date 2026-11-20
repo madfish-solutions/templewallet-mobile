@@ -22,12 +22,14 @@ import { ConnectionItemAnalyticsEvents } from './analytics-events';
 import { useConnectionItemStyles } from './styles';
 
 interface Props {
-  connection: DAppConnection;
+  connections: NonEmptyArray<DAppConnection>;
 }
 
-export const ConnectionItem = memo<Props>(({ connection }) => {
+export const ConnectionItem = memo<Props>(({ connections }) => {
   const styles = useConnectionItemStyles();
   const { trackEvent } = useAnalytics();
+
+  const [connection] = connections;
 
   const isBeaconConnection = connection.protocol === DAppConnectionProtocol.Beacon;
 
@@ -49,13 +51,13 @@ export const ConnectionItem = memo<Props>(({ connection }) => {
             text: 'Disconnect',
             style: 'destructive',
             onPress: () => {
-              dispatch(removeConnectionAction(connection));
+              dispatch(removeConnectionAction(connections));
               trackEvent(ConnectionItemAnalyticsEvents.DeleteConnectionSuccess, AnalyticsEventCategory.General);
             }
           }
         ]
       ),
-    [connection, isBeaconConnection, trackEvent]
+    [connections, isBeaconConnection, trackEvent]
   );
 
   const chainKind = isBeaconConnection ? TempleChainKind.Tezos : TempleChainKind.EVM;
