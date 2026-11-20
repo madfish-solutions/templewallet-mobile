@@ -1,0 +1,15 @@
+# Continues from perf-unlock-screen.yaml. The password screen is already showing.
+appId: ${APP_ID}
+name: Unlock wallet
+---
+- tapOn:
+    id: "Enter Password/Password Input"
+- inputText: ${DEFAULT_PASSWORD}
+# The keyboard's Enter/Done key closes a single-line field. Back can leave this screen.
+- pressKey: Enter
+- tapOn:
+    id: "Enter Password/Unlock Button"
+- extendedWaitUntil:
+    visible:
+      id: "Wallet/Receive Button"
+    timeout: 120000

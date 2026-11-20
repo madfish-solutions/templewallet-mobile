@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { readFileAssets, MainBundlePath, readFile } from 'react-native-fs';
 
 import { isAndroid } from 'src/config/system';
+import { installHermesReleaseProfileTrigger } from 'src/utils/hermes-release-profile';
 import { migrateLegacyAsyncStorageIfNeeded } from 'src/utils/legacy-async-storage-migration';
 import { setSaplingParamsProvider } from 'src/utils/sapling/sapling-params-provider';
 
@@ -23,6 +24,8 @@ export const AppBootstrap: React.FC = () => {
   const [App, setApp] = useState<React.ComponentType | null>(null);
 
   useEffect(() => {
+    const removeProfileTrigger = installHermesReleaseProfileTrigger();
+
     setSaplingParamsProvider(async () => ({
       spend: {
         saplingSpendParams: await readBundledBinary('sapling-spend.params')
@@ -40,6 +43,7 @@ export const AppBootstrap: React.FC = () => {
 
     return () => {
       cancelled = true;
+      removeProfileTrigger();
     };
   }, []);
 

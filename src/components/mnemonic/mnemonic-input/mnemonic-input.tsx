@@ -13,6 +13,8 @@ import { MnemonicProps } from '../mnemonic.props';
 import { MnemonicStyles } from '../mnemonic.styles';
 import { ProtectedOverlay } from '../protected-overlay/protected-overlay';
 
+import { MnemonicInputSelectors } from './mnemonic-input.selectors';
+
 export const MnemonicInput: FC<MnemonicProps> = ({
   value,
   isError,
@@ -54,9 +56,15 @@ export const MnemonicInput: FC<MnemonicProps> = ({
         testID={testID}
       />
       <View style={MnemonicStyles.buttonsContainer}>
-        <ButtonSmallSecondary title="Paste" onPress={handlePasteButtonPress} />
+        <ButtonSmallSecondary
+          title="Paste"
+          onPress={handlePasteButtonPress}
+          testID={MnemonicInputSelectors.pasteButton}
+        />
       </View>
-      {isShowOverlay && <ProtectedOverlay onPress={() => inputRef.current?.focus()} />}
+      {isShowOverlay && (
+        <ProtectedOverlay testID={MnemonicInputSelectors.protectedOverlay} onPress={() => inputRef.current?.focus()} />
+      )}
     </View>
   );
 };

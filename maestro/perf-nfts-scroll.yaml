@@ -1,0 +1,20 @@
+appId: ${APP_ID}
+name: Scroll collectibles
+---
+# The account header does not scroll. A swipe moves the list only when the
+# finger goes down on the list, so both points stay in its lower part of the
+# screen. A short duration flings, and repeating it carries the list further.
+- repeat:
+    times: 3
+    commands:
+      - swipe:
+          start: "50%, 84%"
+          end: "50%, 55%"
+          duration: 180
+- repeat:
+    times: 3
+    commands:
+      - swipe:
+          start: "50%, 55%"
+          end: "50%, 84%"
+          duration: 180

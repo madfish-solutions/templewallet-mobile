@@ -1,0 +1,376 @@
+// Build two git versions, warm the API cache, and measure the same watch-only wallet.
+//   node perf/compare.mjs --platform android base=$(git merge-base HEAD origin/development) mine=.
+//   node perf/compare.mjs --platform ios --profile etherlink base=... mine=.
+//
+// Start the proxy first, with TW_API_CACHE pointed at the same directory:
+//   TW_API_CACHE=api-cache TW_API_CACHE_FILL=1 mitmdump -s api-cache.py
+import { spawn } from 'node:child_process';
+import crypto from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import { writeReport } from './results.mjs';
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+
+const PROFILES = {
+  tezos: { name: 'whale-tezos', address: 'tz2RDjqC2bpUPvy43C7DNFNUuV6Ma5R9fcab' },
+  etherlink: { name: 'whale-etherlink', address: '0xb4a28bec10175315bafce05c5d474cee14e18971' }
+};
+
+const APP_IDS = {
+  android: 'com.templewallet',
+  ios: 'com.madfish.temple-wallet'
+};
+
+const usage = () => {
+  process.stderr.write(
+    'Usage: node perf/compare.mjs --platform android|ios [--profile tezos|etherlink] [--unlocks 5] [--no-warmup] [--out dir] name=ref ...\n'
+  );
+  process.exit(1);
+};
+
+const args = process.argv.slice(2);
+let platform;
+let profileName = 'tezos';
+let unlocks = 5;
+let warmup = true;
+let outDir;
+const versions = [];
+
+for (let index = 0; index < args.length; index += 1) {
+  const arg = args[index];
+  if (arg === '--platform') platform = args[++index];
+  else if (arg === '--profile') profileName = args[++index];
+  else if (arg === '--unlocks') unlocks = Number(args[++index]);
+  else if (arg === '--no-warmup') warmup = false;
+  else if (arg === '--out') outDir = args[++index];
+  else if (arg.includes('=')) {
+    const eq = arg.indexOf('=');
+    versions.push({ name: arg.slice(0, eq), source: arg.slice(eq + 1) });
+  } else usage();
+}
+
+if (!APP_IDS[platform] || !PROFILES[profileName] || !Number.isInteger(unlocks) || unlocks < 1 || !versions.length)
+  usage();
+
+const profile = PROFILES[profileName];
+const appId = APP_IDS[platform];
+let maestroDevice = '';
+const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+const dir = path.resolve(outDir ?? path.join(root, 'perf', 'out', `cmp-${stamp}`));
+const cacheDir = path.resolve(process.env.TW_API_CACHE ?? path.join(dir, 'api-cache'));
+const buildCacheRoot = path.join(root, 'perf', 'out', 'builds');
+
+const run = (command, commandArgs, { cwd = root, env = process.env, log, quiet = false } = {}) =>
+  new Promise(resolve => {
+    const child = spawn(command, commandArgs, { cwd, env, stdio: ['ignore', 'pipe', 'pipe'] });
+    let out = '';
+    const started = Date.now();
+    const collect = chunk => {
+      const text = chunk.toString();
+      out += text;
+      if (!quiet) process.stdout.write(text);
+    };
+    child.stdout.on('data', collect);
+    child.stderr.on('data', collect);
+    child.on('close', code => {
+      if (log) fs.appendFileSync(log, out);
+      resolve({ ms: Date.now() - started, status: code ?? 1, out });
+    });
+  });
+
+const resultLine = (log, payload) => {
+  fs.appendFileSync(log, `RESULT ${JSON.stringify(payload)}\n`);
+};
+
+const deviceEnv = () => (maestroDevice ? { MAESTRO_DEVICE: maestroDevice, HERMES_DEVICE: maestroDevice } : {});
+
+const measureEnv = () => {
+  const env = {
+    ...process.env,
+    ...deviceEnv(),
+    APP_ID: appId,
+    HERMES_PROFILE: '0',
+    WHALE_NAME: profile.name,
+    WHALE_ADDRESS: profile.address
+  };
+  delete env.MYAPP_UPLOAD_STORE_PASSWORD;
+  delete env.MYAPP_UPLOAD_KEY_PASSWORD;
+  delete env.TW_API_CACHE_FILL;
+  return env;
+};
+
+const maestro = (flow, log) => run('bash', [path.join(root, 'maestro-test.sh'), flow], { env: measureEnv(), log });
+
+const readStats = () => {
+  try {
+    const data = JSON.parse(fs.readFileSync(path.join(cacheDir, 'stats.json'), 'utf8'));
+    return {
+      hits: data.hits ?? 0,
+      recorded: data.recorded ?? 0,
+      throttled: data.throttled ?? 0
+    };
+  } catch {
+    return { hits: 0, recorded: 0, throttled: 0 };
+  }
+};
+
+const ignoredBuildFiles = () => {
+  const files = ['android/local.properties', 'android/sentry.properties', 'ios/sentry.properties', 'ios/.xcode.env.local'];
+  for (const name of fs.readdirSync(root)) {
+    if (name === '.env' || (name.startsWith('.env.') && name !== '.env.dist')) files.push(name);
+  }
+  const appDir = path.join(root, 'android', 'app');
+  if (fs.existsSync(appDir)) {
+    for (const name of fs.readdirSync(appDir)) {
+      if (name.endsWith('.keystore') && name !== 'debug.keystore') files.push(path.join('android', 'app', name));
+    }
+  }
+  return files;
+};
+
+/** A worktree has no ignored files. Copy the ones a release build reads. */
+const copyIgnoredBuildFiles = dest => {
+  const copied = [];
+  for (const relative of ignoredBuildFiles()) {
+    const from = path.join(root, relative);
+    if (!fs.existsSync(from) || !fs.statSync(from).isFile()) continue;
+    const to = path.join(dest, relative);
+    fs.mkdirSync(path.dirname(to), { recursive: true });
+    fs.copyFileSync(from, to);
+    copied.push(relative);
+  }
+  if (copied.length) process.stdout.write(`Copied ignored build files: ${copied.join(', ')}\n`);
+};
+
+const checkoutDirectory = source => {
+  const direct = source === '.' ? root : path.resolve(source);
+  return fs.existsSync(path.join(direct, 'package.json')) ? direct : null;
+};
+
+// Release builds embed .env, so a changed file is a different app than this commit.
+const envStamp = () => {
+  const file = path.join(root, '.env');
+  const data = fs.existsSync(file) ? fs.readFileSync(file) : Buffer.alloc(0);
+  return crypto.createHash('sha256').update(data).digest('hex').slice(0, 16);
+};
+
+const artifactIn = cachePath =>
+  path.join(cachePath, platform === 'android' ? 'app-release.apk' : 'TempleWallet.app');
+
+const artifactReady = file =>
+  platform === 'android' ? fs.existsSync(file) && fs.statSync(file).isFile() : fs.existsSync(file);
+
+const resolveCommit = async source => {
+  const parsed = await run('git', ['rev-parse', '--verify', `${source}^{commit}`], { quiet: true });
+  const commit = parsed.out.trim().split('\n').pop()?.trim() ?? '';
+  if (parsed.status !== 0 || !/^[0-9a-f]{40}$/.test(commit)) throw new Error(`Could not resolve ${source}`);
+  return commit;
+};
+
+const prepare = async version => {
+  const direct = checkoutDirectory(version.source);
+  if (direct) return { checkout: direct, cachePath: null, artifact: null, commit: null };
+
+  const commit = await resolveCommit(version.source);
+  const cachePath = path.join(buildCacheRoot, platform, `${commit}-${envStamp()}`);
+  const artifact = artifactIn(cachePath);
+  if (artifactReady(artifact)) {
+    process.stdout.write(`Using cached ${platform} build ${commit.slice(0, 12)}\n`);
+    return { checkout: null, cachePath, artifact, commit };
+  }
+
+  const dest = path.join(dir, 'src', version.name);
+  fs.mkdirSync(path.dirname(dest), { recursive: true });
+  const added = await run('git', ['worktree', 'add', '--detach', dest, commit], { cwd: root });
+  if (added.status !== 0) throw new Error(`Could not check out ${version.source}`);
+  copyIgnoredBuildFiles(dest);
+  const installed = await run('yarn', ['install'], { cwd: dest });
+  if (installed.status !== 0) throw new Error(`yarn install failed in ${dest}`);
+  if (platform === 'ios' && !fs.existsSync(path.join(dest, 'ios', 'Pods'))) {
+    const pods = await run('yarn', ['ios:pods'], { cwd: dest });
+    if (pods.status !== 0) throw new Error(`pod install failed in ${dest}`);
+  }
+  return { checkout: dest, cachePath, artifact: null, commit };
+};
+
+const install = ({ checkout, cachePath, artifact }) => {
+  const script = platform === 'android' ? 'android-test.sh' : 'ios-hermes.sh';
+  if (artifact) {
+    return run('bash', [path.join(root, script), 'install-cached', artifact], {
+      env: { ...process.env, ...deviceEnv(), APP_ID: appId }
+    });
+  }
+  const env = {
+    ...process.env,
+    ...deviceEnv(),
+    CHECKOUT: checkout,
+    APP_ID: appId,
+    SENTRY_DISABLE_AUTO_UPLOAD: 'true'
+  };
+  if (cachePath) env.BUILD_CACHE = cachePath;
+  return run('bash', [path.join(root, script), 'install'], { env });
+};
+
+const traceFrom = (output, suffix) =>
+  [...output.matchAll(/^Saved (.+)$/gm)].map(match => match[1].trim()).find(file => file.endsWith(suffix)) ?? null;
+
+const jank = async log => {
+  if (platform === 'android') {
+    const traced = await run('bash', [path.join(root, 'android-test.sh'), 'perfetto'], {
+      env: { ...measureEnv(), SKIP_INSTALL: '1', MAESTRO_FLOW: 'maestro/perf-jank.yaml' },
+      log
+    });
+    return { ...traced, trace: traceFrom(traced.out, '.perfetto-trace') };
+  }
+  const traced = await run('bash', [path.join(root, 'xctrace-test.sh')], {
+    env: { ...measureEnv(), MAESTRO_FLOW: 'maestro/perf-jank.yaml' },
+    log
+  });
+  return { ...traced, trace: traceFrom(traced.out, '.trace') };
+};
+
+const measure = async version => {
+  const log = probe => path.join(dir, `${version.name}-${probe}.log`);
+  const setupLog = log('setup');
+  fs.writeFileSync(setupLog, '');
+
+  const installed = await install(version);
+  fs.appendFileSync(setupLog, installed.out);
+  if (installed.status !== 0) return;
+
+  const imported = await maestro('maestro/import-wallet.yaml', setupLog);
+  if (imported.status !== 0) return;
+  // Maestro's long press always lasts 3s. Settings opens Debug after 4s, so the
+  // hold is injected here and the flow continues in Maestro.
+  const held = await run(process.execPath, [path.join(root, 'perf', 'long-press-settings.mjs')], {
+    env: measureEnv(),
+    log: setupLog
+  });
+  if (held.status !== 0) return;
+  const watched = await maestro('maestro/perf-watch-only.yaml', setupLog);
+  if (watched.status !== 0) return;
+
+  if (warmup) {
+    const filled = await run('python3', [path.join(root, 'api-cache.py'), '--fill'], {
+      env: { ...process.env, TW_API_CACHE: cacheDir },
+      log: setupLog
+    });
+    if (filled.status !== 0) return;
+  }
+
+  const unlockLog = log('unlock');
+  fs.writeFileSync(unlockLog, '');
+  for (let index = 0; index < unlocks; index += 1) {
+    const screen = await maestro('maestro/perf-unlock-screen.yaml', unlockLog);
+    const wallet = await maestro('maestro/perf-unlock-wallet.yaml', unlockLog);
+    resultLine(unlockLog, {
+      probe: 'unlock',
+      screenMs: screen.ms,
+      walletMs: wallet.ms,
+      ok: screen.status === 0 && wallet.status === 0
+    });
+  }
+
+  const before = readStats();
+  const tokensLog = log('tokens');
+  fs.writeFileSync(tokensLog, '');
+  const tokensOpen = await maestro('maestro/perf-tokens-open.yaml', tokensLog);
+  const tokensScroll = await maestro('maestro/perf-tokens-scroll.yaml', tokensLog);
+  resultLine(tokensLog, {
+    probe: 'tokens',
+    openMs: tokensOpen.ms,
+    scrollMs: tokensScroll.ms,
+    reached: tokensOpen.status === 0,
+    ok: tokensOpen.status === 0 && tokensScroll.status === 0
+  });
+
+  const nftsLog = log('nfts');
+  fs.writeFileSync(nftsLog, '');
+  const nftsOpen = await maestro('maestro/perf-nfts-open.yaml', nftsLog);
+  const nftsScroll = await maestro('maestro/perf-nfts-scroll.yaml', nftsLog);
+  resultLine(nftsLog, {
+    probe: 'nfts',
+    openMs: nftsOpen.ms,
+    scrollMs: nftsScroll.ms,
+    reached: nftsOpen.status === 0,
+    ok: nftsOpen.status === 0 && nftsScroll.status === 0
+  });
+
+  const after = readStats();
+  const networkLog = log('network');
+  fs.writeFileSync(networkLog, '');
+  resultLine(networkLog, {
+    probe: 'network',
+    hits: after.hits - before.hits,
+    recorded: after.recorded - before.recorded,
+    throttled: after.throttled - before.throttled
+  });
+
+  const jankLog = log('jank');
+  fs.writeFileSync(jankLog, '');
+  const traced = await jank(jankLog);
+  resultLine(jankLog, {
+    probe: 'jank',
+    trace: traced.trace,
+    ok: traced.status === 0 && Boolean(traced.trace)
+  });
+};
+
+const bootedIosSimulators = async () => {
+  const listed = await run('xcrun', ['simctl', 'list', 'devices', 'booted'], { quiet: true });
+  if (listed.status !== 0) throw new Error('Could not list booted iOS simulators');
+  return [...listed.out.matchAll(/\(([0-9A-Fa-f-]{36})\) \(Booted\)/g)].map(match => match[1]);
+};
+
+const main = async () => {
+  if (platform === 'ios') {
+    maestroDevice = process.env.MAESTRO_DEVICE || process.env.HERMES_DEVICE || '';
+    if (!maestroDevice) {
+      const booted = await bootedIosSimulators();
+      if (booted.length !== 1) {
+        throw new Error(
+          booted.length
+            ? 'More than one iOS simulator is booted. Set HERMES_DEVICE to the one that should run the comparison.'
+            : 'Boot one iOS simulator before an iOS comparison.'
+        );
+      }
+      maestroDevice = booted[0];
+    }
+    process.stdout.write(`Maestro will use iOS simulator ${maestroDevice}\n`);
+  }
+
+  fs.mkdirSync(dir, { recursive: true });
+  fs.mkdirSync(cacheDir, { recursive: true });
+  process.stdout.write(`Comparison: ${dir}\n`);
+  process.stdout.write(`API cache: ${cacheDir}\n`);
+  process.stdout.write(`Watch-only ${profileName}: ${profile.address}\n`);
+
+  const builds = [];
+  for (const version of versions) {
+    const prepared = await prepare(version);
+    builds.push({ name: version.name, source: version.source, ...prepared });
+  }
+  fs.writeFileSync(
+    path.join(dir, 'builds.json'),
+    JSON.stringify(
+      builds.map(({ name, source, commit, checkout, cachePath }) => ({ name, source, commit, checkout, cachePath })),
+      null,
+      2
+    )
+  );
+
+  for (const build of builds) {
+    process.stdout.write(`\n${build.name} (${build.source})\n`);
+    await measure(build);
+  }
+
+  writeReport(dir);
+};
+
+main().catch(error => {
+  process.stderr.write(`${error instanceof Error ? error.message : String(error)}\n`);
+  process.exit(1);
+});

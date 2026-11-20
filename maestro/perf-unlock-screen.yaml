@@ -1,0 +1,10 @@
+# Cold launch into the password screen. Does not clear the imported wallet.
+appId: ${APP_ID}
+name: Unlock screen
+---
+- launchApp:
+    stopApp: true
+- extendedWaitUntil:
+    visible:
+      id: "Enter Password/Password Input"
+    timeout: 60000

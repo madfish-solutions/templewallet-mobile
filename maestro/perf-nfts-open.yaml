@@ -1,0 +1,9 @@
+appId: ${APP_ID}
+name: Open collectibles
+---
+- tapOn:
+    id: "Tab/Collectibles"
+- extendedWaitUntil:
+    visible:
+      id: "Collectibles/List"
+    timeout: 120000

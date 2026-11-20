@@ -25,6 +25,8 @@
         android:usesCleartextTraffic="${usesCleartextTraffic}"
         android:supportsRtl="true"
         android:enableOnBackInvokedCallback="false">
+        <!-- Lets a release build be traced locally. Idle runs stay on the release path. -->
+        <profileable android:shell="true" />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
