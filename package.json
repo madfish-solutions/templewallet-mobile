@@ -176,6 +176,7 @@
     "knip": "^5.81.0",
     "node-libs-react-native": "^1.2.1",
     "prettier": "2.8.8",
+    "react-native-release-profiler": "^0.4.5",
     "react-native-svg-transformer": "^1.5.2",
     "react-test-renderer": "19.2.3",
     "typescript": "^5.8.3"

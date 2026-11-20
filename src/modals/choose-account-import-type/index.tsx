@@ -18,6 +18,7 @@ import { ImportAccountKeystoreFile } from '../import-account/import-account-keys
 import { ImportAccountPrivateKey } from '../import-account/import-account-private-key/import-account-private-key';
 import { ImportAccountSeed } from '../import-account/import-account-seed/import-account-seed';
 
+import { ChooseAccountImportTypeSelectors } from './selectors';
 import { useChooseAccountImportTypeStyles } from './styles';
 
 enum ImportType {
@@ -35,18 +36,21 @@ export const ChooseAccountImportType = memo(() => {
         title: 'Seed Phrase',
         description: 'Use your seed phrase from Temple Wallet\n' + 'or another crypto wallet',
         iconName: IconNameEnum.Docs,
+        testID: ChooseAccountImportTypeSelectors.seedPhraseButton,
         onPress: () => setSelectedImportType(ImportType.SeedPhrase)
       },
       {
         title: 'Private Key',
         description: 'Use your private key of the account you\n' + 'want to import',
         iconName: IconNameEnum.Key,
+        testID: ChooseAccountImportTypeSelectors.privateKeyButton,
         onPress: () => setSelectedImportType(ImportType.PrivateKey)
       },
       {
         title: 'Keystore File',
         description: 'Import your account from an encrypted\n' + 'keystore file (.tez)',
         iconName: IconNameEnum.FileUpload,
+        testID: ChooseAccountImportTypeSelectors.keystoreFileButton,
         onPress: () => setSelectedImportType(ImportType.KeystoreFile)
       }
     ],

@@ -11,6 +11,7 @@ import { ScreenContainer } from 'src/components/screen-container/screen-containe
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { setHasSeenAnnouncementAction } from 'src/store/sapling/sapling-actions';
 
+import { ShieldedAnnouncementSelectors } from './shielded-announcement-modal.selectors';
 import { useShieldedAnnouncementStyles } from './shielded-announcement-modal.styles';
 
 export const ShieldedAnnouncementModal: FC = () => {
@@ -51,7 +52,7 @@ export const ShieldedAnnouncementModal: FC = () => {
       </ScreenContainer>
 
       <ButtonsFloatingContainer>
-        <ButtonLargePrimary title="Got it" onPress={goBack} />
+        <ButtonLargePrimary title="Got it" onPress={goBack} testID={ShieldedAnnouncementSelectors.gotItButton} />
         <InsetSubstitute type="bottom" />
       </ButtonsFloatingContainer>
     </>

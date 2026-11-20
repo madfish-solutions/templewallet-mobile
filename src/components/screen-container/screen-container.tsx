@@ -18,7 +18,9 @@ import { setTestID } from 'src/utils/test-id.utils';
 
 import { useScreenContainerStyles } from './screen-container.styles';
 
-interface Props extends TestIdProps, Pick<ScrollViewProps, 'onLayout' | 'onScroll' | 'scrollEventThrottle'> {
+interface Props
+  extends TestIdProps,
+    Pick<ScrollViewProps, 'onLayout' | 'onScroll' | 'scrollEventThrottle' | 'keyboardDismissMode'> {
   keyboardBehavior?: KeyboardAvoidingViewProps['behavior'];
   scrollViewRefreshControl?: ScrollViewProps['refreshControl'];
   isFullScreenMode?: boolean;
@@ -39,6 +41,7 @@ export const ScreenContainer: FCWithChildren<Props> = ({
   onLayout,
   onScroll,
   scrollEventThrottle,
+  keyboardDismissMode,
   children,
   testID
 }) => {
@@ -77,6 +80,7 @@ export const ScreenContainer: FCWithChildren<Props> = ({
         onScroll={onScroll}
         onLayout={onLayout}
         scrollEventThrottle={scrollEventThrottle}
+        keyboardDismissMode={keyboardDismissMode}
         {...setTestID(testID)}
       >
         {children}

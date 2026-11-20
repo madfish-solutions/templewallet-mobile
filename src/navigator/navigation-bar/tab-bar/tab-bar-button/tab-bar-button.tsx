@@ -4,22 +4,19 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { conditionalStyle } from 'src/utils/conditional-style';
+import { setTestID } from 'src/utils/test-id.utils';
 
 import { NavigationBarIcon } from '../../navigation-bar-icon';
 import { NavigationBarIconNameEnum } from '../../navigation-bar-icon/icon-name.enum';
 import { useNavigationBarColors } from '../../use-navigation-bar-colors';
 
+import { TabRoute, tabBarButtonTestID } from './tab-bar-button.selectors';
 import { useTabBarButtonStyles } from './tab-bar-button.styles';
 
 interface Props {
   label: string;
   iconName: NavigationBarIconNameEnum;
-  routeName:
-    | ScreensEnum.Wallet
-    | ScreensEnum.DApps
-    | ScreensEnum.SwapScreen
-    | ScreensEnum.Market
-    | ScreensEnum.CollectiblesHome;
+  routeName: TabRoute;
   focused: boolean;
   disabled?: boolean;
   swapScreenParams?: ScreensParamList[ScreensEnum.SwapScreen];
@@ -45,10 +42,13 @@ export const TabBarButton = memo<Props>(
       }
     };
 
+    const testID = tabBarButtonTestID[routeName];
+
     return (
       <TouchableOpacity
         style={[styles.container, conditionalStyle(disabled, { borderLeftColor: iconColor })]}
         onPress={handlePress}
+        {...setTestID(testID)}
       >
         <View style={styles.iconContainer}>
           <NavigationBarIcon name={iconName} color={iconColor} />

@@ -18,11 +18,13 @@ import { formatSize } from 'src/styles/format-size';
 import { DisplayedCollectible } from 'src/utils/assets/types';
 import { toChainAssetSlug } from 'src/utils/chain-asset-slug';
 import { createGetItemLayout } from 'src/utils/flat-list.utils';
+import { setTestID } from 'src/utils/test-id.utils';
 
 import { useCollectiblesGridStyles } from '../styles';
 
 import { CollectibleItem } from './collectible-item';
 import { useCollectibleItemStyles } from './collectible-item/styles';
+import { CollectiblesListSelectors } from './collectibles-list.selectors';
 import { CollectiblesListStyles, GRID_GAP } from './styles';
 
 interface Props {
@@ -91,6 +93,7 @@ export const CollectiblesList = memo<Props>(({ collectibles, showInfo, onScroll 
 
   return (
     <Animated.FlatList
+      {...setTestID(CollectiblesListSelectors.list)}
       data={sortedCollectibles}
       numColumns={ITEMS_PER_ROW}
       initialNumToRender={INITIAL_ROWS_TO_RENDER}
