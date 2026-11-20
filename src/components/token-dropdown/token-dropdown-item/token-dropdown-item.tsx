@@ -9,11 +9,13 @@ import { AssetInterface } from 'src/interfaces/asset.interface';
 import { formatSize } from 'src/styles/format-size';
 import { emptyToken } from 'src/token/interfaces/token.interface';
 import { assetsEqualityFn, isCollectibleAsset } from 'src/utils/asset.utils';
+import { getDollarValue } from 'src/utils/balance.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
 
 import { AssetValueText } from '../../asset-value-text/asset-value-text';
 import { Divider } from '../../divider/divider';
+import { FormattedAmount } from '../../formatted-amount';
 import { HideBalance } from '../../hide-balance/hide-balance';
 import { Icon } from '../../icon/icon';
 import { IconNameEnum } from '../../icon/icon-name.enum';
@@ -207,7 +209,10 @@ const TokenDropdownItemHOC = <IconName extends string, Size extends number>(
                   {isShowBalanceLoading ? (
                     '---'
                   ) : (
-                    <AssetValueText asset={token} convertToDollar amount={token?.balance} />
+                    <FormattedAmount
+                      amount={getDollarValue(token.balance, token.decimals, token.exchangeRate)}
+                      isDollarValue
+                    />
                   )}
                 </HideBalance>
               )}
