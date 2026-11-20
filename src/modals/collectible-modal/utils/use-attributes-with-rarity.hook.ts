@@ -1,3 +1,4 @@
+import { uniqBy } from 'lodash-es';
 import { useMemo } from 'react';
 import useSWR from 'swr';
 
@@ -27,5 +28,5 @@ export const useAttributesWithRarity = (details: CollectibleDetailsInterface | n
     );
   });
 
-  return data || initialAttributes;
+  return useMemo(() => uniqBy(data || initialAttributes, 'name'), [data, initialAttributes]);
 };
