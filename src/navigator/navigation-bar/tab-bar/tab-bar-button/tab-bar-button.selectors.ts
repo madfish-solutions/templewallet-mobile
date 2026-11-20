@@ -1,6 +1,6 @@
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 
-export enum TabBarButtonSelectors {
+enum TabBarButtonSelectors {
   wallet = 'Tab/Wallet',
   collectibles = 'Tab/Collectibles',
   swap = 'Tab/Swap',
