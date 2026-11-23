@@ -97,6 +97,29 @@ export const mapWcSessionToConnection = (
 export const sortConnectionsByNewest = (connections: DAppConnection[]) =>
   [...connections].sort((a, b) => b.connectedAt - a.connectedAt);
 
+const getDAppGroupKey = (connection: DAppConnection) =>
+  connection.protocol === DAppConnectionProtocol.Beacon
+    ? `beacon:${connection.accountIdentifier}:${connection.name.trim().toLowerCase()}`
+    : connection.id;
+
+// in-app and external browsers pair as separate Beacon peers, so one dApp + account would show up twice
+export const groupConnectionsByDApp = (connections: DAppConnection[]) => {
+  const groups = new Map<string, NonEmptyArray<DAppConnection>>();
+
+  for (const connection of connections) {
+    const key = getDAppGroupKey(connection);
+    const group = groups.get(key);
+
+    if (group) {
+      group.push(connection);
+    } else {
+      groups.set(key, [connection]);
+    }
+  }
+
+  return Array.from(groups.values());
+};
+
 const normalizeWcDappOrigin = (origin: string) => origin.trim().toLowerCase().replace(/\/+$/, '');
 
 /**

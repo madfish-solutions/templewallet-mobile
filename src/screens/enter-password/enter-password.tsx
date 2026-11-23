@@ -16,7 +16,6 @@ import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitut
 import { Label } from 'src/components/label/label';
 import { Quote } from 'src/components/quote/quote';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
-import { MAX_PASSWORD_ATTEMPTS } from 'src/config/security';
 import { FormPasswordInput } from 'src/form/form-password-input';
 import { useAtBootsplash } from 'src/hooks/use-hide-bootsplash';
 import { usePasswordLock } from 'src/hooks/use-password-lock.hook';
@@ -72,77 +71,79 @@ export const EnterPassword = () => {
     }
   }, [dispatch, groupName]);
 
-  return (
-    <ScreenContainer style={styles.root} keyboardBehavior="padding" isFullScreenMode={true}>
-      <View style={styles.imageView}>
-        <InsetSubstitute />
-        <Icon name={IconNameEnum.TempleLogoWithText} width={formatSize(208)} height={formatSize(64)} />
-      </View>
-      <Divider />
-      <Quote
-        quote="The only function of economic forecasting is to make astrology look more respectable."
-        author="John Kenneth Galbraith"
-      />
-      <Divider />
-      <View>
-        <Formik
-          initialValues={enterPasswordInitialValues}
-          validationSchema={enterPasswordValidationSchema}
-          onSubmit={onSubmit}
-        >
-          {({ submitForm, isValid }) => (
-            <View>
-              <Label label="Password" description="A password is used to protect the wallet." />
-              <View style={styles.passwordInputSection}>
-                <View style={styles.passwordInputWrapper}>
-                  <FormPasswordInput
-                    name="password"
-                    error={
-                      isDisabled
-                        ? `You have entered the wrong password ${MAX_PASSWORD_ATTEMPTS} times. Your wallet is being blocked for ${timeleft}`
-                        : undefined
-                    }
-                    testID={EnterPasswordSelectors.passwordInput}
-                  />
-                </View>
-                {isBiometryAvailable && (
-                  <View style={styles.passwordBiometry}>
-                    <Divider size={formatSize(16)} />
-                    <View>
-                      <Divider size={formatSize(4)} />
-                      <TouchableIcon
-                        name={biometryIconName}
-                        size={formatSize(40)}
-                        onPress={unlockWithBiometry}
-                        testID={EnterPasswordSelectors.unlockWithBiometry}
-                      />
-                    </View>
-                  </View>
-                )}
-              </View>
+  const lockedErrorText = isBiometryAvailable
+    ? `Too many attempts. Use biometrics, or wait ${timeleft}`
+    : `Too many attempts. Wait ${timeleft}`;
 
-              <Divider size={formatSize(8)} />
-              <ButtonLargePrimary
-                title={unlockInProgress ? '' : 'Unlock'}
-                disabled={!isValid || isDisabled}
-                isLoading={unlockInProgress}
-                onPress={unlockInProgress ? noop : submitForm}
-                testID={EnterPasswordSelectors.unlockButton}
-              />
-              <Divider />
-            </View>
-          )}
-        </Formik>
-        <Text style={styles.bottomText}>Having troubles?</Text>
-        <Divider size={formatSize(4)} />
-        <ButtonLink
-          title="Erase Data"
-          onPress={resetInProgress ? noop : handleResetDataButtonPress}
-          testID={EnterPasswordSelectors.eraseDataButtonLink}
+  return (
+    <View style={styles.root}>
+      <ScreenContainer keyboardBehavior="padding" isFullScreenMode={true}>
+        <View style={styles.imageView}>
+          <InsetSubstitute />
+          <Icon name={IconNameEnum.TempleLogoWithText} width={formatSize(208)} height={formatSize(64)} />
+        </View>
+        <Divider />
+        <Quote
+          quote="The only function of economic forecasting is to make astrology look more respectable."
+          author="John Kenneth Galbraith"
         />
-        <InsetSubstitute type="bottom" />
-      </View>
+        <Divider />
+        <View>
+          <Formik
+            initialValues={enterPasswordInitialValues}
+            validationSchema={enterPasswordValidationSchema}
+            onSubmit={onSubmit}
+          >
+            {({ submitForm, isValid }) => (
+              <View>
+                <Label label="Password" description="A password is used to protect the wallet." />
+                <View style={styles.passwordInputSection}>
+                  <View style={styles.passwordInputWrapper}>
+                    <FormPasswordInput
+                      name="password"
+                      error={isDisabled ? lockedErrorText : undefined}
+                      testID={EnterPasswordSelectors.passwordInput}
+                    />
+                  </View>
+                  {isBiometryAvailable && (
+                    <View style={styles.passwordBiometry}>
+                      <Divider size={formatSize(16)} />
+                      <View>
+                        <Divider size={formatSize(4)} />
+                        <TouchableIcon
+                          name={biometryIconName}
+                          size={formatSize(40)}
+                          onPress={unlockWithBiometry}
+                          testID={EnterPasswordSelectors.unlockWithBiometry}
+                        />
+                      </View>
+                    </View>
+                  )}
+                </View>
+
+                <Divider size={formatSize(8)} />
+                <ButtonLargePrimary
+                  title={unlockInProgress ? '' : 'Unlock'}
+                  disabled={!isValid || isDisabled}
+                  isLoading={unlockInProgress}
+                  onPress={unlockInProgress ? noop : submitForm}
+                  testID={EnterPasswordSelectors.unlockButton}
+                />
+                <Divider />
+              </View>
+            )}
+          </Formik>
+          <Text style={styles.bottomText}>Having troubles?</Text>
+          <Divider size={formatSize(4)} />
+          <ButtonLink
+            title="Erase Data"
+            onPress={resetInProgress ? noop : handleResetDataButtonPress}
+            testID={EnterPasswordSelectors.eraseDataButtonLink}
+          />
+          <InsetSubstitute type="bottom" />
+        </View>
+      </ScreenContainer>
       <ToastProvider />
-    </ScreenContainer>
+    </View>
   );
 };
