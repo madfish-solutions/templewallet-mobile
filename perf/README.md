@@ -60,7 +60,13 @@ yarn perf --platform ios --profile etherlink base=TW-2411-only-add-tests-selecto
 
 An iOS comparison uses the one booted simulator, or `HERMES_DEVICE` when that is set, and passes that id to Maestro with `--platform ios`. The install and every flow, including the Settings hold, use that simulator. A cached iOS install reboots that simulator, then waits 20 seconds before Maestro starts.
 
-`--profile tezos` (the default) watches `tz2RDjqC2bpUPvy43C7DNFNUuV6Ma5R9fcab`. `--profile etherlink` watches `0xb4a28bec10175315bafce05c5d474cee14e18971`. `--unlocks` defaults to 5. The first unlock is left out of the median once there are at least three. `--no-warmup` skips the fill. `--out` chooses the folder; the default is `perf/out/cmp-<time>/`.
+`--profile tezos` (the default) watches `tz2RDjqC2bpUPvy43C7DNFNUuV6Ma5R9fcab`. `--profile etherlink` watches `0xb4a28bec10175315bafce05c5d474cee14e18971`. `--unlocks` defaults to 5. The first sample of a repeated probe is left out of the median once there are at least three. `--no-warmup` skips the fill. `--out` chooses the folder; the default is `perf/out/cmp-<time>/`.
+
+`--flow unlock|tokens|nfts|network|jank` measures that probe after the setup it needs. `--iterations N` repeats the selected probe; it requires `--flow`. A network iteration is one tokens pass and one collectibles pass, because those requests are what the cache counters measure. Unlock still repeats `--unlocks` times when no flow is selected. The other probes then run once.
+
+```bash
+yarn perf --platform ios --profile etherlink --flow tokens --iterations 5 base=TW-2411-only-add-tests-selectors mine=.
+```
 
 Each version is installed from a git worktree under that folder. `mine=.` is the current checkout and is left as it is, and it is built on every run. A worktree does not contain ignored files, so the keystore, `.env`, `local.properties`, Sentry properties, and `.xcode.env.local` are copied from the current checkout. A release build of a git commit is saved in `perf/out/builds/<platform>/<commit>-<env>/`. The next comparison of that commit installs the saved APK or simulator app. The directory name includes a hash of `.env`, which the release build embeds. Release builds cannot export their data, so setup runs again for each version: import a wallet, hold Settings for 4.5 seconds, then import the watch-only address. Maestro's own long press stops at 3 seconds, so that hold is one stationary swipe at the button, which can last 4.5 seconds. The rest of the screen stays in the normal Maestro flow. The shared `TW_API_CACHE` directory is what makes the server answers match. After setup, and before the timed probes, the script runs `python3 api-cache.py --fill` while the app is idle.
 

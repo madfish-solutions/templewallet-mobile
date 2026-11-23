@@ -24,20 +24,19 @@ const readResults = file => {
 };
 
 const load = (dir, name) => {
-  const data = { name, unlock: [], unfinished: [] };
+  const data = { name, unlock: [], tokens: [], nfts: [], network: [], jank: [], unfinished: [], ran: new Set() };
   for (const probe of PROBES) {
-    for (const row of readResults(path.join(dir, `${name}-${probe}.log`))) {
+    const file = path.join(dir, `${name}-${probe}.log`);
+    if (!fs.existsSync(file)) continue;
+    data.ran.add(probe);
+    for (const row of readResults(file)) {
       if (row.ok === false) {
         if (!data.unfinished.includes(probe)) data.unfinished.push(probe);
         continue;
       }
-      if (row.probe === 'unlock') data.unlock.push(row);
-      else data[row.probe] = row;
+      data[probe].push(row);
     }
-  }
-  for (const probe of PROBES) {
-    const missing = probe === 'unlock' ? data.unlock.length === 0 : !data[probe];
-    if (missing && !data.unfinished.includes(probe)) data.unfinished.push(probe);
+    if (!data[probe].length && !data.unfinished.includes(probe)) data.unfinished.push(probe);
   }
   return data;
 };
@@ -71,8 +70,8 @@ const range = values => {
   return `${mid} (${time(Math.min(...numbers))}–${time(Math.max(...numbers))})`;
 };
 
-/** The first unlock does extra first-session work. Leave it out once there are enough runs. */
-const unlockRuns = data => (data.unlock.length >= 3 ? data.unlock.slice(1) : data.unlock);
+/** The first run does extra first-session work. Leave it out once there are enough runs. */
+const samples = rows => ((rows ?? []).length >= 3 ? rows.slice(1) : (rows ?? []));
 
 const SAME = { word: 'same', tone: 0 };
 
@@ -101,8 +100,10 @@ const compareCounts = (own, base, fewerBetter) => {
 
 const trustIssues = data => {
   const issues = [];
-  if ((data.network?.throttled ?? 0) > 100) issues.push(`${data.name} got more than 100 throttled answers`);
-  if (!data.tokens?.reached) issues.push(`${data.name} did not reach the token list`);
+  const throttled = median(samples(data.network).map(row => row.throttled));
+  if (data.ran.has('network') && throttled > 100) issues.push(`${data.name} got more than 100 throttled answers`);
+  if (data.ran.has('tokens') && data.tokens.length && !data.tokens.some(row => row.reached))
+    issues.push(`${data.name} did not reach the token list`);
   return issues;
 };
 
@@ -110,31 +111,75 @@ const METRICS = [
   {
     label: 'Unlock, password screen',
     kind: 'time',
-    values: data => unlockRuns(data).map(row => row.screenMs)
+    probe: 'unlock',
+    values: data => samples(data.unlock).map(row => row.screenMs)
   },
   {
     label: 'Unlock, wallet',
     kind: 'time',
-    values: data => unlockRuns(data).map(row => row.walletMs)
+    probe: 'unlock',
+    values: data => samples(data.unlock).map(row => row.walletMs)
   },
-  { label: 'Tokens, list visible', kind: 'time', values: data => [data.tokens?.openMs] },
-  { label: 'Tokens, scroll', kind: 'time', values: data => [data.tokens?.scrollMs] },
-  { label: 'Collectibles, list visible', kind: 'time', values: data => [data.nfts?.openMs] },
-  { label: 'Collectibles, scroll', kind: 'time', values: data => [data.nfts?.scrollMs] },
-  { label: 'Cache hits', kind: 'count', fewerBetter: false, value: data => data.network?.hits },
-  { label: 'Cache recorded', kind: 'count', fewerBetter: true, value: data => data.network?.recorded },
-  { label: 'Throttled answers', kind: 'count', fewerBetter: true, value: data => data.network?.throttled }
+  {
+    label: 'Tokens, list visible',
+    kind: 'time',
+    probe: 'tokens',
+    values: data => samples(data.tokens).map(row => row.openMs)
+  },
+  {
+    label: 'Tokens, scroll',
+    kind: 'time',
+    probe: 'tokens',
+    values: data => samples(data.tokens).map(row => row.scrollMs)
+  },
+  {
+    label: 'Collectibles, list visible',
+    kind: 'time',
+    probe: 'nfts',
+    values: data => samples(data.nfts).map(row => row.openMs)
+  },
+  {
+    label: 'Collectibles, scroll',
+    kind: 'time',
+    probe: 'nfts',
+    values: data => samples(data.nfts).map(row => row.scrollMs)
+  },
+  {
+    label: 'Cache hits',
+    kind: 'count',
+    probe: 'network',
+    fewerBetter: false,
+    values: data => samples(data.network).map(row => row.hits)
+  },
+  {
+    label: 'Cache recorded',
+    kind: 'count',
+    probe: 'network',
+    fewerBetter: true,
+    values: data => samples(data.network).map(row => row.recorded)
+  },
+  {
+    label: 'Throttled answers',
+    kind: 'count',
+    probe: 'network',
+    fewerBetter: true,
+    values: data => samples(data.network).map(row => row.throttled)
+  }
 ];
 
-const cell = (metric, data) => {
-  if (metric.kind === 'time') return range(metric.values(data));
-  const value = metric.value(data);
-  return Number.isFinite(value) ? String(value) : '—';
+const countRange = values => {
+  const numbers = finite(values);
+  if (!numbers.length) return '—';
+  const mid = String(median(numbers));
+  if (numbers.length === 1) return mid;
+  return `${mid} (${Math.min(...numbers)}–${Math.max(...numbers)})`;
 };
+
+const cell = (metric, data) => (metric.kind === 'time' ? range(metric.values(data)) : countRange(metric.values(data)));
 
 const verdictFor = (metric, own, base) => {
   if (metric.kind === 'time') return compareTimings(metric.values(own), metric.values(base));
-  return compareCounts(metric.value(own), metric.value(base), metric.fewerBetter);
+  return compareCounts(median(metric.values(own)), median(metric.values(base)), metric.fewerBetter);
 };
 
 const headline = (versions, rows) => {
@@ -159,24 +204,33 @@ const explain = (versions, rows) => {
       if (item && item.tone !== 0) changes.push(`${row.label} on ${versions[index + 1].name} is ${item.word}.`);
     });
   }
-  if (!changes.length) return 'Unlock, tokens, collectibles, and the API cache match within the usual range.';
+  if (!changes.length) return 'The measured rows match within the usual range.';
   return changes.join(' ');
 };
 
 export const writeReport = dir => {
   const names = versionNames(dir);
   const versions = names.map(name => load(dir, name));
+  const expected = new Set(versions.flatMap(data => [...data.ran]));
+  for (const data of versions) {
+    for (const probe of expected) {
+      if (!data.ran.has(probe)) data.unfinished.push(probe);
+    }
+  }
   const base = versions[0];
-  const rows = METRICS.map(metric => ({
+  const rows = METRICS.filter(metric => versions.some(data => data.ran.has(metric.probe))).map(metric => ({
     label: metric.label,
     cells: versions.map(data => cell(metric, data)),
     verdicts: versions.slice(1).map(data => (base ? verdictFor(metric, data, base) : null))
   }));
 
   const jankLine = version => {
-    const trace = version.jank?.trace;
-    return trace ? `recorded (${trace})` : 'missing';
+    const traces = version.jank.map(row => row.trace).filter(Boolean);
+    if (!traces.length) return 'missing';
+    if (traces.length === 1) return `recorded (${traces[0]})`;
+    return `${traces.length} traces`;
   };
+  const jankRan = versions.some(data => data.ran.has('jank'));
 
   const title = headline(versions, rows);
   const lines = [`# ${title}`, '', explain(versions, rows), ''];
@@ -199,37 +253,59 @@ export const writeReport = dir => {
     lines.push(`| ${row.label} | ${shown.join(' | ')} |`);
   }
 
-  const jankCells = versions.map(jankLine);
-  const jankVerdicts = versions.slice(1).map(version => {
-    if (!base) return null;
-    if (base.jank?.trace && version.jank?.trace) return 'same';
-    return 'broken';
-  });
-  lines.push(
-    `| Tokens scroll trace | ${jankCells
-      .map((value, index) =>
-        index === 0 || !jankVerdicts[index - 1] ? value : `${value} · ${jankVerdicts[index - 1]}`
-      )
-      .join(' | ')} |`
-  );
+  if (jankRan) {
+    const jankCells = versions.map(jankLine);
+    const jankVerdicts = versions.slice(1).map(version => {
+      if (!base) return null;
+      if (base.jank.length && version.jank.length) return 'same';
+      return 'broken';
+    });
+    lines.push(
+      `| Tokens scroll trace | ${jankCells
+        .map((value, index) =>
+          index === 0 || !jankVerdicts[index - 1] ? value : `${value} · ${jankVerdicts[index - 1]}`
+        )
+        .join(' | ')} |`
+    );
+  }
 
   lines.push('', '## Details', '');
   for (const version of versions) {
     lines.push(`### ${version.name}`, '');
-    if (!version.unlock.length) lines.push('Unlock: no finished run.');
-    version.unlock.forEach((row, index) => {
-      const dropped = version.unlock.length >= 3 && index === 0 ? ' (dropped)' : '';
-      lines.push(`Unlock ${index + 1}${dropped}: password screen ${time(row.screenMs)}, wallet ${time(row.walletMs)}.`);
-    });
-    lines.push(`Tokens: list ${time(version.tokens?.openMs)}, scroll ${time(version.tokens?.scrollMs)}.`);
-    lines.push(`Collectibles: list ${time(version.nfts?.openMs)}, scroll ${time(version.nfts?.scrollMs)}.`);
-    const network = version.network;
-    lines.push(
-      network
-        ? `Network: hits ${network.hits ?? 0}, recorded ${network.recorded ?? 0}, throttled ${network.throttled ?? 0}.`
-        : 'Network: no counters.'
-    );
-    lines.push(`Trace: ${jankLine(version)}.`, '');
+    if (version.ran.has('unlock')) {
+      if (!version.unlock.length) lines.push('Unlock: no finished run.');
+      version.unlock.forEach((row, index) => {
+        const dropped = version.unlock.length >= 3 && index === 0 ? ' (dropped)' : '';
+        lines.push(
+          `Unlock ${index + 1}${dropped}: password screen ${time(row.screenMs)}, wallet ${time(row.walletMs)}.`
+        );
+      });
+    }
+    if (version.ran.has('tokens')) {
+      if (!version.tokens.length) lines.push('Tokens: no finished run.');
+      version.tokens.forEach((row, index) => {
+        const dropped = version.tokens.length >= 3 && index === 0 ? ' (dropped)' : '';
+        lines.push(`Tokens ${index + 1}${dropped}: list ${time(row.openMs)}, scroll ${time(row.scrollMs)}.`);
+      });
+    }
+    if (version.ran.has('nfts')) {
+      if (!version.nfts.length) lines.push('Collectibles: no finished run.');
+      version.nfts.forEach((row, index) => {
+        const dropped = version.nfts.length >= 3 && index === 0 ? ' (dropped)' : '';
+        lines.push(`Collectibles ${index + 1}${dropped}: list ${time(row.openMs)}, scroll ${time(row.scrollMs)}.`);
+      });
+    }
+    if (version.ran.has('network')) {
+      if (!version.network.length) lines.push('Network: no counters.');
+      version.network.forEach((row, index) => {
+        const dropped = version.network.length >= 3 && index === 0 ? ' (dropped)' : '';
+        lines.push(
+          `Network ${index + 1}${dropped}: hits ${row.hits ?? 0}, recorded ${row.recorded ?? 0}, throttled ${row.throttled ?? 0}.`
+        );
+      });
+    }
+    if (version.ran.has('jank')) lines.push(`Trace: ${jankLine(version)}.`);
+    lines.push('');
   }
 
   const report = `${lines.join('\n')}\n`;

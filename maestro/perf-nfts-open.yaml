@@ -1,6 +1,9 @@
+# Leaves the wallet and comes back, so a later iteration renders the list again.
 appId: ${APP_ID}
 name: Open collectibles
 ---
+- tapOn:
+    id: "Tab/Wallet"
 - tapOn:
     id: "Tab/Collectibles"
 - extendedWaitUntil:

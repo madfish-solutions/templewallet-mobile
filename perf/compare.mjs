@@ -1,9 +1,12 @@
 // Build two git versions, warm the API cache, and measure the same watch-only wallet.
 //   node perf/compare.mjs --platform android base=$(git merge-base HEAD origin/development) mine=.
 //   node perf/compare.mjs --platform ios --profile etherlink base=... mine=.
+//   node perf/compare.mjs --platform ios --flow tokens --iterations 5 base=... mine=.
 //
 // Start the proxy first, with TW_API_CACHE pointed at the same directory:
 //   TW_API_CACHE=api-cache TW_API_CACHE_FILL=1 mitmdump -s api-cache.py
+import { validateAddress, ValidationResult } from '@taquito/utils';
+import { isAddress } from 'viem';
 import { spawn } from 'node:child_process';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -24,9 +27,18 @@ const APP_IDS = {
   ios: 'com.madfish.temple-wallet'
 };
 
+const FLOW_DEPS = {
+  unlock: [],
+  tokens: [],
+  nfts: [],
+  network: ['tokens', 'nfts'],
+  jank: []
+};
+const PROBE_ORDER = ['unlock', 'tokens', 'nfts', 'network', 'jank'];
+
 const usage = () => {
   process.stderr.write(
-    'Usage: node perf/compare.mjs --platform android|ios [--profile tezos|etherlink] [--unlocks 5] [--no-warmup] [--out dir] name=ref ...\n'
+    'Usage: node perf/compare.mjs --platform android|ios [--profile tezos|etherlink] [--unlocks 5] [--flow unlock|tokens|nfts|network|jank] [--iterations N] [--no-warmup] [--out dir] name=ref ...\n'
   );
   process.exit(1);
 };
@@ -35,6 +47,9 @@ const args = process.argv.slice(2);
 let platform;
 let profileName = 'tezos';
 let unlocks = 5;
+let whaleAccount;
+let flowName;
+let iterations;
 let warmup = true;
 let outDir;
 const versions = [];
@@ -43,7 +58,10 @@ for (let index = 0; index < args.length; index += 1) {
   const arg = args[index];
   if (arg === '--platform') platform = args[++index];
   else if (arg === '--profile') profileName = args[++index];
+  else if (arg === '--account') whaleAccount = args[++index];
   else if (arg === '--unlocks') unlocks = Number(args[++index]);
+  else if (arg === '--flow') flowName = args[++index];
+  else if (arg === '--iterations') iterations = Number(args[++index]);
   else if (arg === '--no-warmup') warmup = false;
   else if (arg === '--out') outDir = args[++index];
   else if (arg.includes('=')) {
@@ -52,10 +70,30 @@ for (let index = 0; index < args.length; index += 1) {
   } else usage();
 }
 
-if (!APP_IDS[platform] || !PROFILES[profileName] || !Number.isInteger(unlocks) || unlocks < 1 || !versions.length)
+if (
+  !APP_IDS[platform] ||
+  (
+    !PROFILES[profileName] &&
+    (!whaleAccount || (validateAddress(whaleAccount) !== ValidationResult.VALID && !isAddress(whaleAccount)))
+  ) ||
+  !Number.isInteger(unlocks) ||
+  unlocks < 1 ||
+  (flowName && !FLOW_DEPS[flowName]) ||
+  (iterations !== undefined && (!flowName || !Number.isInteger(iterations) || iterations < 1)) ||
+  !versions.length
+)
   usage();
 
-const profile = PROFILES[profileName];
+const repeatCount = probe => {
+  if (flowName && probe !== flowName) return 1;
+  if (probe === flowName && iterations) return iterations;
+  return probe === 'unlock' ? unlocks : 1;
+};
+const activeProbes = flowName
+  ? PROBE_ORDER.filter(probe => probe === flowName || FLOW_DEPS[flowName].includes(probe))
+  : PROBE_ORDER;
+
+const profile = whaleAccount ? { name: 'custom', address: whaleAccount } : PROFILES[profileName];
 const appId = APP_IDS[platform];
 let maestroDevice = '';
 const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
@@ -236,6 +274,8 @@ const measure = async version => {
   const log = probe => path.join(dir, `${version.name}-${probe}.log`);
   const setupLog = log('setup');
   fs.writeFileSync(setupLog, '');
+  // Empty logs stay behind when setup stops, so the report treats those probes as unfinished.
+  for (const probe of activeProbes) fs.writeFileSync(log(probe), '');
 
   const installed = await install(version);
   fs.appendFileSync(setupLog, installed.out);
@@ -261,62 +301,93 @@ const measure = async version => {
     if (filled.status !== 0) return;
   }
 
-  const unlockLog = log('unlock');
-  fs.writeFileSync(unlockLog, '');
-  for (let index = 0; index < unlocks; index += 1) {
-    const screen = await maestro('maestro/perf-unlock-screen.yaml', unlockLog);
-    const wallet = await maestro('maestro/perf-unlock-wallet.yaml', unlockLog);
-    resultLine(unlockLog, {
-      probe: 'unlock',
-      screenMs: screen.ms,
-      walletMs: wallet.ms,
-      ok: screen.status === 0 && wallet.status === 0
+  const runs = async (times, once) => {
+    for (let index = 0; index < times; index += 1) await once(index);
+  };
+
+  if (activeProbes.includes('unlock')) {
+    const unlockLog = log('unlock');
+    await runs(repeatCount('unlock'), async () => {
+      const screen = await maestro('maestro/perf-unlock-screen.yaml', unlockLog);
+      const wallet = await maestro('maestro/perf-unlock-wallet.yaml', unlockLog);
+      resultLine(unlockLog, {
+        probe: 'unlock',
+        screenMs: screen.ms,
+        walletMs: wallet.ms,
+        ok: screen.status === 0 && wallet.status === 0
+      });
     });
   }
 
-  const before = readStats();
   const tokensLog = log('tokens');
-  fs.writeFileSync(tokensLog, '');
-  const tokensOpen = await maestro('maestro/perf-tokens-open.yaml', tokensLog);
-  const tokensScroll = await maestro('maestro/perf-tokens-scroll.yaml', tokensLog);
-  resultLine(tokensLog, {
-    probe: 'tokens',
-    openMs: tokensOpen.ms,
-    scrollMs: tokensScroll.ms,
-    reached: tokensOpen.status === 0,
-    ok: tokensOpen.status === 0 && tokensScroll.status === 0
-  });
+  const runTokens = async () => {
+    const tokensOpen = await maestro('maestro/perf-tokens-open.yaml', tokensLog);
+    const tokensScroll = await maestro('maestro/perf-tokens-scroll.yaml', tokensLog);
+    resultLine(tokensLog, {
+      probe: 'tokens',
+      openMs: tokensOpen.ms,
+      scrollMs: tokensScroll.ms,
+      reached: tokensOpen.status === 0,
+      ok: tokensOpen.status === 0 && tokensScroll.status === 0
+    });
+    return tokensOpen.status === 0 && tokensScroll.status === 0;
+  };
 
   const nftsLog = log('nfts');
-  fs.writeFileSync(nftsLog, '');
-  const nftsOpen = await maestro('maestro/perf-nfts-open.yaml', nftsLog);
-  const nftsScroll = await maestro('maestro/perf-nfts-scroll.yaml', nftsLog);
-  resultLine(nftsLog, {
-    probe: 'nfts',
-    openMs: nftsOpen.ms,
-    scrollMs: nftsScroll.ms,
-    reached: nftsOpen.status === 0,
-    ok: nftsOpen.status === 0 && nftsScroll.status === 0
-  });
+  const runNfts = async () => {
+    const nftsOpen = await maestro('maestro/perf-nfts-open.yaml', nftsLog);
+    const nftsScroll = await maestro('maestro/perf-nfts-scroll.yaml', nftsLog);
+    resultLine(nftsLog, {
+      probe: 'nfts',
+      openMs: nftsOpen.ms,
+      scrollMs: nftsScroll.ms,
+      reached: nftsOpen.status === 0,
+      ok: nftsOpen.status === 0 && nftsScroll.status === 0
+    });
+    return nftsOpen.status === 0 && nftsScroll.status === 0;
+  };
 
-  const after = readStats();
-  const networkLog = log('network');
-  fs.writeFileSync(networkLog, '');
-  resultLine(networkLog, {
-    probe: 'network',
-    hits: after.hits - before.hits,
-    recorded: after.recorded - before.recorded,
-    throttled: after.throttled - before.throttled
-  });
+  if (flowName === 'network') {
+    const networkLog = log('network');
+    await runs(repeatCount('network'), async () => {
+      const before = readStats();
+      const tokensOk = await runTokens();
+      const nftsOk = await runNfts();
+      const after = readStats();
+      resultLine(networkLog, {
+        probe: 'network',
+        hits: after.hits - before.hits,
+        recorded: after.recorded - before.recorded,
+        throttled: after.throttled - before.throttled,
+        ok: tokensOk && nftsOk
+      });
+    });
+  } else {
+    const before = activeProbes.includes('network') ? readStats() : null;
+    if (activeProbes.includes('tokens')) await runs(repeatCount('tokens'), runTokens);
+    if (activeProbes.includes('nfts')) await runs(repeatCount('nfts'), runNfts);
+    if (before) {
+      const after = readStats();
+      resultLine(log('network'), {
+        probe: 'network',
+        hits: after.hits - before.hits,
+        recorded: after.recorded - before.recorded,
+        throttled: after.throttled - before.throttled
+      });
+    }
+  }
 
-  const jankLog = log('jank');
-  fs.writeFileSync(jankLog, '');
-  const traced = await jank(jankLog);
-  resultLine(jankLog, {
-    probe: 'jank',
-    trace: traced.trace,
-    ok: traced.status === 0 && Boolean(traced.trace)
-  });
+  if (activeProbes.includes('jank')) {
+    const jankLog = log('jank');
+    await runs(repeatCount('jank'), async () => {
+      const traced = await jank(jankLog);
+      resultLine(jankLog, {
+        probe: 'jank',
+        trace: traced.trace,
+        ok: traced.status === 0 && Boolean(traced.trace)
+      });
+    });
+  }
 };
 
 const bootedIosSimulators = async () => {
@@ -347,6 +418,7 @@ const main = async () => {
   process.stdout.write(`Comparison: ${dir}\n`);
   process.stdout.write(`API cache: ${cacheDir}\n`);
   process.stdout.write(`Watch-only ${profileName}: ${profile.address}\n`);
+  if (flowName) process.stdout.write(`Flow ${flowName}, ${repeatCount(flowName)} iteration(s)\n`);
 
   const builds = [];
   for (const version of versions) {
