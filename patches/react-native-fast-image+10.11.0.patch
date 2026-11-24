@@ -1,6 +1,6 @@
-diff --git a/node_modules/react-native-fast-image/ios/FastImage/FFFDownsampledImage.m b/node_modules/react-native-fast-image/ios/FastImage/FFFDownsampledImage.m
---- a/node_modules/react-native-fast-image/ios/FastImage/FFFDownsampledImage.m
-+++ b/node_modules/react-native-fast-image/ios/FastImage/FFFDownsampledImage.m
+diff --git a/ios/FastImage/FFFDownsampledImage.m b/ios/FastImage/FFFDownsampledImage.m
+--- a/ios/FastImage/FFFDownsampledImage.m
++++ b/ios/FastImage/FFFDownsampledImage.m
 @@ -9,6 +9,7 @@
  #import <SDWebImage/SDImageCache.h>
  #import <SDWebImage/SDWebImageManager.h>

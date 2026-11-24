@@ -14012,13 +14012,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-fast-image@patch:react-native-fast-image@npm%3A10.11.0#~/.yarn/patches/react-native-fast-image-npm-10.11.0-78518847a4.patch":
+"react-native-fast-image@patch:react-native-fast-image@npm%3A10.11.0#./patches/react-native-fast-image+10.11.0.patch::locator=temple-wallet%40workspace%3A.":
   version: 10.11.0
-  resolution: "react-native-fast-image@patch:react-native-fast-image@npm%3A10.11.0#~/.yarn/patches/react-native-fast-image-npm-10.11.0-78518847a4.patch::version=10.11.0&hash=620eb0"
+  resolution: "react-native-fast-image@patch:react-native-fast-image@npm%3A10.11.0#./patches/react-native-fast-image+10.11.0.patch::version=10.11.0&hash=64e71a&locator=temple-wallet%40workspace%3A."
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10c0/1707581f30b23ea61f0436734c6bfa2f10735276a84da855d03af38db8a2e3bd67aa9b095035ed8d9b36fa3479d7a3ecdde914b281ac04b1e1df5180a597b983
+  checksum: 10c0/f451bf7f2f8c4a894e8f1957f0eef335384c8913a6bfe8acf3f85bf16fb738d831bcb46ace3482468db9ec3898b30c29128b26b9ab32ad8ffe2dbe692e2d2fe8
   languageName: node
   linkType: hard
 
@@ -16021,7 +16021,7 @@ react-native-randombytes@madfish-solutions/react-native-randombytes:
     react-native-dialog: "npm:^9.3.0"
     react-native-exception-handler: "npm:^2.10.10"
     react-native-exit-app: "npm:^2.0.0"
-    react-native-fast-image: "patch:react-native-fast-image@npm%3A10.11.0#~/.yarn/patches/react-native-fast-image-npm-10.11.0-78518847a4.patch"
+    react-native-fast-image: "patch:react-native-fast-image@npm%3A10.11.0#./patches/react-native-fast-image+10.11.0.patch"
     react-native-fs: "npm:^2.20.0"
     react-native-gesture-handler: "npm:^2.31.2"
     react-native-get-random-values: "npm:^2.0.0"
