@@ -6,6 +6,7 @@ import { SlicedAsyncStorage } from 'src/utils/sliced-async-storage';
 import { createEntity } from '../create-entity';
 
 import {
+  loadEvmSwapTokensAction,
   loadSwapDexesAction,
   loadSwapParamsAction,
   loadSwapTokensAction,
@@ -16,6 +17,15 @@ import { route3InitialState, SwapState } from './swap-state';
 import { DEFAULT_SWAP_PARAMS } from './swap-state.mock';
 
 const swapReducer = createReducer(route3InitialState, builder => {
+  builder.addCase(loadEvmSwapTokensAction.submit, state => {
+    state.evmTokens = { ...state.evmTokens, isLoading: true, error: undefined };
+  });
+  builder.addCase(loadEvmSwapTokensAction.success, (state, { payload }) => {
+    state.evmTokens = createEntity(payload);
+  });
+  builder.addCase(loadEvmSwapTokensAction.fail, (state, { payload }) => {
+    state.evmTokens = { ...createEntity(state.evmTokens.data, false, payload.message), retryAt: payload.retryAt };
+  });
   builder.addCase(loadSwapTokensAction.submit, state => {
     state.tokens = createEntity(state.tokens.data, true);
     state.tokensMetadata = createEntity(state.tokensMetadata.data, true);

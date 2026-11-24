@@ -1,6 +1,7 @@
 import Toast, { ToastShowParams } from 'react-native-toast-message';
 
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
 import { ToastTypeEnum } from 'src/enums/toast-type.enum';
 import { errorMessageFilter } from 'src/utils/error-message.util';
 import { isString } from 'src/utils/is-string';
@@ -9,6 +10,7 @@ interface ToastProps {
   description: string;
   title?: string;
   iconName?: IconNameEnum;
+  iconNameV2?: IconNameV2Enum;
   onPress?: EmptyFn;
   operationHash?: string;
   isCopyButtonVisible?: boolean;
@@ -26,7 +28,14 @@ const TAQUITO_500_ERROR_MESSAGE = 'Http error response: (500)';
  */
 const JSON_PARSE_ERROR = 'JSON Parse error: Unexpected';
 
-export const showErrorToast = ({ description, title, iconName, onPress, isCopyButtonVisible }: ToastProps) => {
+export const showErrorToast = ({
+  description,
+  title,
+  iconName,
+  iconNameV2,
+  onPress,
+  isCopyButtonVisible
+}: ToastProps) => {
   const slicedErrorMessage = description.slice(0, 26);
 
   if (description === TAQUITO_MISSED_BLOCK_ERROR_MESSAGE) {
@@ -39,23 +48,11 @@ export const showErrorToast = ({ description, title, iconName, onPress, isCopyBu
     onPress
   };
 
-  if (description.startsWith(JSON_PARSE_ERROR)) {
+  if (description.startsWith(JSON_PARSE_ERROR) || TAQUITO_500_ERROR_MESSAGE === slicedErrorMessage) {
     return Toast.show({
       ...commonParams,
       text2: errorMessageFilter(DEFAULT_ERROR_MESSAGE),
-      props: {
-        iconName
-      }
-    });
-  }
-
-  if (TAQUITO_500_ERROR_MESSAGE === slicedErrorMessage) {
-    return Toast.show({
-      ...commonParams,
-      text2: errorMessageFilter(DEFAULT_ERROR_MESSAGE),
-      props: {
-        iconName
-      }
+      props: { iconName, iconNameV2 }
     });
   }
 
@@ -64,8 +61,16 @@ export const showErrorToast = ({ description, title, iconName, onPress, isCopyBu
     text2: errorMessageFilter(description),
     props: {
       isCopyButtonVisible,
-      iconName
+      iconName,
+      iconNameV2
     }
+  });
+};
+
+export const showInsufficientGasBalanceToast = (networkName: string): void => {
+  showErrorToast({
+    description: `Insufficient gas balance on ${networkName}`,
+    iconNameV2: IconNameV2Enum.AlarmTriangleFill
   });
 };
 

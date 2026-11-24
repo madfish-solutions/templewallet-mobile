@@ -36,6 +36,22 @@ export const safeShiftedBy = (value: BigNumber, places: number | nullish): BigNu
   return value.shiftedBy(places);
 };
 
+export const atomsToTokens = (amount: BigNumber, decimals: number | nullish): BigNumber => {
+  if (!amount.isFinite() || typeof decimals !== 'number' || !Number.isInteger(decimals)) {
+    return amount;
+  }
+
+  return safeShiftedBy(amount.integerValue(), -decimals);
+};
+
+export const tokensToAtoms = (amount: BigNumber, decimals: number | nullish): BigNumber => {
+  if (!amount.isFinite() || typeof decimals !== 'number' || !Number.isInteger(decimals)) {
+    return amount;
+  }
+
+  return safeShiftedBy(amount, decimals).integerValue();
+};
+
 /** Leaves `value` unrounded when `decimalPlaces` would make `decimalPlaces` throw. */
 export const safeDecimalPlaces = (
   value: BigNumber,

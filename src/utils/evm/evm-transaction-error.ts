@@ -296,16 +296,12 @@ export function normalizeEvmTransactionError(error: unknown): EvmTransactionErro
     return makeError('invalid-params', EVM_TRANSACTION_ERROR_MESSAGES.invalidParams, error);
   }
 
-  if (errorText.includes('nonce')) {
-    if (errorText.includes('too high')) {
-      return makeError('nonce-too-high', EVM_TRANSACTION_ERROR_MESSAGES.nonceTooHigh, error);
-    }
+  if (/\bnonce\b[^\n]*too high/.test(errorText)) {
+    return makeError('nonce-too-high', EVM_TRANSACTION_ERROR_MESSAGES.nonceTooHigh, error);
+  }
 
-    if (errorText.includes('too low') || errorText.includes('already')) {
-      return makeError('nonce-too-low', EVM_TRANSACTION_ERROR_MESSAGES.nonceTooLow, error);
-    }
-
-    return makeError('invalid-params', EVM_TRANSACTION_ERROR_MESSAGES.invalidParams, error);
+  if (/\bnonce\b[^\n]*(?:too low|already)/.test(errorText)) {
+    return makeError('nonce-too-low', EVM_TRANSACTION_ERROR_MESSAGES.nonceTooLow, error);
   }
 
   const decodedErc1155Error = decodeErc1155Error(error);
