@@ -1,6 +1,6 @@
-import FastImage from '@d11/react-native-fast-image';
 import React, { memo, ReactNode } from 'react';
 import { Image, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
 import { isAndroid } from 'src/config/system.ts';
 

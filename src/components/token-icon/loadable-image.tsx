@@ -1,5 +1,5 @@
-import FastImage, { ImageStyle } from '@d11/react-native-fast-image';
 import React, { memo, useMemo } from 'react';
+import FastImage, { ImageStyle } from 'react-native-fast-image';
 
 import { AssetIconPlaceholder } from '../asset-icon-placeholder';
 

@@ -1,5 +1,5 @@
-import FastImage, { FastImageProps } from '@d11/react-native-fast-image';
 import React, { FC } from 'react';
+import FastImage, { FastImageProps } from 'react-native-fast-image';
 
 import { formatSize } from 'src/styles/format-size';
 
@@ -19,7 +19,7 @@ export const AvatarImage: FC<Props> = ({ uri, size = formatSize(16), style, onEr
     <FastImage
       style={[styles.icon, { width: size, height: size }, style]}
       source={{ uri }}
-      resizeMode={FastImage.resizeMode.cover}
+      objectFit="cover"
       onError={onError}
     />
   );
