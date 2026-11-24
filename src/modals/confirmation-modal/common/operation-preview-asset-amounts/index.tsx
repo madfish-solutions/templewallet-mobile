@@ -14,6 +14,7 @@ interface Props {
   receiver?: string;
   showMinusSign?: boolean;
   showDollar?: boolean;
+  hideApproximateSign?: boolean;
   textStyle?: StyleProp<TextStyle>;
 }
 
@@ -25,6 +26,7 @@ export const OperationPreviewAssetAmounts: FC<Props> = ({
   receiver,
   showMinusSign = false,
   showDollar = true,
+  hideApproximateSign = false,
   textStyle
 }) => {
   const styles = useOperationPreviewAssetAmountsStyles();
@@ -51,6 +53,7 @@ export const OperationPreviewAssetAmounts: FC<Props> = ({
           <Divider size={formatSize(8)} />
           <AssetValueText
             convertToDollar
+            hideApproximateSign={hideApproximateSign}
             amount={amount}
             asset={asset}
             showMinusSign={showMinusSign}

@@ -8,9 +8,7 @@ import { catchError, map } from 'rxjs/operators';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { EstimationInterface } from 'src/interfaces/estimation.interface';
 import { LoadableEntityState } from 'src/store/types';
-import { showErrorToast } from 'src/toast/toast.utils';
 import { TezosReadOnlySignerPayload } from 'src/types/tezos-read-only-signer-payload';
-import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { MINIMAL_FEE_PER_GAS_MUTEZ } from 'src/utils/tezos.util';
 
@@ -87,16 +85,7 @@ export const useEstimations = (sender: TezosReadOnlySignerPayload, opParams: Par
   useEffect(() => {
     const subscription = estimate$(opParams).subscribe({
       next: value => setEstimationState({ isLoading: false, data: value }),
-      error: error => {
-        showErrorToast({
-          title: 'Warning!',
-          description: 'The transaction is likely to fail!',
-          isCopyButtonVisible: true,
-          onPress: () => copyStringToClipboard(error.toString())
-        });
-
-        setEstimationState({ error, isLoading: false, data: [] });
-      }
+      error: error => setEstimationState({ error, isLoading: false, data: [] })
     });
 
     return () => subscription.unsubscribe();

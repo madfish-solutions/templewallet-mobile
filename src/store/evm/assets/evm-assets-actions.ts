@@ -13,6 +13,8 @@ export const processLoadedEvmAssetsAction = createAction<ProcessLoadedEvmAssetsA
   'evm/assets/PROCESS_LOADED_EVM_ASSETS'
 );
 
+export const mergeEvmAssetsAction = createAction<ProcessLoadedEvmAssetsActionPayload>('evm/assets/MERGE_EVM_ASSETS');
+
 interface SetEvmAssetManualActionPayload {
   account: HexString;
   chainId: number;

@@ -1,6 +1,8 @@
 import { ObjktCollectionType } from 'src/apis/objkt/types';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import type { TokenScreenDescriptor } from 'src/screens/token-screen/token-screen-descriptor';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { EvmSwapAssetDescriptor } from 'src/types/evm-swap';
 import { ChainId } from 'src/types/networks';
 import { EncryptedBackupObject } from 'src/utils/cloud-backup';
 
@@ -100,7 +102,14 @@ export type ScreensParamList = {
   [ScreensEnum.DApps]: undefined;
 
   /** Swap stack **/
-  [ScreensEnum.SwapScreen]?: { inputToken?: TokenInterface; outputToken?: TokenInterface };
+  [ScreensEnum.SwapScreen]?:
+    | { chainKind?: TempleChainKind.Tezos; inputToken?: TokenInterface; outputToken?: TokenInterface }
+    | {
+        chainKind: TempleChainKind.EVM;
+        chainId: number;
+        inputAsset?: EvmSwapAssetDescriptor;
+        outputAsset?: EvmSwapAssetDescriptor;
+      };
   [ScreensEnum.SwapSettingsScreen]: undefined;
 
   /** Market stack **/

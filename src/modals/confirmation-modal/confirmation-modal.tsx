@@ -16,6 +16,7 @@ import { BridgeWithdrawConfirmation } from './bridge-confirmation/bridge-withdra
 import { InternalOperationsConfirmation } from './common/internal-operations-confirmation';
 import { DAppOperationsConfirmation } from './d-app-operations-confirmation/d-app-operations-confirmation';
 import { EvmInternalOperationsConfirmation } from './evm-internal-operations-confirmation';
+import { EvmSwapConfirmation } from './evm-swap-confirmation';
 import { SaplingOperationsConfirmation } from './sapling-operations-confirmation/sapling-operations-confirmation';
 import { WcSessionProposalConfirmation } from './wc-session-proposal-confirmation';
 import { WcSessionRequestConfirmation } from './wc-session-request-confirmation';
@@ -64,6 +65,7 @@ const ConfirmationModalContent: FC = () => {
       return (
         <InternalOperationsConfirmation
           opParams={params.opParams}
+          isSwap={params.isSwap}
           modalTitle={params.modalTitle}
           testID={params.testID}
           disclaimerMessage={params.disclaimerMessage}
@@ -91,6 +93,8 @@ const ConfirmationModalContent: FC = () => {
           feeRate={params.feeRate}
         />
       );
+    case ConfirmationTypeEnum.EvmSwap:
+      return <EvmSwapConfirmation {...params} />;
     case ConfirmationTypeEnum.EvmInternalOperations:
       return (
         <EvmInternalOperationsConfirmation

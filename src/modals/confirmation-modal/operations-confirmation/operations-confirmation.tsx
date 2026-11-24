@@ -9,17 +9,22 @@ import { Divider } from 'src/components/divider/divider';
 import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { emptyFn } from 'src/config/general';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import { useTezosChain } from 'src/hooks/use-tezos-chains.hook';
 import { Account } from 'src/interfaces/account.interfaces.ts';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useBakersListSelector } from 'src/store/baking/baking-selectors';
+import { useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { showErrorToast, showInsufficientGasBalanceToast } from 'src/toast/error-toast.utils';
 import { TEZ_TOKEN_DECIMALS } from 'src/token/data/tokens-metadata';
 import { getAccountForTezos } from 'src/utils/account.utils.ts';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { AnalyticsEventProperties } from 'src/utils/analytics/analytics.util';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { isTooLowTezBalanceError } from 'src/utils/is-too-low-tez-balance-error';
 import { isTruthy } from 'src/utils/is-truthy';
 import { HELP_UKRAINE_BAKER_ADDRESS } from 'src/utils/known-bakers';
 import { tzToMutez } from 'src/utils/tezos.util';
@@ -43,6 +48,7 @@ const delegationDisabledDisclaimerMessage =
 interface Props extends TestIdProps {
   sender: Account;
   opParams: ParamsWithKind[];
+  isSwap?: boolean;
   isLoading: boolean;
   disclaimer?: ReactNode;
   renderPreview?: (opParams: ParamsWithKind[]) => ReactNode;
@@ -57,6 +63,7 @@ interface Props extends TestIdProps {
 export const OperationsConfirmation: FCWithChildren<Props> = ({
   sender,
   opParams,
+  isSwap = false,
   isLoading,
   onEstimationError = emptyFn,
   onEstimationComplete,
@@ -70,6 +77,8 @@ export const OperationsConfirmation: FCWithChildren<Props> = ({
   confirmEventProperties
 }) => {
   const { goBack } = useNavigation();
+  const { name: networkName } = useTezosChain();
+  const tezosBalance = useCurrentAccountTezosBalance();
 
   const { trackEvent } = useAnalytics();
 
@@ -133,6 +142,32 @@ export const OperationsConfirmation: FCWithChildren<Props> = ({
     onSubmit: handleSubmit
   });
   const { values, isValid, setFieldValue, submitForm } = formik;
+
+  const estimationError = estimations.error;
+  const hasInsufficientGasBalance =
+    isSwap &&
+    (isTooLowTezBalanceError(estimationError) ||
+      (estimationsApplied &&
+        values.gasFeeSum !== undefined &&
+        getEstimatedTezExpenseMutez(
+          opParamsWithEstimations,
+          values.gasFeeSum,
+          (onlyOneOperation ? values.storageLimitSum : undefined) ?? basicFees.storageLimitSum,
+          minimalFeePerStorageByteMutez
+        ).gt(tezosBalance)));
+
+  useEffect(() => {
+    if (hasInsufficientGasBalance) {
+      showInsufficientGasBalanceToast(networkName);
+    } else if (isDefined(estimationError)) {
+      showErrorToast({
+        title: 'Warning!',
+        description: 'The transaction is likely to fail!',
+        isCopyButtonVisible: true,
+        onPress: () => copyStringToClipboard(String(estimationError))
+      });
+    }
+  }, [estimationError, hasInsufficientGasBalance, networkName]);
 
   useEffect(
     () => void (isDefined(estimations.error) && onEstimationError(estimations.error)),
