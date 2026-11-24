@@ -4,6 +4,7 @@
   "exclude": [
     "**/node_modules",
     "**/Pods",
+    "perf/out",
     "babel.config.js",
     "metro.config.js",
     "jest.config.js"

@@ -94,5 +94,11 @@ fs.writeFileSync(
     duration: ${HOLD_MS}
 `
 );
-const pressed = spawnSync('maestro', [...target, 'test', flow], { stdio: 'inherit' });
+const testArgs = [...target, 'test'];
+if (process.env.MAESTRO_ARTIFACTS) {
+  fs.mkdirSync(process.env.MAESTRO_ARTIFACTS, { recursive: true });
+  testArgs.push('--debug-output', process.env.MAESTRO_ARTIFACTS, '--flatten-debug-output');
+}
+testArgs.push(flow);
+const pressed = spawnSync('maestro', testArgs, { stdio: 'inherit' });
 if (pressed.status !== 0) process.exit(pressed.status ?? 1);

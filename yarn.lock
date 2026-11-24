@@ -1917,16 +1917,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@d11/react-native-fast-image@npm:^8.13.0":
-  version: 8.13.0
-  resolution: "@d11/react-native-fast-image@npm:8.13.0"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 10c0/697d43bade639333aad905cff00c315d8a9e3fb1352cec7c70c5100edaae9f9e05da8ddbcdd032820dcb4d4082ebb6290e59b040d9f0f31a64855b34d2a9e66d
-  languageName: node
-  linkType: hard
-
 "@dicebear/bottts@npm:^9.3.0":
   version: 9.3.0
   resolution: "@dicebear/bottts@npm:9.3.0"
@@ -14207,6 +14197,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-fast-image@npm:^10.11.0":
+  version: 10.11.0
+  resolution: "react-native-fast-image@npm:10.11.0"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/efc2cccc1a2f85d8d347c20aa0dad9f5e47c2871c2d82e5d0c4b5b3d946eee9eb90c8ad393c4236df6b37e24db718c3c3be940488ef06a4d5298a897f484f1d5
+  languageName: node
+  linkType: hard
+
 "react-native-fs@npm:^2.20.0":
   version: 2.20.0
   resolution: "react-native-fs@npm:2.20.0"
@@ -16171,7 +16171,6 @@ react-native-randombytes@madfish-solutions/react-native-randombytes:
     "@babel/core": "npm:^7.25.2"
     "@babel/preset-env": "npm:^7.25.3"
     "@babel/runtime": "npm:^7.25.0"
-    "@d11/react-native-fast-image": "npm:^8.13.0"
     "@dicebear/bottts": "npm:^9.3.0"
     "@dicebear/core": "npm:^9.4.2"
     "@ecadlabs/beacon-sdk": "npm:4.8.5-ecad"
@@ -16273,6 +16272,7 @@ react-native-randombytes@madfish-solutions/react-native-randombytes:
     react-native-dialog: "npm:^9.3.0"
     react-native-exception-handler: "npm:^2.10.10"
     react-native-exit-app: "npm:^2.0.0"
+    react-native-fast-image: "npm:^10.11.0"
     react-native-fs: "npm:^2.20.0"
     react-native-gesture-handler: "npm:^2.31.2"
     react-native-get-random-values: "npm:^2.0.0"

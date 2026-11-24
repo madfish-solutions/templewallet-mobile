@@ -236,7 +236,7 @@ export const writeReport = dir => {
   const lines = [`# ${title}`, '', explain(versions, rows), ''];
   if (title === 'Worse') {
     lines.push(
-      'A slow row is a reason to record JavaScript samples with yarn android:hermes or yarn ios:hermes.',
+      'JavaScript samples for each flow are in artifacts/<version>/<flow>/hermes/profile.json. Open that file at speedscope.app. A re-render is time spent in that component.',
       ''
     );
   }
@@ -304,7 +304,12 @@ export const writeReport = dir => {
         );
       });
     }
-    if (version.ran.has('jank')) lines.push(`Trace: ${jankLine(version)}.`);
+    if (version.ran.has('jank')) {
+      lines.push(`Trace: ${jankLine(version)}.`);
+      const videos = version.jank.map(row => row.video).filter(Boolean);
+      if (videos.length === 1) lines.push(`Video: ${videos[0]}.`);
+      else if (videos.length) lines.push(`Video: ${videos.length} recordings.`);
+    }
     lines.push('');
   }
 

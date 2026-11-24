@@ -35,7 +35,7 @@ cd "$root"
 mode="${1:-}"
 cached_apk="${2:-}"
 case "$mode" in
-  flashlight|perfetto|hermes|install) ;;
+  flashlight|perfetto|hermes|install|collect) ;;
   install-cached)
     if [[ ! -f "$cached_apk" ]]; then
       echo "Cached APK not found: $cached_apk" >&2
@@ -43,7 +43,7 @@ case "$mode" in
     fi
     ;;
   *)
-    echo "Usage: yarn android:flashlight, yarn android:perfetto, yarn android:hermes, or bash android-test.sh install" >&2
+    echo "Usage: yarn android:flashlight, yarn android:perfetto, yarn android:hermes, or bash android-test.sh install|collect" >&2
     exit 1
     ;;
 esac
@@ -55,14 +55,14 @@ config="$script_root/perfetto.cfg"
 perfetto_session=""
 perfetto_stopped=0
 passwords_cleared=0
-if [[ "$mode" == "install-cached" || "${SKIP_INSTALL:-}" == "1" ]]; then
+if [[ "$mode" == "install-cached" || "$mode" == "collect" || "${SKIP_INSTALL:-}" == "1" ]]; then
   passwords_cleared=1
 fi
 device_trace=""
 local_trace=""
 hermes_started=0
 
-if [[ "$mode" != "install-cached" && "${SKIP_INSTALL:-}" != "1" ]]; then
+if [[ "$mode" != "install-cached" && "$mode" != "collect" && "${SKIP_INSTALL:-}" != "1" ]]; then
   if [[ -z "${MYAPP_UPLOAD_STORE_PASSWORD:-}" || -z "${MYAPP_UPLOAD_KEY_PASSWORD:-}" ]]; then
     echo "Set MYAPP_UPLOAD_STORE_PASSWORD and MYAPP_UPLOAD_KEY_PASSWORD." >&2
     exit 1
@@ -187,7 +187,7 @@ stop_perfetto() {
 # this flow denies. MediaStore is given MIME type text/plain, so Android stores
 # the file as "<name>.cpuprofile.txt".
 collect_hermes_profile() {
-  local file="" map args converted mtime waited
+  local file="" map args converted mtime waited out
   # stopProfiling writes the file after Maestro has already opened the stop link.
   for waited in $(seq 1 20); do
     file="$(adb shell ls -tp /sdcard/Download | tr -d '\r' | grep -E '\.cpuprofile(\.txt)?$' | head -1 || true)"
@@ -204,7 +204,9 @@ collect_hermes_profile() {
     echo "No Hermes profile in Downloads. The stop link may not have been handled." >&2
     return 1
   fi
-  map="$root/android/app/build/generated/sourcemaps/react/release/index.android.bundle.map"
+  map="${HERMES_SOURCEMAP:-$root/android/app/build/generated/sourcemaps/react/release/index.android.bundle.map}"
+  out="${HERMES_OUT:-$root/hermes-profiles}"
+  mkdir -p "$out"
   args=(--fromDownload --filename "$file" --appId "$APP_ID")
   if [[ -f "$map" ]]; then
     args+=(--sourcemap-path "$map")
@@ -217,9 +219,15 @@ collect_hermes_profile() {
     echo "Profiler did not write $converted" >&2
     return 1
   fi
-  mv "$converted" "$root/hermes-profiles/android-$stamp-converted.json"
+  adb pull "/sdcard/Download/$file" "$out/profile.cpuprofile" >/dev/null 2>&1 || true
   adb shell rm -f "/sdcard/Download/$file" >/dev/null 2>&1 || true
-  echo "Saved $root/hermes-profiles/android-$stamp-converted.json"
+  if [[ -n "${HERMES_OUT:-}" ]]; then
+    mv "$converted" "$out/profile.json"
+    echo "Saved $out/profile.json"
+  else
+    mv "$converted" "$root/hermes-profiles/android-$stamp-converted.json"
+    echo "Saved $root/hermes-profiles/android-$stamp-converted.json"
+  fi
   echo "Open it at https://www.speedscope.app or https://ui.perfetto.dev"
 }
 
@@ -246,6 +254,13 @@ if [[ -z "${ANDROID_SERIAL:-}" ]]; then
     printf '  %s\n' "${serials[@]}" >&2
     exit 1
   fi
+fi
+
+if [[ "$mode" == "collect" ]]; then
+  hermes_started="${HERMES_STARTED:-0}"
+  stamp="profile"
+  collect_hermes_profile
+  exit $?
 fi
 
 if [[ "$mode" == "perfetto" ]]; then
@@ -312,6 +327,18 @@ if [[ "${SKIP_INSTALL:-}" != "1" ]]; then
       echo "The release APK was not found, so it was not cached." >&2
     fi
   fi
+  map="$root/android/app/build/generated/sourcemaps/react/release/index.android.bundle.map"
+  if [[ -f "$map" ]]; then
+    if [[ -n "${HERMES_SOURCEMAP:-}" ]]; then
+      mkdir -p "$(dirname "$HERMES_SOURCEMAP")"
+      cp "$map" "$HERMES_SOURCEMAP"
+      echo "Saved $HERMES_SOURCEMAP"
+    fi
+    if [[ -n "${BUILD_CACHE:-}" ]]; then
+      mkdir -p "$BUILD_CACHE"
+      cp "$map" "$BUILD_CACHE/bundle.map"
+    fi
+  fi
 fi
 
 if [[ "$mode" == "install" ]]; then
@@ -338,9 +365,13 @@ case "$mode" in
     exit "$flashlight_status"
     ;;
   perfetto)
-    mkdir -p "$root/perfetto-reports"
+    if [[ -n "${PERFETTO_OUT:-}" ]]; then
+      mkdir -p "$PERFETTO_OUT"
+    else
+      mkdir -p "$root/perfetto-reports"
+    fi
     device_trace="/data/misc/perfetto-traces/android-$stamp.perfetto-trace"
-    local_trace="$root/perfetto-reports/android-$stamp.perfetto-trace"
+    local_trace="${PERFETTO_OUT:-$root/perfetto-reports}/android-$stamp.perfetto-trace"
     pushed_config="/data/local/tmp/perfetto-$stamp.cfg"
     tmp_config="$(mktemp)"
 

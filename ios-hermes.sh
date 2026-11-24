@@ -32,9 +32,12 @@ fi
 cd "$root"
 
 install_only=0
+collect_only=0
 cached_app=""
 if [[ "${1:-}" == "install" ]]; then
   install_only=1
+elif [[ "${1:-}" == "collect" ]]; then
+  collect_only=1
 elif [[ "${1:-}" == "install-cached" ]]; then
   cached_app="${2:-}"
   if [[ ! -d "$cached_app" ]]; then
@@ -67,6 +70,64 @@ if [[ -z "$device" ]]; then
   device="${udids[0]}"
 fi
 
+collect_hermes_profile() {
+  local container profile="" candidate mtime base args converted waited out
+  out="${HERMES_OUT:-$root/hermes-profiles}"
+  mkdir -p "$out"
+  container="$(xcrun simctl get_app_container "$device" "$APP_ID" data)" || return 1
+  # stopProfiling writes the file after Maestro has already opened the stop link.
+  for waited in $(seq 1 20); do
+    candidate="$(
+      find "$container/Library/Caches" -name '*.cpuprofile' -exec stat -f '%m %N' {} \; 2>/dev/null \
+        | sort -nr \
+        | head -1 \
+        | cut -d' ' -f2-
+    )"
+    if [[ -n "$candidate" && -f "$candidate" ]]; then
+      mtime="$(stat -f %m "$candidate")"
+      if [[ "$mtime" -ge "$hermes_started" ]]; then
+        profile="$candidate"
+        break
+      fi
+    fi
+    sleep 0.5
+  done
+  if [[ -z "$profile" ]]; then
+    echo "No Hermes profile in the app cache. The stop link may not have been handled." >&2
+    return 1
+  fi
+  cp "$profile" "$out/profile.cpuprofile"
+  args=(--local "$profile")
+  if [[ -n "$sourcemap" && -f "$sourcemap" ]]; then
+    args+=(--sourcemap-path "$sourcemap")
+  else
+    echo "No iOS source map. The profile will show bytecode offsets." >&2
+  fi
+  yarn exec react-native-release-profiler "${args[@]}" || return 1
+  base="$(basename "$profile" .cpuprofile)"
+  converted="$root/${base}-converted.json"
+  if [[ ! -f "$converted" ]]; then
+    echo "Profiler did not write $converted" >&2
+    return 1
+  fi
+  if [[ -n "${HERMES_OUT:-}" ]]; then
+    mv "$converted" "$out/profile.json"
+    echo "Saved $out/profile.json"
+  else
+    mv "$converted" "$root/hermes-profiles/ios-$stamp-converted.json"
+    echo "Saved $root/hermes-profiles/ios-$stamp-converted.json"
+  fi
+  echo "Open it at https://www.speedscope.app or https://ui.perfetto.dev"
+}
+
+if [[ "$collect_only" -eq 1 ]]; then
+  hermes_started="${HERMES_STARTED:-0}"
+  sourcemap="${HERMES_SOURCEMAP:-}"
+  stamp="profile"
+  collect_hermes_profile
+  exit $?
+fi
+
 # simctl openurl, which Maestro uses for openLink, asks "Open in Temple?" until
 # this simulator has approved the scheme. The choice lives outside the app, so
 # clearState does not remove it. LaunchServices reads the list at boot.
@@ -94,7 +155,8 @@ fi
 
 mkdir -p "$root/hermes-profiles"
 stamp="$(date +%Y-%m-%d-%H-%M-%S)"
-sourcemap="$root/hermes-profiles/ios-$stamp.jsbundle.map"
+sourcemap="${SOURCEMAP_FILE:-$root/hermes-profiles/ios-$stamp.jsbundle.map}"
+mkdir -p "$(dirname "$sourcemap")"
 
 echo "Installing the release build of $APP_ID on $device"
 export SENTRY_DISABLE_AUTO_UPLOAD=true
@@ -117,6 +179,11 @@ if [[ -n "${BUILD_CACHE:-}" ]]; then
   fi
 fi
 
+if [[ -n "${BUILD_CACHE:-}" && -f "$sourcemap" ]]; then
+  mkdir -p "$BUILD_CACHE"
+  cp "$sourcemap" "$BUILD_CACHE/bundle.map"
+fi
+
 if [[ "$install_only" -eq 1 ]]; then
   echo "Installed the release build of $APP_ID"
   exit 0
@@ -125,48 +192,6 @@ fi
 hermes_started="$(date +%s)"
 maestro_status=0
 HERMES_PROFILE=1 bash "$root/maestro-test.sh" || maestro_status=$?
-
-collect_hermes_profile() {
-  local container profile="" candidate mtime base args converted waited
-  container="$(xcrun simctl get_app_container "$device" "$APP_ID" data)" || return 1
-  # stopProfiling writes the file after Maestro has already opened the stop link.
-  for waited in $(seq 1 20); do
-    candidate="$(
-      find "$container/Library/Caches" -name '*.cpuprofile' -exec stat -f '%m %N' {} \; 2>/dev/null \
-        | sort -nr \
-        | head -1 \
-        | cut -d' ' -f2-
-    )"
-    if [[ -n "$candidate" && -f "$candidate" ]]; then
-      mtime="$(stat -f %m "$candidate")"
-      if [[ "$mtime" -ge "$hermes_started" ]]; then
-        profile="$candidate"
-        break
-      fi
-    fi
-    sleep 0.5
-  done
-  if [[ -z "$profile" ]]; then
-    echo "No Hermes profile in the app cache. The stop link may not have been handled." >&2
-    return 1
-  fi
-  args=(--local "$profile")
-  if [[ -f "$sourcemap" ]]; then
-    args+=(--sourcemap-path "$sourcemap")
-  else
-    echo "No iOS source map at $sourcemap. The profile will show bytecode offsets." >&2
-  fi
-  yarn exec react-native-release-profiler "${args[@]}" || return 1
-  base="$(basename "$profile" .cpuprofile)"
-  converted="$root/${base}-converted.json"
-  if [[ ! -f "$converted" ]]; then
-    echo "Profiler did not write $converted" >&2
-    return 1
-  fi
-  mv "$converted" "$root/hermes-profiles/ios-$stamp-converted.json"
-  echo "Saved $root/hermes-profiles/ios-$stamp-converted.json"
-  echo "Open it at https://www.speedscope.app or https://ui.perfetto.dev"
-}
 
 pull_status=0
 collect_hermes_profile || pull_status=$?

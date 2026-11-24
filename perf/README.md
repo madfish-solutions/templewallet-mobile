@@ -70,13 +70,12 @@ yarn perf --platform ios --profile etherlink --flow tokens --iterations 5 base=T
 
 Each version is installed from a git worktree under that folder. `mine=.` is the current checkout and is left as it is, and it is built on every run. A worktree does not contain ignored files, so the keystore, `.env`, `local.properties`, Sentry properties, and `.xcode.env.local` are copied from the current checkout. A release build of a git commit is saved in `perf/out/builds/<platform>/<commit>-<env>/`. The next comparison of that commit installs the saved APK or simulator app. The directory name includes a hash of `.env`, which the release build embeds. Release builds cannot export their data, so setup runs again for each version: import a wallet, hold Settings for 4.5 seconds, then import the watch-only address. Maestro's own long press stops at 3 seconds, so that hold is one stationary swipe at the button, which can last 4.5 seconds. The rest of the screen stays in the normal Maestro flow. The shared `TW_API_CACHE` directory is what makes the server answers match. After setup, and before the timed probes, the script runs `python3 api-cache.py --fill` while the app is idle.
 
+Each flow writes its Maestro screenshots, log, and screen recording under `artifacts/<version>/` in the comparison folder. A host recording fills `video.mp4` when that run is not already being recorded. Android's recorder stops after three minutes, so a longer import keeps the first three minutes. On iOS, each flow is also recorded with xctrace, the same way as `xctrace-test.sh`. The `.trace` in that folder opens in Xcode, which plots the time profile. The measured time stays the Maestro run. The tokens-scroll trace is written in the same folder: an `.perfetto-trace` on Android, and an xctrace `.trace` plus its video on iOS. Crash reports from that version's run are copied into `artifacts/<version>/crashes/`.
+
+Each flow also records a Hermes sample profile. The symbolicated trace is `artifacts/<version>/<flow>/hermes/profile.json`, next to the raw `profile.cpuprofile` and the build's `bundle.map`. Open the JSON at [speedscope.app](https://www.speedscope.app). The source map on its own has no samples. In the profile, a re-render is time spent in that component while Maestro was waiting. A cached build made before this keeps its samples as bytecode offsets until that commit is built again.
+
 The report is `report.md` in the comparison folder. Timings are "same" when the medians differ by less than 10% or the ranges overlap. Counts are "same" within 3 or 10%. Trust fails when a version got more than 100 throttled answers or never reached the token list. Print it again with `node perf/results.mjs <folder>`.
 
-A slow row is a reason to record JavaScript samples, not part of this command:
-
-```bash
-yarn android:hermes
-yarn ios:hermes
-```
+`yarn android:hermes` and `yarn ios:hermes` still record one profile of the import flow on their own.
 
 Flashlight stays `yarn android:flashlight`. It cannot run beside Perfetto.

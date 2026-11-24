@@ -130,7 +130,7 @@ const measureEnv = () => {
     ...process.env,
     ...deviceEnv(),
     APP_ID: appId,
-    HERMES_PROFILE: '0',
+    HERMES_PROFILE: '1',
     WHALE_NAME: profile.name,
     WHALE_ADDRESS: profile.address
   };
@@ -140,7 +140,32 @@ const measureEnv = () => {
   return env;
 };
 
-const maestro = (flow, log) => run('bash', [path.join(root, 'maestro-test.sh'), flow], { env: measureEnv(), log });
+const relaunches = new Set(['maestro/import-wallet.yaml', 'maestro/perf-unlock-screen.yaml', 'maestro/perf-jank.yaml']);
+
+const maestro = async (flow, log, artifacts) => {
+  // iOS flows go through xctrace so the folder contains a .trace Xcode can chart.
+  // MAESTRO_MS is the Maestro run, without the wait to flush that trace.
+  if (platform === 'ios' && artifacts) {
+    const traced = await run('bash', [path.join(root, 'xctrace-test.sh')], {
+      env: {
+        ...measureEnv(),
+        MAESTRO_FLOW: flow,
+        MAESTRO_ARTIFACTS: artifacts,
+        XCTRACE_OUT_DIR: artifacts,
+        XCTRACE_RELAUNCH: relaunches.has(flow) ? '1' : '0',
+        HOST_VIDEO: '0',
+        ...(maestroDevice ? { XCTRACE_DEVICE: maestroDevice } : {})
+      },
+      log
+    });
+    const timed = traced.out.match(/^MAESTRO_MS (\d+)$/m);
+    return { ...traced, ms: timed ? Number(timed[1]) : traced.ms };
+  }
+  return run('bash', [path.join(root, 'maestro-test.sh'), flow], {
+    env: { ...measureEnv(), ...(artifacts ? { MAESTRO_ARTIFACTS: artifacts } : {}) },
+    log
+  });
+};
 
 const readStats = () => {
   try {
@@ -234,9 +259,23 @@ const prepare = async version => {
   return { checkout: dest, cachePath, artifact: null, commit };
 };
 
-const install = ({ checkout, cachePath, artifact }) => {
+const hermesMap = version => path.join(dir, 'artifacts', version.name, 'hermes', 'bundle.map');
+
+const placeHermesMap = version => {
+  const dest = hermesMap(version);
+  if (fs.existsSync(dest) || !version.cachePath) return;
+  const cached = path.join(version.cachePath, 'bundle.map');
+  if (!fs.existsSync(cached)) return;
+  fs.mkdirSync(path.dirname(dest), { recursive: true });
+  fs.copyFileSync(cached, dest);
+};
+
+const install = version => {
+  const { checkout, cachePath, artifact } = version;
   const script = platform === 'android' ? 'android-test.sh' : 'ios-hermes.sh';
+  const map = hermesMap(version);
   if (artifact) {
+    placeHermesMap(version);
     return run('bash', [path.join(root, script), 'install-cached', artifact], {
       env: { ...process.env, ...deviceEnv(), APP_ID: appId }
     });
@@ -246,147 +285,255 @@ const install = ({ checkout, cachePath, artifact }) => {
     ...deviceEnv(),
     CHECKOUT: checkout,
     APP_ID: appId,
-    SENTRY_DISABLE_AUTO_UPLOAD: 'true'
+    SENTRY_DISABLE_AUTO_UPLOAD: 'true',
+    SOURCEMAP_FILE: map,
+    HERMES_SOURCEMAP: map
   };
   if (cachePath) env.BUILD_CACHE = cachePath;
   return run('bash', [path.join(root, script), 'install'], { env });
 };
 
-const traceFrom = (output, suffix) =>
-  [...output.matchAll(/^Saved (.+)$/gm)].map(match => match[1].trim()).find(file => file.endsWith(suffix)) ?? null;
+const savedPaths = output => [...output.matchAll(/^Saved (.+)$/gm)].map(match => match[1].trim());
 
-const jank = async log => {
+const traceFrom = (output, suffix) => savedPaths(output).find(file => file.endsWith(suffix)) ?? null;
+
+const videoFrom = output => savedPaths(output).filter(file => file.endsWith('.mp4')).at(-1) ?? null;
+
+const jank = async (log, artifacts) => {
+  const env = {
+    ...measureEnv(),
+    SKIP_INSTALL: '1',
+    MAESTRO_FLOW: 'maestro/perf-jank.yaml',
+    MAESTRO_ARTIFACTS: artifacts
+  };
   if (platform === 'android') {
     const traced = await run('bash', [path.join(root, 'android-test.sh'), 'perfetto'], {
-      env: { ...measureEnv(), SKIP_INSTALL: '1', MAESTRO_FLOW: 'maestro/perf-jank.yaml' },
+      env: { ...env, PERFETTO_OUT: artifacts },
       log
     });
-    return { ...traced, trace: traceFrom(traced.out, '.perfetto-trace') };
+    return { ...traced, trace: traceFrom(traced.out, '.perfetto-trace'), video: videoFrom(traced.out) };
   }
   const traced = await run('bash', [path.join(root, 'xctrace-test.sh')], {
-    env: { ...measureEnv(), MAESTRO_FLOW: 'maestro/perf-jank.yaml' },
+    env: {
+      ...env,
+      XCTRACE_OUT_DIR: artifacts,
+      XCTRACE_RELAUNCH: '1',
+      HOST_VIDEO: '0',
+      ...(maestroDevice ? { XCTRACE_DEVICE: maestroDevice } : {})
+    },
     log
   });
-  return { ...traced, trace: traceFrom(traced.out, '.trace') };
+  return { ...traced, trace: traceFrom(traced.out, '.trace'), video: videoFrom(traced.out) };
+};
+
+const collectHermes = (version, artifacts, startedAt) => {
+  const script = platform === 'android' ? 'android-test.sh' : 'ios-hermes.sh';
+  return run('bash', [path.join(root, script), 'collect'], {
+    env: {
+      ...measureEnv(),
+      HERMES_OUT: artifacts,
+      HERMES_SOURCEMAP: hermesMap(version),
+      HERMES_STARTED: String(Math.floor(startedAt / 1000))
+    }
+  });
+};
+
+// A relaunch drops samples that were recorded in the previous process, so those
+// flows start sampling themselves once the new process is up. Every other flow
+// is bracketed here. The stop link writes the file the collect step converts.
+const maestroProfiled = async (version, flow, log, artifacts) => {
+  const startedAt = Date.now();
+  if (!relaunches.has(flow)) await maestro('maestro/hermes-start.yaml', log);
+  const result = await maestro(flow, log, artifacts);
+  await maestro('maestro/hermes-stop.yaml', log);
+  await collectHermes(version, path.join(artifacts, 'hermes'), startedAt);
+  return result;
+};
+
+const collectCrashes = async (version, startedAt) => {
+  const dest = path.join(dir, 'artifacts', version.name, 'crashes');
+  if (platform === 'ios') {
+    const reports = path.join(process.env.HOME ?? '', 'Library', 'Logs', 'DiagnosticReports');
+    if (!fs.existsSync(reports)) return;
+    const copied = [];
+    for (const name of fs.readdirSync(reports)) {
+      if (!/^TempleWallet.*\.ips$/.test(name)) continue;
+      const from = path.join(reports, name);
+      if (fs.statSync(from).mtimeMs < startedAt - 5000) continue;
+      fs.mkdirSync(dest, { recursive: true });
+      fs.copyFileSync(from, path.join(dest, name));
+      copied.push(name);
+    }
+    if (copied.length) process.stdout.write(`Copied crash reports: ${copied.join(', ')}\n`);
+    return;
+  }
+  const started = new Date(startedAt - 5000);
+  const pad = value => String(value).padStart(2, '0');
+  const from = `${pad(started.getMonth() + 1)}-${pad(started.getDate())} ${pad(started.getHours())}:${pad(started.getMinutes())}:${pad(started.getSeconds())}.000`;
+  const crashed = await run('adb', ['logcat', '-b', 'crash', '-d', '-t', from], { quiet: true });
+  const body = crashed.out
+    .split('\n')
+    .filter(line => line && !line.startsWith('---------'))
+    .join('\n');
+  if (crashed.status !== 0 || !body.trim()) return;
+  fs.mkdirSync(dest, { recursive: true });
+  fs.writeFileSync(path.join(dest, 'logcat-crash.txt'), `${body}\n`);
+  process.stdout.write(`Saved ${path.join(dest, 'logcat-crash.txt')}\n`);
 };
 
 const measure = async version => {
-  const log = probe => path.join(dir, `${version.name}-${probe}.log`);
-  const setupLog = log('setup');
-  fs.writeFileSync(setupLog, '');
-  // Empty logs stay behind when setup stops, so the report treats those probes as unfinished.
-  for (const probe of activeProbes) fs.writeFileSync(log(probe), '');
+  const startedAt = Date.now();
+  const slot = name => path.join(dir, 'artifacts', version.name, name);
+  try {
+    const log = probe => path.join(dir, `${version.name}-${probe}.log`);
+    const setupLog = log('setup');
+    fs.writeFileSync(setupLog, '');
+    // Empty logs stay behind when setup stops, so the report treats those probes as unfinished.
+    for (const probe of activeProbes) fs.writeFileSync(log(probe), '');
 
-  const installed = await install(version);
-  fs.appendFileSync(setupLog, installed.out);
-  if (installed.status !== 0) return;
+    const installed = await install(version);
+    fs.appendFileSync(setupLog, installed.out);
+    if (installed.status !== 0) return;
 
-  const imported = await maestro('maestro/import-wallet.yaml', setupLog);
-  if (imported.status !== 0) return;
-  // Maestro's long press always lasts 3s. Settings opens Debug after 4s, so the
-  // hold is injected here and the flow continues in Maestro.
-  const held = await run(process.execPath, [path.join(root, 'perf', 'long-press-settings.mjs')], {
-    env: measureEnv(),
-    log: setupLog
-  });
-  if (held.status !== 0) return;
-  const watched = await maestro('maestro/perf-watch-only.yaml', setupLog);
-  if (watched.status !== 0) return;
-
-  if (warmup) {
-    const filled = await run('python3', [path.join(root, 'api-cache.py'), '--fill'], {
-      env: { ...process.env, TW_API_CACHE: cacheDir },
+    const imported = await maestroProfiled(version, 'maestro/import-wallet.yaml', setupLog, slot('setup-import'));
+    if (imported.status !== 0) return;
+    // Maestro's long press always lasts 3s. Settings opens Debug after 4s, so the
+    // hold is injected here and the flow continues in Maestro.
+    const held = await run(process.execPath, [path.join(root, 'perf', 'long-press-settings.mjs')], {
+      env: { ...measureEnv(), MAESTRO_ARTIFACTS: slot('setup-settings') },
       log: setupLog
     });
-    if (filled.status !== 0) return;
-  }
+    if (held.status !== 0) return;
+    const watched = await maestroProfiled(version, 'maestro/perf-watch-only.yaml', setupLog, slot('setup-watch'));
+    if (watched.status !== 0) return;
 
-  const runs = async (times, once) => {
-    for (let index = 0; index < times; index += 1) await once(index);
-  };
-
-  if (activeProbes.includes('unlock')) {
-    const unlockLog = log('unlock');
-    await runs(repeatCount('unlock'), async () => {
-      const screen = await maestro('maestro/perf-unlock-screen.yaml', unlockLog);
-      const wallet = await maestro('maestro/perf-unlock-wallet.yaml', unlockLog);
-      resultLine(unlockLog, {
-        probe: 'unlock',
-        screenMs: screen.ms,
-        walletMs: wallet.ms,
-        ok: screen.status === 0 && wallet.status === 0
+    if (warmup) {
+      const filled = await run('python3', [path.join(root, 'api-cache.py'), '--fill'], {
+        env: { ...process.env, TW_API_CACHE: cacheDir },
+        log: setupLog
       });
-    });
-  }
+      if (filled.status !== 0) return;
+    }
 
-  const tokensLog = log('tokens');
-  const runTokens = async () => {
-    const tokensOpen = await maestro('maestro/perf-tokens-open.yaml', tokensLog);
-    const tokensScroll = await maestro('maestro/perf-tokens-scroll.yaml', tokensLog);
-    resultLine(tokensLog, {
-      probe: 'tokens',
-      openMs: tokensOpen.ms,
-      scrollMs: tokensScroll.ms,
-      reached: tokensOpen.status === 0,
-      ok: tokensOpen.status === 0 && tokensScroll.status === 0
-    });
-    return tokensOpen.status === 0 && tokensScroll.status === 0;
-  };
+    const runs = async (times, once) => {
+      for (let index = 0; index < times; index += 1) await once(index);
+    };
 
-  const nftsLog = log('nfts');
-  const runNfts = async () => {
-    const nftsOpen = await maestro('maestro/perf-nfts-open.yaml', nftsLog);
-    const nftsScroll = await maestro('maestro/perf-nfts-scroll.yaml', nftsLog);
-    resultLine(nftsLog, {
-      probe: 'nfts',
-      openMs: nftsOpen.ms,
-      scrollMs: nftsScroll.ms,
-      reached: nftsOpen.status === 0,
-      ok: nftsOpen.status === 0 && nftsScroll.status === 0
-    });
-    return nftsOpen.status === 0 && nftsScroll.status === 0;
-  };
-
-  if (flowName === 'network') {
-    const networkLog = log('network');
-    await runs(repeatCount('network'), async () => {
-      const before = readStats();
-      const tokensOk = await runTokens();
-      const nftsOk = await runNfts();
-      const after = readStats();
-      resultLine(networkLog, {
-        probe: 'network',
-        hits: after.hits - before.hits,
-        recorded: after.recorded - before.recorded,
-        throttled: after.throttled - before.throttled,
-        ok: tokensOk && nftsOk
-      });
-    });
-  } else {
-    const before = activeProbes.includes('network') ? readStats() : null;
-    if (activeProbes.includes('tokens')) await runs(repeatCount('tokens'), runTokens);
-    if (activeProbes.includes('nfts')) await runs(repeatCount('nfts'), runNfts);
-    if (before) {
-      const after = readStats();
-      resultLine(log('network'), {
-        probe: 'network',
-        hits: after.hits - before.hits,
-        recorded: after.recorded - before.recorded,
-        throttled: after.throttled - before.throttled
+    if (activeProbes.includes('unlock')) {
+      const unlockLog = log('unlock');
+      await runs(repeatCount('unlock'), async index => {
+        const screen = await maestroProfiled(
+          version,
+          'maestro/perf-unlock-screen.yaml',
+          unlockLog,
+          slot(`unlock-${index + 1}-screen`)
+        );
+        const wallet = await maestroProfiled(
+          version,
+          'maestro/perf-unlock-wallet.yaml',
+          unlockLog,
+          slot(`unlock-${index + 1}-wallet`)
+        );
+        resultLine(unlockLog, {
+          probe: 'unlock',
+          screenMs: screen.ms,
+          walletMs: wallet.ms,
+          ok: screen.status === 0 && wallet.status === 0
+        });
       });
     }
-  }
 
-  if (activeProbes.includes('jank')) {
-    const jankLog = log('jank');
-    await runs(repeatCount('jank'), async () => {
-      const traced = await jank(jankLog);
-      resultLine(jankLog, {
-        probe: 'jank',
-        trace: traced.trace,
-        ok: traced.status === 0 && Boolean(traced.trace)
+    const tokensLog = log('tokens');
+    const runTokens = async index => {
+    const tokensOpen = await maestroProfiled(
+      version,
+      'maestro/perf-tokens-open.yaml',
+      tokensLog,
+      slot(`tokens-${index + 1}-open`)
+    );
+    const tokensScroll = await maestroProfiled(
+      version,
+      'maestro/perf-tokens-scroll.yaml',
+      tokensLog,
+      slot(`tokens-${index + 1}-scroll`)
+    );
+      resultLine(tokensLog, {
+        probe: 'tokens',
+        openMs: tokensOpen.ms,
+        scrollMs: tokensScroll.ms,
+        reached: tokensOpen.status === 0,
+        ok: tokensOpen.status === 0 && tokensScroll.status === 0
       });
-    });
+      return tokensOpen.status === 0 && tokensScroll.status === 0;
+    };
+
+    const nftsLog = log('nfts');
+    const runNfts = async index => {
+    const nftsOpen = await maestroProfiled(version, 'maestro/perf-nfts-open.yaml', nftsLog, slot(`nfts-${index + 1}-open`));
+    const nftsScroll = await maestroProfiled(
+      version,
+      'maestro/perf-nfts-scroll.yaml',
+      nftsLog,
+      slot(`nfts-${index + 1}-scroll`)
+    );
+      resultLine(nftsLog, {
+        probe: 'nfts',
+        openMs: nftsOpen.ms,
+        scrollMs: nftsScroll.ms,
+        reached: nftsOpen.status === 0,
+        ok: nftsOpen.status === 0 && nftsScroll.status === 0
+      });
+      return nftsOpen.status === 0 && nftsScroll.status === 0;
+    };
+
+    if (flowName === 'network') {
+      const networkLog = log('network');
+      await runs(repeatCount('network'), async index => {
+        const before = readStats();
+        const tokensOk = await runTokens(index);
+        const nftsOk = await runNfts(index);
+        const after = readStats();
+        resultLine(networkLog, {
+          probe: 'network',
+          hits: after.hits - before.hits,
+          recorded: after.recorded - before.recorded,
+          throttled: after.throttled - before.throttled,
+          ok: tokensOk && nftsOk
+        });
+      });
+    } else {
+      const before = activeProbes.includes('network') ? readStats() : null;
+      if (activeProbes.includes('tokens')) await runs(repeatCount('tokens'), runTokens);
+      if (activeProbes.includes('nfts')) await runs(repeatCount('nfts'), runNfts);
+      if (before) {
+        const after = readStats();
+        resultLine(log('network'), {
+          probe: 'network',
+          hits: after.hits - before.hits,
+          recorded: after.recorded - before.recorded,
+          throttled: after.throttled - before.throttled
+        });
+      }
+    }
+
+    if (activeProbes.includes('jank')) {
+      const jankLog = log('jank');
+      await runs(repeatCount('jank'), async index => {
+        const jankSlot = slot(`jank-${index + 1}`);
+        const jankStarted = Date.now();
+        const traced = await jank(jankLog, jankSlot);
+        await maestro('maestro/hermes-stop.yaml', jankLog);
+        await collectHermes(version, path.join(jankSlot, 'hermes'), jankStarted);
+        resultLine(jankLog, {
+          probe: 'jank',
+          trace: traced.trace,
+          video: traced.video,
+          ok: traced.status === 0 && Boolean(traced.trace)
+        });
+      });
+    }
+  } finally {
+    await collectCrashes(version, startedAt);
   }
 };
 

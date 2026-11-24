@@ -39,11 +39,14 @@ const handleUrl = (url: string) => {
   const command = profileCommand(url);
 
   if (command === 'start') {
-    if (started) {
+    // A flow that already stopped can start again in the same process. A second
+    // start while sampling is still running leaves that session alone.
+    if (started && !stopped) {
       return;
     }
 
     started = true;
+    stopped = false;
     startProfiling();
 
     return;

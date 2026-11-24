@@ -15,6 +15,7 @@
 #   ./xctrace-test.sh
 #   XCTRACE_TEMPLATE='Animation Hitches' ./xctrace-test.sh
 #   XCTRACE_DEVICE=<simulator-udid> ./xctrace-test.sh
+#   XCTRACE_RELAUNCH=0 ./xctrace-test.sh   # the app is already running
 #
 # APP_ID defaults to the iOS bundle. maestro-test.sh supplies the wallet env.
 
@@ -156,13 +157,21 @@ fi
 
 existing_pids="$(list_app_pids | sort -u)"
 
+now_ms() {
+  perl -MTime::HiRes=time -e 'printf "%d\n", time * 1000'
+}
+
+# This script already records the simulator. A second recorder would fail.
+maestro_started="$(now_ms)"
 if [[ -n "${MAESTRO_FLOW:-}" ]]; then
-  bash "$root/maestro-test.sh" "$MAESTRO_FLOW" &
+  HOST_VIDEO=0 bash "$root/maestro-test.sh" "$MAESTRO_FLOW" &
 else
-  bash "$root/maestro-test.sh" &
+  HOST_VIDEO=0 bash "$root/maestro-test.sh" &
 fi
 maestro_pid=$!
 
+# A relaunch shows up as a new process, and the trace has to follow that one.
+# XCTRACE_RELAUNCH=0 means this flow leaves the app running, so attach to it.
 app_pid=""
 for _ in $(seq 1 140); do
   if ! kill -0 "$maestro_pid" 2>/dev/null; then
@@ -170,6 +179,13 @@ for _ in $(seq 1 140); do
   fi
   if app_pid="$(fresh_app_pid)"; then
     break
+  fi
+  if [[ "${XCTRACE_RELAUNCH:-1}" == "0" ]]; then
+    current="$(list_app_pids | head -n 1)"
+    if [[ -n "$current" ]]; then
+      app_pid="$current"
+      break
+    fi
   fi
   sleep 0.5
 done
@@ -210,6 +226,10 @@ fi
 maestro_status=0
 wait "$maestro_pid" || maestro_status=$?
 maestro_pid=""
+maestro_ended="$(now_ms)"
+if [[ -n "$maestro_started" && -n "$maestro_ended" ]]; then
+  echo "MAESTRO_MS $((maestro_ended - maestro_started))"
+fi
 
 finish
 if [[ -d "$trace" ]]; then

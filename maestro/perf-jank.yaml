@@ -5,10 +5,20 @@ name: Tokens scroll trace
 ---
 - launchApp:
     stopApp: true
+- runFlow:
+    when:
+      true: ${typeof HERMES_PROFILE !== 'undefined' && HERMES_PROFILE == '1'}
+    file: hermes-start.yaml
 - extendedWaitUntil:
     visible:
       id: "Enter Password/Password Input"
     timeout: 60000
+# A link sent before JavaScript is listening is dropped. This second start
+# covers the unlock and the scroll when the first one arrived too early.
+- runFlow:
+    when:
+      true: ${typeof HERMES_PROFILE !== 'undefined' && HERMES_PROFILE == '1'}
+    file: hermes-start.yaml
 - tapOn:
     id: "Enter Password/Password Input"
 - inputText: ${DEFAULT_PASSWORD}
