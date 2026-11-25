@@ -1,0 +1,114 @@
+diff --git a/ios/FastImage/FFFDownsampledImage.m b/ios/FastImage/FFFDownsampledImage.m
+--- a/ios/FastImage/FFFDownsampledImage.m
++++ b/ios/FastImage/FFFDownsampledImage.m
+@@ -9,6 +9,7 @@
+ #import <SDWebImage/SDImageCache.h>
+ #import <SDWebImage/SDWebImageManager.h>
+ #import <SDWebImage/SDImageTransformer.h>
++#import <SDWebImageSVGCoder/SDImageSVGCoder.h>
+ 
+ // The decode option that carries the full image's size to the view.
+ static SDImageCoderOption const FFFDecodeSourceSize = @"FFFDecodeSourceSize";
+@@ -197,6 +198,89 @@
+ }
+ 
+ @end
++
++// Whether UIKit can draw an SVG as a vector image here. Before iOS 18.6 it
++// can't safely: UIKit draws a vector image into a bitmap context of automatic
++// range, where Core Graphics crashes (EXC_BAD_ACCESS in CGGStateSetFillColor,
++// from rip_auto_context_begin_layer) on an element with both a fill and an
++// opacity, e.g. <g fill="none" opacity=".3">. Seen on iOS 17.0.1 and reported
++// up to 17.7; 18.6 and later draw it. The crash can't be caught, and the SVG
++// coder's vector images are drawn that way as they're decoded.
++static BOOL FFFCanDrawVectorSVG(void) {
++    if (@available(iOS 18.6, tvOS 18.6, *)) {
++        return YES;
++    }
++    return NO;
++}
++
++// An SVG drawn by the SVG coder's bitmap path, which draws the document into
++// a plain 8-bit context (no vector image), stretched to a size in points at
++// the screen's scale. A side of zero keeps the SVG's own length for it.
++static UIImage* FFFCoderBitmapSVG(NSData* data, CGSize size) {
++    return [[SDImageSVGCoder sharedCoder] decodedImageWithData: data options: @{
++        SDImageCoderDecodeThumbnailPixelSize: [NSValue valueWithCGSize: size],
++        SDImageCoderDecodePreserveAspectRatio: @NO,
++    }];
++}
++
++// What initWithData makes of an SVG where a vector image can't be drawn (see
++// FFFCanDrawVectorSVG): the same bitmap, for the box or at its own size, with
++// the SVG's size in points, but drawn by the SVG coder's bitmap path.
++static UIImage* FFFBitmapSVG(NSData* data, SDImageCoderOptions* options) {
++    return FFFWithSVGLock(^id {
++        CGContextRef current = UIGraphicsGetCurrentContext();
++        @try {
++            // The SVG's size in points: a strip one point wide has its
++            // height, and one a point high its width.
++            UIImage* tall = FFFCoderBitmapSVG(data, CGSizeMake(1, 0));
++            UIImage* wide = FFFCoderBitmapSVG(data, CGSizeMake(0, 1));
++            CGSize size = CGSizeMake(wide.size.width, tall.size.height);
++            CGFloat coderScale = tall.scale;
++            if (size.width <= 0 || size.height <= 0 || coderScale <= 0) {
++                return nil;
++            }
++            NSValue* boxValue = options[SDImageCoderDecodeThumbnailPixelSize];
++            CGFloat scale;
++            if (boxValue) {
++                NSNumber* preserveAspectRatio = options[SDImageCoderDecodePreserveAspectRatio];
++                BOOL cover = preserveAspectRatio != nil && !preserveAspectRatio.boolValue;
++                CGFloat maxScale = [options[FFFDecodeMaxScale] doubleValue];
++                scale = FFFBoxScale(size, boxValue.CGSizeValue, cover);
++                if (maxScale > 0) {
++                    scale = MIN(scale, maxScale);
++                }
++            } else {
++                scale = [options[FFFDecodeScreenScale] doubleValue];
++                NSValue* vectorBox = options[FFFDecodeVectorBox];
++                if (vectorBox) {
++                    scale = MAX(scale, FFFBoxScale(size, vectorBox.CGSizeValue, [options[FFFDecodeVectorCover] boolValue]));
++                }
++            }
++            // A load that would keep it a vector gets it at the screen's
++            // scale.
++            scale = FFFDrawnSVGScale(size, scale > 0 ? scale : coderScale);
++            FFFWork(@"svg", options[FFFDecodeWorkURL], [NSString stringWithFormat: @"%gx%g at scale %g as a bitmap", size.width, size.height, scale]);
++            UIImage* bitmap = FFFCoderBitmapSVG(data, CGSizeMake(size.width * scale / coderScale, size.height * scale / coderScale));
++            if (!bitmap.CGImage) {
++                return nil;
++            }
++            FFFSourceSize* sourceSize = options[FFFDecodeSourceSize];
++            if ([sourceSize isKindOfClass: [FFFSourceSize class]]) {
++                sourceSize.size = size;
++                sourceSize.drawnForBox = boxValue != nil;
++                sourceSize.drawnAtFullSize = boxValue == nil;
++            }
++            return [[UIImage alloc] initWithCGImage: bitmap.CGImage scale: CGImageGetWidth(bitmap.CGImage) / size.width orientation: UIImageOrientationUp];
++        } @catch (...) {
++            // CoreSVG throws for some SVGs, which the coder's bitmap path
++            // doesn't catch, leaving the context it was drawing into.
++            if (UIGraphicsGetCurrentContext() != current) {
++                UIGraphicsEndImageContext();
++            }
++            return nil;
++        }
++    });
++}
+ 
+ // Gives a load its own memory cache key, which SDWebImage makes from the url,
+ // the box and whether it's covered, not the decode options (see
+@@ -444,7 +528,11 @@
+     // image): a vector image from the SVG coder, without the box (it would
+     // draw it at the box's size in points, at the screen's scale), drawn here
+     // for the box (FFFDrawnSVG), or at its own size for a full-size load.
+-    if ([NSData sd_imageFormatForImageData: data] == SDImageFormatSVG) {
++    if ([NSData sd_imageFormatForImageData: data] == SDImageFormatSVG || [[SDImageSVGCoder sharedCoder] canDecodeFromData: data]) {
++        if (!FFFCanDrawVectorSVG()) {
++            self = (id) FFFBitmapSVG(data, options);
++            return self;
++        }
+         NSMutableDictionary* vectorOptions = options ? [options mutableCopy] : [NSMutableDictionary dictionary];
+         [vectorOptions removeObjectForKey: SDImageCoderDecodeThumbnailPixelSize];
+         UIImage* image = FFFWithSVGLock(^id {
