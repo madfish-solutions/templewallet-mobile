@@ -1,6 +1,6 @@
-import FastImage from '@d11/react-native-fast-image';
 import React, { FC } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
+import FastImage from 'react-native-fast-image';
 import { SvgUri, SvgXml } from 'react-native-svg';
 
 import { CryptoLogo } from 'src/components/crypto-logo';

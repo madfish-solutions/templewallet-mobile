@@ -1,6 +1,6 @@
-import FastImage from '@d11/react-native-fast-image';
 import React, { memo, ReactNode } from 'react';
 import { StyleProp, StyleSheet, ViewStyle } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
 import { ActivityIndicator } from '../activity-indicator';
 import { BlurredImageFrame } from '../blurred-image-frame';
@@ -49,7 +49,7 @@ export const CollectibleImageRenderer = memo<Props>(
       <FastImage
         style={styles.image}
         source={{ uri: sourceUri }}
-        resizeMode={resizeMode}
+        objectFit={resizeMode}
         onError={onError}
         onLoad={onLoad}
       />
