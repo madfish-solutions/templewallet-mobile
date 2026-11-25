@@ -393,7 +393,9 @@ const measure = async version => {
 
     const installed = await install(version);
     fs.appendFileSync(setupLog, installed.out);
-    if (installed.status !== 0) return;
+    if (installed.status !== 0) {
+      throw new Error(`The release build of ${version.name} failed. The log is ${setupLog}`);
+    }
 
     const imported = await maestroProfiled(version, 'maestro/import-wallet.yaml', setupLog, slot('setup-import'));
     if (imported.status !== 0) return;
