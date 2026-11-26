@@ -1,0 +1,9 @@
+appId: ${APP_ID}
+---
+# Maestro 2.12 does not pass notifications=deny to applesimutils, so iOS still
+# shows this alert. ios-hermes.sh sets the simulator to English before boot.
+- runFlow:
+    when:
+      visible: "Don't Allow"
+    commands:
+      - tapOn: "Don't Allow"

@@ -109,6 +109,55 @@ const trustIssues = data => {
 
 const METRICS = [
   {
+    label: 'Unlock, password screen freezes',
+    kind: 'freeze',
+    probe: 'unlock',
+    fewerBetter: true,
+    values: data => samples(data.unlock).map(row => row.screenFreezes)
+  },
+  {
+    label: 'Unlock, wallet freezes',
+    kind: 'freeze',
+    probe: 'unlock',
+    fewerBetter: true,
+    values: data => samples(data.unlock).map(row => row.walletFreezes)
+  },
+  {
+    label: 'Tokens, list freezes',
+    kind: 'freeze',
+    probe: 'tokens',
+    fewerBetter: true,
+    values: data => samples(data.tokens).map(row => row.openFreezes)
+  },
+  {
+    label: 'Tokens, scroll freezes',
+    kind: 'freeze',
+    probe: 'tokens',
+    fewerBetter: true,
+    values: data => samples(data.tokens).map(row => row.scrollFreezes)
+  },
+  {
+    label: 'Collectibles, list freezes',
+    kind: 'freeze',
+    probe: 'nfts',
+    fewerBetter: true,
+    values: data => samples(data.nfts).map(row => row.openFreezes)
+  },
+  {
+    label: 'Collectibles, scroll freezes',
+    kind: 'freeze',
+    probe: 'nfts',
+    fewerBetter: true,
+    values: data => samples(data.nfts).map(row => row.scrollFreezes)
+  },
+  {
+    label: 'Tokens scroll trace, freezes',
+    kind: 'freeze',
+    probe: 'jank',
+    fewerBetter: true,
+    values: data => samples(data.jank).map(row => row.freezes)
+  },
+  {
     label: 'Unlock, password screen',
     kind: 'time',
     probe: 'unlock',
@@ -167,6 +216,12 @@ const METRICS = [
   }
 ];
 
+const freezeNote = (count, longest) => {
+  if (!Number.isFinite(count)) return '';
+  const longestText = Number.isFinite(longest) && longest > 0 ? `, longest ${time(longest)}` : '';
+  return `, ${count} freeze${count === 1 ? '' : 's'}${longestText}`;
+};
+
 const countRange = values => {
   const numbers = finite(values);
   if (!numbers.length) return '—';
@@ -180,6 +235,12 @@ const cell = (metric, data) => (metric.kind === 'time' ? range(metric.values(dat
 const verdictFor = (metric, own, base) => {
   if (metric.kind === 'time') return compareTimings(metric.values(own), metric.values(base));
   return compareCounts(median(metric.values(own)), median(metric.values(base)), metric.fewerBetter);
+};
+
+// Maestro's own waits move the timings. Freeze counts decide Better, Worse, and Same.
+const scoringRows = rows => {
+  const freezes = rows.filter(row => row.kind === 'freeze' && row.verdicts.some(Boolean));
+  return freezes.length ? freezes : rows.filter(row => row.kind === 'time');
 };
 
 const headline = (versions, rows) => {
@@ -197,7 +258,7 @@ const explain = (versions, rows) => {
     return broken.map(data => `${data.name} did not finish: ${data.unfinished.join(', ')}.`).join(' ');
   }
   const trust = versions.flatMap(trustIssues);
-  if (trust.length) return `${trust.join('. ')}. The timings are not comparable.`;
+  if (trust.length) return `${trust.join('. ')}. The results are not comparable.`;
   const changes = [];
   for (const row of rows) {
     row.verdicts.forEach((item, index) => {
@@ -220,9 +281,11 @@ export const writeReport = dir => {
   const base = versions[0];
   const rows = METRICS.filter(metric => versions.some(data => data.ran.has(metric.probe))).map(metric => ({
     label: metric.label,
+    kind: metric.kind,
     cells: versions.map(data => cell(metric, data)),
     verdicts: versions.slice(1).map(data => (base ? verdictFor(metric, data, base) : null))
   }));
+  const scored = scoringRows(rows);
 
   const jankLine = version => {
     const traces = version.jank.map(row => row.trace).filter(Boolean);
@@ -232,8 +295,8 @@ export const writeReport = dir => {
   };
   const jankRan = versions.some(data => data.ran.has('jank'));
 
-  const title = headline(versions, rows);
-  const lines = [`# ${title}`, '', explain(versions, rows), ''];
+  const title = headline(versions, scored);
+  const lines = [`# ${title}`, '', explain(versions, scored), ''];
   if (title === 'Worse') {
     lines.push(
       'JavaScript samples for each flow are in artifacts/<version>/<flow>/hermes/profile.json. Open that file at speedscope.app. A re-render is time spent in that component.',
@@ -246,7 +309,7 @@ export const writeReport = dir => {
 
   for (const row of rows) {
     const shown = row.cells.map((value, index) => {
-      if (index === 0) return value;
+      if (index === 0 || row.kind === 'time') return value;
       const verdict = row.verdicts[index - 1];
       return verdict ? `${value} · ${verdict.word}` : value;
     });
@@ -277,7 +340,7 @@ export const writeReport = dir => {
       version.unlock.forEach((row, index) => {
         const dropped = version.unlock.length >= 3 && index === 0 ? ' (dropped)' : '';
         lines.push(
-          `Unlock ${index + 1}${dropped}: password screen ${time(row.screenMs)}, wallet ${time(row.walletMs)}.`
+          `Unlock ${index + 1}${dropped}: password screen ${time(row.screenMs)}${freezeNote(row.screenFreezes, row.screenFreezeMs)}, wallet ${time(row.walletMs)}${freezeNote(row.walletFreezes, row.walletFreezeMs)}.`
         );
       });
     }
@@ -285,14 +348,18 @@ export const writeReport = dir => {
       if (!version.tokens.length) lines.push('Tokens: no finished run.');
       version.tokens.forEach((row, index) => {
         const dropped = version.tokens.length >= 3 && index === 0 ? ' (dropped)' : '';
-        lines.push(`Tokens ${index + 1}${dropped}: list ${time(row.openMs)}, scroll ${time(row.scrollMs)}.`);
+        lines.push(
+          `Tokens ${index + 1}${dropped}: list ${time(row.openMs)}${freezeNote(row.openFreezes, row.openFreezeMs)}, scroll ${time(row.scrollMs)}${freezeNote(row.scrollFreezes, row.scrollFreezeMs)}.`
+        );
       });
     }
     if (version.ran.has('nfts')) {
       if (!version.nfts.length) lines.push('Collectibles: no finished run.');
       version.nfts.forEach((row, index) => {
         const dropped = version.nfts.length >= 3 && index === 0 ? ' (dropped)' : '';
-        lines.push(`Collectibles ${index + 1}${dropped}: list ${time(row.openMs)}, scroll ${time(row.scrollMs)}.`);
+        lines.push(
+          `Collectibles ${index + 1}${dropped}: list ${time(row.openMs)}${freezeNote(row.openFreezes, row.openFreezeMs)}, scroll ${time(row.scrollMs)}${freezeNote(row.scrollFreezes, row.scrollFreezeMs)}.`
+        );
       });
     }
     if (version.ran.has('network')) {
@@ -305,6 +372,9 @@ export const writeReport = dir => {
       });
     }
     if (version.ran.has('jank')) {
+      version.jank.forEach((row, index) => {
+        lines.push(`Tokens scroll trace ${index + 1}: ${freezeNote(row.freezes, row.freezeMs).replace(/^, /, '') || 'no freeze count'}.`);
+      });
       lines.push(`Trace: ${jankLine(version)}.`);
       const videos = version.jank.map(row => row.video).filter(Boolean);
       if (videos.length === 1) lines.push(`Video: ${videos[0]}.`);

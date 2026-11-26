@@ -137,6 +137,17 @@ if ! xcrun simctl spawn "$device" defaults write com.apple.launchservices.scheme
   echo "Could not approve the temple URL scheme." >&2
   exit 1
 fi
+# System alerts use the simulator language. English keeps one set of labels in
+# the flows. Both writes are read on the next boot.
+echo "Setting the simulator language to English"
+if ! xcrun simctl spawn "$device" defaults write 'Apple Global Domain' AppleLanguages -array en; then
+  echo "Could not set the simulator language." >&2
+  exit 1
+fi
+if ! xcrun simctl spawn "$device" defaults write 'Apple Global Domain' AppleLocale -string en_US; then
+  echo "Could not set the simulator language." >&2
+  exit 1
+fi
 xcrun simctl shutdown "$device"
 xcrun simctl boot "$device"
 xcrun simctl bootstatus "$device" -b

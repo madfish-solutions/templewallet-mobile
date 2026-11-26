@@ -391,15 +391,27 @@ case "$mode" in
     if [[ "$(adb shell cat /sys/kernel/tracing/tracing_on 2>/dev/null | tr -d '\r')" != "1" ]]; then
       echo "Perfetto did not start." >&2
       printf '%s\n' "$perfetto_output" >&2
-      exit 1
+      perfetto_session=""
+      # A comparison still runs the flow. The standalone command exists to record.
+      if [[ -z "${MAESTRO_FLOW:-}" ]]; then
+        exit 1
+      fi
+      echo "The flow continues without a trace." >&2
+    else
+      echo "Perfetto is tracing $APP_ID"
     fi
-    echo "Perfetto is tracing $APP_ID"
+    now_ms() {
+      perl -MTime::HiRes=time -e 'printf "%d\n", time * 1000'
+    }
+    maestro_started="$(now_ms)"
     maestro_status=0
     if [[ -n "${MAESTRO_FLOW:-}" ]]; then
       bash "$root/maestro-test.sh" "$MAESTRO_FLOW" || maestro_status=$?
     else
       bash "$root/maestro-test.sh" || maestro_status=$?
     fi
+    maestro_ended="$(now_ms)"
+    echo "MAESTRO_MS $((maestro_ended - maestro_started))"
     exit "$maestro_status"
     ;;
   hermes)

@@ -39,6 +39,7 @@ test_opts=()
 video_pid=""
 video_file=""
 device_video=""
+emu_video=0
 video_stopped=0
 if [[ -n "${MAESTRO_ARTIFACTS:-}" ]]; then
   mkdir -p "$MAESTRO_ARTIFACTS"
@@ -63,6 +64,11 @@ stop_video() {
     wait "$video_pid" 2>/dev/null || true
   fi
   video_pid=""
+  if [[ "$emu_video" -eq 1 ]]; then
+    # The emulator already wrote the file on this machine. stop only closes it.
+    adb emu screenrecord stop >>"$MAESTRO_ARTIFACTS/video.log" 2>&1 || true
+    emu_video=0
+  fi
   if [[ -n "$device_video" ]]; then
     adb pull "$device_video" "$video_file" >/dev/null 2>&1 || true
     adb shell rm -f "$device_video" >/dev/null 2>&1 || true
@@ -77,7 +83,6 @@ start_video() {
   if [[ -z "${MAESTRO_ARTIFACTS:-}" || "${HOST_VIDEO:-1}" == "0" ]]; then
     return 0
   fi
-  video_file="$MAESTRO_ARTIFACTS/video.mp4"
   case "$APP_ID" in
     com.madfish.temple-wallet)
       local device="${MAESTRO_DEVICE:-}"
@@ -89,15 +94,24 @@ start_video() {
         video_file=""
         return 0
       fi
+      video_file="$MAESTRO_ARTIFACTS/video.mp4"
       xcrun simctl io "$device" recordVideo --codec=h264 --force "$video_file" >"$MAESTRO_ARTIFACTS/video.log" 2>&1 &
       video_pid=$!
       ;;
     com.templewallet)
-      device_video="/sdcard/temple-perf-video.mp4"
-      adb shell rm -f "$device_video" >/dev/null 2>&1 || true
-      # screenrecord stops itself after three minutes. The file is still pulled.
-      adb shell screenrecord --time-limit 180 "$device_video" >"$MAESTRO_ARTIFACTS/video.log" 2>&1 &
-      video_pid=$!
+      # The emulator records frames it already displayed and writes them here.
+      # adb shell screenrecord encodes inside the guest, then rewrites the mp4 when it stops.
+      video_file="$(cd "$MAESTRO_ARTIFACTS" && pwd)/video.webm"
+      if adb emu screenrecord start "$video_file" >"$MAESTRO_ARTIFACTS/video.log" 2>&1; then
+        emu_video=1
+      else
+        video_file="$MAESTRO_ARTIFACTS/video.mp4"
+        device_video="/sdcard/temple-perf-video.mp4"
+        adb shell rm -f "$device_video" >/dev/null 2>&1 || true
+        # A physical device has no emulator recorder. screenrecord stops after three minutes.
+        adb shell screenrecord --time-limit 180 "$device_video" >"$MAESTRO_ARTIFACTS/video.log" 2>&1 &
+        video_pid=$!
+      fi
       ;;
   esac
 }

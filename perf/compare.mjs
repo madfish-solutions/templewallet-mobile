@@ -13,9 +13,29 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { countFreezes } from './freezes.mjs';
 import { writeReport } from './results.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+
+// A name copied from a shell or an editor can carry a BOM, a trailing space, or a
+// carriage return. It still shows up when the environment is printed, and
+// process.env.MYAPP_UPLOAD_STORE_PASSWORD stays empty.
+const canonicalizeEnv = () => {
+  for (const [key, value] of Object.entries(process.env)) {
+    if (typeof value !== 'string') continue;
+    const canonical = key.replace(/^\uFEFF/, '').replace(/[\u200B\u200C\u200D\r\n]/g, '').trim();
+    if (!canonical || canonical === key) continue;
+    if (process.env[canonical] === undefined) process.env[canonical] = value;
+    delete process.env[key];
+  }
+  for (const name of ['MYAPP_UPLOAD_STORE_PASSWORD', 'MYAPP_UPLOAD_KEY_PASSWORD']) {
+    const value = process.env[name];
+    if (typeof value === 'string') process.env[name] = value.replace(/\r$/, '');
+  }
+};
+
+canonicalizeEnv();
 
 const PROFILES = {
   tezos: { name: 'whale-tezos', address: 'tz2RDjqC2bpUPvy43C7DNFNUuV6Ma5R9fcab' },
@@ -38,7 +58,7 @@ const PROBE_ORDER = ['unlock', 'tokens', 'nfts', 'network', 'jank'];
 
 const usage = () => {
   process.stderr.write(
-    'Usage: node perf/compare.mjs --platform android|ios [--profile tezos|etherlink] [--unlocks 5] [--flow unlock|tokens|nfts|network|jank] [--iterations N] [--no-warmup] [--out dir] name=ref ...\n'
+    'Usage: node perf/compare.mjs --platform android|ios [--profile tezos|etherlink] [--account address] [--unlocks 5] [--flow unlock|tokens|nfts|network|jank] [--iterations N] [--no-warmup] [--out dir] name=ref ...\n'
   );
   process.exit(1);
 };
@@ -101,11 +121,24 @@ const dir = path.resolve(outDir ?? path.join(root, 'perf', 'out', `cmp-${stamp}`
 const cacheDir = path.resolve(process.env.TW_API_CACHE ?? path.join(dir, 'api-cache'));
 const buildCacheRoot = path.join(root, 'perf', 'out', 'builds');
 
-const run = (command, commandArgs, { cwd = root, env = process.env, log, quiet = false } = {}) =>
+const run = (command, commandArgs, { cwd = root, env = process.env, log, quiet = false, timeoutMs } = {}) =>
   new Promise(resolve => {
     const child = spawn(command, commandArgs, { cwd, env, stdio: ['ignore', 'pipe', 'pipe'] });
     let out = '';
+    let settled = false;
     const started = Date.now();
+    const finish = status => {
+      if (settled) return;
+      settled = true;
+      if (timer) clearTimeout(timer);
+      if (log) fs.appendFileSync(log, out);
+      resolve({ ms: Date.now() - started, status, out });
+    };
+    const timer = timeoutMs
+      ? setTimeout(() => {
+          child.kill('SIGKILL');
+        }, timeoutMs)
+      : null;
     const collect = chunk => {
       const text = chunk.toString();
       out += text;
@@ -113,10 +146,8 @@ const run = (command, commandArgs, { cwd = root, env = process.env, log, quiet =
     };
     child.stdout.on('data', collect);
     child.stderr.on('data', collect);
-    child.on('close', code => {
-      if (log) fs.appendFileSync(log, out);
-      resolve({ ms: Date.now() - started, status: code ?? 1, out });
-    });
+    child.on('error', () => finish(1));
+    child.on('close', code => finish(code ?? 1));
   });
 
 const resultLine = (log, payload) => {
@@ -143,8 +174,7 @@ const measureEnv = () => {
 const relaunches = new Set(['maestro/import-wallet.yaml', 'maestro/perf-unlock-screen.yaml', 'maestro/perf-jank.yaml']);
 
 const maestro = async (flow, log, artifacts) => {
-  // iOS flows go through xctrace so the folder contains a .trace Xcode can chart.
-  // MAESTRO_MS is the Maestro run, without the wait to flush that trace.
+  // MAESTRO_MS is the Maestro run. Flushing the trace happens after that line.
   if (platform === 'ios' && artifacts) {
     const traced = await run('bash', [path.join(root, 'xctrace-test.sh')], {
       env: {
@@ -152,6 +182,8 @@ const maestro = async (flow, log, artifacts) => {
         MAESTRO_FLOW: flow,
         MAESTRO_ARTIFACTS: artifacts,
         XCTRACE_OUT_DIR: artifacts,
+        // Animation Hitches keeps the Time Profiler chart and adds hitch and hang rows.
+        XCTRACE_TEMPLATE: process.env.XCTRACE_TEMPLATE || 'Animation Hitches',
         XCTRACE_RELAUNCH: relaunches.has(flow) ? '1' : '0',
         HOST_VIDEO: '0',
         ...(maestroDevice ? { XCTRACE_DEVICE: maestroDevice } : {})
@@ -159,7 +191,32 @@ const maestro = async (flow, log, artifacts) => {
       log
     });
     const timed = traced.out.match(/^MAESTRO_MS (\d+)$/m);
-    return { ...traced, ms: timed ? Number(timed[1]) : traced.ms };
+    return {
+      ...traced,
+      ms: timed ? Number(timed[1]) : traced.ms,
+      trace: traceFrom(traced.out, '.trace'),
+      video: videoFrom(traced.out)
+    };
+  }
+  // Every Android flow with a folder gets a Perfetto trace, not only the jank probe.
+  if (platform === 'android' && artifacts) {
+    const traced = await run('bash', [path.join(root, 'android-test.sh'), 'perfetto'], {
+      env: {
+        ...measureEnv(),
+        SKIP_INSTALL: '1',
+        MAESTRO_FLOW: flow,
+        MAESTRO_ARTIFACTS: artifacts,
+        PERFETTO_OUT: artifacts
+      },
+      log
+    });
+    const timed = traced.out.match(/^MAESTRO_MS (\d+)$/m);
+    return {
+      ...traced,
+      ms: timed ? Number(timed[1]) : traced.ms,
+      trace: traceFrom(traced.out, '.perfetto-trace'),
+      video: videoFrom(traced.out)
+    };
   }
   return run('bash', [path.join(root, 'maestro-test.sh'), flow], {
     env: { ...measureEnv(), ...(artifacts ? { MAESTRO_ARTIFACTS: artifacts } : {}) },
@@ -280,6 +337,12 @@ const install = version => {
       env: { ...process.env, ...deviceEnv(), APP_ID: appId }
     });
   }
+  if (
+    platform === 'android' &&
+    (!process.env.MYAPP_UPLOAD_STORE_PASSWORD || !process.env.MYAPP_UPLOAD_KEY_PASSWORD)
+  ) {
+    throw new Error('Set MYAPP_UPLOAD_STORE_PASSWORD and MYAPP_UPLOAD_KEY_PASSWORD.');
+  }
   const env = {
     ...process.env,
     ...deviceEnv(),
@@ -297,33 +360,14 @@ const savedPaths = output => [...output.matchAll(/^Saved (.+)$/gm)].map(match =>
 
 const traceFrom = (output, suffix) => savedPaths(output).find(file => file.endsWith(suffix)) ?? null;
 
-const videoFrom = output => savedPaths(output).filter(file => file.endsWith('.mp4')).at(-1) ?? null;
+const videoFrom = output =>
+  savedPaths(output).filter(file => file.endsWith('.mp4') || file.endsWith('.webm')).at(-1) ?? null;
 
-const jank = async (log, artifacts) => {
-  const env = {
-    ...measureEnv(),
-    SKIP_INSTALL: '1',
-    MAESTRO_FLOW: 'maestro/perf-jank.yaml',
-    MAESTRO_ARTIFACTS: artifacts
-  };
-  if (platform === 'android') {
-    const traced = await run('bash', [path.join(root, 'android-test.sh'), 'perfetto'], {
-      env: { ...env, PERFETTO_OUT: artifacts },
-      log
-    });
-    return { ...traced, trace: traceFrom(traced.out, '.perfetto-trace'), video: videoFrom(traced.out) };
-  }
-  const traced = await run('bash', [path.join(root, 'xctrace-test.sh')], {
-    env: {
-      ...env,
-      XCTRACE_OUT_DIR: artifacts,
-      XCTRACE_RELAUNCH: '1',
-      HOST_VIDEO: '0',
-      ...(maestroDevice ? { XCTRACE_DEVICE: maestroDevice } : {})
-    },
-    log
-  });
-  return { ...traced, trace: traceFrom(traced.out, '.trace'), video: videoFrom(traced.out) };
+const jank = (log, artifacts) => maestro('maestro/perf-jank.yaml', log, artifacts);
+
+const annotate = async result => {
+  const counted = result.trace ? await countFreezes(platform, result.trace, appId) : null;
+  return { ...result, freezes: counted?.freezes ?? null, freezeMs: counted?.longestMs ?? null };
 };
 
 const collectHermes = (version, artifacts, startedAt) => {
@@ -370,7 +414,13 @@ const collectCrashes = async (version, startedAt) => {
   const started = new Date(startedAt - 5000);
   const pad = value => String(value).padStart(2, '0');
   const from = `${pad(started.getMonth() + 1)}-${pad(started.getDate())} ${pad(started.getHours())}:${pad(started.getMinutes())}:${pad(started.getSeconds())}.000`;
-  const crashed = await run('adb', ['logcat', '-b', 'crash', '-d', '-t', from], { quiet: true });
+  // adb logcat waits forever when no emulator is connected. devices returns immediately.
+  const listed = await run('adb', ['devices'], { quiet: true, timeoutMs: 5000 });
+  if (listed.status !== 0 || !listed.out.includes('\tdevice')) return;
+  const crashed = await run('adb', ['logcat', '-b', 'crash', '-d', '-t', from], {
+    quiet: true,
+    timeoutMs: 15000
+  });
   const body = crashed.out
     .split('\n')
     .filter(line => line && !line.startsWith('---------'))
@@ -424,22 +474,20 @@ const measure = async version => {
     if (activeProbes.includes('unlock')) {
       const unlockLog = log('unlock');
       await runs(repeatCount('unlock'), async index => {
-        const screen = await maestroProfiled(
-          version,
-          'maestro/perf-unlock-screen.yaml',
-          unlockLog,
-          slot(`unlock-${index + 1}-screen`)
+        const screen = await annotate(
+          await maestroProfiled(version, 'maestro/perf-unlock-screen.yaml', unlockLog, slot(`unlock-${index + 1}-screen`))
         );
-        const wallet = await maestroProfiled(
-          version,
-          'maestro/perf-unlock-wallet.yaml',
-          unlockLog,
-          slot(`unlock-${index + 1}-wallet`)
+        const wallet = await annotate(
+          await maestroProfiled(version, 'maestro/perf-unlock-wallet.yaml', unlockLog, slot(`unlock-${index + 1}-wallet`))
         );
         resultLine(unlockLog, {
           probe: 'unlock',
           screenMs: screen.ms,
           walletMs: wallet.ms,
+          screenFreezes: screen.freezes,
+          screenFreezeMs: screen.freezeMs,
+          walletFreezes: wallet.freezes,
+          walletFreezeMs: wallet.freezeMs,
           ok: screen.status === 0 && wallet.status === 0
         });
       });
@@ -447,22 +495,20 @@ const measure = async version => {
 
     const tokensLog = log('tokens');
     const runTokens = async index => {
-    const tokensOpen = await maestroProfiled(
-      version,
-      'maestro/perf-tokens-open.yaml',
-      tokensLog,
-      slot(`tokens-${index + 1}-open`)
+    const tokensOpen = await annotate(
+      await maestroProfiled(version, 'maestro/perf-tokens-open.yaml', tokensLog, slot(`tokens-${index + 1}-open`))
     );
-    const tokensScroll = await maestroProfiled(
-      version,
-      'maestro/perf-tokens-scroll.yaml',
-      tokensLog,
-      slot(`tokens-${index + 1}-scroll`)
+    const tokensScroll = await annotate(
+      await maestroProfiled(version, 'maestro/perf-tokens-scroll.yaml', tokensLog, slot(`tokens-${index + 1}-scroll`))
     );
       resultLine(tokensLog, {
         probe: 'tokens',
         openMs: tokensOpen.ms,
         scrollMs: tokensScroll.ms,
+        openFreezes: tokensOpen.freezes,
+        openFreezeMs: tokensOpen.freezeMs,
+        scrollFreezes: tokensScroll.freezes,
+        scrollFreezeMs: tokensScroll.freezeMs,
         reached: tokensOpen.status === 0,
         ok: tokensOpen.status === 0 && tokensScroll.status === 0
       });
@@ -471,17 +517,20 @@ const measure = async version => {
 
     const nftsLog = log('nfts');
     const runNfts = async index => {
-    const nftsOpen = await maestroProfiled(version, 'maestro/perf-nfts-open.yaml', nftsLog, slot(`nfts-${index + 1}-open`));
-    const nftsScroll = await maestroProfiled(
-      version,
-      'maestro/perf-nfts-scroll.yaml',
-      nftsLog,
-      slot(`nfts-${index + 1}-scroll`)
+    const nftsOpen = await annotate(
+      await maestroProfiled(version, 'maestro/perf-nfts-open.yaml', nftsLog, slot(`nfts-${index + 1}-open`))
+    );
+    const nftsScroll = await annotate(
+      await maestroProfiled(version, 'maestro/perf-nfts-scroll.yaml', nftsLog, slot(`nfts-${index + 1}-scroll`))
     );
       resultLine(nftsLog, {
         probe: 'nfts',
         openMs: nftsOpen.ms,
         scrollMs: nftsScroll.ms,
+        openFreezes: nftsOpen.freezes,
+        openFreezeMs: nftsOpen.freezeMs,
+        scrollFreezes: nftsScroll.freezes,
+        scrollFreezeMs: nftsScroll.freezeMs,
         reached: nftsOpen.status === 0,
         ok: nftsOpen.status === 0 && nftsScroll.status === 0
       });
@@ -523,13 +572,15 @@ const measure = async version => {
       await runs(repeatCount('jank'), async index => {
         const jankSlot = slot(`jank-${index + 1}`);
         const jankStarted = Date.now();
-        const traced = await jank(jankLog, jankSlot);
+        const traced = await annotate(await jank(jankLog, jankSlot));
         await maestro('maestro/hermes-stop.yaml', jankLog);
         await collectHermes(version, path.join(jankSlot, 'hermes'), jankStarted);
         resultLine(jankLog, {
           probe: 'jank',
           trace: traced.trace,
           video: traced.video,
+          freezes: traced.freezes,
+          freezeMs: traced.freezeMs,
           ok: traced.status === 0 && Boolean(traced.trace)
         });
       });
