@@ -1,4 +1,4 @@
-import React, { ComponentType, FC, memo, useEffect, useState } from 'react';
+import React, { ComponentType, FC, memo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { WebView } from 'react-native-webview';
@@ -59,28 +59,17 @@ const TezosCollectibleImage = memo<TezosProps>(
   }) => {
     const styles = useCollectibleImageStyles();
 
-    // Adult content stays on the thumbnail stack: the blurred backdrop is the only image mounted.
-    const loadSharpImage = isFullView && !isBlurred;
     const { src, isStackFailed, isLoading, onSuccess, onFail } = useTezosCollectibleImagesStack(
       slug,
       artifactUri,
       displayUri,
       thumbnailUri,
-      loadSharpImage
+      isFullView
     );
-    const srcDataUri = !isBlurred && src && isImgUriDataUri(src) ? src : undefined;
-    const base64DataUri =
-      !isBlurred && artifactUri && isSvgDataUriInBase64Encoding(artifactUri) ? artifactUri : undefined;
+    const srcDataUri = src && isImgUriDataUri(src) ? src : undefined;
+    const base64DataUri = artifactUri && isSvgDataUriInBase64Encoding(artifactUri) ? artifactUri : undefined;
     const isDataUri = srcDataUri != null || base64DataUri != null;
-    // Full-view adult content only mounts the thumbnail blur, so its load must not be cached as the sharp asset.
-    const [isBlurBackdropReady, setBlurBackdropReady] = useState(false);
-
-    useEffect(() => {
-      setBlurBackdropReady(false);
-    }, [src]);
-
-    const isMediaLoading = !isDataUri && (isBlurred && isFullView ? !isBlurBackdropReady && isLoading : isLoading);
-    const handleBlurredLoad = isFullView ? () => setBlurBackdropReady(true) : onSuccess;
+    const isMediaLoading = !isDataUri && isLoading;
     const dataUriForeground = srcDataUri ? (
       <DataUriImage
         dataUri={srcDataUri}
@@ -118,7 +107,7 @@ const TezosCollectibleImage = memo<TezosProps>(
         forceFrame={isBlurred}
         frameStyle={styles.container}
         background={
-          isDataUri ? null : loadSharpImage ? (
+          isDataUri ? null : isFullView ? (
             <CollectiblePreviewBackground
               slug={slug}
               artifactUri={artifactUri}
@@ -126,11 +115,7 @@ const TezosCollectibleImage = memo<TezosProps>(
               thumbnailUri={thumbnailUri}
             />
           ) : (
-            <BlurredImageBackground
-              uri={src}
-              onError={isBlurred ? onFail : undefined}
-              onLoad={isBlurred ? handleBlurredLoad : undefined}
-            />
+            <BlurredImageBackground uri={src} />
           )
         }
         isForegroundHidden={isBlurred}

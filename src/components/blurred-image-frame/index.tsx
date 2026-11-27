@@ -1,23 +1,24 @@
 import React, { memo, ReactNode } from 'react';
 import { Image, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
-// FastImage applies blurRadius on the main thread, creating a CIContext per image.
-// React Native Image blurs off the main thread.
+import { isAndroid } from 'src/config/system.ts';
+
+// FastImage disables blur cache reuse on Android 12+. Use bitmap blur for the background.
+const BackgroundImage = isAndroid ? Image : FastImage;
 
 interface BlurredImageBackgroundProps {
   uri?: string;
   onError?: EmptyFn;
-  onLoad?: EmptyFn;
 }
 
-export const BlurredImageBackground = memo<BlurredImageBackgroundProps>(({ uri, onError, onLoad }) => (
-  <Image
+export const BlurredImageBackground = memo<BlurredImageBackgroundProps>(({ uri, onError }) => (
+  <BackgroundImage
     style={styles.layer}
     source={uri ? { uri } : undefined}
     resizeMode="cover"
     blurRadius={16}
     onError={onError}
-    onLoad={onLoad}
   />
 ));
 
@@ -26,20 +27,21 @@ interface BlurredImageFrameProps {
   background: ReactNode;
   foreground: ReactNode;
   overlay?: ReactNode;
+  isForegroundHidden?: boolean;
   style?: StyleProp<ViewStyle>;
 }
 
-export const BlurredImageFrame = memo<BlurredImageFrameProps>(({ size, background, foreground, overlay, style }) => (
-  <View style={[styles.container, { width: size, height: size }, style]}>
-    {background}
-    {foreground != null && (
-      <View pointerEvents="none" style={styles.layer}>
+export const BlurredImageFrame = memo<BlurredImageFrameProps>(
+  ({ size, background, foreground, overlay, isForegroundHidden = false, style }) => (
+    <View style={[styles.container, { width: size, height: size }, style]}>
+      {background}
+      <View pointerEvents="none" style={[styles.layer, isForegroundHidden && styles.hidden]}>
         {foreground}
       </View>
-    )}
-    {overlay}
-  </View>
-));
+      {overlay}
+    </View>
+  )
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -47,5 +49,8 @@ const styles = StyleSheet.create({
   },
   layer: {
     ...StyleSheet.absoluteFill
+  },
+  hidden: {
+    opacity: 0
   }
 });
