@@ -1,5 +1,5 @@
 import React, { FC, ReactNode } from 'react';
-import { View } from 'react-native';
+import { StyleProp, View, ViewStyle } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
@@ -21,6 +21,7 @@ interface Props {
   /** Optional address shown on the right of the header row. */
   publicKeyHash?: string;
   children?: ReactNode;
+  style?: StyleProp<ViewStyle>;
 }
 
 export const OperationPreviewCard: FC<Props> = ({
@@ -28,12 +29,13 @@ export const OperationPreviewCard: FC<Props> = ({
   iconSize = formatSize(32),
   description,
   publicKeyHash,
-  children
+  children,
+  style
 }) => {
   const styles = useOperationPreviewCardStyles();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <View style={styles.contentWrapper}>
         <View style={styles.infoContainer}>
           {isDefined(iconSeed) && (

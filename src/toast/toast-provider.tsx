@@ -3,6 +3,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast, { ToastConfigParams } from 'react-native-toast-message';
 
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
 import { isIOS } from 'src/config/system';
 import { ToastTypeEnum } from 'src/enums/toast-type.enum';
 import { formatSize } from 'src/styles/format-size';
@@ -15,6 +16,7 @@ type CustomToastProps = ToastConfigParams<{
   operationUrl?: string;
   isCopyButtonVisible: boolean;
   iconName?: IconNameEnum;
+  iconNameV2?: IconNameV2Enum;
 }>;
 
 const config = {
@@ -36,6 +38,7 @@ const config = {
       title={text1}
       description={text2}
       iconName={props?.iconName}
+      iconNameV2={props?.iconNameV2}
       toastType={ToastTypeEnum.Error}
       isCopyButtonVisible={props?.isCopyButtonVisible}
       hide={hide}

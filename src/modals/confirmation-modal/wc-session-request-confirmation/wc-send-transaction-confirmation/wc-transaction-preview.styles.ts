@@ -25,9 +25,6 @@ export const useWcTransactionPreviewStyles = createUseStyles(({ colors, typograp
   amountsColumn: {
     alignItems: 'flex-end'
   },
-  approvalAmountToken: {
-    color: colors.black
-  },
   loader: {
     height: formatSize(96),
     justifyContent: 'center',

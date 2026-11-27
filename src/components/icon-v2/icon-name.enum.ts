@@ -4,6 +4,7 @@ export enum IconNameV2Enum {
   XBig = 'XBig',
   XRound = 'XRound',
   AlarmTriangle = 'AlarmTriangle',
+  AlarmTriangleFill = 'AlarmTriangleFill',
   Info = 'Info',
   InfoFill = 'InfoFill',
   ArrowLeft = 'ArrowLeft',

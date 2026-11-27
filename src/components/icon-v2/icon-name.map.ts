@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { SvgProps } from 'react-native-svg';
 
+import AlarmTriangleFillIcon from './assets/alarm-triangle-fill.svg';
 import AlarmTriangleIcon from './assets/alarm-triangle.svg';
 import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowLeftIcon from './assets/arrow-left.svg';
@@ -54,6 +55,7 @@ export const IconNameV2Map: Record<IconNameV2Enum, FC<SvgProps>> = {
   [IconNameV2Enum.XBig]: XBigIcon,
   [IconNameV2Enum.XRound]: XRoundIcon,
   [IconNameV2Enum.AlarmTriangle]: AlarmTriangleIcon,
+  [IconNameV2Enum.AlarmTriangleFill]: AlarmTriangleFillIcon,
   [IconNameV2Enum.Info]: InfoIcon,
   [IconNameV2Enum.InfoFill]: InfoFillIcon,
   [IconNameV2Enum.ArrowLeft]: ArrowLeftIcon,

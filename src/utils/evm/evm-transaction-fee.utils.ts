@@ -94,7 +94,9 @@ const getEip1559FeeOptions = (estimation: Eip1559Estimation) => {
   };
 };
 
-export const getEvmFeeOptions = (estimation: EvmEstimation) => {
+export const getEvmFeeOptions = (estimated: EvmEstimation, providedGas?: bigint) => {
+  const estimation = { ...estimated, gas: resolveEvmGasLimit(estimated.gas, providedGas) };
+
   if (estimation.type === 'eip1559') return getEip1559FeeOptions(estimation);
 
   const estimatedGasPrice = estimation.gasPrice;
