@@ -45,17 +45,19 @@ export const CollectibleImageRenderer = memo<Props>(
       return fallback;
     }
 
-    const foreground = dataUriForeground ?? (
-      <FastImage
-        style={styles.image}
-        source={{ uri: sourceUri }}
-        objectFit={resizeMode}
-        onError={onError}
-        onLoad={onLoad}
-      />
-    );
+    const foreground = isForegroundHidden
+      ? null
+      : dataUriForeground ?? (
+          <FastImage
+            style={styles.image}
+            source={{ uri: sourceUri }}
+            objectFit={resizeMode}
+            onError={onError}
+            onLoad={onLoad}
+          />
+        );
 
-    if (dataUriForeground && !forceFrame) {
+    if (foreground != null && dataUriForeground && !forceFrame) {
       return foreground;
     }
 
@@ -65,7 +67,6 @@ export const CollectibleImageRenderer = memo<Props>(
         style={frameStyle}
         background={background}
         foreground={foreground}
-        isForegroundHidden={isForegroundHidden}
         overlay={
           <>
             {overlay}

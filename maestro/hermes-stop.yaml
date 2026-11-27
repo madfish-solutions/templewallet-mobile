@@ -1,0 +1,4 @@
+appId: ${APP_ID}
+name: Stop Hermes profile
+---
+- openLink: temple://hermes-profile/stop

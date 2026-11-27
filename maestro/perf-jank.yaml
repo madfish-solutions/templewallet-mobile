@@ -1,0 +1,45 @@
+# One tokens-scroll session for Perfetto or xctrace. Relaunches so the tracer
+# can attach to a new process, then unlocks and scrolls the token list.
+appId: ${APP_ID}
+name: Tokens scroll trace
+---
+- launchApp:
+    stopApp: true
+- runFlow:
+    when:
+      true: ${typeof HERMES_PROFILE !== 'undefined' && HERMES_PROFILE == '1'}
+    file: hermes-start.yaml
+- extendedWaitUntil:
+    visible:
+      id: "Enter Password/Password Input"
+    timeout: 60000
+# A link sent before JavaScript is listening is dropped. This second start
+# covers the unlock and the scroll when the first one arrived too early.
+- runFlow:
+    when:
+      true: ${typeof HERMES_PROFILE !== 'undefined' && HERMES_PROFILE == '1'}
+    file: hermes-start.yaml
+- tapOn:
+    id: "Enter Password/Password Input"
+- inputText: ${DEFAULT_PASSWORD}
+- pressKey: Enter
+- tapOn:
+    id: "Enter Password/Unlock Button"
+- extendedWaitUntil:
+    visible:
+      id: "Wallet/Token List"
+    timeout: 120000
+- repeat:
+    times: 3
+    commands:
+      - swipe:
+          start: "50%, 84%"
+          end: "50%, 55%"
+          duration: 180
+- repeat:
+    times: 3
+    commands:
+      - swipe:
+          start: "50%, 55%"
+          end: "50%, 84%"
+          duration: 180

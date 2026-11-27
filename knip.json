@@ -6,7 +6,8 @@
     "@ecadlabs/beacon-transport-walletconnect",
     "@react-native-masked-view/masked-view",
     "@babel/preset-env",
-    "@react-native-community/cli*"
+    "@react-native-community/cli*",
+    "reassure"
   ],
   "ignoreBinaries": ["pod", "watchman"],
   "ignoreIssues": {

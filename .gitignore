@@ -76,6 +76,14 @@ api-*.json
 
 # testing
 /coverage
+/flashlight-reports
+/perfetto-reports
+/xctrace-reports
+/hermes-profiles
+/api-cache
+/perf/out
+*-converted.json
+*.cpuprofile
 
 # Yarn
 .yarn/
@@ -88,3 +96,5 @@ api-*.json
 ios/sentry.properties
 android/sentry.properties
 .vscode/
+# Reassure output directory
+.reassure

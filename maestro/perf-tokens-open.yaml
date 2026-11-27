@@ -1,0 +1,12 @@
+# Leaves the wallet and comes back, so the token list has to render again.
+appId: ${APP_ID}
+name: Open token list
+---
+- tapOn:
+    id: "Tab/Collectibles"
+- tapOn:
+    id: "Tab/Wallet"
+- extendedWaitUntil:
+    visible:
+      id: "Wallet/Token List"
+    timeout: 120000

@@ -1,0 +1,16 @@
+# Cold launch into the password screen. Does not clear the imported wallet.
+appId: ${APP_ID}
+name: Unlock screen
+---
+- launchApp:
+    stopApp: true
+# The new process is running. Sampling starts before the wait, so the profile
+# covers the JavaScript that runs while Maestro is waiting for this screen.
+- runFlow:
+    when:
+      true: ${typeof HERMES_PROFILE !== 'undefined' && HERMES_PROFILE == '1'}
+    file: hermes-start.yaml
+- extendedWaitUntil:
+    visible:
+      id: "Enter Password/Password Input"
+    timeout: 60000

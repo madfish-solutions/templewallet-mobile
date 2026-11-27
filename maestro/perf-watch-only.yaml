@@ -1,0 +1,32 @@
+# Runs after perf/long-press-settings.mjs has held Settings and opened Debug.
+# WHALE_NAME and WHALE_ADDRESS are passed by perf/compare.mjs.
+appId: ${APP_ID}
+name: Import watch-only whale
+---
+- extendedWaitUntil:
+    visible:
+      id: "Debug/Watch Only Name"
+    timeout: 20000
+- tapOn:
+    id: "Debug/Watch Only Name"
+- inputText: "${WHALE_NAME}"
+- pressKey: Enter
+- tapOn:
+    id: "Debug/Watch Only Address"
+- inputText: "${WHALE_ADDRESS}"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - runFlow:
+          when:
+            visible:
+              id: "android:id/input_method_nav_back"
+          commands:
+            - back
+- tapOn:
+    id: "Debug/Watch Only Import"
+- extendedWaitUntil:
+    visible:
+      id: "Wallet/Receive Button"
+    timeout: 30000

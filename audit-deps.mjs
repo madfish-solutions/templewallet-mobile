@@ -8,10 +8,6 @@ const ignoredAdvisories = new Map([
   ['GHSA-w3rx-r6r6-pgpr', 'ICNS parser allows denial of service through an infinite loop'],
   ['GHSA-5p2g-fcmc-qvqq', 'JXL and HEIF parsers allow denial of service through infinite loops'],
   [
-    'GHSA-86w9-cpqp-85rv',
-    'node-forge RSA PKCS#1 v1.5 signature verification accepts extra nested DigestAlgorithm elements'
-  ],
-  [
     'GHSA-m9gg-hp2v-232j',
     'In certain configurations, getAuthContext can return unauthorized certificates as though they were authorized'
   ]

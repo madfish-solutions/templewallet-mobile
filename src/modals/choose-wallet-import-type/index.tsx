@@ -17,6 +17,7 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { ImportWallet } from '../import-wallet/import-wallet';
 import { SyncInstructions } from '../sync-account/sync-instructions/sync-instructions';
 
+import { ChooseWalletImportTypeSelectors } from './selectors';
 import { useChooseWalletImportTypeStyles } from './styles';
 
 enum ImportType {
@@ -33,12 +34,14 @@ export const ChooseWalletImportType = memo(() => {
         title: 'Seed Phrase',
         description: 'Use your seed phrase from Temple Wallet\n' + 'or another crypto wallet',
         iconName: IconNameEnum.Docs,
+        testID: ChooseWalletImportTypeSelectors.seedPhraseButton,
         onPress: () => setSelectedImportType(ImportType.SeedPhrase)
       },
       {
         title: 'Sync with Extension Wallet',
         description: 'Synchronize your mobile and extension\n' + 'Temple Wallet',
         iconName: IconNameEnum.Sync,
+        testID: ChooseWalletImportTypeSelectors.syncButton,
         onPress: () => setSelectedImportType(ImportType.Sync)
       }
     ],

@@ -1,0 +1,162 @@
+# Same variable names as the extension e2e tests. Set them in Maestro Studio, or pass
+# -e DEFAULT_HD_ACCOUNT_SEED_PHRASE=... -e DEFAULT_PASSWORD=...
+# Android is the default app id. For iOS add -e APP_ID=com.madfish.temple-wallet
+# The device must have a passcode, or the app stays on the passcode gate.
+appId: ${APP_ID}
+name: Import existing wallet
+tags:
+  - setup
+---
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - launchApp:
+          clearState: true
+          clearKeychain: true
+          permissions:
+            all: deny
+            notifications: deny
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - launchApp:
+          clearState: true
+          permissions:
+            all: deny
+            notifications: deny
+# The notification alert can cover the welcome screen. Dismiss it, then wait
+# for the button. The simulator language is English, so the label stays fixed.
+- repeat:
+    times: 10
+    while:
+      notVisible:
+        id: "Welcome/Import Button"
+    commands:
+      - runFlow:
+          file: dismiss-notification-alert.yaml
+      - waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: "Welcome/Import Button"
+    timeout: 60000
+- runFlow:
+    file: dismiss-notification-alert.yaml
+# Sampling starts only when the host script sets HERMES_PROFILE=1. The listener is
+# already mounted by the time this screen is visible.
+- runFlow:
+    when:
+      true: ${typeof HERMES_PROFILE !== 'undefined' && HERMES_PROFILE == '1'}
+    commands:
+      - openLink: temple://hermes-profile/start
+      - waitForAnimationToEnd
+# The alert can appear while the profile link is opening.
+- runFlow:
+    file: dismiss-notification-alert.yaml
+- extendedWaitUntil:
+    visible:
+      id: "Welcome/Import Button"
+    timeout: 20000
+- tapOn:
+    id: "Welcome/Import Button"
+- extendedWaitUntil:
+    visible:
+      id: "Choose wallet import type/Seed phrase button"
+    timeout: 15000
+- tapOn:
+    id: "Choose wallet import type/Seed phrase button"
+- extendedWaitUntil:
+    visible:
+      id: "Import Existing Wallet/Seed Phrase Input"
+    timeout: 15000
+- tapOn:
+    id: "Import Existing Wallet/Seed Phrase Input"
+- inputText: "${DEFAULT_HD_ACCOUNT_SEED_PHRASE}"
+# Hide keyboard waits on the iOS keyboard until the driver dies. Dragging the form dismisses it.
+- swipe:
+    from:
+      id: "Import Existing Wallet/Seed Phrase Label"
+    direction: DOWN
+    duration: 400
+- tapOn:
+    id: "Import Existing Wallet/Next Button"
+- extendedWaitUntil:
+    visible:
+      id: "Create a new password/Password Input"
+    timeout: 15000
+- tapOn:
+    id: "Create a new password/Password Input"
+- inputText: "${DEFAULT_PASSWORD}"
+# Enter/Done closes this single-line field so the repeat field is not covered.
+# Back is not used: once the keyboard is gone, Back leaves the screen.
+- pressKey: Enter
+- scrollUntilVisible:
+    element:
+      id: "Create a new password/Repeat Password Input"
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: "Create a new password/Repeat Password Input"
+- inputText: "${DEFAULT_PASSWORD}"
+- pressKey: Enter
+# The row is on screen while its center is covered by the floating Back/Import bar.
+# A center tap presses Back. Centering the row, then tapping its top edge, stays above that bar.
+- scrollUntilVisible:
+    element:
+      id: "Create a new password/Accept Terms Check Box"
+    direction: DOWN
+    timeout: 10000
+    centerElement: true
+- tapOn:
+    id: "Create a new password/Accept Terms Check Box"
+    point: "50%,8%"
+- tapOn:
+    id: "Create a new password/Create Button"
+# Import derives the account, then the wallet opens the shielded announcement and the newsletter.
+- extendedWaitUntil:
+    visible:
+      id: "Shielded announcement/Got it Button|Newsletter \\(Modal\\)/Subscribe Button"
+    timeout: 180000
+- repeat:
+    times: 2
+    commands:
+      - runFlow:
+          when:
+            visible:
+              id: "Shielded announcement/Got it Button"
+          commands:
+            - tapOn:
+                id: "Shielded announcement/Got it Button"
+            - waitForAnimationToEnd
+      - runFlow:
+          when:
+            visible:
+              id: "Newsletter \\(Modal\\)/Subscribe Button"
+          commands:
+            - runFlow:
+                when:
+                  platform: Android
+                commands:
+                  - back
+            - runFlow:
+                when:
+                  platform: iOS
+                commands:
+                  - swipe:
+                      start: "50%, 12%"
+                      end: "50%, 90%"
+                      duration: 600
+            - waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: "Wallet/Receive Button"
+    timeout: 20000
+- assertVisible:
+    id: "Wallet/Account Dropdown Button"
+# Stop writes the profile. The host script waits until that file appears.
+- runFlow:
+    when:
+      true: ${typeof HERMES_PROFILE !== 'undefined' && HERMES_PROFILE == '1'}
+    commands:
+      - openLink: temple://hermes-profile/stop
