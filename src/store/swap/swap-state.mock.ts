@@ -25,5 +25,6 @@ export const mockSwapState = mockPersistedState<SwapState>({
   swapParams: createEntity(DEFAULT_SWAP_PARAMS),
   dexes: createEntity([]),
   tokens: createEntity([]),
-  tokensMetadata: createEntity([])
+  tokensMetadata: createEntity([]),
+  evmTokens: createEntity({})
 });

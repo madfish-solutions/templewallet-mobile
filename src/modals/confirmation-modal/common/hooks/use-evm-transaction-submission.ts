@@ -6,14 +6,14 @@ import { StacksEnum } from 'src/navigator/enums/stacks.enum';
 import { dispatch as storeDispatch } from 'src/store';
 import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-assets-selectors';
 import { navigateAction } from 'src/store/root-state.actions';
-import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
+import { showErrorToast } from 'src/toast/toast.utils';
 import { toEvmNetworkEssentials } from 'src/types/networks';
 import { buildPreparedEvmTransaction } from 'src/utils/evm/build-prepared-evm-transaction';
 import { EvmSubmissionFees } from 'src/utils/evm/estimate-evm-transaction';
 import { loadEtherlinkBalancesOnChain } from 'src/utils/evm/etherlink-balances.utils';
 import { normalizeEvmTransactionError } from 'src/utils/evm/evm-transaction-error';
 import { evmTransactionSubmissionService } from 'src/utils/evm/evm-transaction-submission';
-import { getEvmTransactionExplorerUrl } from 'src/utils/evm/get-evm-transaction-explorer-url';
+import { showEvmTransactionSuccessToast } from 'src/utils/evm/transaction-toast.utils';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
 interface Props {
@@ -44,12 +44,7 @@ export const useEvmTransactionSubmission = ({ chainId, sourceAddress, request }:
         // Increase confirmations amount for other blockchains to reduce stale balance reads
         receiptOptions: { confirmations: network.chainId === ETHERLINK_MAINNET_CHAIN_ID ? 2 : 1 },
         onBroadcast: hash => {
-          showSuccessToast({
-            operationHash: hash,
-            operationUrl: getEvmTransactionExplorerUrl(chain.activeBlockExplorer.url, hash),
-            title: 'Success!',
-            description: 'Transaction request sent! Confirming...'
-          });
+          showEvmTransactionSuccessToast(chain, hash, 'submitted');
           storeDispatch(navigateAction({ screen: StacksEnum.MainStack }));
         }
       });
@@ -67,12 +62,7 @@ export const useEvmTransactionSubmission = ({ chainId, sourceAddress, request }:
 
       const hash = result.receipt.transactionHash;
 
-      showSuccessToast({
-        operationHash: hash,
-        operationUrl: getEvmTransactionExplorerUrl(chain.activeBlockExplorer.url, hash),
-        title: 'Success!',
-        description: `${chain.name} transaction confirmed`
-      });
+      showEvmTransactionSuccessToast(chain, hash, 'confirmed');
 
       void loadEtherlinkBalancesOnChain({ network, account: sourceAddress, knownAssets }).catch(console.error);
     },

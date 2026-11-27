@@ -1,3 +1,4 @@
+import { Route3EvmTokenWithPrice } from 'src/apis/temple-wallet/evm-swap';
 import {
   Route3Dex,
   Route3LiquidityBakingParamsResponse,
@@ -11,16 +12,22 @@ import { LoadableEntityState } from '../types';
 
 import { DEFAULT_SWAP_PARAMS } from './swap-state.mock';
 
+export interface EvmSwapTokensState extends LoadableEntityState<Record<string, Route3EvmTokenWithPrice>> {
+  retryAt?: number;
+}
+
 export interface SwapState {
   swapParams: LoadableEntityState<Route3SwapParamsResponse | Route3LiquidityBakingParamsResponse>;
   dexes: LoadableEntityState<Array<Route3Dex>>;
   tokens: LoadableEntityState<Array<Route3Token>>;
   tokensMetadata: LoadableEntityState<Array<TokenInterface>>;
+  evmTokens: EvmSwapTokensState;
 }
 
 export const route3InitialState: SwapState = {
   swapParams: createEntity(DEFAULT_SWAP_PARAMS),
   dexes: createEntity([]),
   tokens: createEntity([]),
-  tokensMetadata: createEntity([])
+  tokensMetadata: createEntity([]),
+  evmTokens: createEntity({})
 };
