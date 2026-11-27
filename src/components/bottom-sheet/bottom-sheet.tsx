@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { emptyFn } from 'src/config/general';
+import { isIOS } from 'src/config/system';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
@@ -139,6 +140,11 @@ export const BottomSheet: FCWithChildren<Props> = ({
       {!isLocked && (
         <GorhomBottomSheet
           key={`${sheetId}-${sheetNonce}`}
+          // On iOS the sheet is one accessibility element by default, which hides every control inside it.
+          // Android already exposes those controls, so it keeps the library defaults.
+          accessible={isIOS ? false : undefined}
+          accessibilityLabel={isIOS ? null : undefined}
+          accessibilityRole={isIOS ? null : undefined}
           containerStyle={styles.bottomSheetContainer}
           containerLayoutState={containerLayoutState}
           ref={controller.ref}

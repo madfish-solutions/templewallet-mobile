@@ -229,7 +229,9 @@ export const BuyWithCreditCard: FC = () => {
             <Text
               style={styles.exchangeRateValue}
               {...setTestID(
-                isDefined(exchangeRate) && !formIsLoading ? BuyWithCreditCardSelectors.quoteReady : undefined
+                isDefined(exchangeRate) && !formIsLoading
+                  ? BuyWithCreditCardSelectors.quoteReady
+                  : BuyWithCreditCardSelectors.quote
               )}
             >
               {isDefined(exchangeRate) && isDefined(inputAsset.code) && !formIsLoading

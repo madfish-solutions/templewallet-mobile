@@ -212,7 +212,7 @@ Otherwise, you may lose your assets permanently.`
                 <Text style={styles.exchangeRate}>Exchange Rate</Text>
                 <Text
                   style={styles.exchangeRateValue}
-                  {...setTestID(values.rate === 0 ? undefined : ExolixSelectors.quoteReady)}
+                  {...setTestID(values.rate === 0 ? ExolixSelectors.quote : ExolixSelectors.quoteReady)}
                 >
                   {values.rate === 0 ? '---' : `1 ${inputCurrency.code} ≈ ${values.rate} ${outputCurrency.code}`}
                 </Text>
