@@ -23,7 +23,7 @@ interface Props extends AssetMediaURIs {
 export const TezosCollectibleThumbnail = memo<Props>(
   ({ slug, size, artifactUri, displayUri, thumbnailUri, blurAdultContent = true, Fallback, resizeMode }) => {
     const details = useCollectibleDetailsSelector(slug);
-    const areDetailsLoading = useCollectibleDetailsLoadingSelector();
+    const areDetailsLoading = useCollectibleDetailsLoadingSelector(slug);
     const isAdultContent = useCollectibleIsAdultSelector(slug);
 
     if (blurAdultContent && !isDefined(isAdultContent) && areDetailsLoading && details === undefined) {

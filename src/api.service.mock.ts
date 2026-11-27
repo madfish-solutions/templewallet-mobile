@@ -1,5 +1,6 @@
 export const mockTezosMetadataApi = {
-  get: jest.fn()
+  get: jest.fn(),
+  post: jest.fn()
 };
 
 jest.mock('./api.service', () => ({
