@@ -1,6 +1,6 @@
-import FastImage from '@d11/react-native-fast-image';
 import React, { memo, useMemo } from 'react';
 import { View } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
 import { CryptoLogo } from 'src/components/crypto-logo';
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
@@ -68,7 +68,7 @@ const EvmCollectibleFace = memo<{ imageUri?: string; size: number; borderRadius:
             key={src}
             style={styles.collectibleImage}
             source={{ uri: src }}
-            resizeMode="cover"
+            objectFit="cover"
             onLoad={onSuccess}
             onError={onFail}
           />

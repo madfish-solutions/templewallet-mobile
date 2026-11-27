@@ -1,6 +1,6 @@
-import FastImage from '@d11/react-native-fast-image';
 import React, { memo } from 'react';
 import { View } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
 import { IconV2 } from 'src/components/icon-v2';
 import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
