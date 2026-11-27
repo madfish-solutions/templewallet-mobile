@@ -1,6 +1,5 @@
 import React, { memo, ReactNode } from 'react';
 import { Image, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
-import FastImage from 'react-native-fast-image';
 
 // FastImage applies blurRadius on the main thread, creating a CIContext per image.
 // React Native Image blurs off the main thread.
