@@ -4,6 +4,7 @@ import FastImage from 'react-native-fast-image';
 
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
+import { setTestID } from 'src/utils/test-id.utils';
 
 import { Divider } from '../../divider/divider';
 import { Icon } from '../../icon/icon';
@@ -13,16 +14,17 @@ import { useProtectedOverlayStyle } from './protected-overlay.style';
 
 interface Props {
   onPress: EmptyFn;
+  testID?: string;
 }
 
-export const ProtectedOverlay: FC<Props> = ({ onPress }) => {
+export const ProtectedOverlay: FC<Props> = ({ onPress, testID }) => {
   const colors = useColors();
   const styles = useProtectedOverlayStyle();
 
   return (
     <View style={styles.container}>
       <FastImage style={styles.protectedBackground} source={require('./protected-background.gif')} />
-      <TouchableOpacity style={styles.touchableOpacity} onPress={onPress}>
+      <TouchableOpacity style={styles.touchableOpacity} onPress={onPress} {...setTestID(testID)}>
         <Icon name={IconNameEnum.Lock} size={formatSize(40)} color={colors.black} />
         <Divider size={formatSize(12)} />
         <Text style={styles.title}>Protected</Text>

@@ -17,10 +17,12 @@ import {
   useCurrentAccountCollectibles,
   useCurrentAccountEvmManageAssets
 } from 'src/utils/assets/hooks';
+import { setTestID } from 'src/utils/test-id.utils';
 import { isOwnedOrManual } from 'src/utils/tezos.util';
 
 import { ManageAssetsItem } from '../manage-assets-item/manage-assets-item';
 import { useManageAssetsStyles } from '../manage-assets.styles';
+import { ManageAssetsSelectors } from '../selectors';
 
 const keyExtractor = (item: ManageAsset) => (isEvmManageAsset(item) ? item.assetKey : getTokenSlug(item));
 const renderItem: ListRenderItem<ManageAsset> = ({ item }) => <ManageAssetsItem asset={item} />;
@@ -62,6 +64,7 @@ export const ManageCollectibles = memo(() => {
         contentContainerStyle={styles.contentContainerStyle}
         ListEmptyComponent={ListEmptyComponent}
         onScroll={handleScroll}
+        {...setTestID(ManageAssetsSelectors.collectiblesList)}
       />
     </>
   );

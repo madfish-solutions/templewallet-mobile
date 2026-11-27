@@ -6,6 +6,7 @@ import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { setTestID } from 'src/utils/test-id.utils';
 
 import { tileMargin, useSegmentedControlStyles } from './segmented-control.styles';
 
@@ -15,6 +16,7 @@ export interface SegmentedControlProps<T> extends TestIdProps {
   values: T[];
   width?: number;
   onChange: SyncFn<number>;
+  optionTestIDs?: string[];
   style?: StyleProp<ViewStyle>;
   optionAnalyticsPropertiesFn?: (value: T, index: number) => object | undefined;
 }
@@ -40,6 +42,7 @@ export const SegmentedControl = <T extends unknown>({
   style,
   testID,
   testIDProperties,
+  optionTestIDs,
   optionAnalyticsPropertiesFn = defaultOptionAnalyticsPropertiesFn,
   onChange
 }: PropsWithChildren<Props<T>>) => {
@@ -84,6 +87,7 @@ export const SegmentedControl = <T extends unknown>({
             });
             onChange(index);
           }}
+          {...setTestID(optionTestIDs?.[index])}
         >
           <ValueComponent item={item} isDisabled={isDisabled} isSelected={index === selectedIndex} />
         </TouchableOpacity>
@@ -97,6 +101,7 @@ export const SegmentedControl = <T extends unknown>({
       testID,
       testIDProperties,
       onChange,
+      optionTestIDs,
       ValueComponent,
       selectedIndex,
       values,

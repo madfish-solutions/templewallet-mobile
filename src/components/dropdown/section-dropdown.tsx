@@ -8,6 +8,7 @@ import { SectionDropdownDataInterface } from 'src/interfaces/section-dropdown-da
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
+import { setTestID } from 'src/utils/test-id.utils';
 
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
@@ -16,6 +17,7 @@ import { SearchInput } from '../search-input/search-input';
 import { TouchableWithAnalytics } from '../touchable-with-analytics';
 
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
+import { DropdownSelectors } from './selectors';
 import { useDropdownStyles } from './styles';
 
 export interface SectionDropdownProps<T> extends TestIdProps, Pick<FlatListProps<T>, 'keyExtractor'> {
@@ -132,7 +134,7 @@ const SectionDropdownComponent = <T extends unknown>({
               <Text style={styles.sectionHeaderText}>{sectionTitle}</Text>
             </View>
           )}
-          <TouchableOpacity key={index} onPress={handlePress}>
+          <TouchableOpacity key={index} onPress={handlePress} {...setTestID(DropdownSelectors.option)}>
             <DropdownItemContainer hasMargin isSelected={isSelected} style={itemContainerStyle}>
               {renderListItem({ item, isSelected })}
             </DropdownItemContainer>
@@ -192,6 +194,7 @@ const SectionDropdownComponent = <T extends unknown>({
                 containerStyle={styles.searchInputContainer}
                 placeholder="Search"
                 onChangeText={setSearchValue}
+                testID={DropdownSelectors.search}
               />
             </View>
           )}

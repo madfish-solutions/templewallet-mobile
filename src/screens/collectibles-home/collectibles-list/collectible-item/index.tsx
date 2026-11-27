@@ -14,7 +14,10 @@ import { useCollectibleDetailsSelector } from 'src/store/collectibles/collectibl
 import { DisplayedCollectible } from 'src/utils/assets/types';
 import { formatNumber } from 'src/utils/format-price';
 import { isDefined } from 'src/utils/is-defined';
+import { setTestID } from 'src/utils/test-id.utils';
 import { mutezToTz } from 'src/utils/tezos.util';
+
+import { CollectiblesListSelectors } from '../collectibles-list.selectors';
 
 import { Balance } from './balance';
 import { useCollectibleItemStyles } from './styles';
@@ -137,7 +140,12 @@ const CollectibleItemView = memo<CollectibleItemViewProps>(
     const styles = useCollectibleItemStyles();
 
     return (
-      <TouchableOpacity activeOpacity={0.7} onPress={onPress} style={[styles.root, style, { width: size }]}>
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={onPress}
+        style={[styles.root, style, { width: size }]}
+        {...setTestID(CollectiblesListSelectors.item)}
+      >
         <View style={[styles.image, { width: size, height: size }]}>
           {image}
           {showInfo && isDefined(balance) ? <Balance balance={balance} /> : null}

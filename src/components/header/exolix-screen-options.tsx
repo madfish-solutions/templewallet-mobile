@@ -9,6 +9,7 @@ import { IconNameV2Enum } from '../icon-v2/icon-name.enum';
 import { HeaderButton } from './header-button/header-button';
 import { HeaderProgress } from './header-progress/header-progress';
 import { HeaderTitle } from './header-title/header-title';
+import { HeaderSelectors } from './selectors';
 
 const BackButton: FC = () => {
   const { goBack } = useNavigation();
@@ -17,7 +18,9 @@ const BackButton: FC = () => {
     goBack();
   };
 
-  return <HeaderButton iconName={IconNameV2Enum.ArrowLeft} onPress={handleOnPress} />;
+  return (
+    <HeaderButton iconName={IconNameV2Enum.ArrowLeft} onPress={handleOnPress} testID={HeaderSelectors.backButton} />
+  );
 };
 
 export const exolixScreenOptions = (): StackNavigationOptions => ({

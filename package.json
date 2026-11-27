@@ -109,6 +109,7 @@
     "react-native-quick-actions": "^0.3.13",
     "react-native-reanimated": "^4.4.0",
     "react-native-reanimated-carousel": "^4.0.3",
+    "react-native-release-profiler": "^0.4.5",
     "react-native-restart": "^0.0.27",
     "react-native-safe-area-context": "^5.5.2",
     "react-native-sapling": "^0.0.2",

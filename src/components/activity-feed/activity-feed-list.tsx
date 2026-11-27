@@ -14,6 +14,7 @@ import { useInternalAdsAnalyticsWithImpressionCallback } from 'src/hooks/use-int
 import { useOutsideOfListIntersection } from 'src/hooks/use-outside-of-list-intersection.hook';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { isDefined } from 'src/utils/is-defined';
+import { setTestID } from 'src/utils/test-id.utils';
 
 import { ActivityFeedItem } from './activity-feed-item';
 import { useActivityFeedListStyles } from './activity-feed-list.styles';
@@ -190,7 +191,7 @@ export const ActivityFeedList = memo<Props>(
     const ListFooterComponent = useMemo(
       () =>
         shouldRenderAdditionalLoader ? (
-          <View style={styles.additionalLoader}>
+          <View style={styles.additionalLoader} {...setTestID(ActivityFeedSelectors.loadMore)}>
             <ActivitySpinner size={24} />
           </View>
         ) : null,
@@ -203,7 +204,7 @@ export const ActivityFeedList = memo<Props>(
     );
 
     return (
-      <View style={styles.contentContainer} onLayout={handleContainerLayout}>
+      <View style={styles.contentContainer} onLayout={handleContainerLayout} {...setTestID(ActivityFeedSelectors.list)}>
         <FlashList
           data={sections}
           stickyHeaderIndices={stickyHeaderIndices}

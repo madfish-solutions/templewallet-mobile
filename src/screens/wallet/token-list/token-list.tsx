@@ -234,8 +234,16 @@ export const TokensList = memo<Props>(({ onRefreshEtherlink }) => {
           containerStyle={styles.searchInputContainer}
           placeholder="Search"
         />
-        <ActionButton iconName={IconNameV2Enum.Clock} onPress={navigateToActivity} />
-        <ActionButton iconName={IconNameV2Enum.Slider} onPress={navigateToManageAssets} />
+        <ActionButton
+          iconName={IconNameV2Enum.Clock}
+          onPress={navigateToActivity}
+          testID={WalletSelectors.activityButton}
+        />
+        <ActionButton
+          iconName={IconNameV2Enum.Slider}
+          onPress={navigateToManageAssets}
+          testID={WalletSelectors.manageAssetsButton}
+        />
       </View>
 
       {isInAppUpdateAvailable ? <InAppUpdateBanner style={styles.banner} /> : null}

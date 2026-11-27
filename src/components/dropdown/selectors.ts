@@ -1,3 +1,4 @@
 export enum DropdownSelectors {
-  option = 'Dropdown/Option'
+  option = 'Dropdown/Option',
+  search = 'Dropdown/Search'
 }

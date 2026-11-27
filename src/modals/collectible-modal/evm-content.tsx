@@ -23,6 +23,7 @@ import { CollectibleAttributeGrid } from './components/collectible-attributes';
 import { EvmCollectibleDetails } from './components/collectible-details';
 import { CollectibleModalLayout } from './components/collectible-modal-layout';
 import { CollectionImage } from './components/collection-image';
+import { CollectibleModalSelectors } from './selectors';
 import { useCollectibleModalStyles } from './styles';
 
 enum Segment {
@@ -64,6 +65,7 @@ export const EvmCollectibleModalContent = memo<Props>(({ chainId, slug }) => {
       action={{
         title: 'Send',
         disabled: !isPositiveNumber(balance),
+        testID: CollectibleModalSelectors.sendButton,
         onPress: () => navigateToModal(ModalsEnum.Send, { assetKey })
       }}
     >

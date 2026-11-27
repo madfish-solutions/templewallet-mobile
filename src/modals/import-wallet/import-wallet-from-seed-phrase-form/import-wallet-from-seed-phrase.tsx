@@ -42,11 +42,15 @@ export const ImportWalletFromSeedPhrase = memo<ImportWalletProps>(({ onSubmit, o
 
   return (
     <FormikProvider value={formik}>
-      <ScreenContainer isFullScreenMode={true}>
+      <ScreenContainer isFullScreenMode={true} keyboardDismissMode="on-drag">
         <Divider size={formatSize(16)} />
 
         <View style={styles.seedPhraseInputContainer}>
-          <Label label="Seed phrase" description="Mnemonic. Your secret 12 - 24 words phrase." />
+          <Label
+            label="Seed phrase"
+            description="Mnemonic. Your secret 12 - 24 words phrase."
+            testID={ImportWalletFromSeedPhraseSelectors.seedPhraseLabel}
+          />
           <FormMnemonicInput name="seedPhrase" testID={ImportWalletFromSeedPhraseSelectors.seedPhraseInput} />
           <AndroidKeyboardDisclaimer />
         </View>

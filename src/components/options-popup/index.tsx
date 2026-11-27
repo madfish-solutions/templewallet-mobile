@@ -4,6 +4,7 @@ import Popover, { Rect, PopoverPlacement } from 'react-native-popover-view';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { isAndroid } from 'src/config/system';
+import { setTestID } from 'src/utils/test-id.utils';
 
 import { popoverWidth, useOptionsPopupStyles } from './styles';
 
@@ -33,8 +34,8 @@ export interface OptionsPopupProps<T> {
 
 const noArrowSize = { width: 0, height: 0 };
 
-export const OptionsPopupHOC = <T extends unknown>(OptionContent: OptionContent<T>) => {
-  const Option = OptionHOC(OptionContent);
+export const OptionsPopupHOC = <T,>(OptionContent: OptionContent<T>, testIDFn?: SyncFn<T, string | undefined>) => {
+  const Option = OptionHOC(OptionContent, testIDFn);
 
   const OptionsPopup = memo<OptionsPopupProps<T>>(
     ({ controlRef, title, options, keyFn, placement, onOptionPress, xOffset = 0, yOffset = 0, triggerRef }) => {
@@ -123,13 +124,14 @@ interface OptionProps<T> {
   onPress: SyncFn<T, void>;
 }
 
-const OptionHOC = <T extends unknown>(Content: OptionContent<T>) => {
+const OptionHOC = <T,>(Content: OptionContent<T>, testIDFn?: SyncFn<T, string | undefined>) => {
   const Option = memo(({ option, onPress }: OptionProps<T>) => {
     const styles = useOptionsPopupStyles();
     const handleOptionPress = useCallback(() => onPress(option), [option, onPress]);
+    const testID = testIDFn?.(option);
 
     return (
-      <TouchableOpacity style={styles.option} onPress={handleOptionPress}>
+      <TouchableOpacity style={styles.option} onPress={handleOptionPress} {...setTestID(testID)}>
         <Content option={option} />
       </TouchableOpacity>
     );

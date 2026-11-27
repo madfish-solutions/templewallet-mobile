@@ -12,6 +12,7 @@ import {
   WalletInitFinalStepInputsProps,
   WalletInitFormValuesBase
 } from './wallet-init-final-step-inputs';
+import { WalletInitNewPasswordInputsSelectors } from './wallet-init-new-password-inputs.selectors';
 
 interface WalletInitNewPasswordFormValues extends WalletInitFormValuesBase {
   password: string;
@@ -30,7 +31,11 @@ export const WalletInitNewPasswordInputs = memo<WalletInitNewPasswordInputsProps
     <WalletInitFinalStepInputs {...restProps}>
       <Divider size={formatSize(16)} />
       <View>
-        <Label label="Password" description="A password is used to protect the wallet." />
+        <Label
+          label="Password"
+          description="A password is used to protect the wallet."
+          testID={WalletInitNewPasswordInputsSelectors.passwordLabel}
+        />
         <FormPasswordInput isShowPasswordStrengthIndicator name="password" testID={passwordInputTestID} />
       </View>
 

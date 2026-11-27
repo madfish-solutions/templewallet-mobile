@@ -20,6 +20,7 @@ import {
   importWatchOnlyDebugValidationSchema,
   ImportWatchOnlyDebugValues
 } from './import-watch-only-debug.form';
+import { ImportWatchOnlyDebugSelectors } from './import-watch-only-debug.selectors';
 
 export const ImportWatchOnlyDebug: FC = () => {
   const dispatch = useDispatch();
@@ -51,9 +52,14 @@ export const ImportWatchOnlyDebug: FC = () => {
     >
       {({ submitForm, isValid }) => (
         <View>
-          <FormTextInput name="name" placeholder="Account name" />
-          <FormAddressInput name="address" placeholder="Address" />
-          <ButtonLargePrimary title="Import" disabled={!isValid} onPress={submitForm} />
+          <FormTextInput name="name" placeholder="Account name" testID={ImportWatchOnlyDebugSelectors.nameInput} />
+          <FormAddressInput name="address" placeholder="Address" testID={ImportWatchOnlyDebugSelectors.addressInput} />
+          <ButtonLargePrimary
+            title="Import"
+            disabled={!isValid}
+            testID={ImportWatchOnlyDebugSelectors.importButton}
+            onPress={submitForm}
+          />
         </View>
       )}
     </Formik>

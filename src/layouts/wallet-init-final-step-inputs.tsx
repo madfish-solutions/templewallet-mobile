@@ -74,7 +74,7 @@ export const WalletInitFinalStepInputs = <T extends WalletInitFormValuesBase>({
   const { errors, touched } = formik;
 
   return (
-    <ScreenContainer scrollViewRef={refScrollView} isFullScreenMode={true}>
+    <ScreenContainer scrollViewRef={refScrollView} isFullScreenMode={true} keyboardDismissMode="on-drag">
       <View style={styles.flex} onLayout={onMainPartLayout}>
         {children}
       </View>
