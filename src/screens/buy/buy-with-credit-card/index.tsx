@@ -26,6 +26,7 @@ import { useInterval } from 'src/utils/hooks';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
 import { jsonEqualityFn } from 'src/utils/store.utils';
+import { setTestID } from 'src/utils/test-id.utils';
 
 import { renderPaymentProviderOption } from '../components/payment-provider';
 import { renderSelectedPaymentProvider } from '../components/selected-payment-provider';
@@ -225,7 +226,12 @@ export const BuyWithCreditCard: FC = () => {
 
           <View style={styles.exchangeContainer}>
             <Text style={styles.exchangeRate}>Exchange Rate</Text>
-            <Text style={styles.exchangeRateValue}>
+            <Text
+              style={styles.exchangeRateValue}
+              {...setTestID(
+                isDefined(exchangeRate) && !formIsLoading ? BuyWithCreditCardSelectors.quoteReady : undefined
+              )}
+            >
               {isDefined(exchangeRate) && isDefined(inputAsset.code) && !formIsLoading
                 ? `1 ${inputAsset.code} = ${exchangeRate} ${outputAsset.codeToDisplay ?? outputAsset.code}`
                 : '---'}

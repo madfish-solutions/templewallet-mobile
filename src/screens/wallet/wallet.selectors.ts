@@ -15,5 +15,8 @@ export enum WalletSelectors {
   searchTokenButton = 'Wallet/Search Token Button',
   promotion = 'Wallet/Promotion',
   createNewAccountButton = 'Wallet/Create New Account Button',
+  addAccountButton = 'Wallet/Add Account Button',
+  newAccountOption = 'Wallet/New Account Option',
+  importAccountOption = 'Wallet/Import Account Option',
   settingsButton = 'Wallet/Settings Button'
 }

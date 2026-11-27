@@ -277,6 +277,7 @@ const DropdownComponent = <T extends unknown>({
                 containerStyle={styles.searchInputContainer}
                 placeholder={searchPlaceholder}
                 onChangeText={setSearchValue}
+                testID={DropdownSelectors.search}
               />
               {renderSearchActionButtons && (
                 <>

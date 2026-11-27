@@ -1,3 +1,4 @@
 export enum CollectiblesListSelectors {
-  list = 'Collectibles/List'
+  list = 'Collectibles/List',
+  item = 'Collectibles/Item'
 }

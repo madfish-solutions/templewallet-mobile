@@ -9,6 +9,7 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { useManageAssetsStyles } from './manage-assets.styles';
 import { ManageCollectibles } from './manage-collectibles/manage-collectibles';
 import { ManageTokens } from './manage-tokens/manage-tokens';
+import { ManageAssetsSelectors } from './selectors';
 
 const manageTokensIndex = 0;
 
@@ -36,6 +37,7 @@ export const ManageAssets = () => {
         <TextSegmentControl
           selectedIndex={segmentedControlIndex}
           values={['Tokens', 'Collectibles']}
+          optionTestIDs={[ManageAssetsSelectors.tokensTab, ManageAssetsSelectors.collectiblesTab]}
           onChange={handleSegmentedControlChange}
         />
       </View>

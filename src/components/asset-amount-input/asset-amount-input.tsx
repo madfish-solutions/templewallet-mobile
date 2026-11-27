@@ -23,6 +23,7 @@ import {
 } from 'src/utils/asset.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
+import { setTestID } from 'src/utils/test-id.utils';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 
 import { AssetValueText } from '../asset-value-text/asset-value-text';
@@ -380,6 +381,7 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
             onBlur={handleBlur}
             onFocus={handleFocus}
             onChangeText={handleChange}
+            {...setTestID(AssetAmountInputSelectors.amountInput)}
           />
 
           <View

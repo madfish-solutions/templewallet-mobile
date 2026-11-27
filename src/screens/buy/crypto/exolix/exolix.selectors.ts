@@ -1,5 +1,6 @@
 export enum ExolixSelectors {
   TopupFirstStepSubmit = 'TopUp/Exolix/Step1/TopUpButton',
+  quoteReady = 'TopUp/Exolix/Step1/Quote Ready',
   TopupFirstStepTransactionOverdue = 'TopUp/Exolix/Step1/TrOverdue',
   TopupFirstStepSubmitAgain = 'TopUp/Exolix/Step1/TopUpAgainButton',
   TopupSecondStepCopy = 'TopUp/Exolix/Step2/CopyTrID',

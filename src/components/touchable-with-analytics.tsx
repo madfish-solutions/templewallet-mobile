@@ -5,6 +5,7 @@ import { TouchableOpacity as GHTouchableOpacity } from 'react-native-gesture-han
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { setTestID } from 'src/utils/test-id.utils';
 
 type GHTouchableOpacityProps = typeof GHTouchableOpacity extends ComponentType<infer P> ? P : never;
 
@@ -43,5 +44,5 @@ export const TouchableWithAnalytics: FC<Props> = ({
     onLongPress?.();
   }, [onLongPress, testID, testIDProperties, trackEvent, shouldTrackLongPress]);
 
-  return <Component {...restProps} onPress={handlePress} onLongPress={handleLongPress} testID={testID} />;
+  return <Component {...restProps} onPress={handlePress} onLongPress={handleLongPress} {...setTestID(testID)} />;
 };

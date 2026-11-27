@@ -43,20 +43,24 @@ interface AddAccountOption {
   icon: IconNameV2Enum;
   name: string;
   handler: EmptyFn;
+  testID: string;
 }
 const optionKeyFn = ({ name }: AddAccountOption) => name;
 
-const CreateAccountPopupBase = OptionsPopupHOC<AddAccountOption>(({ option }) => {
-  const { icon, name } = option;
-  const styles = useCurrentAccountDropdownStyles();
+const CreateAccountPopupBase = OptionsPopupHOC<AddAccountOption>(
+  ({ option }) => {
+    const { icon, name } = option;
+    const styles = useCurrentAccountDropdownStyles();
 
-  return (
-    <View style={styles.popoverOptionContent}>
-      <IconV2 name={icon} size={24} color={commonTheme.blue} />
-      <Text style={styles.popoverOptionName}>{name}</Text>
-    </View>
-  );
-});
+    return (
+      <View style={styles.popoverOptionContent}>
+        <IconV2 name={icon} size={24} color={commonTheme.blue} />
+        <Text style={styles.popoverOptionName}>{name}</Text>
+      </View>
+    );
+  },
+  option => option.testID
+);
 
 const SearchActionButtons: DropdownActionButtonsComponent = ({ closeDropdown }) => {
   const navigateToScreen = useNavigateToScreen();
@@ -96,12 +100,14 @@ const SearchActionButtons: DropdownActionButtonsComponent = ({ closeDropdown }) 
       {
         icon: IconNameV2Enum.UserAdd,
         name: 'New account',
-        handler: createNewAccount
+        handler: createNewAccount,
+        testID: WalletSelectors.newAccountOption
       },
       {
         icon: IconNameV2Enum.Import,
         name: 'Import account',
-        handler: goToImportAccount
+        handler: goToImportAccount,
+        testID: WalletSelectors.importAccountOption
       }
     ],
     [createNewAccount, goToImportAccount]
@@ -123,6 +129,7 @@ const SearchActionButtons: DropdownActionButtonsComponent = ({ closeDropdown }) 
           iconSize={24}
           color={commonTheme.blue}
           onPress={openCreateAccountPopup}
+          testID={WalletSelectors.addAccountButton}
           key="create"
         />
       </View>

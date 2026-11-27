@@ -5,6 +5,7 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 
 import { HeaderButton } from '../header-button/header-button';
+import { HeaderSelectors } from '../selectors';
 
 import { useHeaderCloseButtonStyles } from './styles';
 
@@ -19,6 +20,7 @@ export const HeaderCloseButton: FC = () => {
       size={formatSize(28)}
       style={styles.icon}
       onPress={goBack}
+      testID={HeaderSelectors.closeButton}
     />
   );
 };

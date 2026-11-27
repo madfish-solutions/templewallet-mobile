@@ -23,11 +23,13 @@ import { ExchangePayload } from 'src/types/exolix.types';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { AnalyticsError } from 'src/utils/error-analytics-data.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { setTestID } from 'src/utils/test-id.utils';
 import { getProperNetworkFullName } from 'src/utils/topup';
 
 import { ErrorComponent } from '../../components/error-component';
 import { EXOLIX_PRIVICY_LINK, EXOLIX_TERMS_LINK, initialFormValues } from '../../config';
 import { exolixTopupFormValidationSchema, ExolixTopupFormValues } from '../../exolix-topup.form';
+import { ExolixSelectors } from '../../exolix.selectors';
 import { useFilteredCurrenciesList } from '../../hooks/use-filtered-currencies-list.hook';
 
 import { InitialStepSelectors } from './initial-step.selectors';
@@ -208,7 +210,10 @@ Otherwise, you may lose your assets permanently.`
               <Divider size={formatSize(16)} />
               <View style={styles.exchangeContainer}>
                 <Text style={styles.exchangeRate}>Exchange Rate</Text>
-                <Text style={styles.exchangeRateValue}>
+                <Text
+                  style={styles.exchangeRateValue}
+                  {...setTestID(values.rate === 0 ? undefined : ExolixSelectors.quoteReady)}
+                >
                   {values.rate === 0 ? '---' : `1 ${inputCurrency.code} ≈ ${values.rate} ${outputCurrency.code}`}
                 </Text>
               </View>
